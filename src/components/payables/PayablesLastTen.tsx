@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 interface PayablesLastTenProps {
   latestAccounts: AccountDetails[];
   handleView: (account: AccountDetails) => void;
-  handleDelete: (id: number) => void;
+  handleDelete: (id: string) => void;
   handleEdit: (account: AccountDetails) => void;
 }
 
@@ -26,9 +26,9 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
 
   // Estado para o diálogo
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const openConfirm = (id: number) => {
+  const openConfirm = (id: string) => {
     setSelectedId(id);
     setConfirmOpen(true);
   };

@@ -219,13 +219,13 @@ const Payables: React.FC = () => {
 
   const handleView = (account: AccountDetails) => setSelectedAccount(account);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteAccount(id);
       showToast('Conta excluída com sucesso.', 'success');
       loadMonthAccounts();
       loadYearAccounts();
-      setSelectedAccount((current) => (current?.id === id ? null : current));
+      setSelectedAccount((current) => (current?.id === String(id) ? null : current));
     } catch {
       showToast('Erro ao excluir a conta.', 'error');
     }
@@ -259,7 +259,7 @@ const Payables: React.FC = () => {
     }
   };
 
-  const handleCancelPayment = async (id: number) => {
+  const handleCancelPayment = async (id: string) => {
     try {
       await cancelAccountPayment(id);
       showToast('Pagamento cancelado e conta voltou a Pendente.', 'success');

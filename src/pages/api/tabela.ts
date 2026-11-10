@@ -4,11 +4,11 @@ import fs from 'fs';
 import path from 'path';
 import XLSX from 'xlsx';
 import {
-  findTableSearchHistory,
-  saveTableSearchHistory,
-  getRecentTableSearchHistory,
-  clearTableSearchHistory,
-} from '../../database/tabelaDb';
+  findMedicineSearchHistory,
+  saveMedicineSearchHistory,
+  listMedicineSearchHistory,
+  clearMedicineSearchHistory,
+} from '../../database/payablesRepository';
 
 export const config = {
   api: {
@@ -279,8 +279,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (history === '1' || history === 'true') {
       try {
-        const table = getRecentTableSearchHistory();
-        return res.status(200).json(table);
+      const table = await listMedicineSearchHistory();
+      return res.status(200).json(table);
       } catch (error) {
         console.error('Erro ao buscar histórico de tabela:', error);
         return res.status(500).json({ error: 'Erro ao buscar histórico.' });
@@ -297,10 +297,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const normalizedQuery = normalizeText(query);
-    const cached = findTableSearchHistory(normalizedQuery);
+    const cached = await findMedicineSearchHistory(normalizedQuery);
     if (cached) {
       try {
-        const results = JSON.parse(cached.result_json as string);
+        const results = cached.results;
         return res.status(200).json({ source: 'history', results, query });
       } catch (error) {
         console.error('Erro ao parsear resultados do cache de tabela:', error);
@@ -314,7 +314,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const results = searchTableData(query, table);
     try {
-      saveTableSearchHistory(query, normalizedQuery, results);
+      await saveMedicineSearchHistory(query, normalizedQuery, results);
     } catch (error) {
       console.error('Erro ao salvar histórico de tabela:', error);
     }
@@ -324,7 +324,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'DELETE') {
     try {
-      clearTableSearchHistory();
+      await clearMedicineSearchHistory();
       return res.status(200).json({ message: 'Histórico de tabela limpo com sucesso.' });
     } catch (error) {
       console.error('Erro ao limpar histórico de tabela:', error);

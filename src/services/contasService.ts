@@ -1,5 +1,5 @@
 export interface AccountDetails {
-  id: number;
+  id: string;
   distribuidora: string;
   valor: number;
   vencimento: string;
@@ -53,7 +53,7 @@ export const fetchAccounts = async (year: number, month?: number): Promise<Accou
 };
 
 // Função assíncrona exportada.
-export const payAccount = async (id: number) => {
+export const payAccount = async (id: string | number) => {
   const response = await fetch('/api/contas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -63,7 +63,7 @@ export const payAccount = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const cancelAccountPayment = async (id: number) => {
+export const cancelAccountPayment = async (id: string | number) => {
   const response = await fetch('/api/contas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -74,7 +74,7 @@ export const cancelAccountPayment = async (id: number) => {
 
 // Função assíncrona exportada.
 export const updateAccount = async (
-  id: number,
+  id: string | number,
   supplierName: string,
   amount: number,
   dueDate: string,
@@ -97,7 +97,7 @@ export const updateAccount = async (
 };
 
 // Função assíncrona exportada.
-export const deleteAccount = async (id: number) => {
+export const deleteAccount = async (id: string | number) => {
   const response = await fetch('/api/contas', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },

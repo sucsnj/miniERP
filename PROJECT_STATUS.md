@@ -6,7 +6,7 @@ Atualizado em: **10/11/2026**
 
 ## Resumo executivo
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Estágio atual: **estável**, com a migração SQLite → Supabase em andamento. Fases 0 a 3 concluídas para vendas/estoque e catálogo (ADR 0012, schema aplicado, client server-only, rotas migradas para Supabase). SQLite permanece ativo para contas, notas, tabela de medicamentos, backup e OCR. Offline/PWA planejado para depois da migração.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Estágio atual: **estável**, com a migração SQLite → Supabase concluída nas Fases 0 a 3 (ADR 0012). Persistência ativa agora é o Supabase para vendas, estoque, catálogo, contas, notas e histórico de tabela. SQLite permanece apenas para backup legado/OCR até a Fase 4. Offline/PWA planejado para depois da migração.
 
 ## Estado atual
 
@@ -20,14 +20,14 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | `npm run build` | build de produção OK |
 | `node scripts/check-docs.mjs` | espelho e links consistentes |
 | `node scripts/check-encoding.mjs` | sem mojibake/BOM |
-| Persistência | Supabase ativo para vendas/estoque e catálogo; SQLite ativo para contas, notas, tabela, backup e OCR |
-| Supabase | schema aplicado; `src/database/supabase.ts`, `productsRepository.ts` e `salesRepository.ts` em uso pelas rotas migradas |
+| Persistência | Supabase ativo para todo o domínio migrado (vendas, estoque, catálogo, contas, notas, histórico de tabela) |
+| Supabase | schema aplicado; repositórios e rotas migradas em uso |
 | Offline/PWA | não implementado (futuro) |
 | Teste manual | funcionalidades críticas OK; fluxo Supabase ainda não exercitado em runtime |
 
 ## Pendentes
 
-- **Migração Supabase (ADR 0012) — Fase 3 (parcial):** vendas/estoque e catálogo migrados; pendentes contas/notas, tabela de medicamentos e consolidação mensal.
+- **Migração Supabase (ADR 0012) — Fase 3:** concluída (vendas/estoque, catálogo, contas/notas, tabela de medicamentos).
 - **Fase 4:** remover SQLite (`db/`, `better-sqlite3`), endpoints/botões de backup e OCR/PDF; atualizar docs espelhados.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em `/tmp` ou Storage) e validação do deploy; autenticação/proteção ficam para depois.
 - **Refatoração de grandes componentes:** `CartModal`, `ImportItemsModal`, `ProductForm` e `SelectItemsModal` — extrair hooks/serviços/subcomponentes no padrão do `DailySaleForm`.

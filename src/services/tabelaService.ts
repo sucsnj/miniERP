@@ -10,7 +10,7 @@ export interface TableRow {
 }
 
 export interface TableSearchHistoryItem {
-  id: number;
+  id: string;
   query: string;
   result_count: number;
   updated_at: string;

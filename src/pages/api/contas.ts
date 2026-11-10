@@ -1,110 +1,109 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
-  cancelAccountPayment,
-  deleteAccount,
-  getAccountById,
-  getAccountsByPeriod,
-  getAllAccounts,
-  insertAccount,
-  payAccount,
-  updateAccount,
-} from '../../database/contasDb';
+  listPayablesByPeriod,
+  listAllPayables,
+  getPayableById,
+  createPayable,
+  updatePayable,
+  deletePayable,
+  payPayable,
+  cancelPayablePayment,
+} from '../../database/payablesRepository';
 
-// Handler de API ou componente exportado.
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapPayable(p: any) {
+  return {
+    id: String(p.id),
+    distribuidora: p.supplierName,
+    valor: p.amount,
+    vencimento: p.dueDate,
+    documento: p.document,
+    status: p.status === 'PAID' ? 'Pago' : 'Pendente',
+    banco_observacoes: p.bankNotes,
+    criado_em: p.createdAt,
+  };
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const { ano: yearParam, mes: monthParam } = req.query;
     if (!yearParam) {
       return res.status(400).json({ error: 'Ano é obrigatório' });
     }
 
-    const accounts = getAccountsByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined);
-    return res.status(200).json(accounts);
+    const accounts = await listPayablesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined);
+    return res.status(200).json(accounts.map(mapPayable));
   }
 
   if (req.method === 'POST') {
-    const {
-      action,
-      id,
-      distribuidora: distributor,
-      valor: amount,
-      vencimento: dueDate,
-      documento: documentNumber,
-      bancoObservacoes: bankNotes,
-    } = req.body;
+    const body = req.body ?? {};
+    const { action, id } = body;
 
     if (action === 'pagar') {
-      if (!id) {
-        return res.status(400).json({ error: 'ID da conta é obrigatório para pagar' });
-      }
-      const existingAccount = getAccountById(id);
-      if (!existingAccount) {
-        return res.status(404).json({ error: 'Conta não encontrada' });
-      }
-      payAccount(id);
+      if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para pagar' });
+      const existing = await getPayableById(String(id));
+      if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
+      await payPayable(String(id));
       return res.status(200).json({ message: 'Conta marcada como Pago' });
     }
 
     if (action === 'cancelar') {
-      if (!id) {
-        return res.status(400).json({ error: 'ID da conta é obrigatório para cancelar o pagamento' });
-      }
-      const existingAccount = getAccountById(id);
-      if (!existingAccount) {
-        return res.status(404).json({ error: 'Conta não encontrada' });
-      }
-      cancelAccountPayment(id);
+      if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para cancelar o pagamento' });
+      const existing = await getPayableById(String(id));
+      if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
+      await cancelPayablePayment(String(id));
       return res.status(200).json({ message: 'Pagamento cancelado e conta voltou a Pendente' });
     }
+
+    const distributor = body.distribuidora ?? body.supplierName;
+    const amount = body.valor ?? body.amount;
+    const dueDate = body.vencimento ?? body.dueDate;
+    const documentNumber = body.documento ?? body.document;
+    const bankNotes = body.bancoObservacoes ?? body.bankNotes;
 
     if (!distributor || typeof amount !== 'number' || !dueDate || !documentNumber) {
       return res.status(400).json({ error: 'Dados inválidos para criação de conta' });
     }
 
-    const allAccounts = getAllAccounts();
-    const duplicateAccount = allAccounts.find(c => c.distribuidora === distributor && c.documento === documentNumber);
+    const allAccounts = await listAllPayables();
+    const duplicateAccount = allAccounts.find((c) => c.supplierName === distributor && c.document === documentNumber);
     if (duplicateAccount) {
       return res.status(400).json({ error: 'Já existe uma conta com a mesma distribuidora e documento' });
     }
 
-    insertAccount(distributor, amount, dueDate, documentNumber, bankNotes);
+    await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes });
     return res.status(200).json({ message: 'Conta registrada com sucesso' });
   }
 
   if (req.method === 'PUT') {
-    const {
-      id,
-      distribuidora: distributor,
-      valor: amount,
-      vencimento: dueDate,
-      documento: documentNumber,
-      bancoObservacoes: bankNotes,
-    } = req.body;
+    const body = req.body ?? {};
+    const id = body.id;
+    const distributor = body.distribuidora ?? body.supplierName;
+    const amount = body.valor ?? body.amount;
+    const dueDate = body.vencimento ?? body.dueDate;
+    const documentNumber = body.documento ?? body.document;
+    const bankNotes = body.bancoObservacoes ?? body.bankNotes;
+
     if (!id || !distributor || typeof amount !== 'number' || !dueDate || !documentNumber) {
       return res.status(400).json({ error: 'Dados inválidos para atualização de conta' });
     }
 
-    const existingAccount = getAccountById(id);
-    if (!existingAccount) {
-      return res.status(404).json({ error: 'Conta não encontrada' });
-    }
+    const existing = await getPayableById(String(id));
+    if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
 
-    updateAccount(id, distributor, amount, dueDate, documentNumber, bankNotes);
+    await updatePayable({ id: String(id), supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes });
     return res.status(200).json({ message: 'Conta atualizada com sucesso' });
   }
 
   if (req.method === 'DELETE') {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(400).json({ error: 'ID da conta é obrigatório para exclusão' });
-    }
+    const body = req.body ?? {};
+    const id = body.id;
+    if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para exclusão' });
 
-    const existingAccount = getAccountById(id);
-    if (!existingAccount) {
-      return res.status(404).json({ error: 'Conta não encontrada' });
-    }
+    const existing = await getPayableById(String(id));
+    if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
 
-    deleteAccount(id);
+    await deletePayable(String(id));
     return res.status(200).json({ message: 'Conta excluída com sucesso' });
   }
 

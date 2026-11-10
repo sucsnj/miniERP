@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { insertAccount, getAllAccounts } from '../../../database/contasDb';
-import { getAllInvoices, insertInvoice } from '../../../database/notasDb';
+import { listAllPayables, createPayable } from '../../../database/payablesRepository';
+import { listAllInvoices, createInvoice } from '../../../database/payablesRepository';
 import parseNumber, { parseCurrency } from '../../../utils/number';
 import { toDate } from '../../../utils/date';
 import { parseStringPromise } from 'xml2js';
@@ -86,14 +86,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         distributor = 'Mbca';
       }
 
-      const allAccounts = getAllAccounts();
+      const allAccounts = await listAllPayables();
       // se já existir uma conta com a mesma distribuidora e documento, pule para a próxima
-      const duplicateAccount = allAccounts.find(c => c.distribuidora === distributor && c.documento === documentNumber);
+      const duplicateAccount = allAccounts.find(c => c.supplierName === distributor && c.document === documentNumber);
       if (duplicateAccount) {
         continue; // pula pra proxima duplicata
       }
 
-      insertAccount(distributor, amount, dueDate, documentNumber);
+      await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber });
 
       records.push({ distribuidora: distributor, valor: amount, vencimento: dueDate, documento: documentNumber });
     }
@@ -102,8 +102,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let invoiceInserted = false;
 
     // se já existir uma nota com a mesma chave
-    const allInvoices = getAllInvoices();
-    const existingInvoice = allInvoices.find(n => n.chave === accessKey);
+    const allInvoices = await listAllInvoices();
+    const existingInvoice = allInvoices.find(n => n.accessKey === accessKey);
 
     if (existingInvoice) {
       if (records.length > 0) {
@@ -115,7 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } else {
       // adiciona nota
-      insertInvoice(distributor, accessKey, issueDate, invoiceTotal);
+      await createInvoice({ supplierName: distributor, accessKey, issueDate, amount: invoiceTotal });
       invoiceInserted = true;
     }
 

@@ -29,7 +29,7 @@ interface PayablesModalsProps {
   onStartPayment: (account: AccountDetails) => void;
   onConfirmPayment: () => void;
   onClosePayModal: () => void;
-  onCancelPayment: (id: number) => void;
+  onCancelPayment: (id: string) => void;
   onSave: (event: React.FormEvent<HTMLButtonElement>) => void;
 }
 

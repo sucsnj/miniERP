@@ -26,7 +26,7 @@ interface PayablesFilterPanelProps {
   today: string;
   filteredAccounts: AccountDetails[];
   handleView: (account: AccountDetails) => void;
-  handleDelete: (id: number) => void;
+  handleDelete: (id: string) => void;
   handleEdit: (account: AccountDetails) => void;
   handleStartPayment: (account: AccountDetails) => void;
   onClearFilters: () => void;
@@ -50,9 +50,9 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
 
   // Estado para o diálogo
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const openConfirm = (id: number) => {
+  const openConfirm = (id: string) => {
     setSelectedId(id);
     setConfirmOpen(true);
   };
