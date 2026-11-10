@@ -1,16 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import db, { insertItem, getItemByBarcode, checkDuplicateBarcode, insertMovimentacaoEstoque } from '../../../database/produtosDb';
+import db, { insertItem, getItemByBarcode, checkDuplicateBarcode, insertStockMovement } from '../../../database/produtosDb';
 import { parseNumber } from '../../../utils/number';
 import { parseStringPromise } from 'xml2js';
 
-interface ItemExistenteRow {
+interface ExistingItemRow {
   id: number;
   nome: string;
   preco_venda: number;
   estoque: number;
 }
 
-interface ProdutoPreview {
+interface ProductPreview {
   cProd: string;
   ean: string;
   descricao: string;
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { xml, preview, importar, produto } = req.body;
+        const { xml, preview, importar: shouldImport, produto: productPayload } = req.body;
 
         // MODO 1: Pre-visualizar / parsear o XML e retornar a lista de produtos com mapeamento
         if (preview) {
@@ -44,91 +44,98 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const infNFe = parsed.nfeProc.NFe[0].infNFe[0];
-            const itens = infNFe.det || [];
-            const produtos: ProdutoPreview[] = [];
+            const details = infNFe.det || [];
+            const previewItems: ProductPreview[] = [];
 
             // Na importação de nota (mesmo sendo saída do fornecedor), para a loja local é um AJUSTE ou ENTRADA para somar no estoque.
-            const tipoMovimentacao = 'ENTRADA';
+            const movementType = 'ENTRADA';
 
-            for (let i = 0; i < itens.length; i++) {
-                const prod = itens[i].prod[0];
+            for (let i = 0; i < details.length; i++) {
+                const productXml = details[i].prod[0];
 
-                const cProd = prod.cProd?.[0] ? String(prod.cProd[0]).trim() : '';
-                const ean = prod.cEAN && prod.cEAN[0] !== 'SEM GTIN' ? String(prod.cEAN[0]).trim() : '';
-                const descricao = prod.xProd?.[0] ? String(prod.xProd[0]).trim() : '';
-                const quantidade = parseNumber(prod.qCom[0]);
-                const valorUnitario = parseNumber(prod.vUnCom[0]);
-                const unidadeMedida = prod.uCom?.[0] ? String(prod.uCom[0]).trim() : '';
+                const cProd = productXml.cProd?.[0] ? String(productXml.cProd[0]).trim() : '';
+                const ean = productXml.cEAN && productXml.cEAN[0] !== 'SEM GTIN' ? String(productXml.cEAN[0]).trim() : '';
+                const description = productXml.xProd?.[0] ? String(productXml.xProd[0]).trim() : '';
+                const quantity = parseNumber(productXml.qCom[0]);
+                const unitValue = parseNumber(productXml.vUnCom[0]);
+                const unitOfMeasure = productXml.uCom?.[0] ? String(productXml.uCom[0]).trim() : '';
                 
                 // Verifica se já existe no banco de dados
-                let itemExistente: ItemExistenteRow | null | undefined = null;
+                let existingItem: ExistingItemRow | null | undefined = null;
                 if (ean) {
-                    itemExistente = getItemByBarcode(ean);
+                    existingItem = getItemByBarcode(ean);
                 }
-                if (!itemExistente && cProd) {
-                    itemExistente = db.prepare('SELECT id, nome, preco_venda, estoque FROM itens WHERE LOWER(codigo_interno) = LOWER(?)').get(cProd) as unknown as ItemExistenteRow | undefined;
-                    if (!itemExistente) {
-                        itemExistente = db.prepare('SELECT id, nome, preco_venda, 0 as estoque FROM servicos WHERE LOWER(codigo_interno) = LOWER(?)').get(cProd) as unknown as ItemExistenteRow | undefined;
+                if (!existingItem && cProd) {
+                    existingItem = db.prepare('SELECT id, nome, preco_venda, estoque FROM itens WHERE LOWER(codigo_interno) = LOWER(?)').get(cProd) as unknown as ExistingItemRow | undefined;
+                    if (!existingItem) {
+                        existingItem = db.prepare('SELECT id, nome, preco_venda, 0 as estoque FROM servicos WHERE LOWER(codigo_interno) = LOWER(?)').get(cProd) as unknown as ExistingItemRow | undefined;
                     }
                 }
-                if (!itemExistente && descricao) {
-                    itemExistente = db.prepare('SELECT id, nome, preco_venda, estoque FROM itens WHERE LOWER(TRIM(nome)) = LOWER(?)').get(descricao) as unknown as ItemExistenteRow | undefined;
-                    if (!itemExistente) {
-                        itemExistente = db.prepare('SELECT id, nome, preco_venda, 0 as estoque FROM servicos WHERE LOWER(TRIM(nome)) = LOWER(?)').get(descricao) as unknown as ItemExistenteRow | undefined;
+                if (!existingItem && description) {
+                    existingItem = db.prepare('SELECT id, nome, preco_venda, estoque FROM itens WHERE LOWER(TRIM(nome)) = LOWER(?)').get(description) as unknown as ExistingItemRow | undefined;
+                    if (!existingItem) {
+                        existingItem = db.prepare('SELECT id, nome, preco_venda, 0 as estoque FROM servicos WHERE LOWER(TRIM(nome)) = LOWER(?)').get(description) as unknown as ExistingItemRow | undefined;
                     }
                 }
 
-                const existe = !!itemExistente;
+                const exists = !!existingItem;
 
                 // Ignorar os itens duplicados no mesmo XML pelo EAN ou cProd
-                const existenteNoLote = produtos.find(p => (p.ean && p.ean === ean) || (cProd && p.cProd === cProd));
-                if (!existenteNoLote) {
-                     produtos.push({
+                const existingInBatch = previewItems.find(p => (p.ean && p.ean === ean) || (cProd && p.cProd === cProd));
+                if (!existingInBatch) {
+                     previewItems.push({
                          cProd,
                          ean,
-                         descricao: itemExistente ? itemExistente.nome : descricao,
-                         descricaoOriginal: descricao,
-                         unidadeMedida,
-                         quantidade,
-                         valorUnitario,
-                         tipoMovimentacao,
-                         existe,
-                         itemIdExistente: itemExistente?.id
+                         descricao: existingItem ? existingItem.nome : description,
+                         descricaoOriginal: description,
+                         unidadeMedida: unitOfMeasure,
+                         quantidade: quantity,
+                         valorUnitario: unitValue,
+                         tipoMovimentacao: movementType,
+                         existe: exists,
+                         itemIdExistente: existingItem?.id
                      });
                 } else {
-                     existenteNoLote.quantidade += quantidade;
+                     existingInBatch.quantidade += quantity;
                 }
             }
 
-            return res.status(200).json({ produtos });
+            return res.status(200).json({ produtos: previewItems });
         }
 
         // MODO 2: Importar um produto específico
-        if (importar && produto) {
-            const { ean, descricao, quantidade, valorUnitario, tipoMovimentacao, itemIdExistente } = produto;
+        if (shouldImport && productPayload) {
+            const {
+                ean,
+                descricao: description,
+                quantidade: quantity,
+                valorUnitario: unitValue,
+                tipoMovimentacao: movementType,
+                itemIdExistente: existingItemId,
+            } = productPayload;
 
             // 1. Se já possui item vinculado pelo usuário ou preview, atualiza o estoque
-            if (itemIdExistente) {
-                insertMovimentacaoEstoque({
-                    item_id: itemIdExistente,
-                    tipo: tipoMovimentacao || 'ENTRADA',
-                    quantidade,
+            if (existingItemId) {
+                insertStockMovement({
+                    item_id: existingItemId,
+                    tipo: movementType || 'ENTRADA',
+                    quantidade: quantity,
                     descricao: 'Importação de XML de NF-e',
                 });
-                return res.status(200).json({ sucesso: true, id: itemIdExistente, estoqueAtualizado: true });
+                return res.status(200).json({ sucesso: true, id: existingItemId, estoqueAtualizado: true });
             }
 
             // 2. Verifica se já existe produto com esse EAN (código de barras)
             if (ean) {
-                const itemExistente = getItemByBarcode(ean);
-                if (itemExistente) {
-                    insertMovimentacaoEstoque({
-                        item_id: itemExistente.id,
-                        tipo: tipoMovimentacao || 'ENTRADA',
-                        quantidade,
+                const existingItem = getItemByBarcode(ean);
+                if (existingItem) {
+                    insertStockMovement({
+                        item_id: existingItem.id,
+                        tipo: movementType || 'ENTRADA',
+                        quantidade: quantity,
                         descricao: 'Importação de XML de NF-e',
                     });
-                    return res.status(200).json({ sucesso: true, id: itemExistente.id, estoqueAtualizado: true });
+                    return res.status(200).json({ sucesso: true, id: existingItem.id, estoqueAtualizado: true });
                 }
                 const duplicateInBarcodesTable = checkDuplicateBarcode([ean]);
                 if (duplicateInBarcodesTable) {
@@ -143,29 +150,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             // fornecedor_id 1 = Sem fornecedor
             const listBarcodes = ean ? [{ codigo_barras: ean.trim(), principal: 1 }] : [];
 
-            const precoCompra = valorUnitario;
-            const precoVenda = valorUnitario * 1.5; // Margem padrão de 50%
-            const margemLucro = 50;
+            const purchasePrice = unitValue;
+            const salePrice = unitValue * 1.5; // Margem padrão de 50%
+            const profitMargin = 50;
 
-            const novoItem = {
+            const newItem = {
                 tipo: 'PRODUTO' as const,
-                nome: descricao.substring(0, 100), // Limita tamanho se necessário
+                nome: description.substring(0, 100), // Limita tamanho se necessário
                 descricao: `Importado via XML da NF-e`,
                 categoria_id: 1, 
                 unidade_medida_id: 1, 
                 marca_id: 1,
                 fornecedor_id: 1,
-                preco_compra: precoCompra,
-                margem_lucro: margemLucro,
-                preco_venda: precoVenda,
-                estoque: quantidade,
+                preco_compra: purchasePrice,
+                margem_lucro: profitMargin,
+                preco_venda: salePrice,
+                estoque: quantity,
                 multiplicador_unidade: 1,
                 referencia: null,
                 ativo: 1,
                 codigos_barras: listBarcodes,
             };
 
-            const itemId = insertItem(novoItem);
+            const itemId = insertItem(newItem);
 
             return res.status(201).json({ sucesso: true, id: itemId });
         }

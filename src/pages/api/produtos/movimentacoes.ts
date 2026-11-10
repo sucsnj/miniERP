@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { insertMovimentacaoEstoque, getMovimentacoesEstoque, getItemById } from '../../../database/produtosDb';
+import { insertStockMovement, getStockMovements, getItemById } from '../../../database/produtosDb';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'ID do item é obrigatório para buscar movimentações.' });
       }
 
-      const movements = getMovimentacoesEstoque(Number(item_id));
+      const movements = getStockMovements(Number(item_id));
       return res.status(200).json(movements);
     } catch (error) {
       console.error('Erro ao buscar movimentações de estoque:', error);
@@ -19,14 +19,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { item_id, tipo, quantidade, descricao } = req.body;
+      const { item_id, tipo: movementType, quantidade: quantity, descricao: description } = req.body;
       if (!item_id || isNaN(Number(item_id))) {
         return res.status(400).json({ error: 'ID do item é obrigatório para registrar movimentação.' });
       }
-      if (!tipo || ['ENTRADA', 'SAIDA', 'AJUSTE'].indexOf(String(tipo).toUpperCase()) === -1) {
+      if (!movementType || ['ENTRADA', 'SAIDA', 'AJUSTE'].indexOf(String(movementType).toUpperCase()) === -1) {
         return res.status(400).json({ error: 'Tipo de movimentação deve ser ENTRADA, SAIDA ou AJUSTE.' });
       }
-      if (!quantidade || isNaN(Number(quantidade))) {
+      if (!quantity || isNaN(Number(quantity))) {
         return res.status(400).json({ error: 'Quantidade deve ser um número válido.' });
       }
 
@@ -35,11 +35,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ error: 'Item não encontrado.' });
       }
 
-      const movement = insertMovimentacaoEstoque({
+      const movement = insertStockMovement({
         item_id: Number(item_id),
-        tipo: String(tipo).toUpperCase() as 'ENTRADA' | 'SAIDA' | 'AJUSTE',
-        quantidade: Number(quantidade),
-        descricao,
+        tipo: String(movementType).toUpperCase() as 'ENTRADA' | 'SAIDA' | 'AJUSTE',
+        quantidade: Number(quantity),
+        descricao: description,
       });
 
       return res.status(201).json({ id: movement.lastInsertRowid, message: 'Movimentação de estoque registrada com sucesso.' });

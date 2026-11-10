@@ -1,4 +1,4 @@
-export interface TabelaRow {
+export interface TableRow {
   substancia: string;
   laboratorio: string;
   ean: string;
@@ -9,7 +9,7 @@ export interface TabelaRow {
   pmc205: string;
 }
 
-export interface TabelaSearchHistoryItem {
+export interface TableSearchHistoryItem {
   id: number;
   query: string;
   result_count: number;
@@ -18,7 +18,7 @@ export interface TabelaSearchHistoryItem {
 
 export interface TabelaSearchResponse {
   source: 'history' | 'table';
-  results: TabelaRow[];
+  results: TableRow[];
   query: string;
 }
 
@@ -36,7 +36,7 @@ const handleJsonResponse = async (response: Response) => {
 };
 
 // Função assíncrona exportada.
-export const uploadTabela = async (formData: FormData) => {
+export const uploadTable = async (formData: FormData) => {
   const response = await fetch('/api/tabela', {
     method: 'POST',
     body: formData,
@@ -45,19 +45,19 @@ export const uploadTabela = async (formData: FormData) => {
 };
 
 // Função assíncrona exportada.
-export const searchTabela = async (query: string): Promise<TabelaSearchResponse> => {
+export const searchTable = async (query: string): Promise<TabelaSearchResponse> => {
   const response = await fetch(`/api/tabela?query=${encodeURIComponent(query.trim())}`);
   return handleJsonResponse(response);
 };
 
 // Função assíncrona exportada.
-export const fetchTabelaHistory = async (): Promise<TabelaSearchHistoryItem[]> => {
+export const fetchTableHistory = async (): Promise<TableSearchHistoryItem[]> => {
   const response = await fetch('/api/tabela?history=1');
   return handleJsonResponse(response);
 };
 
 // Função assíncrona exportada.
-export const clearTabelaHistory = async () => {
+export const clearTableHistory = async () => {
   const response = await fetch('/api/tabela', {
     method: 'DELETE',
   });
@@ -65,7 +65,7 @@ export const clearTabelaHistory = async () => {
 };
 
 // Função assíncrona exportada.
-export const fetchTabelaStatus = async (): Promise<TabelaStatusResponse> => {
+export const fetchTableStatus = async (): Promise<TabelaStatusResponse> => {
   const response = await fetch('/api/tabela?status=1');
   return handleJsonResponse(response);
 };

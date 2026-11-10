@@ -1,0 +1,284 @@
+.resultsGrid {
+          display: grid;
+          grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+          gap: 8px;
+        }
+
+        .uploadHelp {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          flex: 1;
+        }
+
+        .uploadButton {
+          align-self: flex-start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .searchField {
+          flex: unset;
+          padding-left: 4px;
+          width: 70%;
+        }
+
+        .searchField label {
+          display: block;
+          width: 100%;
+        }
+
+        .searchInput {
+          flex: 1;
+          max-width: 100%;
+          padding: 8px 14px;
+        }
+
+        .searchButton {
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          margin-bottom: 8px;
+        }
+
+        .panelHeader {
+          display: flex;
+          justify-content: space-between;
+          gap: 14px;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .resultCounter {
+          color: var(--muted);
+          font-size: 0.95rem;
+        }
+
+        .uploadPanel,
+        .searchPanel,
+        .resultsPanel,
+        .historyPanel {
+          padding: 18px;
+          border-radius: 18px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          box-shadow: var(--shadow);
+        }
+
+        .panelRow {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 18px;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .panelSummary {
+          min-width: 220px;
+          display: grid;
+          gap: 2px;
+          font-size: 0.92rem;
+        }
+
+        .panelSummary strong {
+          display: block;
+          color: var(--muted);
+        }
+
+        .panelSummary span {
+          font-weight: 600;
+        }
+
+        .searchForm {
+          display: flex;
+          align-items: flex-end;
+          gap: 14px;
+          width: 100%;
+        }
+
+        .searchForm label {
+          flex: 1;
+          min-width: 220px;
+        }
+
+        .searchForm input {
+          width: 100%;
+        }
+
+        .searchForm button {
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .searchHint {
+          margin-top: 14px;
+          color: var(--muted);
+          font-size: 0.92rem;
+        }
+
+        .tableWrapper {
+          overflow-x: auto;
+        }
+
+        .tableContainer {
+          width: 95%;
+          min-width: 700px;
+          font-size: 0.8rem;
+        }
+
+        .historyList {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .historyItem {
+          text-align: left;
+          border: 1px solid var(--border);
+          background: var(--surface-strong);
+          border-radius: 12px;
+          padding: 12px 14px;
+          cursor: pointer;
+          transition: transform 0.2s ease, border-color 0.2s ease;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .historyItem:hover {
+          transform: translateY(-1px);
+          border-color: var(--accent);
+        }
+
+        .historyItem small {
+          color: var(--muted);
+        }
+
+        .emptyState {
+          color: var(--muted);
+          padding: 22px;
+          text-align: center;
+          border: 1px dashed var(--border);
+          border-radius: 16px;
+          background: var(--surface-soft);
+        }
+
+        .secondary {
+          background: var(--surface-soft);
+          border-color: var(--border);
+        }
+
+      @media (max-width: 630px) {
+        .resultsGrid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .uploadHelp {
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .uploadButton {
+          align-self: stretch;
+          width: 100%;
+          text-align: center;
+        }
+
+        .searchField {
+          width: 100%;
+          padding-left: 0;
+        }
+
+        .searchInput {
+          width: 100%;
+          padding: 10px 12px;
+          font-size: 0.95rem;
+        }
+
+        .searchButton {
+          width: 100%;
+          margin-bottom: 10px;
+          padding: 10px;
+          font-size: 0.95rem;
+        }
+
+        .panelHeader {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .resultCounter {
+          font-size: 0.85rem;
+        }
+
+        .uploadPanel,
+        .searchPanel,
+        .resultsPanel,
+        .historyPanel {
+          padding: 14px;
+          border-radius: 14px;
+        }
+
+        .panelRow {
+          flex-direction: column;
+          gap: 12px;
+          align-items: stretch;
+        }
+
+        .panelSummary {
+          min-width: auto;
+          font-size: 0.85rem;
+        }
+
+        .searchForm {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+        }
+
+        .searchForm label {
+          min-width: auto;
+          width: 100%;
+        }
+
+        .searchForm button {
+          width: 100%;
+          padding: 10px;
+          font-size: 0.95rem;
+        }
+
+        .searchHint {
+          font-size: 0.85rem;
+          margin-top: 10px;
+        }
+
+        .tableContainer {
+          width: 100%;
+          min-width: auto;
+          font-size: 0.65rem;
+        }
+
+        .historyList {
+          gap: 8px;
+        }
+
+        .historyItem {
+          padding: 10px 12px;
+          font-size: 0.9rem;
+        }
+
+        .historyItem small {
+          font-size: 0.8rem;
+        }
+
+        .emptyState {
+          font-size: 0.9rem;
+          padding: 16px;
+        }
+      }

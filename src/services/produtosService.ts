@@ -32,7 +32,7 @@ export interface ItemData {
   unidades_medida?: { unidade_medida_id: number; multiplicador_unidade: number; principal: number }[];
 }
 
-export interface ServicoData {
+export interface ServiceData {
   id: number;
   nome: string;
   descricao?: string;
@@ -46,7 +46,7 @@ export interface ServicoData {
   categoria_nome?: string;
 }
 
-export interface ServicoInput {
+export interface ServiceInput {
   nome: string;
   descricao?: string;
   categoria_id: number;
@@ -56,7 +56,7 @@ export interface ServicoInput {
   duracao_minutos?: number;
 }
 
-export interface MovimentacaoEstoqueData {
+export interface StockMovementData {
   id: number;
   item_id: number;
   item: string;
@@ -67,7 +67,7 @@ export interface MovimentacaoEstoqueData {
   data_movimentacao: string;
 }
 
-export interface MovimentacaoEstoqueInput {
+export interface StockMovementInput {
   item_id: number;
   tipo: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
   quantidade: number;
@@ -82,29 +82,29 @@ export interface PagedResult<T> {
   totalPages: number;
 }
 
-export interface CategoriaData {
+export interface CategoryData {
   id: number;
   nome: string;
   descricao?: string;
 }
 
-export interface MarcaData {
+export interface BrandData {
   id: number;
   nome: string;
 }
 
-export interface FornecedorData {
+export interface SupplierData {
   id: number;
   nome: string;
 }
 
-export interface UnidadeMedidaData {
+export interface UnitOfMeasureData {
   id: number;
   sigla: string;
   descricao?: string;
 }
 
-export const buscarProdutos = async (options: {
+export const fetchProducts = async (options: {
   search?: string;
   categoria_id?: number;
   marca_id?: number;
@@ -132,11 +132,11 @@ export const buscarProdutos = async (options: {
   return response.json();
 };
 
-export const registrarProduto = async (dados: Omit<ItemData, 'id' | 'ativo'> & { ativo?: number }) => {
+export const registerProduct = async (data: Omit<ItemData, 'id' | 'ativo'> & { ativo?: number }) => {
   const response = await fetch('/api/produtos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dados),
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -145,11 +145,11 @@ export const registrarProduto = async (dados: Omit<ItemData, 'id' | 'ativo'> & {
   return response.json();
 };
 
-export const atualizarProduto = async (id: number, dados: Omit<ItemData, 'id'>) => {
+export const updateProduct = async (id: number, data: Omit<ItemData, 'id'>) => {
   const response = await fetch('/api/produtos', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, ...dados }),
+    body: JSON.stringify({ id, ...data }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -158,7 +158,7 @@ export const atualizarProduto = async (id: number, dados: Omit<ItemData, 'id'>) 
   return response.json();
 };
 
-export const excluirProduto = async (id: number) => {
+export const deleteProduct = async (id: number) => {
   const response = await fetch('/api/produtos', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -171,11 +171,11 @@ export const excluirProduto = async (id: number) => {
   return response.json();
 };
 
-export const toggleStatusProduto = async (id: number, ativo: number) => {
+export const toggleProductStatus = async (id: number, active: number) => {
   const response = await fetch('/api/produtos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'toggle-status', id, ativo, tipo: 'PRODUTO' }),
+    body: JSON.stringify({ action: 'toggle-status', id, ativo: active, tipo: 'PRODUTO' }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -185,12 +185,12 @@ export const toggleStatusProduto = async (id: number, ativo: number) => {
 };
 
 // Chamadas de API para Serviços
-export const buscarServicos = async (options: {
+export const fetchServices = async (options: {
   search?: string;
   categoria_id?: number;
   page?: number;
   pageSize?: number;
-}): Promise<PagedResult<ServicoData>> => {
+}): Promise<PagedResult<ServiceData>> => {
   const params = new URLSearchParams();
   if (options.search) params.append('search', options.search);
   if (options.categoria_id) params.append('categoria_id', String(options.categoria_id));
@@ -205,7 +205,7 @@ export const buscarServicos = async (options: {
   return response.json();
 };
 
-export const buscarServicoPorId = async (id: number): Promise<ServicoData | null> => {
+export const fetchServiceById = async (id: number): Promise<ServiceData | null> => {
   const response = await fetch(`/api/produtos/servicos?id=${id}`);
   if (!response.ok) {
     const errorData = await response.json();
@@ -214,11 +214,11 @@ export const buscarServicoPorId = async (id: number): Promise<ServicoData | null
   return response.json();
 };
 
-export const registrarServico = async (dados: ServicoInput) => {
+export const registerService = async (data: ServiceInput) => {
   const response = await fetch('/api/produtos/servicos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dados),
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -227,11 +227,11 @@ export const registrarServico = async (dados: ServicoInput) => {
   return response.json();
 };
 
-export const atualizarServico = async (id: number, dados: ServicoInput) => {
+export const updateService = async (id: number, data: ServiceInput) => {
   const response = await fetch(`/api/produtos/servicos?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dados),
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -240,7 +240,7 @@ export const atualizarServico = async (id: number, dados: ServicoInput) => {
   return response.json();
 };
 
-export const excluirServico = async (id: number) => {
+export const deleteService = async (id: number) => {
   const response = await fetch(`/api/produtos/servicos?id=${id}`, {
     method: 'DELETE',
   });
@@ -252,8 +252,8 @@ export const excluirServico = async (id: number) => {
 };
 
 // Chamadas de API para Movimentações de Estoque
-export const buscarMovimentacoesEstoque = async (item_id: number): Promise<MovimentacaoEstoqueData[]> => {
-  const response = await fetch(`/api/produtos/movimentacoes?item_id=${item_id}`);
+export const fetchStockMovements = async (itemId: number): Promise<StockMovementData[]> => {
+  const response = await fetch(`/api/produtos/movimentacoes?item_id=${itemId}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar movimentações de estoque.');
@@ -261,11 +261,11 @@ export const buscarMovimentacoesEstoque = async (item_id: number): Promise<Movim
   return response.json();
 };
 
-export const registrarMovimentacaoEstoque = async (dados: MovimentacaoEstoqueInput) => {
+export const registerStockMovement = async (data: StockMovementInput) => {
   const response = await fetch('/api/produtos/movimentacoes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dados),
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -275,17 +275,17 @@ export const registrarMovimentacaoEstoque = async (dados: MovimentacaoEstoqueInp
 };
 
 // Chamadas de API para Categorias
-export const buscarCategorias = async (): Promise<CategoriaData[]> => {
+export const fetchCategories = async (): Promise<CategoryData[]> => {
   const response = await fetch('/api/produtos/categorias');
   if (!response.ok) throw new Error('Erro ao buscar categorias.');
   return response.json();
 };
 
-export const criarCategoria = async (nome: string, descricao?: string): Promise<{ id: number; message: string }> => {
+export const createCategory = async (name: string, description?: string): Promise<{ id: number; message: string }> => {
   const response = await fetch('/api/produtos/categorias', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, descricao }),
+    body: JSON.stringify({ nome: name, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -294,7 +294,7 @@ export const criarCategoria = async (nome: string, descricao?: string): Promise<
   return response.json();
 };
 
-export const deletarCategoria = async (id: number): Promise<{ message: string }> => {
+export const deleteCategory = async (id: number): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/categorias?id=${id}`, {
     method: 'DELETE',
   });
@@ -305,11 +305,11 @@ export const deletarCategoria = async (id: number): Promise<{ message: string }>
   return response.json();
 };
 
-export const atualizarCategoria = async (id: number, nome: string, descricao?: string): Promise<{ message: string }> => {
+export const updateCategory = async (id: number, name: string, description?: string): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/categorias?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, descricao }),
+    body: JSON.stringify({ nome: name, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -319,17 +319,17 @@ export const atualizarCategoria = async (id: number, nome: string, descricao?: s
 };
 
 // Chamadas de API para Marcas
-export const buscarMarcas = async (): Promise<MarcaData[]> => {
+export const fetchBrands = async (): Promise<BrandData[]> => {
   const response = await fetch('/api/produtos/marcas');
   if (!response.ok) throw new Error('Erro ao buscar marcas.');
   return response.json();
 };
 
-export const criarMarca = async (nome: string): Promise<{ id: number; message: string }> => {
+export const createBrand = async (name: string): Promise<{ id: number; message: string }> => {
   const response = await fetch('/api/produtos/marcas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome }),
+    body: JSON.stringify({ nome: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -338,7 +338,7 @@ export const criarMarca = async (nome: string): Promise<{ id: number; message: s
   return response.json();
 };
 
-export const deletarMarca = async (id: number): Promise<{ message: string }> => {
+export const deleteBrand = async (id: number): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/marcas?id=${id}`, {
     method: 'DELETE',
   });
@@ -349,11 +349,11 @@ export const deletarMarca = async (id: number): Promise<{ message: string }> => 
   return response.json();
 };
 
-export const atualizarMarca = async (id: number, nome: string): Promise<{ message: string }> => {
+export const updateBrand = async (id: number, name: string): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/marcas?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome }),
+    body: JSON.stringify({ nome: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -363,17 +363,17 @@ export const atualizarMarca = async (id: number, nome: string): Promise<{ messag
 };
 
 // Chamadas de API para Fornecedores
-export const buscarFornecedores = async (): Promise<FornecedorData[]> => {
+export const fetchSuppliers = async (): Promise<SupplierData[]> => {
   const response = await fetch('/api/produtos/fornecedores');
   if (!response.ok) throw new Error('Erro ao buscar fornecedores.');
   return response.json();
 };
 
-export const criarFornecedor = async (nome: string): Promise<{ id: number; message: string }> => {
+export const createSupplier = async (name: string): Promise<{ id: number; message: string }> => {
   const response = await fetch('/api/produtos/fornecedores', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome }),
+    body: JSON.stringify({ nome: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -382,7 +382,7 @@ export const criarFornecedor = async (nome: string): Promise<{ id: number; messa
   return response.json();
 };
 
-export const deletarFornecedor = async (id: number): Promise<{ message: string }> => {
+export const deleteSupplier = async (id: number): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/fornecedores?id=${id}`, {
     method: 'DELETE',
   });
@@ -393,11 +393,11 @@ export const deletarFornecedor = async (id: number): Promise<{ message: string }
   return response.json();
 };
 
-export const atualizarFornecedor = async (id: number, nome: string): Promise<{ message: string }> => {
+export const updateSupplier = async (id: number, name: string): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/fornecedores?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome }),
+    body: JSON.stringify({ nome: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -407,17 +407,17 @@ export const atualizarFornecedor = async (id: number, nome: string): Promise<{ m
 };
 
 // Chamadas de API para Unidade de Medida
-export const buscarUnidadesMedida = async (): Promise<UnidadeMedidaData[]> => {
+export const fetchUnitsOfMeasure = async (): Promise<UnitOfMeasureData[]> => {
   const response = await fetch('/api/produtos/unidades-medida');
   if (!response.ok) throw new Error('Erro ao buscar unidades de medida.');
   return response.json();
 };
 
-export const criarUnidadeMedida = async (sigla: string, descricao?: string): Promise<{ id: number; message: string }> => {
+export const createUnitOfMeasure = async (abbreviation: string, description?: string): Promise<{ id: number; message: string }> => {
   const response = await fetch('/api/produtos/unidades-medida', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sigla, descricao }),
+    body: JSON.stringify({ sigla: abbreviation, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -426,7 +426,7 @@ export const criarUnidadeMedida = async (sigla: string, descricao?: string): Pro
   return response.json();
 };
 
-export const deletarUnidadeMedida = async (id: number): Promise<{ message: string }> => {
+export const deleteUnitOfMeasure = async (id: number): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/unidades-medida?id=${id}`, {
     method: 'DELETE',
   });
@@ -437,11 +437,11 @@ export const deletarUnidadeMedida = async (id: number): Promise<{ message: strin
   return response.json();
 };
 
-export const atualizarUnidadeMedida = async (id: number, sigla: string, descricao?: string): Promise<{ message: string }> => {
+export const updateUnitOfMeasure = async (id: number, abbreviation: string, description?: string): Promise<{ message: string }> => {
   const response = await fetch(`/api/produtos/unidades-medida?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sigla, descricao }),
+    body: JSON.stringify({ sigla: abbreviation, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -449,3 +449,59 @@ export const atualizarUnidadeMedida = async (id: number, sigla: string, descrica
   }
   return response.json();
 };
+
+// Importação de itens via XML de NF-e (/api/produtos/itens)
+export interface ImportedProduct {
+  cProd?: string;
+  ean: string;
+  descricao: string;
+  descricaoOriginal?: string;
+  unidadeMedida: string;
+  quantidade: number;
+  valorUnitario: number;
+  ncm?: string;
+  cfop?: string;
+  existe?: boolean;
+  itemIdExistente?: number;
+}
+
+export interface InvoiceItemsPreviewResult {
+  ok: boolean;
+  produtos?: ImportedProduct[];
+  error?: string;
+}
+
+/** Pré-visualiza os itens de uma nota fiscal a partir do XML (modo preview). */
+export async function previewInvoiceItems(xml: string): Promise<InvoiceItemsPreviewResult> {
+  const response = await fetch('/api/produtos/itens', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ xml, preview: true }),
+  });
+  const result = await response.json();
+  if (!response.ok || result.error) {
+    return { ok: false, error: result.error || 'Erro ao processar o arquivo XML.' };
+  }
+  return { ok: true, produtos: result.produtos as ImportedProduct[] };
+}
+
+export interface InvoiceItemImportResult {
+  ok: boolean;
+  estoqueAtualizado?: boolean;
+  duplicado?: boolean;
+  error?: string;
+}
+
+/** Importa (ou apenas atualiza o estoque de) um item extraído da nota fiscal. */
+export async function importInvoiceItem(product: ImportedProduct): Promise<InvoiceItemImportResult> {
+  const response = await fetch('/api/produtos/itens', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ importar: true, produto: product }),
+  });
+  const result = await response.json();
+  if (!response.ok || result.error) {
+    return { ok: false, duplicado: Boolean(result.duplicado), error: result.error };
+  }
+  return { ok: true, estoqueAtualizado: Boolean(result.estoqueAtualizado) };
+}

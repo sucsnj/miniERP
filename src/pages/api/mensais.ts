@@ -3,10 +3,10 @@ import { getMonthlyTotal, getAllMonthly, consolidateMonthly, deleteMonthly } fro
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { mes, ano } = req.query;
-    if (mes && ano) {
+    const { mes: monthParam, ano: yearParam } = req.query;
+    if (monthParam && yearParam) {
       try {
-        const total = getMonthlyTotal(parseInt(mes as string), parseInt(ano as string));
+        const total = getMonthlyTotal(parseInt(monthParam as string), parseInt(yearParam as string));
         res.status(200).json(total);
       } catch {
         res.status(500).json({ error: 'Erro ao buscar total mensal' });
@@ -20,9 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
   } else if (req.method === 'POST') {
-    const { mes, ano } = req.body;
+    const { mes: month, ano: year } = req.body;
     try {
-      consolidateMonthly(mes, ano);
+      consolidateMonthly(month, year);
       res.status(200).json({ message: 'Consolidação realizada' });
     } catch {
       res.status(500).json({ error: 'Erro na consolidação' });

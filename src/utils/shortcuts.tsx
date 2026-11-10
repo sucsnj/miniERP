@@ -23,7 +23,7 @@ const useShortcuts = (shortcuts: string[], callback: (shortcut: string) => void)
 };
 
 
-const useShortcutsHanlers = (handlers: Record<string, ShortcutHandler>) => {
+const useShortcutsHandlers = (handlers: Record<string, ShortcutHandler>) => {
     useEffect(() => {
         const handleShortcut = (event: KeyboardEvent) => {
             const handler = handlers[event.key];
@@ -38,4 +38,4 @@ const useShortcutsHanlers = (handlers: Record<string, ShortcutHandler>) => {
     }, [handlers]);
 };
 
-export { useShortcuts, useShortcutsHanlers };
+export { useShortcuts, useShortcutsHandlers };

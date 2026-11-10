@@ -1,5 +1,5 @@
 .contasPage {
-  padding: 8 24px;
+  padding: 8px 24px;
   min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
@@ -65,7 +65,7 @@
 }
 
 .anoInput {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .mesSelect {
@@ -132,13 +132,6 @@
   align-items: center;
 }
 
-.modalRow {
-  display: flex;
-  grid-template-columns: 140px 1fr;
-  gap: 10px;
-  align-items: center;
-}
-
 .modalEdit {
   flex: 1;
   border: 1px solid var(--border);
@@ -147,10 +140,6 @@
   color: var(--foreground);
   padding: 12px 14px;
   outline: none;
-}
-
-.modalRow strong {
-  min-width: 200px;
 }
 
 .filterActions button {
@@ -215,13 +204,15 @@
 
 .modalRow {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 18px;
   margin-bottom: 14px;
-  flex-wrap: wrap;
 }
 
 .modalRow strong {
+  min-width: 200px;
   color: var(--muted);
 }
 
@@ -252,6 +243,40 @@
 
 .contasPanel>* {
   min-width: 0;
+}
+
+.agendaPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.agendaCard {
+  min-height: 220px;
+  margin-bottom: 15px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface-strong);
+}
+
+.agendaCard h3 {
+  margin-bottom: 12px;
+}
+
+.agendaList {
+  display: grid;
+  gap: 14px;
+}
+
+.agendaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--surface-soft);
 }
 
 .detailPanel {
@@ -457,6 +482,17 @@
 .status.pago {
   background: rgba(34, 197, 94, 0.18);
   color: var(--success);
+}
+
+.status:hover::after {
+  content: attr(data-observacoes);
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transform: translateY(-120%);
 }
 
 .emptyRow {
@@ -665,10 +701,8 @@
 }
 
 @media (max-width: 436px) {
-
-  :global(html),
-  :global(body) {
-    font-size: 12px;
+  .contasPage {
+    font-size: 0.75rem;
   }
 
   .detailTable {

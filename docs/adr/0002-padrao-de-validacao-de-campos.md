@@ -49,5 +49,5 @@ Pergunta: **qual contrato e arquitetura padronizam a validação de campos em to
 ## Referências
 
 - `src/utils/validation.ts` (estado atual), `src/utils/forms.tsx`, `src/utils/number.ts`, `src/utils/formatter.tsx`.
-- Call sites: `src/pages/api/vendas.ts`, `src/pages/api/contas/import.ts`, `src/components/DailySaleForm.tsx`.
+- Call sites: `src/pages/api/vendas.ts`, `src/pages/api/contas/import.ts`, `src/components/sales/DailySaleForm.tsx`.
 - Regras de boas práticas: `AGENTS.md` (validação centralizada, sem `any`), `docs/CONTEXT.md` (regra 6).

@@ -3,8 +3,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-import { lerLinhaDigitavel } from "@/services/ocrService";
-import { lerPdfComOcr, info } from "@/services/pdfService";
+import { readDigitableLine } from "@/services/ocrService";
+import { readPdfWithOcr, info } from "@/services/pdfService";
 
 export const config = {
     api: {
@@ -63,7 +63,7 @@ export default async function handler(
         fs.mkdirSync("./temp");
     }
 
-    const resultados = [];
+    const results = [];
 
     for (const file of files) {
 
@@ -79,22 +79,22 @@ export default async function handler(
 
                 console.log("PROCESSANDO PDF");
 
-                linhaDigitavel = await lerPdfComOcr(file.path);
+                linhaDigitavel = await readPdfWithOcr(file.path);
 
             } else {
 
                 console.log("PROCESSANDO IMAGEM");
 
-                linhaDigitavel = await lerLinhaDigitavel(file.path);
+                linhaDigitavel = await readDigitableLine(file.path);
             }
 
             if (linhaDigitavel) {
-                resultados.push({
+                results.push({
                     arquivo: file.originalname + `${info}`,
                     linha: linhaDigitavel,
                 });
             } else {
-                resultados.push({
+                results.push({
                     arquivo: file.originalname,
                     erro: "Erro no OCR",
                 });
@@ -104,7 +104,7 @@ export default async function handler(
 
             console.error("Erro:", err);
 
-            resultados.push({
+            results.push({
                 arquivo: file.originalname,
                 erro: "Falha ao processar arquivo",
             });
@@ -118,5 +118,5 @@ export default async function handler(
         }
     }
 
-    return res.status(200).json(resultados);
+    return res.status(200).json(results);
 }

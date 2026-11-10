@@ -3,27 +3,29 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styles from '../styles/produtos.module.css';
-import Toast from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 import {
-  buscarProdutos,
-  buscarServicos,
-  excluirProduto,
-  toggleStatusProduto,
-  buscarCategorias,
-  buscarMarcas,
-  buscarFornecedores,
-  buscarUnidadesMedida,
-  excluirServico,
+  fetchProducts,
+  fetchServices,
+  deleteProduct,
+  toggleProductStatus,
+  fetchCategories,
+  fetchBrands,
+  fetchSuppliers,
+  fetchUnitsOfMeasure,
+  deleteService,
   ItemData,
-  ServicoData,
+  ServiceData,
 } from '../services/produtosService';
-import { ProdutoOptions } from '@/components/FormularioProduto';
-import ProdutosList from '@/components/ProdutosList';
-import Filtros from '@/components/Filtros';
-import ModalProdExclusao from '@/components/ModalProdExclusao';
-import { FiltrosState } from '@/components/Filtros';
+import { ProductOptions } from '@/components/products/ProductForm';
+import ProdutosList from '@/components/products/ProductList';
+import ProductFilters from '@/components/products/ProductFilters';
+import ProductDeleteModal from '@/components/products/ProductDeleteModal';
+import { ProductFiltersState } from '@/components/products/ProductFilters';
+import PageShell from '@/components/common/PageShell';
+import PageHeader from '@/components/common/PageHeader';
 
-const ProdutosPage: React.FC = () => {
+const ProductsPage: React.FC = () => {
 
   const router = useRouter();
 
@@ -36,54 +38,44 @@ const ProdutosPage: React.FC = () => {
 
   // Filtros de busca
   const [searchQuery, setSearchQuery] = useState('');
-  const [state, setState] = useState<FiltrosState>({
+  const [state, setState] = useState<ProductFiltersState>({
     search: '',
-    tipo: 'TODOS',
-    categoriaId: '',
-    marcaId: '',
-    fornecedorId: '',
+    type: 'TODOS',
+    categoryId: '',
+    brandId: '',
+    supplierId: '',
     status: 'TODOS',
   });
 
   // Listas auxiliares para os dropdowns de filtro
-  const [options, setOptions] = useState<ProdutoOptions>({
-    categorias: [],
-    marcas: [],
-    fornecedores: [],
-    unidadesMedida: [],
+  const [options, setOptions] = useState<ProductOptions>({
+        categories: [],
+        brands: [],
+        suppliers: [],
+    unitsOfMeasure: [],
   });
 
   // Modal de confirmação de exclusão
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [itemParaExcluir, setItemParaExcluir] = useState<ItemData | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<ItemData | null>(null);
 
-  // Toast notifications
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
-
-  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastOpen(true);
-  }, []);
-
-  const closeToast = () => setToastOpen(false);
+  // Notificações (toast) do store global
+  const { showToast } = useToast();
 
   // Carrega opções auxiliares para os filtros
-  const carregarAuxiliares = useCallback(async () => {
+  const loadAuxiliaryData = useCallback(async () => {
     try {
-      const [cats, brands, forns, uoms] = await Promise.all([
-        buscarCategorias(),
-        buscarMarcas(),
-        buscarFornecedores(),
-        buscarUnidadesMedida(),
+      const [categories, brands, suppliers, uoms] = await Promise.all([
+        fetchCategories(),
+        fetchBrands(),
+        fetchSuppliers(),
+        fetchUnitsOfMeasure(),
       ]);
       setOptions({
-        categorias: cats,
-        marcas: brands,
-        fornecedores: forns,
-        unidadesMedida: uoms,
+        categories: categories,
+        brands: brands,
+        suppliers: suppliers,
+        unitsOfMeasure: uoms,
       });
     } catch (error) {
       console.error(error);
@@ -92,75 +84,75 @@ const ProdutosPage: React.FC = () => {
   }, [showToast]);
 
   // Carrega o catálogo a partir das tabelas específicas de cada tipo
-  const carregarItens = useCallback(async () => {
+  const loadItems = useCallback(async () => {
     setLoading(true);
     try {
-      const [produtosData, servicosData] = await Promise.all([
-        state.tipo === 'SERVICO' ? Promise.resolve(null) : buscarProdutos({
+      const [productsData, servicesData] = await Promise.all([
+        state.type === 'SERVICO' ? Promise.resolve(null) : fetchProducts({
           search: searchQuery || undefined,
-          categoria_id: state.categoriaId || undefined,
-          marca_id: state.marcaId || undefined,
-          fornecedor_id: state.fornecedorId || undefined,
+          categoria_id: state.categoryId || undefined,
+          marca_id: state.brandId || undefined,
+          fornecedor_id: state.supplierId || undefined,
           ativo: state.status,
           page: 1,
           pageSize: 10000,
         }),
-        state.tipo === 'PRODUTO' || state.status !== 'TODOS' ? Promise.resolve(null) : buscarServicos({
+        state.type === 'PRODUTO' || state.status !== 'TODOS' ? Promise.resolve(null) : fetchServices({
           search: searchQuery || undefined,
-          categoria_id: state.categoriaId || undefined,
+          categoria_id: state.categoryId || undefined,
           page: 1,
           pageSize: 10000,
         }),
       ]);
 
-      const produtos = produtosData?.items || [];
-      const servicos: ItemData[] = (servicosData?.items || []).map((servico: ServicoData) => ({
-        id: servico.id,
+      const products = productsData?.items || [];
+      const services: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
+        id: service.id,
         tipo: 'SERVICO',
-        nome: servico.nome,
-        descricao: servico.descricao,
-        categoria_id: servico.categoria_id,
+        nome: service.nome,
+        descricao: service.descricao,
+        categoria_id: service.categoria_id,
         unidade_medida_id: 21,
         marca_id: 1,
         fornecedor_id: 1,
         preco_compra: 0,
         margem_lucro: 0,
-        preco_venda: servico.preco_venda,
+        preco_venda: service.preco_venda,
         estoque: 0,
         multiplicador_unidade: 1,
         estoque_total: 0,
-        codigo_interno: servico.codigo_interno,
-        referencia: servico.referencia || '',
-        duracao_minutos: servico.duracao_minutos,
-        data_criacao: servico.data_criacao,
-        data_atualizacao: servico.data_atualizacao,
-        categoria_nome: servico.categoria_nome,
+        codigo_interno: service.codigo_interno,
+        referencia: service.referencia || '',
+        duracao_minutos: service.duracao_minutos,
+        data_criacao: service.data_criacao,
+        data_atualizacao: service.data_atualizacao,
+        categoria_nome: service.categoria_nome,
       }));
 
-      const catalogo = [...produtos, ...servicos].sort((a, b) => a.nome.localeCompare(b.nome));
+      const catalog = [...products, ...services].sort((a, b) => a.nome.localeCompare(b.nome));
       const offset = (page - 1) * 10;
-      setItems(catalogo.slice(offset, offset + 10));
-      setTotal(catalogo.length);
-      setTotalPages(Math.max(1, Math.ceil(catalogo.length / 10)));
+      setItems(catalog.slice(offset, offset + 10));
+      setTotal(catalog.length);
+      setTotalPages(Math.max(1, Math.ceil(catalog.length / 10)));
     } catch (error) {
       console.error(error);
-      showToast('Erro ao carregar produtos e serviços.', 'error');
+      showToast('Erro ao carregar products e serviços.', 'error');
     } finally {
       setLoading(false);
     }
-  }, [page, searchQuery, state.tipo, state.categoriaId, state.marcaId, state.fornecedorId, state.status, showToast]);
+  }, [page, searchQuery, state.type, state.categoryId, state.brandId, state.supplierId, state.status, showToast]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      carregarAuxiliares();
+      loadAuxiliaryData();
     }, 0);
     return () => clearTimeout(timer);
-  }, [carregarAuxiliares]);
+  }, [loadAuxiliaryData]);
 
   useEffect(() => {
-    const timer = setTimeout(() => carregarItens(), 0);
+    const timer = setTimeout(() => loadItems(), 0);
     return () => clearTimeout(timer);
-  }, [carregarItens]);
+  }, [loadItems]);
 
   // Handler de Busca
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -169,21 +161,21 @@ const ProdutosPage: React.FC = () => {
     setSearchQuery(state.search);
   };
 
-  const handleLimparFiltros = () => {
+  const handleClearFilters = () => {
     setSearchQuery('');
     setState({
       search: '',
-      tipo: 'TODOS',
-      categoriaId: '',
-      marcaId: '',
-      fornecedorId: '',
+      type: 'TODOS',
+      categoryId: '',
+      brandId: '',
+      supplierId: '',
       status: 'TODOS',
     });
     setPage(1);
   };
 
   // Navega para /cadastro?id=X para editar o item
-  const handleEditarClick = (item: ItemData) => {
+  const handleEditClick = (item: ItemData) => {
     router.push({
       pathname: '/cadastro',
       query: { id: item.id },
@@ -195,40 +187,40 @@ const ProdutosPage: React.FC = () => {
     const novoStatus = item.ativo === 1 ? 0 : 1;
     try {
       if (item.tipo === 'PRODUTO') {
-        await toggleStatusProduto(item.id, novoStatus);
+        await toggleProductStatus(item.id, novoStatus);
       }
       showToast(
         `Item ${novoStatus === 1 ? 'ativado' : 'desativado'} com sucesso.`,
         'success'
       );
-      carregarItens();
+      loadItems();
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao alterar status.', 'error');
     }
   };
 
   // Abre confirmação de exclusão
-  const handleExcluirClick = (item: ItemData) => {
-    setItemParaExcluir(item);
+  const handleDeleteClick = (item: ItemData) => {
+    setItemToDelete(item);
     setDeleteConfirmOpen(true);
   };
 
   // Confirma exclusão
-  const handleConfirmExcluir = async () => {
-    if (!itemParaExcluir) return;
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
     try {
-      if (itemParaExcluir.tipo === 'SERVICO') {
-        await excluirServico(itemParaExcluir.id);
+      if (itemToDelete.tipo === 'SERVICO') {
+        await deleteService(itemToDelete.id);
       } else {
-        await excluirProduto(itemParaExcluir.id);
+        await deleteProduct(itemToDelete.id);
       }
       showToast('Item excluído com sucesso.', 'success');
       setDeleteConfirmOpen(false);
-      setItemParaExcluir(null);
+      setItemToDelete(null);
       if (items.length === 1 && page > 1) {
         setPage(page - 1);
       } else {
-        carregarItens();
+        loadItems();
       }
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao excluir item.', 'error');
@@ -245,25 +237,22 @@ const ProdutosPage: React.FC = () => {
         />
       </Head>
 
-      <div className={styles.produtosPage}>
+      <PageShell>
 
-        <div>
-          <h1 id="page-title">Listagem</h1>
-          <p>Listagem com filtros, paginação e controle de status.</p>
-        </div>
+        <PageHeader title="Listagem" description="Listagem com filtros, paginação e controle de status." />
 
         <div className={styles.listagemGrid}>
           {/* Coluna Esquerda: Listagem e Filtros */}
           <div className={styles.produtosGridLeft}>
             {/* Filtros */}
-            <Filtros
+            <ProductFilters
               state={state}
               data={options}
-              setFiltros={setState}
+              setFilters={setState}
               actions={{
-                buscar: handleSearchSubmit,
-                limpar: handleLimparFiltros,
-                mudarPagina: setPage,
+                search: handleSearchSubmit,
+                clear: handleClearFilters,
+                changePage: setPage,
               }}
             />
 
@@ -276,41 +265,32 @@ const ProdutosPage: React.FC = () => {
               totalPages={totalPages}
               onPageChange={setPage}
               onToggleStatus={handleToggleStatus}
-              onEdit={handleEditarClick}
-              onDelete={handleExcluirClick}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
             />
           </div>
         </div>
 
         {/* Modal: Confirmação de Exclusão */}
-        {deleteConfirmOpen && itemParaExcluir && (
-          <ModalProdExclusao
+        {deleteConfirmOpen && itemToDelete && (
+          <ProductDeleteModal
             open={deleteConfirmOpen}
-            item={itemParaExcluir}
-            onConfirm={handleConfirmExcluir}
+            item={itemToDelete}
+            onConfirm={handleConfirmDelete}
             onClose={() => {
               setDeleteConfirmOpen(false);
-              setItemParaExcluir(null);
+              setItemToDelete(null);
             }}
           />
         )}
-
-        {/* Notificações Toast */}
-        <Toast
-          open={toastOpen}
-          message={toastMessage}
-          type={toastType}
-          onClose={closeToast}
-          position="top-right"
-        />
 
         {/* Botão flutuante: Novo Cadastro */}
         <Link href="/cadastro" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
           <span className={styles.fabIcon}>+</span>
         </Link>
-      </div >
+      </PageShell>
     </>
   );
 };
 
-export default ProdutosPage;
+export default ProductsPage;

@@ -1,0 +1,219 @@
+:root {
+  color-scheme: light;
+  
+  /* Fundos & Superfícies Base */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-strong: #ffffff;
+  --surface-soft: rgba(241, 245, 249, 0.8);
+  --glass-surface: rgba(255, 255, 255, 0.85);
+  --border: rgba(15, 23, 42, 0.12);
+  --muted: #64748b;
+
+  /* --- CORES FUNCIONAIS (Sólidas e Vibrantes) --- */
+  --accent: #4f46e5;           /* Primary (Indigo Moderno) */
+  --accent-hover: #4338ca;
+  --accent-active: #3730a3;
+  --text-on-accent: #ffffff;
+  --shadow-accent: 0 8px 20px -4px rgba(79, 70, 229, 0.35);
+
+  --success: #10b981;          /* Success (Emerald) */
+  --success-hover: #059669;
+  --success-active: #047857;
+  --text-on-success: #ffffff;
+  --shadow-success: 0 8px 20px -4px rgba(16, 185, 129, 0.35);
+
+  --danger: #f43f5e;           /* Danger (Rose) */
+  --danger-hover: #e11d48;
+  --danger-active: #be123c;
+  --text-on-danger: #ffffff;
+  --shadow-danger: 0 8px 20px -4px rgba(244, 63, 94, 0.35);
+
+  --warning: #f59e0b;          /* Warning (Amber) */
+  --warning-hover: #d97706;
+  --warning-active: #b45309;
+  --text-on-warning: #0f172a;  /* Contraste escuro garantido */
+  --shadow-warning: 0 8px 20px -4px rgba(245, 158, 11, 0.35);
+
+  --info: #0284c7;             /* Info (Sky) */
+  --info-hover: #0369a1;
+  --info-active: #075985;
+  --text-on-info: #ffffff;
+  --shadow-info: 0 8px 20px -4px rgba(2, 132, 199, 0.35);
+
+  --secondary: #475569;        /* Secondary (Slate) */
+  --secondary-hover: #334155;
+  --secondary-active: #1e293b;
+  --text-on-secondary: #ffffff;
+  --shadow-secondary: 0 8px 20px -4px rgba(71, 85, 105, 0.25);
+
+  --secondary-accent: #8b5cf6; /* Accent Roxo/Purple */
+
+  /* Estados Suaves / Transparências (Badges, Outlines & Hovers) */
+  --accent-soft: rgba(79, 70, 229, 0.12);
+  --success-soft: rgba(16, 185, 129, 0.12);
+  --danger-soft: rgba(244, 63, 94, 0.12);
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --info-soft: rgba(2, 132, 199, 0.12);
+  --secondary-soft: rgba(71, 85, 105, 0.12);
+
+  /* Foco, Anéis & Sombras Globais */
+  --focus-ring: rgba(79, 70, 229, 0.4);
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --overlay: rgba(15, 23, 42, 0.65);
+
+  /* Dimensões, Espaçamentos e Raios */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+
+  --control-height: 42px;
+  --nav-height: 48px;
+  --z-nav: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+}
+
+/* --- TEMA ESCURO (Dark Mode) --- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --background: #020617;
+    --foreground: #f8fafc;
+    --surface: rgba(15, 23, 42, 0.92);
+    --surface-strong: #0f172a;
+    --surface-soft: rgba(30, 41, 59, 0.78);
+    --glass-surface: rgba(15, 23, 42, 0.85);
+    --border: rgba(148, 163, 184, 0.2);
+    --muted: #94a3b8;
+
+    /* Variantes Funcionais no Escuro (Aumentada a luminosidade) */
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --accent-active: #4338ca;
+    --text-on-accent: #ffffff;
+    --shadow-accent: 0 8px 25px -4px rgba(99, 102, 241, 0.5);
+
+    --success: #10b981;
+    --success-hover: #059669;
+    --success-active: #047857;
+    --text-on-success: #ffffff;
+    --shadow-success: 0 8px 25px -4px rgba(16, 185, 129, 0.5);
+
+    --danger: #f43f5e;
+    --danger-hover: #e11d48;
+    --danger-active: #be123c;
+    --text-on-danger: #ffffff;
+    --shadow-danger: 0 8px 25px -4px rgba(244, 63, 94, 0.5);
+
+    --warning: #fbbf24;
+    --warning-hover: #f59e0b;
+    --warning-active: #d97706;
+    --text-on-warning: #0f172a;
+    --shadow-warning: 0 8px 25px -4px rgba(251, 191, 36, 0.4);
+
+    --info: #38bdf8;
+    --info-hover: #0284c7;
+    --info-active: #0369a1;
+    --text-on-info: #0f172a;
+    --shadow-info: 0 8px 25px -4px rgba(56, 189, 248, 0.4);
+
+    --secondary: #475569;
+    --secondary-hover: #64748b;
+    --secondary-active: #334155;
+    --text-on-secondary: #f8fafc;
+    --shadow-secondary: 0 8px 20px -4px rgba(0, 0, 0, 0.4);
+
+    --accent-soft: rgba(99, 102, 241, 0.2);
+    --success-soft: rgba(16, 185, 129, 0.2);
+    --danger-soft: rgba(244, 63, 94, 0.2);
+    --warning-soft: rgba(251, 191, 36, 0.2);
+    --info-soft: rgba(56, 189, 248, 0.2);
+    --secondary-soft: rgba(148, 163, 184, 0.15);
+
+    --focus-ring: rgba(99, 102, 241, 0.5);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --overlay: rgba(2, 6, 23, 0.8);
+  }
+}
+
+/* Forçado por Atributo [data-theme] */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background: #020617;
+  --foreground: #f8fafc;
+  --surface: rgba(15, 23, 42, 0.92);
+  --surface-strong: #0f172a;
+  --surface-soft: rgba(30, 41, 59, 0.78);
+  --glass-surface: rgba(15, 23, 42, 0.85);
+  --border: rgba(148, 163, 184, 0.2);
+  --muted: #94a3b8;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-active: #4338ca;
+  --text-on-accent: #ffffff;
+  --shadow-accent: 0 8px 25px -4px rgba(99, 102, 241, 0.5);
+
+  --success: #10b981;
+  --success-hover: #059669;
+  --success-active: #047857;
+  --text-on-success: #ffffff;
+  --shadow-success: 0 8px 25px -4px rgba(16, 185, 129, 0.5);
+
+  --danger: #f43f5e;
+  --danger-hover: #e11d48;
+  --danger-active: #be123c;
+  --text-on-danger: #ffffff;
+  --shadow-danger: 0 8px 25px -4px rgba(244, 63, 94, 0.5);
+
+  --warning: #fbbf24;
+  --warning-hover: #f59e0b;
+  --warning-active: #d97706;
+  --text-on-warning: #0f172a;
+  --shadow-warning: 0 8px 25px -4px rgba(251, 191, 36, 0.4);
+
+  --info: #38bdf8;
+  --info-hover: #0284c7;
+  --info-active: #0369a1;
+  --text-on-info: #0f172a;
+  --shadow-info: 0 8px 25px -4px rgba(56, 189, 248, 0.4);
+
+  --secondary: #475569;
+  --secondary-hover: #64748b;
+  --secondary-active: #334155;
+  --text-on-secondary: #f8fafc;
+  --shadow-secondary: 0 8px 20px -4px rgba(0, 0, 0, 0.4);
+
+  --accent-soft: rgba(99, 102, 241, 0.2);
+  --success-soft: rgba(16, 185, 129, 0.2);
+  --danger-soft: rgba(244, 63, 94, 0.2);
+  --warning-soft: rgba(251, 191, 36, 0.2);
+  --info-soft: rgba(56, 189, 248, 0.2);
+  --secondary-soft: rgba(148, 163, 184, 0.15);
+
+  --focus-ring: rgba(99, 102, 241, 0.5);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --overlay: rgba(2, 6, 23, 0.8);
+}

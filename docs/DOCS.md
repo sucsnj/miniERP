@@ -7,13 +7,14 @@
 O projeto é uma aplicação Next.js 16 com front-end React e back-end API routes integrados via `src/pages/api`. A arquitetura segue uma separação simples:
 
 - `src/pages`: páginas de rota Next.js que orquestram componentes e estados.
-- `src/components`: componentes visuais reutilizáveis e painéis de UI.
+- `src/components`: componentes visuais reutilizáveis e painéis de UI, agrupados em subpastas por domínio (`cart/`, `sales/`, `summary/`, `payables/`, `products/`, `catalog/`, `import/`, `pix/`, `common/` — ADR 0005), com nomes de arquivo em inglês (ADR 0004).
 - `src/hooks`: hooks de estado (carrinho, filtros, toasts e CRUD de catálogo).
 - `src/services`: camada cliente que faz chamadas `fetch` para APIs internas.
 - `src/pages/api`: endpoints REST internos que expõem operações CRUD.
 - `src/database`: abstração local SQLite usando `better-sqlite3` para persistência.
 - `src/utils`: funções utilitárias de formatação, parsing e limpeza.
 - `src/types`: tipos compartilhados entre camadas.
+- `src/styles`: design tokens e tema (`tokens.css`), reset (`base.css`), utilitários (`utilities.css`), CSS global em migração (`legacy.css`) e CSS Modules por componente (ADR 0007).
 
 ## Fluxo de Dados
 

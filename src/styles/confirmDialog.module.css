@@ -1,0 +1,77 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--overlay);
+}
+
+.dialog {
+  width: min(100%, 420px);
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+  color: var(--foreground);
+  outline: none;
+}
+
+.title {
+  margin: 0 0 12px;
+  color: var(--foreground);
+  font-size: 1.25rem;
+}
+
+.message {
+  margin: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.button {
+  min-width: 100px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.cancel {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+
+.cancel:hover {
+  background: var(--surface);
+}
+
+.confirm {
+  background: var(--success);
+  color: var(--text-on-success);
+}
+
+.danger {
+  background: var(--danger);
+  color: var(--text-on-danger);
+}
+
+.confirm:hover,
+.danger:hover {
+  opacity: 0.85;
+}

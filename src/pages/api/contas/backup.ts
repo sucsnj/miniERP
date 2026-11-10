@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { backupContasDatabase } from '../../../database/contasDb';
+import { backupAccountsDatabase } from '../../../database/contasDb';
 
 // Handler de API ou componente exportado.
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const path = backupContasDatabase();
+    const path = backupAccountsDatabase();
     return res.status(200).json({ message: 'Backup de contas criado', path });
   } catch (error) {
     console.error('Erro no backup das contas:', error);

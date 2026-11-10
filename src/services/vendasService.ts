@@ -3,7 +3,7 @@ import { getDateArray } from '../utils/date';
 import dayjs from 'dayjs';
 dayjs.locale('pt-br');
 
-export interface VendaDiaria {
+export interface DailySale {
   id: number;
   data: string;
   valor: number;
@@ -11,7 +11,7 @@ export interface VendaDiaria {
   criado_em: string;
 }
 
-export interface VendaItemData {
+export interface SaleItemData {
   id: number;
   venda_id: number;
   item_id?: number | null;
@@ -25,7 +25,7 @@ export interface VendaItemData {
   criado_em: string;
 }
 
-export interface VendaItemInput {
+export interface SaleItemInput {
   id?: number;
   item_id?: number | null;
   tipo: 'PRODUTO' | 'SERVICO';
@@ -38,7 +38,7 @@ export interface VendaItemInput {
   estoque?: number;
 }
 
-export interface VendaMensal {
+export interface MonthlySale {
   id: number;
   mes: number;
   ano: number;
@@ -55,64 +55,64 @@ export interface VendaMensal {
 }
 
 // Função assíncrona exportada.
-export const registrarVenda = async (
+export const registerSale = async (
   data: string,
-  valor: number,
-  observacoes?: string,
-  itens?: VendaItemInput[]
+  amount: number,
+  notes?: string,
+  items?: SaleItemInput[]
 ) => {
   const response = await fetch('/api/vendas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data, valor, observacoes, itens }),
+    body: JSON.stringify({ data, valor: amount, observacoes: notes, itens: items }),
   });
   return response.json();
 };
 
 // Vai ser usado exclusivamente para importar vendas de um arquivo XLSX
-export const registrarVendaComCriadoEm = async (
+export const registerSaleWithCreatedAt = async (
   data: string,
-  valor: number,
-  observacoes?: string,
-  criado_em?: string
+  amount: number,
+  notes?: string,
+  createdAt?: string
 ) => {
   const response = await fetch('/api/vendas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data, valor, observacoes, criado_em }),
+    body: JSON.stringify({ data, valor: amount, observacoes: notes, criado_em: createdAt }),
   });
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const buscarVendasDiarias = async (
-  mes: number,
-  ano: number,
-  filtro: 'positivas' | 'negativas' | 'todas' = 'todas'
-): Promise<VendaDiaria[]> => {
-  const response = await fetch(`/api/vendas?mes=${mes}&ano=${ano}&filtro=${filtro}`);
+export const fetchDailySales = async (
+  month: number,
+  year: number,
+  filter: 'positivas' | 'negativas' | 'todas' = 'todas'
+): Promise<DailySale[]> => {
+  const response = await fetch(`/api/vendas?mes=${month}&ano=${year}&filtro=${filter}`);
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const atualizarVenda = async (id: number, data: string, valor: number, observacoes?: string, itens?: VendaItemInput[]) => {
+export const updateSale = async (id: number, data: string, amount: number, notes?: string, items?: SaleItemInput[]) => {
   const response = await fetch('/api/vendas', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, data, valor, observacoes, itens }),
+    body: JSON.stringify({ id, data, valor: amount, observacoes: notes, itens: items }),
   });
   return response.json();
 };
 
 // Busca os itens associados a uma venda específica.
-export const buscarVendaItens = async (vendaId: number): Promise<VendaItemData[]> => {
-  const response = await fetch(`/api/venda-itens?vendaId=${vendaId}`);
+export const fetchSaleItems = async (saleId: number): Promise<SaleItemData[]> => {
+  const response = await fetch(`/api/venda-itens?vendaId=${saleId}`);
   if (!response.ok) return [];
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const excluirVenda = async (id: number) => {
+export const deleteSale = async (id: number) => {
   const response = await fetch('/api/vendas', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -122,30 +122,30 @@ export const excluirVenda = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const buscarTotalMensal = async (mes: number, ano: number): Promise<VendaMensal | null> => {
-  const response = await fetch(`/api/mensais?mes=${mes}&ano=${ano}`);
+export const fetchMonthlyTotal = async (month: number, year: number): Promise<MonthlySale | null> => {
+  const response = await fetch(`/api/mensais?mes=${month}&ano=${year}`);
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const buscarTodosMensais = async (): Promise<VendaMensal[]> => {
+export const fetchAllMonthly = async (): Promise<MonthlySale[]> => {
   const response = await fetch('/api/mensais');
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const consolidarMensal = async (mes: number, ano: number) => {
+export const consolidateMonthly = async (month: number, year: number) => {
   const response = await fetch('/api/mensais', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mes, ano }),
+    body: JSON.stringify({ mes: month, ano: year }),
   });
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const verificarConsolidado = async (mes: number, ano: number): Promise<boolean> => {
-  const response = await fetch(`/api/mensais?mes=${mes}&ano=${ano}`);
+export const isConsolidated = async (month: number, year: number): Promise<boolean> => {
+  const response = await fetch(`/api/mensais?mes=${month}&ano=${year}`);
 
   // Se não houver corpo, retorna false
   if (!response.ok) return false;
@@ -158,34 +158,34 @@ export const verificarConsolidado = async (mes: number, ano: number): Promise<bo
 };
 
 // Função assíncrona exportada.
-export const autoConsolidar = async () => {
+export const autoConsolidate = async () => {
   const [day, month, initialYear] = getDateArray();
   if (!day || !month || !initialYear) return;
   let year = initialYear;
 
-  let mesAnterior = month - 1;
+  let previousMonth = month - 1;
   if (month === 1) {
     year = year - 1;
-    mesAnterior = 12;
+    previousMonth = 12;
   }
 
   // Todo dia 03 do mês atual faz uma consolidação
   if (day === 3) {
-    await consolidarMensal(mesAnterior, year);
+    await consolidateMonthly(previousMonth, year);
   }
 
-  const jaConsolidado = await verificarConsolidado(mesAnterior, year);
+  const jaConsolidado = await isConsolidated(previousMonth, year);
   if (jaConsolidado) {
     return;
   }
 
   if (day > 2) {
-    await consolidarMensal(mesAnterior, year);
+    await consolidateMonthly(previousMonth, year);
   }
 };
 
 // Função assíncrona exportada.
-export const excluirMensal = async (id: number) => {
+export const deleteMonthly = async (id: number) => {
   const response = await fetch('/api/mensais', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -195,7 +195,7 @@ export const excluirMensal = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const fazerBackup = async () => {
+export const backupDatabase = async () => {
   const response = await fetch('/api/backup', {
     method: 'POST',
   });

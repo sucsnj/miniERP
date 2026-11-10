@@ -1,0 +1,217 @@
+.cartCatalogSearch {
+          position: relative;
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .cartCatalogSearch input.cartSearchInput {
+          width: 100%;
+          padding: 10px 36px 10px 12px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--background);
+          color: var(--foreground);
+          font-size: 0.9rem;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+
+        .cartCatalogSearch input.cartSearchInput:focus {
+          border-color: var(--accent);
+        }
+
+        .cartCatalogSearch button.cartSearchClear {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          padding: 4px;
+          width: auto;
+          color: var(--muted);
+          font-size: 0.8rem;
+          cursor: pointer;
+          border-radius: 4px;
+        }
+
+        .cartCatalogSearch button.cartSearchClear:hover {
+          color: var(--foreground);
+        }
+
+        .cartCatalogList {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding-bottom: 8px;
+        }
+
+        .cartCatalogItemRow {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          width: 100%;
+        }
+
+        button.cartBtnSub {
+          width: 28px;
+          height: 28px;
+          min-width: 28px;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          border: 1px solid var(--border, #444);
+          background: rgba(239, 68, 68, 0.15);
+          color: #ef4444;
+          font-size: 1.2rem;
+          font-weight: 800;
+          line-height: 1;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.1s, opacity 0.2s;
+          flex-shrink: 0;
+        }
+
+        button.cartBtnSub:hover:not(:disabled) {
+          background: rgba(239, 68, 68, 0.3);
+          transform: scale(1.05);
+        }
+
+        button.cartBtnSub:disabled,
+        button.cartBtnSub.disabled {
+          opacity: 0.15;
+          background: transparent;
+          color: var(--muted);
+          border-color: transparent;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .cartCatalogItemRow .cartCatalogItem {
+          flex: 1;
+        }
+
+        .cartCatalogItem {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.15s ease;
+          background: var(--surface-soft, rgba(255, 255, 255, 0.04));
+          border: 1px solid var(--border, #2a2a2a);
+          gap: 8px;
+        }
+
+        .cartCatalogItem:hover {
+          background: var(--surface-soft, rgba(255, 255, 255, 0.08));
+          border-color: var(--border, #444);
+        }
+
+        .cartItemInfo {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          text-align: left;
+          min-width: 0;
+          flex: 1;
+        }
+
+        .cartItemName {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--foreground);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .cartItemMeta {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.75rem;
+          color: var(--muted);
+          flex-wrap: wrap;
+        }
+
+        .cartTypeBadge {
+          font-size: 0.65rem;
+          padding: 1px 6px;
+          border-radius: 4px;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        .cartTypeBadge.produto {
+          background: rgba(59, 130, 246, 0.15);
+          color: #60a5fa;
+          border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .cartTypeBadge.servico {
+          background: rgba(168, 85, 247, 0.15);
+          color: #c084fc;
+          border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .cartItemStock,
+        .cartItemCode {
+          font-size: 0.75rem;
+          color: var(--muted);
+        }
+
+        .cartItemPriceSection {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .cartItemPrice {
+          font-weight: 700;
+          font-size: 0.9rem;
+          color: var(--foreground);
+        }
+
+        .cartItemQtyBadge {
+          background: #3ed955;
+          color: #000;
+          font-weight: 800;
+          font-size: 0.75rem;
+          padding: 2px 7px;
+          border-radius: 10px;
+        }
+
+        .cartCatalogEmpty {
+          padding: 24px;
+          text-align: center;
+          color: var(--muted);
+          font-size: 0.85rem;
+        }
+
+        button.cartManageBtn {
+          width: auto;
+          min-width: unset;
+          padding: 8px 14px;
+          margin: 0;
+          border-radius: 8px;
+          background: #3ed955;
+          color: #000;
+          font-size: 0.85rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: opacity 0.2s, transform 0.1s;
+        }
+
+        button.cartManageBtn:hover {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }

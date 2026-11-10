@@ -1,0 +1,27 @@
+.wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-soft);
+}

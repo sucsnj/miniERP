@@ -30,7 +30,7 @@ try {
 }
 
 // Constante exportada com função.
-export interface NotaRow {
+export interface InvoiceRow {
   id: number;
   distribuidora: string;
   chave: string;
@@ -38,49 +38,49 @@ export interface NotaRow {
   valor_nota: number;
 }
 
-export const insertNota = (
-  distribuidora: string,
-  chave: string,
-  dataEmissao: string,
-  valorNota: number,
+export const insertInvoice = (
+  supplierName: string,
+  key: string,
+  issueDate: string,
+  invoiceAmount: number,
 ) => {
   const stmt = db.prepare(
     'INSERT INTO notas_detalhes (distribuidora, chave, data_emissao, valor_nota) VALUES (?, ?, ?, ?)'
   );
-  return stmt.run(distribuidora, chave, dataEmissao, valorNota);
+  return stmt.run(supplierName, key, issueDate, invoiceAmount);
 };
 
 // Constante exportada com função.
-export const getNotasById = (id: number) => {
+export const getInvoicesById = (id: number) => {
   const stmt = db.prepare('SELECT * FROM notas_detalhes WHERE id = ?');
   return stmt.get(id);
 };
 
 // soma notas de um determinado ano
-export const getSumNotasByYear = (ano: number) => {
+export const getInvoiceSumByYear = (year: number) => {
   const stmt = db.prepare(`
     SELECT SUM(valor_nota) AS total
     FROM notas_detalhes
     WHERE substr(data_emissao, 1, 10) >= ? AND substr(data_emissao, 1, 10) <= ?
   `);
-  const row = stmt.get(`${ano}-01-01`, `${ano}-12-31`) as { total: number | null };
+  const row = stmt.get(`${year}-01-01`, `${year}-12-31`) as { total: number | null };
   return row?.total ?? 0;
 };
 
 // Constante exportada com função.
-export const getNotasByValor = (valor: number) => {
-  if (valor < 0) {
+export const getInvoicesByAmount = (amount: number) => {
+  if (amount < 0) {
     return null;
   }
 
   const stmt = db.prepare('SELECT * FROM notas_detalhes WHERE valor_nota = ?');
-  return stmt.get(valor);
+  return stmt.get(amount);
 };
 
 // Constante exportada com função.
-export const getNotasByPeriod = (ano: number, mes?: number) => {
-  const startDate = `${ano}-${String(mes ?? 1).padStart(2, '0')}-01`;
-  const endDate = mes ? parseDate(`${ano}-${mes}-01`).endOf('month').format('YYYY-MM-DD') : `${ano}-12-31`;
+export const getInvoicesByPeriod = (year: number, month?: number) => {
+  const startDate = `${year}-${String(month ?? 1).padStart(2, '0')}-01`;
+  const endDate = month ? parseDate(`${year}-${month}-01`).endOf('month').format('YYYY-MM-DD') : `${year}-12-31`;
 
   // Usa substr(data_emissao, 1, 10) para extrair YYYY-MM-DD diretamente da string
   // sem passar pelo date() do SQLite, que interpreta offsets como UTC e troca o dia.
@@ -88,23 +88,23 @@ export const getNotasByPeriod = (ano: number, mes?: number) => {
     'SELECT * FROM notas_detalhes WHERE substr(data_emissao, 1, 10) >= ? AND substr(data_emissao, 1, 10) <= ? ORDER BY data_emissao DESC, id DESC'
   );
 
-  return stmt.all(startDate, endDate) as unknown as NotaRow[];
+  return stmt.all(startDate, endDate) as unknown as InvoiceRow[];
 };
 
 // Constante exportada com função.
-export const getAllNotas = () => {
+export const getAllInvoices = () => {
   const stmt = db.prepare('SELECT * FROM notas_detalhes ORDER BY data_emissao DESC, id DESC');
-  return stmt.all() as unknown as NotaRow[];
+  return stmt.all() as unknown as InvoiceRow[];
 };
 
 // Constante exportada com função.
-export const deleteNota = (id: number) => {
+export const deleteInvoice = (id: number) => {
   const stmt = db.prepare('DELETE FROM notas_detalhes WHERE id = ?');
   return stmt.run(id);
 };
 
 // Constante exportada com função.
-export const backupNotasDatabase = () => {
+export const backupInvoicesDatabase = () => {
   const backupPath = path.join(process.cwd(), `notas-backup-${now().format('YYYY-MM-DD')}.db`);
   db.backup(backupPath);
   return backupPath;

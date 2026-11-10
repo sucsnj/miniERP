@@ -22,14 +22,14 @@ export const seedUoms = [
     { sigla: 'SR', descricao: 'Serviço' }, // id 21
 ];
 
-export const seedCategorias = [
+export const seedCategories = [
     { nome: 'Geral', descricao: 'Categoria padrão' },
 ];
 
-export const seedMarcas = [
+export const seedBrands = [
     { nome: 'Outros' },
 ];
 
-export const seedFornecedores = [
+export const seedSuppliers = [
     { nome: 'Sem fornecedor' },
 ];

@@ -1,0 +1,30 @@
+.summaryCard {
+                    background: var(--surface-strong);
+                    border: 1px solid var(--border);
+                    border-radius: 22px;
+                    padding: 20px;
+                    min-height: 220px;
+                }
+
+                .summaryCard.small {
+                    padding: 18px;
+                }
+
+                .summaryCard h3 {
+                    margin: 0 0 14px;
+                    font-size: 1rem;
+                    color: var(--muted);
+                }
+
+                .summaryCard ul {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    display: grid;
+                    gap: 10px;
+                }
+
+                .summaryCard ul li {
+                    color: var(--foreground);
+                    font-size: 0.95rem;
+                }

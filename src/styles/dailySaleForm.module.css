@@ -1,0 +1,234 @@
+.dailySaleForm {
+          position: relative;
+        }
+
+        .saleFormGrid {
+          display: grid;
+          grid-template-columns: 1.5fr 0.1fr;
+          gap: 24px;
+          align-items: start;
+          margin-top: 20px;
+        }
+
+        .saleFormFields {
+          display: grid;
+          gap: 16px;
+          min-height: 110px;
+          resize: vertical;
+        }
+
+        .saleFormFields label,
+        .recentHistory {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .saleFormFields label input,
+        .saleFormFields label textarea {
+          width: 100%;
+          border-radius: 10px;
+          border: 1px solid var(--border);
+          padding: 10px 12px;
+          font-size: 1rem;
+        }
+
+        .saleFormFields button {
+          width: fit-content;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 12px;
+          background: var(--accent);
+          color: var(--foreground);
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .saleFormFields button:disabled {
+          background: var(--muted);
+          cursor: not-allowed;
+        }
+
+        .inputWithIconWrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
+
+        .saleFormFields .inputWithIconWrapper input {
+          width: 100%;
+          padding-right: 64px;
+        }
+
+        .saleFormFields button.cartIconButton {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          padding: 6px;
+          margin: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          border-radius: 8px;
+          width: auto;
+          min-width: unset;
+          transition: color 0.2s ease, background-color 0.2s ease;
+          color: #3ed955ff;
+        }
+
+        .saleFormFields button.cartIconButton:hover {
+          color: var(--accent);
+          background-color: var(--surface-soft, rgba(255, 255, 255, 0.08));
+        }
+
+        .cartIcon {
+          font-size: 1.3rem;
+        }
+
+        .cartBadge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background: #3ed955;
+          color: #000;
+          font-size: 0.65rem;
+          font-weight: 800;
+          border-radius: 999px;
+          min-width: 17px;
+          height: 17px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 3px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .flexGrow1 {
+          flex: 1;
+        }
+
+        .displayValue {
+          font-size: 1.9rem;
+          font-weight: 700;
+          min-width: 110px;
+          text-align: right;
+          margin-right: 10px;
+
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        /* estilo para deixar o botão clicável visualmente amigável */
+        .pixButton {
+          cursor: pointer;
+          width: fit-content;
+          height: fit-content;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .recentHistory {
+          padding: 16px;
+          background: var(--surface);
+          border-radius: 16px;
+          border: 1px solid var(--border);
+        }
+
+        .recentHistory h3 {
+          margin: 0 0 12px;
+          font-size: 18px;
+        }
+
+        .recentHistory ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: grid;
+          gap: 12px;
+        }
+
+        .recentSaleItem {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 12px 14px;
+          border-radius: 12px;
+          background: var(--surface-soft);
+        }
+
+        .recentSaleObservacoes {
+          margin-top: 6px;
+          color: var(--muted);
+          font-size: 0.95rem;
+        }
+
+        .recentSaleActions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .recentSaleActions button {
+          padding: 8px 12px;
+          border-radius: 10px;
+          border: none;
+          cursor: pointer;
+          font-weight: 600;
+        }
+
+        .recentSaleActions button:first-of-type {
+          background: var(--surface-soft);
+        }
+
+        .recentSaleActions button:last-of-type {
+          background: var(--danger);
+          color: var(--foreground);
+        }
+
+        .mathButtons {
+          display: none;
+        }
+
+        .mathButton {
+          padding: 6px 10px;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          font-size: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+          .saleFormGrid {
+            grid-template-columns: 1fr;
+          }
+
+          .displayValue {
+            font-size: 3.0rem;
+          }
+
+          .mathButtons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+          }
+        }
+
+        .dateInput {
+          padding-right: 2.5rem;
+        }
+
+        @media (max-width: 630px) {
+          .dateInput::-webkit-calendar-picker-indicator,
+          .dateInput::-moz-calendar-picker-indicator {
+            display: none;
+          }
+        }
+

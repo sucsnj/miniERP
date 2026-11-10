@@ -1,0 +1,29 @@
+.summaryCard {
+                    background: var(--surface-strong);
+                    border: 1px solid var(--border);
+                    border-radius: 22px;
+                    padding: 20px;
+                    min-height: 220px;
+                }
+
+                .summaryCard.small {
+                    padding: 18px;
+                }
+            
+                .summaryTable {
+                    width: 100%;
+                    border-collapse: collapse;
+                    color: var(--foreground);
+                }
+
+                .summaryTable th,
+                .summaryTable td {
+                    padding: 10px 12px;
+                    text-align: left;
+                    border-bottom: 1px solid var(--border);
+                }
+
+                .summaryTable th {
+                    color: var(--muted);
+                    font-size: 0.9rem;
+                }

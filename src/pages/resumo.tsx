@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react';
-import Toast from '../components/Toast';
 import { formatCurrency } from '../utils/formatter';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import { capitalize } from '../utils/captalize';
-import ConfirmDialog from '../components/ConfirmDialog';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useToast } from '../hooks/useToast';
-import { useMensais } from '../hooks/useMensais';
+import { useMonthlyData } from '../hooks/useMonthlyData';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
+import PageShell from '@/components/common/PageShell';
+import PageHeader from '@/components/common/PageHeader';
+import Panel from '@/components/common/Panel';
+import Button from '@/components/common/Button';
 dayjs.locale('pt-br');
 
 // Componente React: tela de Resumo Mensal.
 // Mostra as consolidações mensais (normal e especial) com opção de exclusão,
-// usando os hooks useToast, useMensais e useConfirmDialog.
-const Resumo: React.FC = () => {
+// usando os hooks useToast, useMonthlyData e useConfirmDialog.
+const SummaryPage: React.FC = () => {
   // Notificações (toast) exibidas na tela
-  const { toastOpen, toastMessage, toastType, toastDuration, showToast, closeToast } = useToast();
+  const { showToast } = useToast();
   // Consolidações mensais (carregar e excluir)
-  const { mensais, loadMensais, handleDelete } = useMensais(showToast);
+  const { mensais, loadMensais, handleDelete } = useMonthlyData(showToast);
   // Diálogo de confirmação antes de excluir
   const { confirmOpen, openConfirm, handleConfirm, cancelConfirm } = useConfirmDialog(handleDelete);
 
@@ -32,30 +35,33 @@ const Resumo: React.FC = () => {
 
   return (
     <>
-      <div className="container-padding">
-        <h1>Resumo Mensal</h1>
+      <PageShell>
+        <PageHeader title="Resumo Mensal" />
+        <Panel>
 
       {/* Botões de alternância entre as tabelas */}
       <div className="toggle-buttons">
-        <button
-          className={`especial-button ${view === 'especial' ? '' : 'hidden'}`}
+        <Button
+          variant={view === 'comum' ? 'primary' : 'ghost'}
           onClick={() => setView('comum')}
+          className={view === 'especial' ? '' : 'hidden'}
         >
           Mostrar Consolidado Normal
-        </button>
-        <button
-          className={`comum-button ${view === 'comum' ? '' : 'hidden'}`}
+        </Button>
+        <Button
+          variant={view === 'especial' ? 'secondary' : 'ghost'}
           onClick={() => setView('especial')}
+          className={view === 'comum' ? '' : 'hidden'}
         >
           Mostrar Consolidado Especial
-        </button>
+        </Button>
       </div>
 
       {/* Tabelas de consolidação do mês */}
       <div className="glass-form">
         <div className="table-container">
           {/* Tabela consolidado normal (visível quando view = 'comum') */}
-          <table className={`comum-table ${view === 'comum' ? '' : 'hidden'}`}>
+          <table className={view === 'comum' ? undefined : 'hidden'}>
             <thead>
               <tr>
                 <th>Data</th>
@@ -82,12 +88,9 @@ const Resumo: React.FC = () => {
                   <td>{m.qtdVendas}</td>
                   <td>R$ {formatCurrency(m.total, 2)}</td>
                   <td>
-                    <button type="button" onClick={() => openConfirm(m.id)} className="delete-btn">
-                      <span className="icon-responsive">
-                        <DeleteIcon />
-                      </span>
-                      <span className="text-responsive">Excluir</span>
-                    </button>
+                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
+                      Excluir
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -95,7 +98,7 @@ const Resumo: React.FC = () => {
           </table>
 
           {/* Tabela consolidado especial (visível quando view = 'especial') */}
-          <table className={`epecial-table ${view === 'especial' ? '' : 'hidden'}`}>
+          <table className={view === 'especial' ? undefined : 'hidden'}>
             <thead>
               <tr>
                 <th>Data</th>
@@ -113,12 +116,9 @@ const Resumo: React.FC = () => {
                   <td>{m.qtdVendasEsp}</td>
                   <td>R$ {formatCurrency(m.totalEsp, 2)}</td>
                   <td>
-                    <button type="button" onClick={() => openConfirm(m.id)} className="delete-btn">
-                      <span className="icon-responsive">
-                        <DeleteIcon />
-                      </span>
-                      <span className="text-responsive">Excluir</span>
-                    </button>
+                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
+                      Excluir
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -127,6 +127,7 @@ const Resumo: React.FC = () => {
           </table>
         </div>
       </div>
+      </Panel>
 
       {/* Diálogo de confirmação de exclusão */}
       <ConfirmDialog
@@ -138,19 +139,9 @@ const Resumo: React.FC = () => {
         onConfirm={handleConfirm}
         onCancel={cancelConfirm}
       />
-
-      {/* Notificação (toast) da página */}
-      <Toast
-        open={toastOpen}
-        message={toastMessage}
-        type={toastType}
-        duration={toastDuration}
-        onClose={closeToast}
-        position="top-right"
-      />
-      </div>
+    </PageShell>
     </>
   );
 };
 
-export default Resumo;
+export default SummaryPage;

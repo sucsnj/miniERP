@@ -1,36 +1,41 @@
 import { useEffect, useState } from 'react';
-import DailySaleForm from '../components/DailySaleForm';
-import DailySalesTotal from '../components/DailySalesTotal';
-import SalesChart from '../components/SalesChart';
-import Toast from '../components/Toast';
-import ExportButtons from '../components/ExportButtons';
-import EditSaleForm from '../components/EditSaleForm';
+import DailySaleForm from '../components/sales/DailySaleForm';
+import DailySalesTotal from '../components/sales/DailySalesTotal';
+import SalesChart from '../components/sales/SalesChart';
+import ExportButtons from '../components/sales/ExportButtons';
+import EditSaleForm from '../components/sales/EditSaleForm';
 import { useToast } from '../hooks/useToast';
-import { useVendas } from '../hooks/useVendas';
+import { useSales } from '../hooks/useSales';
 import { capitalize } from '../utils/captalize';
 import BackupIcon from '@mui/icons-material/Backup';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { getDateArray, now, toTimestamp, formatMonthName } from '../utils/date';
+import PageShell from '@/components/common/PageShell';
+import PageHeader from '@/components/common/PageHeader';
+import Panel from '@/components/common/Panel';
+import PanelHeader from '@/components/common/PanelHeader';
+import Button from '@/components/common/Button';
 
-// Data de hoje (fuso do app) usada como seleção inicial do formulário
-const hoje = now().format('YYYY-MM-DD');
+
+// Data de today (fuso do app) usada como seleção inicial do formulário
+const today = now().format('YYYY-MM-DD');
 
 // Componente React da página inicial: Dashboard de Vendas.
-// Orquestra os subcomponentes da tela usando os hooks useToast e useVendas,
+// Orquestra os subcomponentes da tela usando os hooks useToast e useSales,
 // mantendo apenas o estado de filtro (mês/ano) e da data selecionada.
 const Home: React.FC = () => {
-  // Período de hoje (mês/ano no fuso do app), calculado uma única vez
-  const [, mesAtual, anoAtual] = getDateArray();
+  // Período de today (mês/ano no fuso do app), calculado uma única vez
+  const [, currentMonth, currentYear] = getDateArray();
   // Período selecionado (mês e ano), usado para carregar as vendas
-  const [mes, setMes] = useState(mesAtual);
-  const [ano, setAno] = useState(anoAtual);
+  const [month, setMonth] = useState(currentMonth);
+  const [year, setYear] = useState(currentYear);
   // Ano exibido no campo; aceita digitação livre e só comita valores válidos
-  const [anoInput, setAnoInput] = useState(String(anoAtual));
+  const [yearInput, setYearInput] = useState(String(currentYear));
   // Data selecionada no formulário de venda diária
-  const [selectedDate, setSelectedDate] = useState(hoje);
+  const [selectedDate, setSelectedDate] = useState(today);
 
   // Notificações (toast) exibidas na página
-  const { toastOpen, toastMessage, toastType, toastDuration, showToast, closeToast } = useToast();
+  const { showToast } = useToast();
   // Estado e ações de vendas (carregar, editar, excluir, consolidar, backup)
   const {
     sales,
@@ -43,9 +48,9 @@ const Home: React.FC = () => {
     handleCancelEdit,
     handleSaved,
     handleDeleteSale,
-  } = useVendas(mes, ano, showToast);
+  } = useSales(month, year, showToast);
 
-  // Recarrega as vendas sempre que o período (mes/ano) mudar
+  // Recarrega as vendas sempre que o período (month/year) mudar
   useEffect(() => {
     loadSales();
   }, [loadSales]);
@@ -62,8 +67,8 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="container-padding">
-        <h1>Dashboard de Vendas</h1>
+      <PageShell>
+        <PageHeader title="Dashboard de Vendas" description={loading ? 'Carregando vendas...' : undefined} />
         {loading && <p className="loading-text">Carregando vendas...</p>}
         {/* Resumo do período + formulário de registro de venda */}
         <DailySalesTotal
@@ -97,18 +102,19 @@ const Home: React.FC = () => {
         {/* <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} /> */}
         <ExportButtons
           sales={sales}
-          mes={mes}
-          ano={ano}
+          month={month}
+          year={year}
           selectedDate={selectedDate}
           onMessage={showToast}
           onImportCompleted={loadSales}
         />
         {/* Rodapé com filtro de período e ações de consolidação/backup */}
-        <div className="footer-header glass-form">
+        <Panel>
+          <PanelHeader title="Período e ações" />
           <div className="page-actions">
             <label>
               Mês:
-              <select className="headerSelect" value={mes} onChange={(e) => setMes(parseInt(e.target.value))}>
+              <select className="headerSelect" value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
                 {Array.from({ length: 12 }, (_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {capitalize(formatMonthName(i + 1))}
@@ -121,38 +127,28 @@ const Home: React.FC = () => {
               <input
                 className="headerInput"
                 type="number"
-                value={anoInput}
+                value={yearInput}
                 onChange={(e) => {
                   const v = e.target.value;
-                  setAnoInput(v);
+                  setYearInput(v);
                   const parsed = parseInt(v, 10);
-                  if (!Number.isNaN(parsed)) setAno(parsed);
+                  if (!Number.isNaN(parsed)) setYear(parsed);
                 }}
                 onBlur={() => {
-                  const parsed = parseInt(anoInput, 10);
-                  if (Number.isNaN(parsed)) setAnoInput(String(ano));
+                  const parsed = parseInt(yearInput, 10);
+                  if (Number.isNaN(parsed)) setYearInput(String(year));
                 }}
               />
             </label>
-            <button className="headerButton" onClick={handleConsolidate}>
-              <DoneAllIcon />
-              Consolidar Mês
-            </button>
-            <button className="headerBackupButton" onClick={handleBackup}>
-              <BackupIcon />
+            <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
+              Consolidar Més
+            </Button>
+            <Button variant="info" onClick={handleBackup} leftIcon={<BackupIcon />}>
               Fazer Backup
-            </button>
+            </Button>
           </div>
-        </div>
-        <Toast
-          open={toastOpen}
-          message={toastMessage}
-          type={toastType}
-          duration={toastDuration}
-          onClose={closeToast}
-          position="top-right"
-        />
-      </div>
+        </Panel>
+      </PageShell>
     </>
   );
 };

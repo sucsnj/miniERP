@@ -1,0 +1,70 @@
+.toast {
+  position: fixed;
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 260px;
+  max-width: calc(100% - 40px);
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.topRight {
+  top: 20px;
+  right: 20px;
+}
+
+.bottomRight {
+  right: 20px;
+  bottom: 20px;
+}
+
+.topLeft {
+  top: 20px;
+  left: 20px;
+}
+
+.topCenter {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.localTopRight {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.localTopLeft {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.info {
+  background: var(--accent);
+}
+
+.success {
+  background: var(--success);
+}
+
+.error {
+  background: var(--danger);
+}
+
+.close {
+  border: none;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}

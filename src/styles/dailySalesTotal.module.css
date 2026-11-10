@@ -1,0 +1,202 @@
+.dailySalesTotal {
+          margin: 28px auto 240px;
+          transform: scale(0.9); /* altera o tamanho do elemento para que ele se adapte ao tamanho da tela */
+          transform-origin: top;
+          padding: 18px;
+          width: calc(105% - 16px);
+          max-width: 1440px;
+          background: linear-gradient(135deg, #5b6ce0 0%, #6f55b0 100%);
+          border-radius: 12px;
+          color: white;
+        }
+
+        .dailySalesTotal h2 {
+          margin: 0 0 16px 0;
+          font-size: 22px;
+        }
+
+        .summaryGrid {
+          display: grid;
+          grid-template-columns: minmax(520px, 1.7fr) minmax(360px, 1fr);
+          gap: 20px;
+          align-items: start;
+        }
+
+        .summaryLeft {
+          display: grid;
+          gap: 14px;
+        }
+
+        .summaryRow {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+        }
+
+        .summaryCard,
+        .historyCard {
+          background: rgba(255, 255, 255, 0.14);
+          padding: 16px;
+          border-radius: 8px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .historyCard {
+          padding-top: 14px;
+        }
+
+        .historyCard .summaryCardTitle {
+          margin-bottom: 8px;
+        }
+
+        .historyCard:hover {
+          transform: translateY(-5px);
+          background: rgba(255, 255, 255, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .recentSalesGrid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 6px;
+        }
+
+        .historyItem {
+          display: flex;
+          transform: scale(0.95);
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 12px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .historyValues {
+          font-size: 1rem;
+          font-weight: 700;
+        }
+
+        .recentSaleActions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .recentSaleActions button {
+          flex: 1;
+          padding: 8px 10px;
+          border-radius: 10px;
+          border: none;
+          cursor: pointer;
+          font-weight: 700;
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .recentSaleActions button:hover {
+          transform: translateY(-1px);
+          opacity: 0.92;
+        }
+
+        .recentSaleActions button:first-child {
+          background: #2563eb;
+          color: white;
+        }
+
+        .recentSaleActions button:last-child {
+          background: #ef4444;
+          color: white;
+        }
+
+        .historyItem strong {
+          display: block;
+          margin-bottom: 6px;
+        }
+
+        .historyItem:hover {
+          transform: translateY(-5px);
+          transform: scale(1.2);
+          background: var(--glass-surface);
+          border: 1px solid var(--border);
+        }
+
+        .summaryCard:hover {
+          transform: translateY(-5px);
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        .summaryCardTitle {
+          font-size: 1rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+          opacity: 0.9;
+        }
+
+        .summaryMetrics {
+          display: grid;
+          gap: 14px;
+        }
+
+        .summaryLabel {
+          font-size: 0.9rem;
+          font-weight: 500;
+          opacity: 0.9;
+        }
+
+        .summaryValue {
+          font-size: 1.75rem;
+          font-weight: 700;
+          animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .summaryGrid {
+            grid-template-columns: 1fr;
+          }
+
+          /* Em modo responsivo, o bloco 'Últimas 4 vendas' fica logo abaixo do formulário de registro */
+          .summaryLeft {
+            display: contents;
+          }
+
+          .formCard {
+            order: -2;
+          }
+
+          .historyCard {
+            order: -1;
+          }
+
+          .summaryRow {
+            order: 0;
+            grid-template-columns: 1fr;
+          }
+
+          /* Em modo responsivo, inverte a ordem das 'Últimas 4 vendas' (mais recente primeiro) */
+          .recentSalesGrid {
+            display: flex;
+            flex-direction: column-reverse;
+          }
+
+          .summaryValue {
+            font-size: 1.4rem;
+          }
+        }

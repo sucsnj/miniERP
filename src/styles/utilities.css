@@ -1,0 +1,57 @@
+.container-padding {
+  padding: var(--space-5);
+}
+
+.loading-text {
+  margin: 8px 0;
+  color: var(--muted);
+}
+
+.button-spacing {
+  margin-left: 10px;
+}
+
+.button-spacing-small {
+  margin-left: 8px;
+}
+
+.color-muted {
+  color: var(--muted);
+  cursor: default;
+  pointer-events: none;
+}
+
+.color-muted-dark {
+  color: var(--foreground);
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.hidden {
+  display: none;
+}
+
+.separator {
+  border-top: 8px solid var(--border);
+}
+
+.icon-responsive {
+  display: none;
+}
+
+.text-responsive {
+  display: inline-flex;
+  align-items: center;
+}
+
+.material-icon {
+  margin-right: 4px;
+}
+
+.danger-text {
+  margin-top: 8px;
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 700;
+}

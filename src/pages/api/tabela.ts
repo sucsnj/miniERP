@@ -4,10 +4,10 @@ import fs from 'fs';
 import path from 'path';
 import XLSX from 'xlsx';
 import {
-  findTabelaSearchHistory,
-  saveTabelaSearchHistory,
-  getRecentTabelaSearchHistory,
-  clearTabelaSearchHistory,
+  findTableSearchHistory,
+  saveTableSearchHistory,
+  getRecentTableSearchHistory,
+  clearTableSearchHistory,
 } from '../../database/tabelaDb';
 
 export const config = {
@@ -69,7 +69,7 @@ const parseNumberValue = (value: unknown) => {
 };
 
 // Função local ou componente.
-const parseTabelaWorksheet = (filePath: string) => {
+const parseTableWorksheet = (filePath: string) => {
   if (!fs.existsSync(filePath)) {
     return null;
   }
@@ -86,7 +86,7 @@ const parseTabelaWorksheet = (filePath: string) => {
   }
 };
 
-interface TabelaRow {
+interface TableRow {
   substancia: string;
   laboratorio: string;
   ean: string;
@@ -100,7 +100,7 @@ interface TabelaRow {
 let cachedTabelaTable: Record<string, unknown>[] | null = null;
 
 // Função local ou componente.
-const loadTabelaTable = () => {
+const loadTableData = () => {
   if (cachedTabelaTable) {
     return cachedTabelaTable;
   }
@@ -120,7 +120,7 @@ const loadTabelaTable = () => {
   }
 
   if (fs.existsSync(xlsxPath)) {
-    const parsed = parseTabelaWorksheet(xlsxPath);
+    const parsed = parseTableWorksheet(xlsxPath);
     if (parsed) {
       try {
         fs.writeFileSync(jsonPath, JSON.stringify(parsed, null, 2), 'utf-8');
@@ -136,7 +136,7 @@ const loadTabelaTable = () => {
 };
 
 // Função local ou componente.
-const searchTabelaTable = (query: string, table: Record<string, unknown>[]) => {
+const searchTableData = (query: string, table: Record<string, unknown>[]) => {
   const normalizedQuery = normalizeText(query);
   const results = table
     .map((row) => {
@@ -182,14 +182,14 @@ const searchTabelaTable = (query: string, table: Record<string, unknown>[]) => {
         score,
       };
     })
-    .filter(Boolean) as Array<{ row: TabelaRow; score: number }>;
+    .filter(Boolean) as Array<{ row: TableRow; score: number }>;
 
   return results
     .sort((a, b) => b.score - a.score)
     .map((item) => item.row);
 };
 
-loadTabelaTable();
+loadTableData();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -279,7 +279,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (history === '1' || history === 'true') {
       try {
-        const table = getRecentTabelaSearchHistory();
+        const table = getRecentTableSearchHistory();
         return res.status(200).json(table);
       } catch (error) {
         console.error('Erro ao buscar histórico de tabela:', error);
@@ -288,7 +288,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.query.status === '1' || req.query.status === 'true') {
-      const table = loadTabelaTable();
+      const table = loadTableData();
       return res.status(200).json({ loaded: Array.isArray(table), rowCount: Array.isArray(table) ? table.length : 0 });
     }
 
@@ -297,7 +297,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const normalizedQuery = normalizeText(query);
-    const cached = findTabelaSearchHistory(normalizedQuery);
+    const cached = findTableSearchHistory(normalizedQuery);
     if (cached) {
       try {
         const results = JSON.parse(cached.result_json as string);
@@ -307,14 +307,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    const table = loadTabelaTable();
+    const table = loadTableData();
     if (!table) {
       return res.status(404).json({ error: 'Nenhuma planilha de tabela carregada. Faça upload de um arquivo XLSX antes de pesquisar.' });
     }
 
-    const results = searchTabelaTable(query, table);
+    const results = searchTableData(query, table);
     try {
-      saveTabelaSearchHistory(query, normalizedQuery, results);
+      saveTableSearchHistory(query, normalizedQuery, results);
     } catch (error) {
       console.error('Erro ao salvar histórico de tabela:', error);
     }
@@ -324,7 +324,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'DELETE') {
     try {
-      clearTabelaSearchHistory();
+      clearTableSearchHistory();
       return res.status(200).json({ message: 'Histórico de tabela limpo com sucesso.' });
     } catch (error) {
       console.error('Erro ao limpar histórico de tabela:', error);

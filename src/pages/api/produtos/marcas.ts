@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getMarcas, insertMarca, deleteMarca, updateMarca } from '../../../database/produtosDb';
+import { getBrands, insertBrand, deleteBrand, updateBrand } from '../../../database/produtosDb';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const brands = getMarcas();
+      const brands = getBrands();
       return res.status(200).json(brands);
     } catch (error) {
       console.error('Erro ao buscar marcas:', error);
@@ -14,17 +14,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { nome } = req.body;
-      if (!nome || !nome.trim()) {
+      const { nome: name } = req.body;
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Nome da marca é obrigatório.' });
       }
 
-      const brands = getMarcas();
-      if (brands.some(b => b.nome.toLowerCase() === nome.trim().toLowerCase())) {
+      const brands = getBrands();
+      if (brands.some(b => b.nome.toLowerCase() === name.trim().toLowerCase())) {
         return res.status(400).json({ error: 'Esta marca já existe.' });
       }
 
-      const result = insertMarca(nome.trim());
+      const result = insertBrand(name.trim());
       return res.status(201).json({ id: result.lastInsertRowid, message: 'Marca cadastrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar marca:', error);
@@ -39,7 +39,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       if (!id || isNaN(Number(id))) {
         return res.status(400).json({ error: 'ID da marca é inválido.' });
       }
-      deleteMarca(Number(id));
+      deleteBrand(Number(id));
       return res.status(200).json({ message: 'Marca apagada com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar marca:', error);
@@ -51,14 +51,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'PUT') {
     try {
       const { id } = req.query;
-      const { nome } = req.body;
+      const { nome: name } = req.body;
       if (!id || isNaN(Number(id))) {
         return res.status(400).json({ error: 'ID da marca é inválido.' });
       }
-      if (!nome || !nome.trim()) {
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Nome da marca é obrigatório.' });
       }
-      updateMarca(Number(id), nome.trim());
+      updateBrand(Number(id), name.trim());
       return res.status(200).json({ message: 'Marca atualizada com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar marca:', error);

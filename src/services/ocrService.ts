@@ -1,10 +1,10 @@
 import Tesseract from "tesseract.js";
 
-export async function lerLinhaDigitavel(imagemPath: string, regexConst: string = "regex1") {
+export async function readDigitableLine(imagePath: string, regexName: string = "regex1") {
 
     try {
 
-        console.log("OCR EXECUTANDO:", imagemPath);
+        console.log("OCR EXECUTANDO:", imagePath);
 
         const worker = await Tesseract.createWorker("eng");
 
@@ -12,14 +12,14 @@ export async function lerLinhaDigitavel(imagemPath: string, regexConst: string =
             tessedit_char_whitelist: "0123456789. "
         });
 
-        const resultado = await worker.recognize(imagemPath);
+        const result = await worker.recognize(imagePath);
 
         await worker.terminate();
 
         console.log("TEXTO OCR:");
-        console.log(resultado.data.text);
+        console.log(result.data.text);
 
-        const texto = resultado.data.text
+        const text = result.data.text
             .replace(/\n/g, " ")
             .replace(/\s+/g, " ");
 
@@ -27,21 +27,21 @@ export async function lerLinhaDigitavel(imagemPath: string, regexConst: string =
         const regex2 = /\d{5}[\s\.]?\d{5}[\s\.]?\d{5}[\s\.]?\d{6}[\s\.]?\d{5}[\s\.]?\d{6}[\s\.]?\d[\s\.]?\d{13,14}/g;
         let regex = null;
 
-        if (regexConst === "regex1") {
+        if (regexName === "regex1") {
             regex = regex1;
         } else {
             regex = regex2;
         }
 
-        const matches = texto.match(regex);
+        const matches = text.match(regex);
         console.log("MATCHES:", matches);
 
         if (matches && matches.length > 0) {
-            // pega sempre a última linha encontrada
-            const linha = matches[matches.length - 1]
+            // pega sempre a última line encontrada
+            const line = matches[matches.length - 1]
                 .replace(/\s/g, "")
                 .replace(/\./g, "");
-            return linha;
+            return line;
         }
 
         return null;

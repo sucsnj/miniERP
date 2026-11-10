@@ -1,6 +1,6 @@
 import { fromPath } from "pdf2pic";
 import path from "path";
-import { lerLinhaDigitavel } from "./ocrService";
+import { readDigitableLine } from "./ocrService";
 import sharp from "sharp";
 import { cleanTemp } from "../utils/cleaner";
 
@@ -149,7 +149,7 @@ async function preprocessScenarios(imgPath: string): Promise<string[]> {
 
 export let info = "";
 
-export async function lerPdfComOcr(pdfPath: string) {
+export async function readPdfWithOcr(pdfPath: string) {
     const converter = fromPath(pdfPath, {
         density: 400,
         saveFilename: "pagina",
@@ -170,11 +170,11 @@ export async function lerPdfComOcr(pdfPath: string) {
             console.log("PNG GERADA:", imgPath);
 
             // const preImgPath = await preprocess(imgPath); // reprocessa a imagem
-            let linha = await lerLinhaDigitavel(imgPath); // tenta por meio padrão
+            let linha = await readDigitableLine(imgPath); // tenta por meio padrão
             if (!linha) {
                 const preImgs = await preprocessScenarios(imgPath); // tenta por cenários de pre-processamento
                 for (const preImg of preImgs) {
-                    linha = await lerLinhaDigitavel(preImg); // imagem reprocessada
+                    linha = await readDigitableLine(preImg); // imagem reprocessada
                     if (linha) break;
                 }
             }
@@ -183,7 +183,7 @@ export async function lerPdfComOcr(pdfPath: string) {
             if (!linha) {
                 const crops = await cropRegions(imgPath);
                 for (const crop of crops) {
-                    linha = await lerLinhaDigitavel(crop);
+                    linha = await readDigitableLine(crop);
                     if (linha) break;
                 }
             }
@@ -196,7 +196,7 @@ export async function lerPdfComOcr(pdfPath: string) {
                 return linha
             } else {
                 // refaz com regex2
-                linha = await lerLinhaDigitavel(imgPath, "regex2");
+                linha = await readDigitableLine(imgPath, "regex2");
                 info = " (ocr inconsistente)";
                 if (linha) {
                     await cleanTemp();

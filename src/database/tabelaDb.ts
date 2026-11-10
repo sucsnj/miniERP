@@ -30,13 +30,13 @@ try {
 }
 
 // Constante exportada com função.
-export const findTabelaSearchHistory = (normalizedQuery: string) => {
+export const findTableSearchHistory = (normalizedQuery: string) => {
   const stmt = db.prepare('SELECT * FROM tabela_search_history WHERE normalized_query = ?');
   return stmt.get(normalizedQuery) as Record<string, unknown> | null;
 };
 
 // Constante exportada com função.
-export const saveTabelaSearchHistory = (query: string, normalizedQuery: string, results: unknown[]) => {
+export const saveTableSearchHistory = (query: string, normalizedQuery: string, results: unknown[]) => {
   const stmt = db.prepare(
     `INSERT INTO tabela_search_history (query, normalized_query, result_json, result_count, updated_at)
       VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -47,12 +47,12 @@ export const saveTabelaSearchHistory = (query: string, normalizedQuery: string, 
         updated_at = CURRENT_TIMESTAMP`
   );
   const result = stmt.run(query, normalizedQuery, JSON.stringify(results), results.length);
-  pruneTabelaSearchHistory();
+  pruneTableSearchHistory();
   return result;
 };
 
 // Constante exportada com função.
-export const getRecentTabelaSearchHistory = () => {
+export const getRecentTableSearchHistory = () => {
   const stmt = db.prepare(
     'SELECT id, query, result_count, updated_at FROM tabela_search_history ORDER BY updated_at DESC LIMIT 25'
   );
@@ -60,13 +60,13 @@ export const getRecentTabelaSearchHistory = () => {
 };
 
 // Constante exportada com função.
-export const clearTabelaSearchHistory = () => {
+export const clearTableSearchHistory = () => {
   const stmt = db.prepare('DELETE FROM tabela_search_history');
   return stmt.run();
 };
 
 // Função local ou componente.
-const pruneTabelaSearchHistory = () => {
+const pruneTableSearchHistory = () => {
   const stmt = db.prepare(
     `DELETE FROM tabela_search_history
      WHERE id NOT IN (

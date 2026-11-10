@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getCategorias, insertCategoria, deleteCategoria, updateCategoria } from '../../../database/produtosDb';
+import { getCategories, insertCategory, deleteCategory, updateCategory } from '../../../database/produtosDb';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const cats = getCategorias();
-      return res.status(200).json(cats);
+      const categories = getCategories();
+      return res.status(200).json(categories);
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
       return res.status(500).json({ error: 'Erro ao buscar categorias.' });
@@ -14,17 +14,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { nome, descricao } = req.body;
-      if (!nome || !nome.trim()) {
+      const { nome: name, descricao: description } = req.body;
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
 
-      const cats = getCategorias();
-      if (cats.some(c => c.nome.toLowerCase() === nome.trim().toLowerCase())) {
+      const categories = getCategories();
+      if (categories.some(c => c.nome.toLowerCase() === name.trim().toLowerCase())) {
         return res.status(400).json({ error: 'Esta categoria já existe.' });
       }
 
-      const result = insertCategoria(nome.trim(), descricao);
+      const result = insertCategory(name.trim(), description);
       return res.status(201).json({ id: result.lastInsertRowid, message: 'Categoria cadastrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar categoria:', error);
@@ -39,7 +39,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       if (!id || isNaN(Number(id))) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }
-      deleteCategoria(Number(id));
+      deleteCategory(Number(id));
       return res.status(200).json({ message: 'Categoria apagada com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar categoria:', error);
@@ -51,14 +51,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'PUT') {
     try {
       const { id } = req.query;
-      const { nome, descricao } = req.body;
+      const { nome: name, descricao: description } = req.body;
       if (!id || isNaN(Number(id))) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }
-      if (!nome || !nome.trim()) {
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
-      updateCategoria(Number(id), nome.trim(), descricao);
+      updateCategory(Number(id), name.trim(), description);
       return res.status(200).json({ message: 'Categoria atualizada com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar categoria:', error);

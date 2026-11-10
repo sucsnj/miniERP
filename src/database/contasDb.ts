@@ -33,7 +33,7 @@ try {
 }
 
 // Constante exportada com função.
-export interface ContaRow {
+export interface AccountRow {
   id: number;
   distribuidora: string;
   valor: number;
@@ -45,78 +45,78 @@ export interface ContaRow {
 }
 
 // Constante exportada com função.
-export const insertConta = (
-  distribuidora: string,
-  valor: number,
-  vencimento: string,
-  documento: string,
-  bancoObservacoes?: string,
+export const insertAccount = (
+  supplierName: string,
+  amount: number,
+  dueDate: string,
+  document: string,
+  bankNotes?: string,
 ) => {
   const stmt = db.prepare(
     'INSERT INTO contas_detalhes (distribuidora, valor, vencimento, documento, status, banco_observacoes) VALUES (?, ?, ?, ?, ?, ?)',
   );
-  return stmt.run(distribuidora, valor, vencimento, documento, 'Pendente', bancoObservacoes || null);
+  return stmt.run(supplierName, amount, dueDate, document, 'Pendente', bankNotes || null);
 };
 
 // Constante exportada com função.
-export const getContasByPeriod = (ano: number, mes?: number) => {
-  const startDate = `${ano}-${String(mes ?? 1).padStart(2, '0')}-01`;
-  const endDate = mes ? parseDate(`${ano}-${mes}-01`).endOf('month').format('YYYY-MM-DD') : `${ano}-12-31`;
+export const getAccountsByPeriod = (year: number, month?: number) => {
+  const startDate = `${year}-${String(month ?? 1).padStart(2, '0')}-01`;
+  const endDate = month ? parseDate(`${year}-${month}-01`).endOf('month').format('YYYY-MM-DD') : `${year}-12-31`;
 
-  const stmt = mes
+  const stmt = month
     ? db.prepare('SELECT * FROM contas_detalhes WHERE vencimento >= ? AND vencimento <= ? ORDER BY vencimento DESC, id DESC')
     : db.prepare('SELECT * FROM contas_detalhes WHERE vencimento >= ? AND vencimento <= ? ORDER BY vencimento DESC, id DESC');
 
-  return stmt.all(startDate, endDate) as unknown as ContaRow[];
+  return stmt.all(startDate, endDate) as unknown as AccountRow[];
 };
 
 // Constante exportada com função.
-export const getContaById = (id: number) => {
+export const getAccountById = (id: number) => {
   const stmt = db.prepare('SELECT * FROM contas_detalhes WHERE id = ?');
   return stmt.get(id);
 };
 
 // Constante exportada com função.
-export const getAllContas = () => {
+export const getAllAccounts = () => {
   const stmt = db.prepare('SELECT * FROM contas_detalhes ORDER BY vencimento DESC, id DESC');
-  return stmt.all() as unknown as ContaRow[];
+  return stmt.all() as unknown as AccountRow[];
 };
 
 // Constante exportada com função.
-export const updateConta = (
+export const updateAccount = (
   id: number,
-  distribuidora: string,
-  valor: number,
-  vencimento: string,
-  documento: string,
-  bancoObservacoes?: string,
+  supplierName: string,
+  amount: number,
+  dueDate: string,
+  document: string,
+  bankNotes?: string,
 ) => {
   const stmt = db.prepare(
     'UPDATE contas_detalhes SET distribuidora = ?, valor = ?, vencimento = ?, documento = ?, banco_observacoes = ? WHERE id = ?',
   );
-  return stmt.run(distribuidora, valor, vencimento, documento, bancoObservacoes || null, id);
+  return stmt.run(supplierName, amount, dueDate, document, bankNotes || null, id);
 };
 
 // Constante exportada com função.
-export const deleteConta = (id: number) => {
+export const deleteAccount = (id: number) => {
   const stmt = db.prepare('DELETE FROM contas_detalhes WHERE id = ?');
   return stmt.run(id);
 };
 
 // Constante exportada com função.
-export const payConta = (id: number) => {
+export const payAccount = (id: number) => {
   const stmt = db.prepare('UPDATE contas_detalhes SET status = ? WHERE id = ?');
   return stmt.run('Pago', id);
 };
 
 // Constante exportada com função.
-export const cancelPaymentConta = (id: number) => {
+export const cancelAccountPayment = (id: number) => {
   const stmt = db.prepare('UPDATE contas_detalhes SET status = ? WHERE id = ?');
   return stmt.run('Pendente', id);
 };
 
 // Constante exportada com função.
-export const backupContasDatabase = () => {
+export const backupAccountsDatabase = () => {
   const backupPath = path.join(process.cwd(), `db/contas-backup-${now().format('YYYY-MM-DD')}.db`);
   db.backup(backupPath);
   return backupPath;

@@ -1,0 +1,59 @@
+.contasPanel {
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    border-radius: 24px;
+                    padding: 22px;
+                    box-shadow: var(--shadow);
+                }
+
+                .summaryPanel {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+
+                .panelHeader {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    margin-bottom: 18px;
+                }
+
+                .panelHeader h2 {
+                    margin: 0;
+                    font-size: 1.4rem;
+                }
+
+                .statusChip {
+                    padding: 8px 12px;
+                    border-radius: 999px;
+                    background: var(--surface-soft);
+                    color: var(--muted);
+                    font-size: 0.9rem;
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
+                    max-width: 100%;
+                }
+
+                .summaryCard {
+                    background: var(--surface-strong);
+                    border: 1px solid var(--border);
+                    border-radius: 22px;
+                    padding: 20px;
+                    min-height: 220px;
+                }
+
+                .summaryRow:last-child {
+                  border-bottom: none;
+                }
+
+                .summaryRow {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 16px 0;
+                    border-bottom: 1px solid var(--border);
+                }

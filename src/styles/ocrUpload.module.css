@@ -1,0 +1,84 @@
+.ocrResults {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin-top: 16px;
+                }
+
+                .ocrUploadWrapper {
+                    width: 100%;
+                    padding: 0 5px 5px 7px;
+                    border-radius: 14px;
+                    background: var(--surface-soft);
+                    border: 1px solid var(--border);
+                    color: var(--foreground);
+                    backdrop-filter: blur(12px);
+                    transition:
+                        transform 0.2s ease,
+                        background 0.2s ease,
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease;
+                    overflow-x: auto;
+                    line-height: 1.5;
+
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                    user-select: all;
+                }
+
+                .ocrUploadWrapper:hover {
+                    cursor: pointer;
+                    background: var(--surface);
+                    border-color: var(--border);
+                    transform: translateY(-2px);
+                    box-shadow:
+                        0 8px 24px rgba(0, 0, 0, 0.18);
+                }
+
+                .ocrUploadWrapper:active {
+                    transform: scale(0.99);
+                }
+
+                .ocrUpload {
+                    width: 100%;
+                    padding: 12px 14px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border);
+                    background: var(--surface-soft);
+                    color: var(--foreground);
+                    backdrop-filter: blur(10px);
+                    transition:
+                        border-color 0.2s ease,
+                        background 0.2s ease,
+                        box-shadow 0.2s ease;
+                    outline: none;
+                }
+
+                .ocrUpload:hover {
+                    background: var(--surface);
+                }
+
+                .ocrUpload:focus {
+                    border-color: var(--accent);
+                    box-shadow:
+                        0 0 0 4px var(--accent);
+                    opacity: 0.3;
+                }
+
+                .ocrUpload::file-selector-button {
+                    margin-right: 12px;
+                    padding: 8px 14px;
+                    border: none;
+                    border-radius: 10px;
+                    background: var(--surface);
+                    color: var(--foreground);
+                    cursor: pointer;
+                    transition:
+                        background 0.2s ease,
+                        transform 0.2s ease;
+                }
+
+                .ocrUpload::file-selector-button:hover {
+                    background: var(--surface-soft);
+                    transform: translateY(-1px);
+                }

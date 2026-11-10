@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
-  getItens,
+  getItems,
   getItemById,
   insertItem,
   updateItem,
   deleteItem,
   toggleItemStatus,
-  checkDuplicateCodigoInterno,
+  checkDuplicateInternalCode,
   checkDuplicateBarcode,
 } from '../../database/produtosDb';
 import { parseNumber } from '../../utils/number';
 
-interface UnidadePayload {
+interface UnitPayload {
   unidade_medida_id: number;
   multiplicador_unidade: number;
   principal: number;
@@ -47,7 +47,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         pageSize: pageSize ? Number(pageSize) : 10,
       };
 
-      const result = getItens(parsedOptions);
+      const result = getItems(parsedOptions);
       return res.status(200).json(result);
     } catch (error) {
       console.error('Erro ao buscar itens:', error);
@@ -57,7 +57,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { action, id, ativo, tipo, nome, descricao, categoria_id, unidade_medida_id, marca_id, fornecedor_id, preco_compra, margem_lucro, preco_venda, estoque, multiplicador_unidade, codigo_interno, referencia, codigos_barras, unidades_medida } = req.body;
+      const {
+        action,
+        id,
+        ativo,
+        tipo: itemType,
+        nome: name,
+        descricao: description,
+        categoria_id,
+        unidade_medida_id,
+        marca_id,
+        fornecedor_id,
+        preco_compra: purchasePriceInput,
+        margem_lucro: profitMarginInput,
+        preco_venda: salePriceInput,
+        estoque: stockInput,
+        multiplicador_unidade: multiplierInput,
+        codigo_interno: internalCode,
+        referencia: reference,
+        codigos_barras: barcodesInput,
+        unidades_medida: unitsInput,
+      } = req.body;
 
       // Altera status de ativo/inativo
       if (action === 'toggle-status') {
@@ -78,41 +98,41 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       }
 
       // Validação do cadastro básico
-      if (tipo !== 'PRODUTO') {
+      if (itemType !== 'PRODUTO') {
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
-      if (!nome || !nome.trim()) {
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'O nome é obrigatório.' });
       }
       if (!categoria_id || isNaN(Number(categoria_id))) {
         return res.status(400).json({ error: 'Selecione uma categoria válida.' });
       }
       // Validação de unidades de medida
-      let listUnidades: UnidadePayload[] = [];
-      if (tipo === 'PRODUTO') {
-        if (unidades_medida && Array.isArray(unidades_medida)) {
-          listUnidades = unidades_medida.map((u: UnidadePayload) => ({
+      let unitList: UnitPayload[] = [];
+      if (itemType === 'PRODUTO') {
+        if (unitsInput && Array.isArray(unitsInput)) {
+          unitList = unitsInput.map((u: UnitPayload) => ({
             unidade_medida_id: Number(u.unidade_medida_id),
             multiplicador_unidade: parseNumber(u.multiplicador_unidade),
             principal: u.principal ? 1 : 0
           })).filter(u => !isNaN(u.unidade_medida_id) && u.unidade_medida_id > 0);
 
-          if (listUnidades.length === 0) {
+          if (unitList.length === 0) {
             return res.status(400).json({ error: 'Nenhuma unidade de medida válida foi informada.' });
           }
 
-          const uIds = listUnidades.map(u => u.unidade_medida_id);
+          const uIds = unitList.map(u => u.unidade_medida_id);
           const duplicateUnits = uIds.filter((item, index) => uIds.indexOf(item) !== index);
           if (duplicateUnits.length > 0) {
             return res.status(400).json({ error: 'Há unidades de medida duplicadas no formulário.' });
           }
 
-          const countPrincipalUnidade = listUnidades.filter(u => u.principal === 1).length;
-          if (countPrincipalUnidade === 0) {
-            listUnidades[0].principal = 1;
-          } else if (countPrincipalUnidade > 1) {
+          const mainUnitCount = unitList.filter(u => u.principal === 1).length;
+          if (mainUnitCount === 0) {
+            unitList[0].principal = 1;
+          } else if (mainUnitCount > 1) {
             let found = false;
-            for (const u of listUnidades) {
+            for (const u of unitList) {
               if (u.principal === 1) {
                 if (!found) found = true;
                 else u.principal = 0;
@@ -134,14 +154,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       }
 
       // Validação de código interno duplicado
-      if (codigo_interno && checkDuplicateCodigoInterno(codigo_interno)) {
-        return res.status(400).json({ error: `O código interno "${codigo_interno}" já está cadastrado.` });
+      if (internalCode && checkDuplicateInternalCode(internalCode)) {
+        return res.status(400).json({ error: `O código interno "${internalCode}" já está cadastrado.` });
       }
 
       // Validação de códigos de barras
       let listBarcodes: BarcodePayload[] = [];
-      if (codigos_barras && Array.isArray(codigos_barras)) {
-        listBarcodes = codigos_barras
+      if (barcodesInput && Array.isArray(barcodesInput)) {
+        listBarcodes = barcodesInput
           .map((cb: BarcodePayload) => ({
             codigo_barras: cb.codigo_barras ? String(cb.codigo_barras).trim() : '',
             principal: cb.principal ? 1 : 0
@@ -175,40 +195,39 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         }
       }
 
-      const precoCompraRaw = parseNumber(preco_compra);
-      const margemLucroRaw = parseNumber(margem_lucro);
-      const precoVendaRaw = parseNumber(preco_venda);
-      const estoqueRaw = parseNumber(estoque);
-      const multiplicadorRaw = parseNumber(multiplicador_unidade);
+      const purchasePriceRaw = parseNumber(purchasePriceInput);
+      const profitMarginRaw = parseNumber(profitMarginInput);
+      const salePriceRaw = parseNumber(salePriceInput);
+      const stockRaw = parseNumber(stockInput);
+      const multiplierRaw = parseNumber(multiplierInput);
 
-      const precoCompraNumber = Number.isFinite(precoCompraRaw) ? precoCompraRaw : 0;
-      const margemLucroNumber = Number.isFinite(margemLucroRaw) ? margemLucroRaw : 0;
-      const precoVendaNumber = Number.isFinite(precoVendaRaw) ? precoVendaRaw : 0;
-      const estoqueNumber = Number.isFinite(estoqueRaw) ? estoqueRaw : 0;
-      const multiplicadorNumber = Number.isFinite(multiplicadorRaw) && multiplicadorRaw > 0 ? multiplicadorRaw : 1;
+      const purchasePrice = Number.isFinite(purchasePriceRaw) ? purchasePriceRaw : 0;
+      const profitMargin = Number.isFinite(profitMarginRaw) ? profitMarginRaw : 0;
+      const salePrice = Number.isFinite(salePriceRaw) ? salePriceRaw : 0;
+      const stock = Number.isFinite(stockRaw) ? stockRaw : 0;
+      const multiplier = Number.isFinite(multiplierRaw) && multiplierRaw > 0 ? multiplierRaw : 1;
 
-      const mainUnit = listUnidades.length > 0 ? listUnidades.find(u => u.principal === 1) : null;
-      const finalUnidadeId = mainUnit ? mainUnit.unidade_medida_id : Number(unidade_medida_id);
-      const finalMultiplicador = mainUnit ? mainUnit.multiplicador_unidade : multiplicadorNumber;
+      const mainUnit = unitList.length > 0 ? unitList.find(u => u.principal === 1) : null;
+      const finalUnitId = mainUnit ? mainUnit.unidade_medida_id : Number(unidade_medida_id);
+      const finalMultiplier = mainUnit ? mainUnit.multiplicador_unidade : multiplier;
 
       const itemId = insertItem({
-        tipo,
-        nome: nome.trim(),
-        descricao,
+        tipo: itemType,
+        nome: name.trim(),        descricao: description,
         categoria_id: Number(categoria_id),
-        unidade_medida_id: tipo === 'PRODUTO' ? finalUnidadeId : 21,
+        unidade_medida_id: itemType === 'PRODUTO' ? finalUnitId : 21,
         marca_id: Number(marca_id),
         fornecedor_id: Number(fornecedor_id),
-        preco_compra: precoCompraNumber,
-        margem_lucro: margemLucroNumber,
-        preco_venda: precoVendaNumber,
-        estoque: estoqueNumber,
-        multiplicador_unidade: finalMultiplicador,
-        codigo_interno: codigo_interno || undefined,
-        referencia: referencia || undefined,
+        preco_compra: purchasePrice,
+        margem_lucro: profitMargin,
+        preco_venda: salePrice,
+        estoque: stock,
+        multiplicador_unidade: finalMultiplier,
+        codigo_interno: internalCode || undefined,
+        referencia: reference || undefined,
         ativo: ativo !== undefined ? Number(ativo) : 1,
         codigos_barras: listBarcodes,
-        unidades_medida: listUnidades,
+        unidades_medida: unitList,
       });
 
       return res.status(201).json({ id: itemId, message: 'Item cadastrado com sucesso.' });
@@ -220,7 +239,26 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'PUT') {
     try {
-      const { id, tipo, nome, descricao, categoria_id, unidade_medida_id, marca_id, fornecedor_id, preco_compra, margem_lucro, preco_venda, estoque, multiplicador_unidade, codigo_interno, referencia, ativo, codigos_barras, unidades_medida } = req.body;
+      const {
+        id,
+        tipo: itemType,
+        nome: name,
+        descricao: description,
+        categoria_id,
+        unidade_medida_id,
+        marca_id,
+        fornecedor_id,
+        preco_compra: purchasePriceInput,
+        margem_lucro: profitMarginInput,
+        preco_venda: salePriceInput,
+        estoque: stockInput,
+        multiplicador_unidade: multiplierInput,
+        codigo_interno: internalCode,
+        referencia: reference,
+        ativo,
+        codigos_barras: barcodesInput,
+        unidades_medida: unitsInput,
+      } = req.body;
 
       if (!id) {
         return res.status(400).json({ error: 'O ID do item é obrigatório para atualização.' });
@@ -232,41 +270,41 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       }
 
       // Validação do cadastro básico
-      if (tipo !== 'PRODUTO') {
+      if (itemType !== 'PRODUTO') {
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
-      if (!nome || !nome.trim()) {
+      if (!name || !name.trim()) {
         return res.status(400).json({ error: 'O nome é obrigatório.' });
       }
       if (!categoria_id || isNaN(Number(categoria_id))) {
         return res.status(400).json({ error: 'Selecione uma categoria válida.' });
       }
       // Validação de unidades de medida
-      let listUnidades: UnidadePayload[] = [];
-      if (tipo === 'PRODUTO') {
-        if (unidades_medida && Array.isArray(unidades_medida)) {
-          listUnidades = unidades_medida.map((u: UnidadePayload) => ({
+      let unitList: UnitPayload[] = [];
+      if (itemType === 'PRODUTO') {
+        if (unitsInput && Array.isArray(unitsInput)) {
+          unitList = unitsInput.map((u: UnitPayload) => ({
             unidade_medida_id: Number(u.unidade_medida_id),
             multiplicador_unidade: parseNumber(u.multiplicador_unidade),
             principal: u.principal ? 1 : 0
           })).filter(u => !isNaN(u.unidade_medida_id) && u.unidade_medida_id > 0);
 
-          if (listUnidades.length === 0) {
+          if (unitList.length === 0) {
             return res.status(400).json({ error: 'Nenhuma unidade de medida válida foi informada.' });
           }
 
-          const uIds = listUnidades.map(u => u.unidade_medida_id);
+          const uIds = unitList.map(u => u.unidade_medida_id);
           const duplicateUnits = uIds.filter((item, index) => uIds.indexOf(item) !== index);
           if (duplicateUnits.length > 0) {
             return res.status(400).json({ error: 'Há unidades de medida duplicadas no formulário.' });
           }
 
-          const countPrincipalUnidade = listUnidades.filter(u => u.principal === 1).length;
-          if (countPrincipalUnidade === 0) {
-            listUnidades[0].principal = 1;
-          } else if (countPrincipalUnidade > 1) {
+          const mainUnitCount = unitList.filter(u => u.principal === 1).length;
+          if (mainUnitCount === 0) {
+            unitList[0].principal = 1;
+          } else if (mainUnitCount > 1) {
             let found = false;
-            for (const u of listUnidades) {
+            for (const u of unitList) {
               if (u.principal === 1) {
                 if (!found) found = true;
                 else u.principal = 0;
@@ -287,27 +325,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Selecione um fornecedor válido.' });
       }
 
-      const precoCompraRaw = parseNumber(preco_compra);
-      const margemLucroRaw = parseNumber(margem_lucro);
-      const precoVendaRaw = parseNumber(preco_venda);
-      const estoqueRaw = parseNumber(estoque);
-      const multiplicadorRaw = parseNumber(multiplicador_unidade);
+      const purchasePriceRaw = parseNumber(purchasePriceInput);
+      const profitMarginRaw = parseNumber(profitMarginInput);
+      const salePriceRaw = parseNumber(salePriceInput);
+      const stockRaw = parseNumber(stockInput);
+      const multiplierRaw = parseNumber(multiplierInput);
 
-      const precoCompraNumber = Number.isFinite(precoCompraRaw) ? precoCompraRaw : 0;
-      const margemLucroNumber = Number.isFinite(margemLucroRaw) ? margemLucroRaw : 0;
-      const precoVendaNumber = Number.isFinite(precoVendaRaw) ? precoVendaRaw : 0;
-      const estoqueNumber = Number.isFinite(estoqueRaw) ? estoqueRaw : 0;
-      const multiplicadorNumber = Number.isFinite(multiplicadorRaw) && multiplicadorRaw > 0 ? multiplicadorRaw : 1;
+      const purchasePrice = Number.isFinite(purchasePriceRaw) ? purchasePriceRaw : 0;
+      const profitMargin = Number.isFinite(profitMarginRaw) ? profitMarginRaw : 0;
+      const salePrice = Number.isFinite(salePriceRaw) ? salePriceRaw : 0;
+      const stock = Number.isFinite(stockRaw) ? stockRaw : 0;
+      const multiplier = Number.isFinite(multiplierRaw) && multiplierRaw > 0 ? multiplierRaw : 1;
 
       // Validação de código interno: não pode ser alterado
-      if (codigo_interno && existing.codigo_interno && codigo_interno.trim() !== existing.codigo_interno) {
+      if (internalCode && existing.codigo_interno && internalCode.trim() !== existing.codigo_interno) {
         return res.status(400).json({ error: 'O código interno não pode ser alterado.' });
       }
 
       // Validação de códigos de barras
       let listBarcodes: BarcodePayload[] = [];
-      if (codigos_barras && Array.isArray(codigos_barras)) {
-        listBarcodes = codigos_barras
+      if (barcodesInput && Array.isArray(barcodesInput)) {
+        listBarcodes = barcodesInput
           .map((cb: BarcodePayload) => ({
             codigo_barras: cb.codigo_barras ? String(cb.codigo_barras).trim() : '',
             principal: cb.principal ? 1 : 0
@@ -341,28 +379,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         }
       }
 
-      const mainUnit = listUnidades.length > 0 ? listUnidades.find(u => u.principal === 1) : null;
-      const finalUnidadeId = mainUnit ? mainUnit.unidade_medida_id : Number(unidade_medida_id);
-      const finalMultiplicador = mainUnit ? mainUnit.multiplicador_unidade : multiplicadorNumber;
+      const mainUnit = unitList.length > 0 ? unitList.find(u => u.principal === 1) : null;
+      const finalUnitId = mainUnit ? mainUnit.unidade_medida_id : Number(unidade_medida_id);
+      const finalMultiplier = mainUnit ? mainUnit.multiplicador_unidade : multiplier;
 
       updateItem(id, {
-        tipo,
-        nome: nome.trim(),
-        descricao,
+        tipo: itemType,
+        nome: name.trim(),        descricao: description,
         categoria_id: Number(categoria_id),
-        unidade_medida_id: finalUnidadeId,
+        unidade_medida_id: finalUnitId,
         marca_id: Number(marca_id),
         fornecedor_id: Number(fornecedor_id),
-        preco_compra: precoCompraNumber,
-        margem_lucro: margemLucroNumber,
-        preco_venda: precoVendaNumber,
-        estoque: estoqueNumber,
-        multiplicador_unidade: finalMultiplicador,
-        codigo_interno: codigo_interno || undefined,
-        referencia: referencia || undefined,
+        preco_compra: purchasePrice,
+        margem_lucro: profitMargin,
+        preco_venda: salePrice,
+        estoque: stock,
+        multiplicador_unidade: finalMultiplier,
+        codigo_interno: internalCode || undefined,
+        referencia: reference || undefined,
         ativo: ativo !== undefined ? Number(ativo) : 1,
         codigos_barras: listBarcodes,
-        unidades_medida: listUnidades,
+        unidades_medida: unitList,
       });
 
       return res.status(200).json({ message: 'Item atualizado com sucesso.' });

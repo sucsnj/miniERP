@@ -1,39 +1,39 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { insertConta, getAllContas } from '../../../database/contasDb';
-import { getAllNotas, insertNota } from '../../../database/notasDb';
+import { insertAccount, getAllAccounts } from '../../../database/contasDb';
+import { getAllInvoices, insertInvoice } from '../../../database/notasDb';
 import parseNumber, { parseCurrency } from '../../../utils/number';
 import { toDate } from '../../../utils/date';
 import { parseStringPromise } from 'xml2js';
 
 // Nomes de distribuidoras válidos
-const nomesValidos = [
+const validNames = [
   'acripel', 'cimed', 'profarma', 'g1', 'nova',
   'unilever', 'aujo', 'f&f', 'nds', 'mbca', 'plena', 'total', 'pro'
 ];
 
 // Funções auxiliares para formatar e normalizar dados
-const formatarDistribuidora = (nome: string) => {
-  const lower = nome.toLowerCase();
+const formatDistributor = (name: string) => {
+  const lower = name.toLowerCase();
   if (lower.includes('f&f')) return 'FF';
-  const encontrado = nomesValidos.find(n => lower.includes(n));
-  if (encontrado) {
-    return encontrado.charAt(0).toUpperCase() + encontrado.slice(1);
+  const foundName = validNames.find(n => lower.includes(n));
+  if (foundName) {
+    return foundName.charAt(0).toUpperCase() + foundName.slice(1);
   }
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 };
 
 // Funções auxiliares para ajustar valores por distribuidora
-const ajustarValorPorDistribuidora = (nome: string, valor: number) => {
-  if (nome.toLowerCase() === 'cimed') return valor + 3.99;
-  if (nome.toLowerCase() === 'pro') return valor + 1.39;
-  if (nome.toLowerCase() === 'profarma') return valor + 1.39;
-  return valor;
+const adjustAmountByDistributor = (name: string, amount: number) => {
+  if (name.toLowerCase() === 'cimed') return amount + 3.99;
+  if (name.toLowerCase() === 'pro') return amount + 1.39;
+  if (name.toLowerCase() === 'profarma') return amount + 1.39;
+  return amount;
 };
 
 // Funções auxiliares para normalizar documentos
-const normalizarDocumento = (doc: string) => {
-  return doc.replace(/[A-Z]/gi, (letra) => {
-    const code = letra.toUpperCase().charCodeAt(0) - 64; // A=1
+const normalizeDocument = (document: string) => {
+  return document.replace(/[A-Z]/gi, (letter) => {
+    const code = letter.toUpperCase().charCodeAt(0) - 64; // A=1
     return code.toString();
   });
 };
@@ -54,74 +54,74 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Caminho correto dentro do XML
     const infNFe = parsed.nfeProc.NFe[0].infNFe[0];
-    const distribuidoraRaw = infNFe.emit[0].xNome[0];
-    const nNF = infNFe.ide[0].nNF[0];
-    const duplicatas = infNFe.cobr?.[0]?.dup ?? []; // caso não exista duplicatas, retorna []
-    // const duplicatas = infNFe.cobr[0].dup;
+    const rawDistributorName = infNFe.emit[0].xNome[0];
+    const invoiceNumber = infNFe.ide[0].nNF[0];
+    const duplicates = infNFe.cobr?.[0]?.dup ?? []; // caso não exista duplicatas, retorna []
+    // const duplicateItems = infNFe.cobr[0].dup;
 
-    const dataEmissao = infNFe.ide[0].dhEmi[0]; // emissão
+    const issueDate = infNFe.ide[0].dhEmi[0]; // emissão
     // const vPag = infNFe.cobr[0].fat[0].vOrig[0]; // total
-    const vNF = infNFe.total[0].ICMSTot[0].vNF[0]; // total
-    const chave = parsed.nfeProc.protNFe[0].infProt[0].chNFe[0]; // chave
+    const invoiceTotal = infNFe.total[0].ICMSTot[0].vNF[0]; // total
+    const accessKey = parsed.nfeProc.protNFe[0].infProt[0].chNFe[0]; // chave
 
-    let distribuidora = formatarDistribuidora(distribuidoraRaw);
-    const documentoBase = normalizarDocumento(nNF);
+    let distributor = formatDistributor(rawDistributorName);
+    const documentBase = normalizeDocument(invoiceNumber);
 
-    const registros: { distribuidora: string; valor: number; vencimento: string; documento: string }[] = [];
+    const records: { distribuidora: string; valor: number; vencimento: string; documento: string }[] = [];
 
-    for (let i = 0; i < duplicatas.length; i++) {
-      let valor = parseNumber(duplicatas[i].vDup[0]);
-      let vencimento = duplicatas[i].dVenc[0];
+    for (let i = 0; i < duplicates.length; i++) {
+      let amount = parseNumber(duplicates[i].vDup[0]);
+      let dueDate = duplicates[i].dVenc[0];
 
       // valida e normaliza valores e datas
-      const validatedValor = parseCurrency(String(duplicatas[i].vDup[0])) ?? valor;
-      const validatedVencimento = toDate(vencimento);
+      const validatedAmount = parseCurrency(String(duplicates[i].vDup[0])) ?? amount;
+      const validatedDueDate = toDate(dueDate);
 
-      valor = ajustarValorPorDistribuidora(distribuidora, validatedValor);
-      vencimento = validatedVencimento ? validatedVencimento.toISOString().split('T')[0] : vencimento;
-      const documento = `${documentoBase}${i + 1}`;
+      amount = adjustAmountByDistributor(distributor, validatedAmount);
+      dueDate = validatedDueDate ? validatedDueDate.toISOString().split('T')[0] : dueDate;
+      const documentNumber = `${documentBase}${i + 1}`;
 
       // se for distribuidora for igual a 'Distribuidora de medicamentos ltda', muda para 'Mbca'
-      if (distribuidora.toLowerCase() === 'distribuidora de medicamentos ltda') {
-        distribuidora = 'Mbca';
+      if (distributor.toLowerCase() === 'distribuidora de medicamentos ltda') {
+        distributor = 'Mbca';
       }
 
-      const todasContas = getAllContas();
+      const allAccounts = getAllAccounts();
       // se já existir uma conta com a mesma distribuidora e documento, pule para a próxima
-      const contaExistente = todasContas.find(c => c.distribuidora === distribuidora && c.documento === documento);
-      if (contaExistente) {
+      const duplicateAccount = allAccounts.find(c => c.distribuidora === distributor && c.documento === documentNumber);
+      if (duplicateAccount) {
         continue; // pula pra proxima duplicata
       }
 
-      insertConta(distribuidora, valor, vencimento, documento);
+      insertAccount(distributor, amount, dueDate, documentNumber);
 
-      registros.push({ distribuidora, valor, vencimento, documento });
+      records.push({ distribuidora: distributor, valor: amount, vencimento: dueDate, documento: documentNumber });
     }
 
     // flag para saber se alguma nota foi inserida
-    let notaInserida = false;
+    let invoiceInserted = false;
 
     // se já existir uma nota com a mesma chave
-    const todasNotas = getAllNotas();
-    const notaExistente = todasNotas.find(n => n.chave === chave);
+    const allInvoices = getAllInvoices();
+    const existingInvoice = allInvoices.find(n => n.chave === accessKey);
 
-    if (notaExistente) {
-      if (registros.length > 0) {
+    if (existingInvoice) {
+      if (records.length > 0) {
         // houve duplicatas novas
-        return res.status(200).json({ sucesso: true, registros });
+        return res.status(200).json({ sucesso: true, registros: records });
       } else {
         // nenhuma duplicata nova e nota já existe
         return res.status(400).json({ error: 'Nota e duplicata(s) já existentes' });
       }
     } else {
       // adiciona nota
-      insertNota(distribuidora, chave, dataEmissao, vNF);
-      notaInserida = true;
+      insertInvoice(distributor, accessKey, issueDate, invoiceTotal);
+      invoiceInserted = true;
     }
 
     // se chegou aqui, ou inseriu nota ou duplicatas
-    if (notaInserida || registros.length > 0) {
-      return res.status(200).json({ sucesso: true, registros });
+    if (invoiceInserted || records.length > 0) {
+      return res.status(200).json({ sucesso: true, registros: records });
     } else {
       return res.status(400).json({ error: 'Nada foi inserido' });
     }

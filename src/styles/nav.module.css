@@ -17,11 +17,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* Compensar a altura da nav */
-body {
-  padding-top: 48px; /* mesma altura da nav */
-}
-
 .rightSide {
   display: flex;
   align-items: center;
@@ -52,7 +47,7 @@ body {
 .themeButton {
   margin-left: 12px;
   border-radius: 999px;
-  border: 0px solid var(--border);
+  border: 0 solid var(--border);
   background: var(--surface);
   color: inherit;
   padding: 8px 14px;
@@ -187,7 +182,7 @@ body {
 @media (max-width: 436px) {
   .nav {
     gap: 8px;
-    padding: 8px 8px;
+    padding: 8px;
   }
 
   .navLinks {

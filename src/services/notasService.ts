@@ -1,4 +1,4 @@
-export interface NotaDetalhe {
+export interface InvoiceDetails {
   id: number;
   distribuidora: string;
   chave: string;
@@ -7,10 +7,10 @@ export interface NotaDetalhe {
 }
 
 // Função assíncrona exportada.
-export const buscarNotasPorPeriodo = async (ano: number, mes?: number): Promise<NotaDetalhe[]> => {
-  const params = new URLSearchParams({ ano: String(ano) });
-  if (mes !== undefined) {
-    params.append('mes', String(mes));
+export const fetchInvoicesByPeriod = async (year: number, month?: number): Promise<InvoiceDetails[]> => {
+  const params = new URLSearchParams({ ano: String(year) });
+  if (month !== undefined) {
+    params.append('mes', String(month));
   }
 
   const response = await fetch(`/api/notas?${params.toString()}`);
@@ -18,8 +18,8 @@ export const buscarNotasPorPeriodo = async (ano: number, mes?: number): Promise<
 };
 
 // Função assíncrona exportada.
-export const buscarNotaPorValor = async (valor: number): Promise<NotaDetalhe | null> => {
-  const params = new URLSearchParams({ valor: String(valor) });
+export const fetchInvoiceByAmount = async (amount: number): Promise<InvoiceDetails | null> => {
+  const params = new URLSearchParams({ valor: String(amount) });
   const response = await fetch(`/api/notas?${params.toString()}`);
   if (response.status === 404) {
     return null;
@@ -28,13 +28,13 @@ export const buscarNotaPorValor = async (valor: number): Promise<NotaDetalhe | n
 };
 
 // Função assíncrona exportada.
-export const buscarTodasNotas = async (): Promise<NotaDetalhe[]> => {
+export const fetchAllInvoices = async (): Promise<InvoiceDetails[]> => {
   const response = await fetch('/api/notas');
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const excluirNota = async (id: number) => {
+export const deleteInvoice = async (id: number) => {
   const response = await fetch('/api/notas', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },

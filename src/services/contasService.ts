@@ -1,4 +1,4 @@
-export interface ContaDetalhe {
+export interface AccountDetails {
   id: number;
   distribuidora: string;
   valor: number;
@@ -10,23 +10,29 @@ export interface ContaDetalhe {
 }
 
 // Função assíncrona exportada.
-export const registrarConta = async (
-  distribuidora: string,
-  valor: number,
-  vencimento: string,
-  documento: string,
-  bancoObservacoes?: string,
+export const registerAccount = async (
+  supplierName: string,
+  amount: number,
+  dueDate: string,
+  document: string,
+  bankNotes?: string,
 ) => {
   const response = await fetch('/api/contas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ distribuidora, valor, vencimento, documento, bancoObservacoes }),
+    body: JSON.stringify({
+      distribuidora: supplierName,
+      valor: amount,
+      vencimento: dueDate,
+      documento: document,
+      bancoObservacoes: bankNotes,
+    }),
   });
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const importarContasXML = async (xml: string) => {
+export const importAccountsFromXml = async (xml: string) => {
   const response = await fetch('/api/contas/import', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -36,10 +42,10 @@ export const importarContasXML = async (xml: string) => {
 };
 
 // Função assíncrona exportada.
-export const buscarContas = async (ano: number, mes?: number): Promise<ContaDetalhe[]> => {
-  const params = new URLSearchParams({ ano: String(ano) });
-  if (mes !== undefined) {
-    params.append('mes', String(mes));
+export const fetchAccounts = async (year: number, month?: number): Promise<AccountDetails[]> => {
+  const params = new URLSearchParams({ ano: String(year) });
+  if (month !== undefined) {
+    params.append('mes', String(month));
   }
 
   const response = await fetch(`/api/contas?${params.toString()}`);
@@ -47,7 +53,7 @@ export const buscarContas = async (ano: number, mes?: number): Promise<ContaDeta
 };
 
 // Função assíncrona exportada.
-export const pagarConta = async (id: number) => {
+export const payAccount = async (id: number) => {
   const response = await fetch('/api/contas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -57,7 +63,7 @@ export const pagarConta = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const cancelarPagamentoConta = async (id: number) => {
+export const cancelAccountPayment = async (id: number) => {
   const response = await fetch('/api/contas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -67,24 +73,31 @@ export const cancelarPagamentoConta = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const atualizarConta = async (
+export const updateAccount = async (
   id: number,
-  distribuidora: string,
-  valor: number,
-  vencimento: string,
-  documento: string,
-  bancoObservacoes?: string,
+  supplierName: string,
+  amount: number,
+  dueDate: string,
+  document: string,
+  bankNotes?: string,
 ) => {
   const response = await fetch('/api/contas', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, distribuidora, valor, vencimento, documento, bancoObservacoes }),
+    body: JSON.stringify({
+      id,
+      distribuidora: supplierName,
+      valor: amount,
+      vencimento: dueDate,
+      documento: document,
+      bancoObservacoes: bankNotes,
+    }),
   });
   return response.json();
 };
 
 // Função assíncrona exportada.
-export const excluirConta = async (id: number) => {
+export const deleteAccount = async (id: number) => {
   const response = await fetch('/api/contas', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -94,7 +107,7 @@ export const excluirConta = async (id: number) => {
 };
 
 // Função assíncrona exportada.
-export const fazerBackupContas = async () => {
+export const backupAccounts = async () => {
   const response = await fetch('/api/contas/backup', {
     method: 'POST',
   });
