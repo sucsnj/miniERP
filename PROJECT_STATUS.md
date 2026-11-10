@@ -22,6 +22,14 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 
 ## Últimas mudanças
 
+### Migração SQLite → Supabase: Fase 2 (client server-only + env) — 09/11/2026
+
+- **Implementado:** `src/database/supabase.ts` com `getSupabaseServerClient()` (singleton, `server-only`, service role, sessão/refresh desabilitados) e `src/utils/env.ts` com validação/cache de `NEXT_PUBLIC_SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`.
+- **Dependências:** `@supabase/supabase-js` e `server-only` instalados.
+- **Limpeza:** removidos 52 arquivos legados (45 componentes na raiz de `src/components` + 7 hooks antigos) sem imports ativos; `check-docs` e `check-encoding` voltaram a passar.
+- **Escopo:** cliente ainda não é usado por nenhuma rota; SQLite continua ativo até a Fase 3.
+- **Verificação:** `check-docs`, `check-encoding`, `tsc` e `lint` (executar ao final).
+
 ### Migração SQLite → Supabase: Fase 0 (ADR 0012) + Fase 1 (schema) — 09/11/2026
 
 - **Decisões registradas:** projeto Supabase único com schema `public`; acesso somente por API routes com `service role`; nomenclatura inglesa ponta a ponta; UUID; produtos/serviços separados; transações via RPC; sem migração de dados; backups locais e OCR/PDF removidos futuramente.
@@ -347,7 +355,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 
 ## Pendentes
 
-- **Migração Supabase (ADR 0012):** Fases 0 e 1 concluídas (decisões/ADR e `supabase/schema.sql`). Próximas: aplicar o SQL no Dashboard; Fase 2 (client server-only + env); Fase 3 (domínios vendas/estoque → catálogo → contas/notas → tabela → consolidação, com renomeação ponta a ponta); Fase 4 (remover SQLite, backups e OCR); Fase 5 (Vercel/uploads, auth depois).
+- **Migração Supabase (ADR 0012):** Fases 0, 1 e 2 concluídas (decisões/ADR, `supabase/schema.sql`, client server-only + env). Próximas: aplicar o SQL no Dashboard; Fase 3 (domínios vendas/estoque → catálogo → contas/notas → tabela → consolidação, com renomeação ponta a ponta); Fase 4 (remover SQLite, backups e OCR); Fase 5 (Vercel/uploads, auth depois).
 - Nenhuma pendência de lint/typecheck/build.
 - **Migração de botões (ADR 0010):** Fase 0 concluída; próximas fases: compartilhados (9), endpoint principal (20), listagens de vendas (11), contas a pagar (20), produtos (21), importação/PIX (10), carrinho (9), páginas/filtros (13) e limpeza final. Os controles especiais (`historyItem`, drop zone e item clicável do catálogo) ficam para uma fase de acessibilidade.
 - **Calculadora:** Fases 0, 1, 2 e 3 concluídas. Implementação encerrada; restam apenas testes manuais opcionais no formulário.

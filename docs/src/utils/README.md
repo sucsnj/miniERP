@@ -11,6 +11,7 @@
 | [clipboard.md](./clipboard.md) | Cópia para a área de transferência com fallback. |
 | [date.md](./date.md) | Datas/horas em `America/Recife` (`dayjs`). |
 | [download.md](./download.md) | Download de Data URL no navegador. |
+| [env.md](./env.md) | Validação das variáveis de ambiente do servidor Supabase. |
 | [edit.md](./edit.md) | Regra de janela de edição de vendas (2 dias). |
 | [focus.md](./focus.md) | Focus trap para modais. |
 | [formatter.md](./formatter.md) | Formatação/arredondamento monetário. |

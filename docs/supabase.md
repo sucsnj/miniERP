@@ -24,6 +24,8 @@ Já presentes no `.env.local` (e devem ser configuradas na Vercel):
 | `SUPABASE_SERVICE_ROLE_KEY` | Chave **somente servidor** usada pelas API routes. Nunca expor no browser. |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Reservada para acesso client-side futuro; não usada nesta fase. |
 
+A validação é centralizada em `src/utils/env.ts` e falha na primeira leitura se `NEXT_PUBLIC_SUPABASE_URL` (URL http/https) ou `SUPABASE_SERVICE_ROLE_KEY` estiverem ausentes/inválidas.
+
 ## Convenções do banco
 
 - Schema único: `public`.
@@ -77,5 +79,6 @@ Já presentes no `.env.local` (e devem ser configuradas na Vercel):
 ## Estado da migração
 
 - Fase 0: ADR 0012.
-- Fase 1: `supabase/schema.sql` (esta entrega).
-- Próximas: client server-only, repositories por domínio, renomeação ponta a ponta, limpeza do SQLite/OCR/backups.
+- Fase 1: `supabase/schema.sql`.
+- Fase 2: `src/database/supabase.ts` (client server-only) + `src/utils/env.ts` (validação de env).
+- Próximas: repositories por domínio, renomeação ponta a ponta, limpeza do SQLite/OCR/backups.

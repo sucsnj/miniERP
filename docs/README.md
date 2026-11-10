@@ -102,6 +102,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ## Banco de Dados
 
 - [supabase.md](supabase.md) - guia do Supabase: aplicar schema, convenções, RPCs, segurança e Vercel.
+- [src/database/supabase.md](src/database/supabase.md) - client server-only do Supabase (service role, sessão desabilitada).
 - [src/database/db.md](src/database/db.md) - configuração e backup do banco SQLite de vendas (`vendas.db`).
 - [src/database/contasDb.md](src/database/contasDb.md) - persistência de contas a pagar.
 - [src/database/notasDb.md](src/database/notasDb.md) - persistência de notas fiscais.
@@ -195,6 +196,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ## Utilitários
 
 - [src/utils/README.md](src/utils/README.md) - índice dos utilitários (formatação, parsing, limpeza, clipboard, download, preço/margem/unidades, carrinho, toast e QR PIX).
+- [src/utils/env.md](src/utils/env.md) - validação centralizada das variáveis de ambiente do servidor Supabase.
 
 ## Glossário
 

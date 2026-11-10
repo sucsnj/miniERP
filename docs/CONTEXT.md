@@ -39,7 +39,7 @@ Bancos em `db/` (SQLite). Documentação em `docs/src/database/`.
 - `tabela.db` — tabelas de medicamentos importadas.
 - `produtos.db` — catálogo: produtos, serviços, categorias, marcas, fornecedores, unidades de medida e movimentações de estoque.
 
-> **Migração em andamento (ADR 0012):** o destino é um único projeto Supabase/Postgres (schema `public`, UUID, nomes em inglês, transações via RPC). O schema está em `supabase/schema.sql` e o guia em `docs/supabase.md`. Até as fases de código concluírem, o SQLite acima continua ativo.
+> **Migração em andamento (ADR 0012):** o destino é um único projeto Supabase/Postgres (schema `public`, UUID, nomes em inglês, transações via RPC). O schema está em `supabase/schema.sql` e o guia em `docs/supabase.md`. A infra de acesso já existe (`src/database/supabase.ts` + `src/utils/env.ts`), mas ainda não é usada pelas rotas. Até as fases de código concluírem, o SQLite acima continua ativo.
 
 ## Páginas principais
 
