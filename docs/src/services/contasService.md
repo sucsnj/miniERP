@@ -10,7 +10,7 @@
 
 ## Relações
 
-- **Usa:** [`/api/contas`](../pages/api/contas.md), [`/api/contas/import`](../pages/api/contas/import.md), [`/api/contas/backup`](../pages/api/contas/backup.md)
+- **Usa:** [`/api/contas`](../pages/api/contas.md), [`/api/contas/import`](../pages/api/contas/import.md)
 - **Usado por:** componentes/páginas de Contas a Pagar ([`docs/src/pages/contas-a-pagar.md`](../pages/contas-a-pagar.md))
 
 ## Notas

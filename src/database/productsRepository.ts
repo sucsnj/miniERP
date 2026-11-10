@@ -665,11 +665,56 @@ export async function applyStockMovement(
   };
 }
 
-export async function checkDuplicateServiceInternalCode(internalCode: string, excludeId?: string): Promise<boolean> {
-  if (!internalCode.trim()) return false;
-  let query = sb().from('services').select('id').ilike('internal_code', internalCode.trim());
-  if (excludeId) query = query.neq('id', excludeId);
-  const { data, error } = await query.limit(1);
+export async function findProductByBarcode(barcode: string): Promise<Product | null> {
+  const cleaned = barcode.trim();
+  if (!cleaned) return null;
+  const { data: barcodeRow, error: barcodeError } = await sb()
+    .from('product_barcodes')
+    .select('product_id')
+    .eq('barcode', cleaned)
+    .maybeSingle();
+  if (barcodeError) throw barcodeError;
+  const productId = barcodeRow ? String(asRecord(barcodeRow).product_id) : null;
+  if (!productId) return null;
+  return getProduct(productId);
+}
+
+export async function findProductByInternalCode(code: string): Promise<Product | null> {
+  const cleaned = code.trim();
+  if (!cleaned) return null;
+  const { data, error } = await sb().from('products').select('id').ilike('internal_code', cleaned).limit(1).maybeSingle();
   if (error) throw error;
-  return asArray(data).length > 0;
+  const id = data ? String(asRecord(data).id) : null;
+  if (!id) return null;
+  return getProduct(id);
+}
+
+export async function findProductByName(name: string): Promise<Product | null> {
+  const cleaned = name.trim();
+  if (!cleaned) return null;
+  const { data, error } = await sb().from('products').select('id').ilike('name', cleaned).limit(1).maybeSingle();
+  if (error) throw error;
+  const id = data ? String(asRecord(data).id) : null;
+  if (!id) return null;
+  return getProduct(id);
+}
+
+export async function findServiceByInternalCode(code: string): Promise<Service | null> {
+  const cleaned = code.trim();
+  if (!cleaned) return null;
+  const { data, error } = await sb().from('services').select('id').ilike('internal_code', cleaned).limit(1).maybeSingle();
+  if (error) throw error;
+  const id = data ? String(asRecord(data).id) : null;
+  if (!id) return null;
+  return getService(id);
+}
+
+export async function findServiceByName(name: string): Promise<Service | null> {
+  const cleaned = name.trim();
+  if (!cleaned) return null;
+  const { data, error } = await sb().from('services').select('id').ilike('name', cleaned).limit(1).maybeSingle();
+  if (error) throw error;
+  const id = data ? String(asRecord(data).id) : null;
+  if (!id) return null;
+  return getService(id);
 }

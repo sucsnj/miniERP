@@ -2,8 +2,6 @@ import React from 'react';
 import styles from '../../styles/contas.module.css';
 import { formatMonthName } from '../../utils/date';
 import { capitalize } from '../../utils/captalize';
-import BackupIcon from '@mui/icons-material/Backup';
-import Button from '@/components/common/Button';
 import { now } from '../../utils/date';
 
 interface PayablesHeaderProps {
@@ -11,10 +9,9 @@ interface PayablesHeaderProps {
   month: number;
   setYear: (year: number) => void;
   setMonth: (month: number) => void;
-  handleBackup: () => Promise<void>;
 }
 
-const PayablesHeader: React.FC<PayablesHeaderProps> = ({ year, month, setYear, setMonth, handleBackup }) => {
+const PayablesHeader: React.FC<PayablesHeaderProps> = ({ year, month, setYear, setMonth }) => {
   const today = now();
 
   return (
@@ -43,9 +40,6 @@ const PayablesHeader: React.FC<PayablesHeaderProps> = ({ year, month, setYear, s
             ))}
           </select>
         </label>
-        <Button type="button" variant="info" onClick={handleBackup} leftIcon={<BackupIcon />}>
-          Backup Anual
-        </Button>
       </div>
     </header>
   );

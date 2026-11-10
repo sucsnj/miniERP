@@ -16,7 +16,6 @@ import {
   updateAccount,
   cancelAccountPayment,
   deleteAccount,
-  backupAccounts,
   payAccount,
   registerAccount,
   AccountDetails,
@@ -271,15 +270,6 @@ const Payables: React.FC = () => {
     }
   };
 
-  const handleBackup = async () => {
-    try {
-      const result = await backupAccounts();
-      showToast(result.message || 'Backup criado com sucesso.', 'success');
-    } catch {
-      showToast('Erro ao fazer backup das contas.', 'error');
-    }
-  };
-
   // Função para importação de XML
   const handleImportXml = async () => {
     try {
@@ -347,7 +337,7 @@ const Payables: React.FC = () => {
 
   return (
     <PageShell className={styles.contasPage}>
-      <PayablesHeader year={year} month={month} setYear={setYear} setMonth={setMonth} handleBackup={handleBackup} />
+      <PayablesHeader year={year} month={month} setYear={setYear} setMonth={setMonth} />
 
       <main className={styles.contasGrid}>
         <section className={`${styles.contasPanel} ${styles.detailPanel}`}>

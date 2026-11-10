@@ -7,7 +7,6 @@ import EditSaleForm from '../components/sales/EditSaleForm';
 import { useToast } from '../hooks/useToast';
 import { useSales } from '../hooks/useSales';
 import { capitalize } from '../utils/captalize';
-import BackupIcon from '@mui/icons-material/Backup';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { getDateArray, now, toTimestamp, formatMonthName } from '../utils/date';
 import PageShell from '@/components/common/PageShell';
@@ -43,7 +42,6 @@ const Home: React.FC = () => {
     editingSale,
     loadSales,
     handleConsolidate,
-    handleBackup,
     handleEditSale,
     handleCancelEdit,
     handleSaved,
@@ -141,10 +139,7 @@ const Home: React.FC = () => {
               />
             </label>
             <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
-              Consolidar Més
-            </Button>
-            <Button variant="info" onClick={handleBackup} leftIcon={<BackupIcon />}>
-              Fazer Backup
+              Consolidar Mês
             </Button>
           </div>
         </Panel>

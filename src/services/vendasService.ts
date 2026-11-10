@@ -257,9 +257,4 @@ export const deleteMonthly = async (id: string | number) => {
   return response.json();
 };
 
-export const backupDatabase = async () => {
-  const response = await fetch('/api/backup', {
-    method: 'POST',
-  });
-  return response.json();
-};
+

@@ -1,3 +1,5 @@
+const OCR_ENABLED = false;
+
 import React, { useMemo } from 'react';
 import OcrUpload from '@/components/import/OcrUpload';
 import { AccountDetails, } from '../../services/contasService';
@@ -81,7 +83,7 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
                     <div className={styles.panelHeader}>
                         <h3>Leitura de Contas</h3>
                     </div>
-                    <OcrUpload />
+                    {OCR_ENABLED && <OcrUpload />}
                 </Panel>
             </Panel>
         </div>

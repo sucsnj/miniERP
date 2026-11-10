@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import {
   fetchDailySales,
   consolidateMonthly,
-  backupDatabase,
   deleteSale,
   DailySale,
   autoConsolidate
@@ -59,16 +58,6 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
     }
   };
 
-  // Executa o backup das vendas e mostra a mensagem retornada pelo serviço
-  const handleBackup = async () => {
-    try {
-      const result = await backupDatabase();
-      showToast(result.message, 'success');
-    } catch {
-      showToast('Não foi possível fazer o backup.', 'error');
-    }
-  };
-
   // Abre o formulário de edição com a venda selecionada
   const handleEditSale = (sale: DailySale) => {
     setEditingSale(sale);
@@ -115,7 +104,6 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
     loading,
     loadSales,
     handleConsolidate,
-    handleBackup,
     handleEditSale,
     handleCancelEdit,
     handleSaved,

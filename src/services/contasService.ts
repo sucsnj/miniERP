@@ -107,9 +107,4 @@ export const deleteAccount = async (id: string | number) => {
 };
 
 // Função assíncrona exportada.
-export const backupAccounts = async () => {
-  const response = await fetch('/api/contas/backup', {
-    method: 'POST',
-  });
-  return response.json();
-};
+// placeholder

@@ -13,7 +13,7 @@
 
 ## Relações
 
-- **Usa:** [`src/utils/date.ts`](../utils/date.md) (`getDateArray`), [`/api/vendas`](../pages/api/vendas.md), [`/api/venda-itens`](../pages/api/venda-itens.md), [`/api/mensais`](../pages/api/mensais.md), [`/api/backup`](../pages/api/backup.md)
+- **Usa:** [`src/utils/date.ts`](../utils/date.md) (`getDateArray`), [`/api/vendas`](../pages/api/vendas.md), [`/api/venda-itens`](../pages/api/venda-itens.md), [`/api/mensais`](../pages/api/mensais.md)
 - **Usado por:** páginas/componentes de vendas (Dashboard, Histórico, Resumo)
 
 ## Notas

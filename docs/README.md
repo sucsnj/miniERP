@@ -61,8 +61,6 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Backup
 
-- [src/pages/api/backup.md](src/pages/api/backup.md) - backup do banco de dados principal.
-- [src/pages/api/contas/backup.md](src/pages/api/contas/backup.md) - backup das contas a pagar.
 
 ### Financeiro
 
@@ -103,12 +101,6 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 - [supabase.md](supabase.md) - guia do Supabase: aplicar schema, convenções, RPCs, segurança e Vercel.
 - [src/database/supabase.md](src/database/supabase.md) - client server-only do Supabase (service role, sessão desabilitada).
-- [src/database/db.md](src/database/db.md) - configuração e backup do banco SQLite de vendas (`vendas.db`).
-- [src/database/contasDb.md](src/database/contasDb.md) - persistência de contas a pagar.
-- [src/database/notasDb.md](src/database/notasDb.md) - persistência de notas fiscais.
-- [src/database/tabelaDb.md](src/database/tabelaDb.md) - persistência do histórico/cache de buscas da tabela de medicamentos.
-- [src/database/produtosDb.md](src/database/produtosDb.md) - catálogo e estoque em `produtos.db`.
-- [src/database/seeds.md](src/database/seeds.md) - dados iniciais/sementes dos bancos.
 
 ## Componentes
 
