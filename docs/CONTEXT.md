@@ -4,14 +4,14 @@
 
 ## O que é este projeto
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; tudo persiste em bancos SQLite locais no servidor. Não há autenticação externa nem banco remoto.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). Não há autenticação externa.
 
 ## Pilha principal
 
 - **Next.js 16** — páginas em `src/pages/` e API interna em `src/pages/api/`.
 - **React 19** + **MUI** (`@mui/material`, `@emotion`) para UI.
 - **@tanstack/react-query** — cache/estado de servidor no cliente.
-- **better-sqlite3** — persistência local (bancos em `db/`).
+- **@supabase/supabase-js** — persistência remota no Supabase (acesso server-only via API routes).
 - **dayjs** — datas (timezone padrão `America/Recife`).
 - **recharts** — gráficos; **jspdf/html2canvas** — PDF; **xlsx** — planilhas.
 - **multer + pdf2pic + sharp + tesseract.js** — upload e OCR de notas.
@@ -23,7 +23,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação s
 - `src/hooks/*.ts` — hooks de estado (flat): carrinho, filtros, toasts, CRUD de catálogo. Arquivos e identificadores exportados em inglês (ADR 0004).
 - `src/services/*.ts` — cliente `fetch` para os endpoints internos.
 - `src/pages/api/**/*.ts` — endpoints REST internos.
-- `src/database/*.ts` — abstrações `better-sqlite3` (vendas, contas, notas, tabela, produtos).
+- src/database/*Repository.ts — repositórios Supabase (vendas, produtos, payables/invoices, histórico de tabela).
 - `src/utils/*.ts(x)` — formatação, validação, datas, números, cores.
 - `src/types/*.ts` — tipos compartilhados.
 - `src/styles/` — `tokens.css` (design tokens e temas `data-theme`), `base.css` (reset/elementos), `utilities.css` (utilitários), `legacy.css` (CSS global em migração) e `*.module.css` (estilos por componente; tipagem gerada em `*.d.css.ts`).
@@ -31,15 +31,9 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação s
 
 ## Bancos de dados
 
-Bancos em `db/` (SQLite). Documentação em `docs/src/database/`.
+Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). A infra de acesso está em src/database/supabase.ts + src/utils/env.ts.
 
-- `vendas.db` — vendas diárias, itens de venda e consolidação mensal.
-- `contas.db` — contas a pagar.
-- `notas.db` — notas fiscais importadas.
-- `tabela.db` — tabelas de medicamentos importadas.
-- `produtos.db` — catálogo: produtos, serviços, categorias, marcas, fornecedores, unidades de medida e movimentações de estoque.
-
-> **Migração em andamento (ADR 0012):** o destino é um único projeto Supabase/Postgres (schema `public`, UUID, nomes em inglês, transações via RPC). O schema está em `supabase/schema.sql` e o guia em `docs/supabase.md`. A infra de acesso já existe (`src/database/supabase.ts` + `src/utils/env.ts`), mas ainda não é usada pelas rotas. Até as fases de código concluírem, o SQLite acima continua ativo.
+> Migração SQLite → Supabase concluída (Fases 0 a 4, ADR 0012). O SQLite não é mais usado pela aplicação.
 
 ## Páginas principais
 
