@@ -9,7 +9,7 @@ import { formatCurrencyNumber } from '../../utils/formatter';
 import type { ProductFormData, ProductOptions, ProductActions } from './ProductForm';
 
 interface ServiceFormProps {
-  editingProductId: number | null;
+  editingProductId: string | null;
   form: ProductFormData;
   setForm: Dispatch<SetStateAction<ProductFormData>>;
   options: ProductOptions;
@@ -65,7 +65,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
             id="form-categoria"
             className={styles.selectField}
             value={form.categoryId}
-            onChange={(e) => setForm(prev => ({ ...prev, categoryId: e.target.value ? Number(e.target.value) : 1 }))}
+            onChange={(e) => setForm(prev => ({ ...prev, categoryId: e.target.value || '' }))}
           >
             {options.categories.map((c) => (
               <option key={c.id} value={c.id}>

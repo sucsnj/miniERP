@@ -9,7 +9,7 @@ import ImportExportIcon from '@mui/icons-material/ImportExport';
 
 interface ItemFormProps {
     onImportXML: (file?: File) => void;
-    editingProductId: number | null;
+    editingProductId: string | null;
     form: ProductFormData;
     setForm: Dispatch<SetStateAction<ProductFormData>>;
     options: ProductOptions;

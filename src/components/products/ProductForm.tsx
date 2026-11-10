@@ -23,20 +23,20 @@ export interface ProductFormData {
     type: 'PRODUTO' | 'SERVICO';
     name: string;
     description: string;
-    categoryId: number;
-    brandId: number;
-    supplierId: number;
+    categoryId: string;
+    brandId: string;
+    supplierId: string;
     purchasePrice: string;
     profitMargin: string;
     salePrice: string;
     stock: string;
     unitMultiplier: string;
-    unitOfMeasureId: number;
+    unitOfMeasureId: string;
     internalCode: string;
     reference: string;
     durationMinutes: string;
     active: number;
-    unitsOfMeasure: { unitOfMeasureId: number; unitMultiplier: string; isPrincipal: boolean }[];
+    unitsOfMeasure: { unitOfMeasureId: string; unitMultiplier: string; isPrincipal: boolean }[];
 }
 
 export interface ProductOptions {
@@ -60,7 +60,7 @@ export interface ProductActions {
 
 // Props do Componente
 interface ProductFormProps {
-    editingProductId: number | null;
+    editingProductId: string | null;
     form: ProductFormData;
     setForm: React.Dispatch<React.SetStateAction<ProductFormData>>;
     options: ProductOptions;
@@ -134,7 +134,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         className={styles.selectField}
                         value={form.categoryId}
                         onChange={(e) =>
-                            setForm(prev => ({ ...prev, categoryId: e.target.value ? Number(e.target.value) : 1 }))
+                            setForm(prev => ({ ...prev, categoryId: e.target.value || '' }))
                         }
                     >
                         {options.categories.map((c) => (
@@ -186,7 +186,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         className={styles.selectField}
                         value={form.brandId}
                         onChange={(e) =>
-                            setForm(prev => ({ ...prev, brandId: e.target.value ? Number(e.target.value) : 1 }))
+                            setForm(prev => ({ ...prev, brandId: e.target.value || '' }))
                         }
                     >
                         {options.brands.map((m) => (
@@ -238,7 +238,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         className={styles.selectField}
                         value={form.supplierId}
                         onChange={(e) =>
-                            setForm(prev => ({ ...prev, supplierId: e.target.value ? Number(e.target.value) : 1 }))
+                            setForm(prev => ({ ...prev, supplierId: e.target.value || '' }))
                         }
                     >
                         {options.suppliers.map((f) => (
@@ -428,7 +428,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                     const { units, unitOfMeasureId } = updateUnitId(
                                         form.unitsOfMeasure,
                                         index,
-                                        Number(e.target.value)
+                                        e.target.value
                                     );
                                     setForm(prev => ({
                                         ...prev,

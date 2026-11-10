@@ -61,7 +61,7 @@ const Home: React.FC = () => {
       const dateA = toTimestamp(`${a.data}T00:00:00`);
       const dateB = toTimestamp(`${b.data}T00:00:00`);
       if (dateA !== dateB) return dateB - dateA;
-      return b.id - a.id;
+      return String(b.criado_em).localeCompare(String(a.criado_em));
     })
     .slice(0, 4);
 

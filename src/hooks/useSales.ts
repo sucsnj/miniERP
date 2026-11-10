@@ -86,7 +86,7 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   };
 
   // Exclui uma venda, respeitando a regra de edição/exclusão
-  const handleDeleteSale = async (id: number) => {
+  const handleDeleteSale = async (id: string) => {
     const sale = sales.find((sale) => sale.id === id);
     // Venda inexistente: avisa e interrompe sem chamar canEdit com data vazia
     if (!sale) {

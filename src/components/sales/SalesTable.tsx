@@ -15,7 +15,7 @@ import { toTimestamp } from '../../utils/date';
 interface SalesTableProps {
   sales: DailySale[];
   onEditSale?: (sale: DailySale) => void;
-  onDeleteSale?: (id: number) => void;
+  onDeleteSale?: (id: string) => void;
 }
 
 const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale }) => {
@@ -30,14 +30,14 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
 
   // estado para o diálogo
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const changeMaxSales = (value: number) => {
     setMaxSales(value);
     localStorage.setItem("maxSales", String(value));
   };
 
-  const openConfirm = (id: number) => {
+  const openConfirm = (id: string) => {
     setSelectedId(id);
     setConfirmOpen(true);
   };
@@ -106,7 +106,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
 
               if (diffDate !== 0) return diffDate;
 
-              return b.id - a.id;
+               return 0;
             })
             .slice(0, maxSales)
             .map((sale) => (

@@ -14,7 +14,7 @@ import { fetchProducts, fetchServices } from '../../services/produtosService';
 import type { ItemWithStatus } from '../../hooks/useImportItems';
 
 export interface SuggestionItem {
-  id: number;
+  id: string;
   type: 'PRODUTO' | 'SERVICO';
   name: string;
   salePrice: number;

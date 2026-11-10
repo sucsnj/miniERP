@@ -68,7 +68,7 @@ export const useUnitOfMeasure = ({
   };
 
   // Handler para abrir modal de edição de unidade de medida
-  const handleOpenEditUnitOfMeasureModal = (unit: { id: number; sigla: string; descricao?: string }) => {
+  const handleOpenEditUnitOfMeasureModal = (unit: { id: string; sigla: string; descricao?: string }) => {
     setForm(prev => ({ ...prev, unitOfMeasureId: unit.id }));
     setUomForm({ abbreviation: unit.sigla, description: unit.descricao || '' });
     setUnitOfMeasureEditModalOpen(true);
@@ -121,7 +121,7 @@ export const useUnitOfMeasure = ({
       setUomForm({ abbreviation: '', description: '' });
 
       // Coloca o Id para 1
-      setForm(prev => ({ ...prev, unitOfMeasureId: 1 }));
+      setForm(prev => ({ ...prev, unitOfMeasureId: '' }));
 
       if (items.length === 1 && page > 1) {
         setPage(page - 1);

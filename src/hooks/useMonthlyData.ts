@@ -22,7 +22,7 @@ export const useMonthlyData = (showToast: ToastFn) => {
   }, []);
 
   // Exclui a consolidação de um mês e recarrega a lista
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteMonthly(id);
       loadMensais();

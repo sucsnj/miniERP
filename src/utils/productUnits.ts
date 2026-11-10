@@ -8,7 +8,7 @@
  */
 
 export interface UnitOfMeasureRow {
-  unitOfMeasureId: number;
+  unitOfMeasureId: string;
   unitMultiplier: string;
   isPrincipal: boolean;
 }
@@ -17,7 +17,7 @@ export interface UnitOfMeasureRow {
 export interface UnitChangeResult {
   units: UnitOfMeasureRow[];
   /** Sync de `unitOfMeasureId` quando a unidade alterada é a isPrincipal. */
-  unitOfMeasureId?: number;
+  unitOfMeasureId?: string;
   /** Sync de `unitMultiplier` quando a unidade alterada é a isPrincipal. */
   unitMultiplier?: string;
 }
@@ -25,7 +25,7 @@ export interface UnitChangeResult {
 /** Resultado da seleção de unidade isPrincipal (sempre sincroniza os campos de resumo). */
 export interface PrincipalUnitChangeResult {
   units: UnitOfMeasureRow[];
-  unitOfMeasureId: number;
+  unitOfMeasureId: string;
   unitMultiplier: string;
 }
 
@@ -47,7 +47,7 @@ export function setUnitAsPrincipal(
 export function updateUnitId(
   units: UnitOfMeasureRow[],
   index: number,
-  unitOfMeasureId: number
+  unitOfMeasureId: string
 ): UnitChangeResult {
   const next = [...units];
   next[index] = { ...next[index], unitOfMeasureId: unitOfMeasureId };
@@ -92,6 +92,6 @@ export function removeUnit(
 export function addUnit(units: UnitOfMeasureRow[]): UnitOfMeasureRow[] {
   return [
     ...units,
-    { unitOfMeasureId: 1, unitMultiplier: '1', isPrincipal: units.length === 0 },
+    { unitOfMeasureId: '', unitMultiplier: '1', isPrincipal: units.length === 0 },
   ];
 }

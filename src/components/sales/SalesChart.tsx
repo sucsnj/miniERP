@@ -22,7 +22,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const [range, setRange] = useState<30 | 7 | 3>(30);
 
-  const sortedData = [...data].sort((a, b) => a.id - b.id);
+  const sortedData = [...data].sort((a, b) => String(a.criado_em).localeCompare(String(b.criado_em)));
   
   // Filtra os dados pelo alcance escolhido
   const chartData = sortedData

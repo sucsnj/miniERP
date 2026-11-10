@@ -14,7 +14,7 @@ interface DailySalesTotalProps {
   selectedDay?: string;
   recentSales?: DailySale[];
   onEditSale?: (sale: DailySale) => void;
-  onDeleteSale?: (id: number) => void;
+  onDeleteSale?: (id: string) => void;
   children?: ReactNode;
 }
 
@@ -33,7 +33,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   useShortcuts(['Delete'], () => {
     if (recentSales.length > 0 && onDeleteSale) {
       const latestSale = [...recentSales]
-        .sort((a, b) => b.id - a.id)[0];
+        .sort((a, b) => String(b.criado_em).localeCompare(String(a.criado_em)))[0];
 
       if (latestSale) {
         onDeleteSale(latestSale.id);
@@ -95,7 +95,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
 
               <div className={`${styles.recentSalesGrid}`}>
                 {[...recentSales]
-                  .sort((a, b) => a.id - b.id)
+                  .sort((a, b) => String(a.criado_em).localeCompare(String(b.criado_em)))
                   .map((sale) => (
                     <div key={sale.id} className={`${styles.historyItem}`}>
                       <div>

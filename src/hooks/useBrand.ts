@@ -63,7 +63,7 @@ export const useBrand = ({
     };
 
     // Handler para abrir modal de edição de marca
-    const handleOpenEditBrandModal = (brand: { id: number; nome: string }) => {
+    const handleOpenEditBrandModal = (brand: { id: string; nome: string }) => {
         setForm(prev => ({ ...prev, brandId: brand.id }));
         setBrandForm({ name: brand.nome });
         setBrandEditModalOpen(true);
@@ -116,7 +116,7 @@ export const useBrand = ({
             setBrandForm({ name: '' });
 
             // Coloca o Id para 1
-            setForm(prev => ({ ...prev, brandId: 1 }));
+            setForm(prev => ({ ...prev, brandId: '' }));
 
             if (items.length === 1 && page > 1) {
                 setPage(page - 1);

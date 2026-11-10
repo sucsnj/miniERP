@@ -1,10 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getCategories, insertCategory, deleteCategory, updateCategory } from '../../../database/produtosDb';
+import {
+  listCategories,
+  createCategory,
+  deleteCategory,
+  updateCategory,
+} from '../../../database/productsRepository';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const categories = getCategories();
+      const categories = await listCategories();
       return res.status(200).json(categories);
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
@@ -14,32 +19,33 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { nome: name, descricao: description } = req.body;
-      if (!name || !name.trim()) {
+      const body = req.body ?? {};
+      const name = body.name ?? body.nome;
+      const description = body.description ?? body.descricao;
+      if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
 
-      const categories = getCategories();
-      if (categories.some(c => c.nome.toLowerCase() === name.trim().toLowerCase())) {
+      const categories = await listCategories();
+      if (categories.some((c) => c.name.toLowerCase() === String(name).trim().toLowerCase())) {
         return res.status(400).json({ error: 'Esta categoria já existe.' });
       }
 
-      const result = insertCategory(name.trim(), description);
-      return res.status(201).json({ id: result.lastInsertRowid, message: 'Categoria cadastrada com sucesso.' });
+      const id = await createCategory(String(name).trim(), description ? String(description) : undefined);
+      return res.status(201).json({ id, message: 'Categoria cadastrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar categoria:', error);
       return res.status(500).json({ error: 'Erro ao salvar categoria.' });
     }
   }
 
-  // Deletar categoria
   if (req.method === 'DELETE') {
     try {
-      const { id } = req.query;
-      if (!id || isNaN(Number(id))) {
+      const id = req.query.id;
+      if (!id) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }
-      deleteCategory(Number(id));
+      await deleteCategory(String(id));
       return res.status(200).json({ message: 'Categoria apagada com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar categoria:', error);
@@ -47,18 +53,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
-  // Atualizar categoria
   if (req.method === 'PUT') {
     try {
-      const { id } = req.query;
-      const { nome: name, descricao: description } = req.body;
-      if (!id || isNaN(Number(id))) {
+      const id = req.query.id;
+      const body = req.body ?? {};
+      const name = body.name ?? body.nome;
+      const description = body.description ?? body.descricao;
+      if (!id) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }
-      if (!name || !name.trim()) {
+      if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
-      updateCategory(Number(id), name.trim(), description);
+      await updateCategory(String(id), String(name).trim(), description ? String(description) : undefined);
       return res.status(200).json({ message: 'Categoria atualizada com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar categoria:', error);
@@ -66,6 +73,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
-  res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT', 'PATCH']);
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

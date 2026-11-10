@@ -10,7 +10,7 @@ export type CatalogItemType = 'PRODUTO' | 'SERVICO';
 
 /** Item do carrinho de uma venda (produto ou serviço). */
 export interface CartItem {
-  id: number;
+  id: string;
   tipo: CatalogItemType;
   nome: string;
   preco_venda: number;

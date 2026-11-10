@@ -38,9 +38,9 @@ export const useCart = (onToast?: CartToast) => {
         nome: service.nome,
         descricao: service.descricao,
         categoria_id: service.categoria_id,
-        unidade_medida_id: 21,
-        marca_id: 1,
-        fornecedor_id: 1,
+        unidade_medida_id: '21',
+        marca_id: '',
+        fornecedor_id: '',
         preco_compra: 0,
         margem_lucro: 0,
         preco_venda: service.preco_venda,
@@ -156,7 +156,7 @@ export const useCart = (onToast?: CartToast) => {
 
   // Atualiza quantidade no carrinho
   const handleUpdateQuantity = useCallback(
-    (id: number, type: 'PRODUTO' | 'SERVICO', newQty: number) => {
+    (id: string, type: 'PRODUTO' | 'SERVICO', newQty: number) => {
       setCartItems((prevItems) => {
         if (newQty <= 0) {
           return prevItems.filter((ci) => !(ci.id === id && ci.tipo === type));
@@ -174,7 +174,7 @@ export const useCart = (onToast?: CartToast) => {
 
   // Remove item completo do carrinho
   const handleRemoveItem = useCallback(
-    (id: number, type: 'PRODUTO' | 'SERVICO') => {
+    (id: string, type: 'PRODUTO' | 'SERVICO') => {
       setCartItems((prevItems) =>
         prevItems.filter((ci) => !(ci.id === id && ci.tipo === type))
       );

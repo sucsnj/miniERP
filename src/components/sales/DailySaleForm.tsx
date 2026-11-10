@@ -17,7 +17,7 @@ interface DailySaleFormProps {
   onDateChange: (date: string) => void;
   onSaleAdded?: () => void;
   onEditSale?: (sale: DailySale) => void;
-  onDeleteSale?: (id: number) => void;
+  onDeleteSale?: (id: string) => void;
   showHistory?: boolean;
 }
 

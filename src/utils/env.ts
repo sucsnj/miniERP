@@ -1,4 +1,3 @@
-import 'server-only';
 
 /**
  * Validação centralizada das variáveis de ambiente usadas no servidor.

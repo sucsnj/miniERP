@@ -1,15 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { insertStockMovement, getStockMovements, getItemById } from '../../../database/produtosDb';
+import { listStockMovements, applyStockMovement } from '../../../database/productsRepository';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+const mapTypeToEnglish = (type: string): 'IN' | 'OUT' | 'ADJUST' => {
+  const upper = type.trim().toUpperCase();
+  if (upper === 'ENTRADA' || upper === 'IN') return 'IN';
+  if (upper === 'SAIDA' || upper === 'OUT') return 'OUT';
+  return 'ADJUST';
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const { item_id } = req.query;
-      if (!item_id || isNaN(Number(item_id))) {
+      const productId = req.query.productId ?? req.query.item_id;
+      if (!productId) {
         return res.status(400).json({ error: 'ID do item é obrigatório para buscar movimentações.' });
       }
 
-      const movements = getStockMovements(Number(item_id));
+      const movements = await listStockMovements(String(productId));
       return res.status(200).json(movements);
     } catch (error) {
       console.error('Erro ao buscar movimentações de estoque:', error);
@@ -19,33 +26,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'POST') {
     try {
-      const { item_id, tipo: movementType, quantidade: quantity, descricao: description } = req.body;
-      if (!item_id || isNaN(Number(item_id))) {
+      const body = req.body ?? {};
+      const productId = body.productId ?? body.item_id;
+      const movementType = body.type ?? body.tipo;
+      const quantity = body.quantity ?? body.quantidade;
+      const description = body.description ?? body.descricao;
+
+      if (!productId) {
         return res.status(400).json({ error: 'ID do item é obrigatório para registrar movimentação.' });
       }
-      if (!movementType || ['ENTRADA', 'SAIDA', 'AJUSTE'].indexOf(String(movementType).toUpperCase()) === -1) {
-        return res.status(400).json({ error: 'Tipo de movimentação deve ser ENTRADA, SAIDA ou AJUSTE.' });
-      }
-      if (!quantity || isNaN(Number(quantity))) {
-        return res.status(400).json({ error: 'Quantidade deve ser um número válido.' });
+      if (!movementType) {
+        return res.status(400).json({ error: 'Tipo de movimentação é obrigatório.' });
       }
 
-      const item = getItemById(Number(item_id));
-      if (!item) {
-        return res.status(404).json({ error: 'Item não encontrado.' });
-      }
-
-      const movement = insertStockMovement({
-        item_id: Number(item_id),
-        tipo: String(movementType).toUpperCase() as 'ENTRADA' | 'SAIDA' | 'AJUSTE',
-        quantidade: Number(quantity),
-        descricao: description,
-      });
-
-      return res.status(201).json({ id: movement.lastInsertRowid, message: 'Movimentação de estoque registrada com sucesso.' });
+      const movement = await applyStockMovement(String(productId), mapTypeToEnglish(String(movementType)), Number(quantity), description ?? null);
+      return res.status(201).json({ id: movement.id, message: 'Movimentação de estoque registrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao registrar movimentação de estoque:', error);
-      return res.status(500).json({ error: 'Erro ao registrar movimentação de estoque.' });
+      return res.status(500).json({ error: 'Erro ao registrar movimentação de estoque.', details: String(error) });
     }
   }
 

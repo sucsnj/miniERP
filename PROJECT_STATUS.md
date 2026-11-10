@@ -2,11 +2,11 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **09/11/2026**
+Atualizado em: **10/11/2026**
 
 ## Resumo executivo
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Estágio atual: **estável**, com a migração SQLite → Supabase em andamento. Fases 0 a 2 concluídas (ADR 0012, schema aplicado no Dashboard e client server-only + validação de env). O SQLite continua sendo a persistência ativa até a Fase 3. Offline/PWA está planejado para depois da migração.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Estágio atual: **estável**, com a migração SQLite → Supabase em andamento. Fases 0 a 3 concluídas para vendas/estoque e catálogo (ADR 0012, schema aplicado, client server-only, rotas migradas para Supabase). SQLite permanece ativo para contas, notas, tabela de medicamentos, backup e OCR. Offline/PWA planejado para depois da migração.
 
 ## Estado atual
 
@@ -20,14 +20,14 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | `npm run build` | build de produção OK |
 | `node scripts/check-docs.mjs` | espelho e links consistentes |
 | `node scripts/check-encoding.mjs` | sem mojibake/BOM |
-| Persistência | SQLite ativo (`vendas.db`, `contas.db`, `notas.db`, `tabela.db`, `produtos.db`) |
-| Supabase | schema aplicado; `src/database/supabase.ts` e `src/utils/env.ts` prontos; nenhuma rota usa o Supabase ainda |
+| Persistência | Supabase ativo para vendas/estoque e catálogo; SQLite ativo para contas, notas, tabela, backup e OCR |
+| Supabase | schema aplicado; `src/database/supabase.ts`, `productsRepository.ts` e `salesRepository.ts` em uso pelas rotas migradas |
 | Offline/PWA | não implementado (futuro) |
 | Teste manual | funcionalidades críticas OK; fluxo Supabase ainda não exercitado em runtime |
 
 ## Pendentes
 
-- **Migração Supabase (ADR 0012) — Fase 3:** migrar um domínio por vez, com pausa entre eles: vendas/estoque → catálogo → contas/notas → tabela de medicamentos → consolidação mensal. Cada etapa inclui repository, API, service e frontend renomeados para inglês.
+- **Migração Supabase (ADR 0012) — Fase 3 (parcial):** vendas/estoque e catálogo migrados; pendentes contas/notas, tabela de medicamentos e consolidação mensal.
 - **Fase 4:** remover SQLite (`db/`, `better-sqlite3`), endpoints/botões de backup e OCR/PDF; atualizar docs espelhados.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em `/tmp` ou Storage) e validação do deploy; autenticação/proteção ficam para depois.
 - **Refatoração de grandes componentes:** `CartModal`, `ImportItemsModal`, `ProductForm` e `SelectItemsModal` — extrair hooks/serviços/subcomponentes no padrão do `DailySaleForm`.

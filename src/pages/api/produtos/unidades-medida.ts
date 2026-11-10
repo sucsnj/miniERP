@@ -1,11 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getUnitsOfMeasure, insertUnitOfMeasure, deleteUnitOfMeasure, updateUnitOfMeasure } from '../../../database/produtosDb';
+import { listUnitsOfMeasure, createUnitOfMeasure, deleteUnitOfMeasure, updateUnitOfMeasure } from '../../../database/productsRepository';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const uoms = getUnitsOfMeasure();
-      return res.status(200).json(uoms);
+      return res.status(200).json(await listUnitsOfMeasure());
     } catch (error) {
       console.error('Erro ao buscar unidades de medida:', error);
       return res.status(500).json({ error: 'Erro ao buscar unidades de medida.' });
@@ -13,60 +12,49 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === 'POST') {
-      try {
-        const { sigla: abbreviation, descricao: description } = req.body;
-        if (!abbreviation || !abbreviation.trim()) {
-          return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
-        }
-  
-        const units = getUnitsOfMeasure();
-        if (units.some(c => c.sigla.toLowerCase() === abbreviation.trim().toLowerCase())) {
-          return res.status(400).json({ error: 'Esta unidade de medida já existe.' });
-        }
-  
-        const result = insertUnitOfMeasure(abbreviation.trim(), description);
-        return res.status(201).json({ id: result.lastInsertRowid, message: 'Unidade de medida cadastrada com sucesso.' });
-      } catch (error) {
-        console.error('Erro ao salvar unidade de medida:', error);
-        return res.status(500).json({ error: 'Erro ao salvar unidade de medida.' });
+    try {
+      const body = req.body ?? {};
+      const abbreviation = body.abbreviation ?? body.sigla;
+      const description = body.description ?? body.descricao;
+      if (!abbreviation || !String(abbreviation).trim()) {
+        return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
       }
+      const id = await createUnitOfMeasure(String(abbreviation).trim(), description ? String(description) : undefined);
+      return res.status(201).json({ id, message: 'Unidade de medida cadastrada com sucesso.' });
+    } catch (error) {
+      console.error('Erro ao salvar unidade de medida:', error);
+      return res.status(500).json({ error: 'Erro ao salvar unidade de medida.' });
     }
-  
-    // Deletar Unidades de Medida
-    if (req.method === 'DELETE') {
-      try {
-        const { id } = req.query;
-        if (!id || isNaN(Number(id))) {
-          return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
-        }
-        deleteUnitOfMeasure(Number(id));
-        return res.status(200).json({ message: 'Unidade de medida apagada com sucesso.' });
-      } catch (error) {
-        console.error('Erro ao apagar unidade de medida:', error);
-        return res.status(500).json({ error: 'Erro ao apagar unidade de medida.' });
-      }
-    }
-  
-    // Atualizar unidades de medida
-    if (req.method === 'PUT') {
-      try {
-        const { id } = req.query;
-        const { sigla: abbreviation, descricao: description } = req.body;
-        if (!id || isNaN(Number(id))) {
-          return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
-        }
-        if (!abbreviation || !abbreviation.trim()) {
-          return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatório.' });
-        }
-        updateUnitOfMeasure(Number(id), abbreviation.trim(), description);
-        return res.status(200).json({ message: 'Unidade de medida atualizada com sucesso.' });
-      } catch (error) {
-        console.error('Erro ao atualizar unidade de medida:', error);
-        return res.status(500).json({ error: 'Erro ao atualizar unidade de medida.' });
-      }
-    }
-  
-    res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT', 'PATCH']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-  
+
+  if (req.method === 'DELETE') {
+    try {
+      const id = req.query.id;
+      if (!id) return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
+      await deleteUnitOfMeasure(String(id));
+      return res.status(200).json({ message: 'Unidade de medida apagada com sucesso.' });
+    } catch (error) {
+      console.error('Erro ao apagar unidade de medida:', error);
+      return res.status(500).json({ error: 'Erro ao apagar unidade de medida.' });
+    }
+  }
+
+  if (req.method === 'PUT') {
+    try {
+      const id = req.query.id;
+      const body = req.body ?? {};
+      const abbreviation = body.abbreviation ?? body.sigla;
+      const description = body.description ?? body.descricao;
+      if (!id) return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
+      if (!abbreviation || !String(abbreviation).trim()) return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
+      await updateUnitOfMeasure(String(id), String(abbreviation).trim(), description ? String(description) : undefined);
+      return res.status(200).json({ message: 'Unidade de medida atualizada com sucesso.' });
+    } catch (error) {
+      console.error('Erro ao atualizar unidade de medida:', error);
+      return res.status(500).json({ error: 'Erro ao atualizar unidade de medida.' });
+    }
+  }
+
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT']);
+  return res.status(405).end(`Method ${req.method} Not Allowed`);
+}

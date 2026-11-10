@@ -55,25 +55,25 @@ const RegistrationPage: React.FC = () => {
     });
 
     // Estado do formulário de Cadastro/Edição
-    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [form, setForm] = useState<ProductFormData>({
         type: 'PRODUTO',
         name: '',
         description: '',
-        categoryId: 1,
-        brandId: 1,
-        supplierId: 1,
+        categoryId: '',
+        brandId: '',
+        supplierId: '',
         purchasePrice: '',
         profitMargin: '',
         salePrice: '',
         stock: '',
         unitMultiplier: '1',
-        unitOfMeasureId: 1,
+        unitOfMeasureId: '',
         internalCode: '',
         reference: '',
         durationMinutes: '',
         active: 1,
-        unitsOfMeasure: [{ unitOfMeasureId: 1, unitMultiplier: '1', isPrincipal: true }],
+        unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isPrincipal: true }],
     });
     const [stockAdjustModalOpen, setStockAdjustModalOpen] = useState(false);
     const [adjustQuantity, setAdjustQuantity] = useState('');
@@ -173,7 +173,7 @@ const RegistrationPage: React.FC = () => {
     }, []);
 
     // Carrega item pelo ID (vindo da query ?id=X) para pré-preencher o formulário de edição
-    const loadItemForEditing = useCallback(async (id: number) => {
+    const loadItemForEditing = useCallback(async (id: string) => {
         try {
             // Tenta buscar como produto primeiro, depois como serviço
             const [productsData, servicesData] = await Promise.all([
@@ -188,9 +188,9 @@ const RegistrationPage: React.FC = () => {
         nome: service.nome,
         descricao: service.descricao,
                 categoria_id: service.categoria_id,
-                unidade_medida_id: 21,
-                marca_id: 1,
-                fornecedor_id: 1,
+                unidade_medida_id: '21',
+                marca_id: '',
+                fornecedor_id: '',
                 preco_compra: 0,
                 margem_lucro: 0,
                 preco_venda: service.preco_venda,
@@ -233,14 +233,11 @@ const RegistrationPage: React.FC = () => {
         const { id, novoImport: isNewImport, nome: nameParam, purchasePrice, estoque: stockParam, unidade: unitParam, ean, internalCode } = router.query;
 
         if (id) {
-            const numId = Number(id);
-            if (!isNaN(numId) && numId > 0) {
-                isQueryProcessed.current = true;
-                const timer = setTimeout(() => {
-                    void loadItemForEditing(numId);
-                }, 0);
-                return () => clearTimeout(timer);
-            }
+            isQueryProcessed.current = true;
+            const timer = setTimeout(() => {
+                void loadItemForEditing(String(id));
+            }, 0);
+            return () => clearTimeout(timer);
         } else if (isNewImport || nameParam) {
             isQueryProcessed.current = true;
             const timer = setTimeout(() => {
@@ -251,7 +248,7 @@ const RegistrationPage: React.FC = () => {
                 const eanStr = typeof ean === 'string' ? ean.trim() : '';
                 const internalCodeValue = typeof internalCode === 'string' ? internalCode.trim() : '';
 
-                let uomId = 1;
+                let uomId = '';
                 if (unitValue && options.unitsOfMeasure.length > 0) {
                     const foundUnit = options.unitsOfMeasure.find(
                         u => u.sigla.toUpperCase() === unitValue || u.sigla.toUpperCase().includes(unitValue)
@@ -268,15 +265,15 @@ const RegistrationPage: React.FC = () => {
         type: 'PRODUTO',
         name: nameValue,
         description: 'Importado via XML da NF-e',
-                    categoryId: 1,
-                    brandId: 1,
-                    supplierId: 1,
+                    categoryId: options.categories[0]?.id ?? '',
+                    brandId: options.brands[0]?.id ?? '',
+                    supplierId: options.suppliers[0]?.id ?? '',
                     purchasePrice: purchasePriceValue,
                     profitMargin: purchasePriceNumber > 0 ? String(defaultMargin) : '',
                     salePrice: calculatedSalePrice,
         stock: stockValue,
                     unitMultiplier: '1',
-                    unitOfMeasureId: uomId,
+                    unitOfMeasureId: uomId || (options.unitsOfMeasure[0]?.id ?? ''),
                     internalCode: internalCodeValue,
         reference: '',
         durationMinutes: '',
@@ -294,6 +291,7 @@ const RegistrationPage: React.FC = () => {
             }, 0);
             return () => clearTimeout(timer);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.isReady, router.query, options.unitsOfMeasure, loadItemForEditing, showToast]);
 
     // Guard: aviso nativo do browser ao fechar aba ou recarregar página
@@ -332,20 +330,20 @@ const RegistrationPage: React.FC = () => {
         type: 'PRODUTO',
         name: '',
         description: '',
-            categoryId: 1,
-            brandId: 1,
-            supplierId: 1,
+            categoryId: '',
+            brandId: '',
+            supplierId: '',
             purchasePrice: '',
             profitMargin: '',
             salePrice: '',
-        stock: '',
+            stock: '',
             unitMultiplier: '1',
-            unitOfMeasureId: 1,
+            unitOfMeasureId: '',
             internalCode: '',
-        reference: '',
-        durationMinutes: '',
-        active: 1,
-            unitsOfMeasure: [{ unitOfMeasureId: 1, unitMultiplier: '1', isPrincipal: true }],
+            reference: '',
+            durationMinutes: '',
+            active: 1,
+            unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isPrincipal: true }],
         });
         setFormBarcodes([]);
         setNewBarcode('');
@@ -357,7 +355,7 @@ const RegistrationPage: React.FC = () => {
         router.replace('/cadastro', undefined, { shallow: true });
     };
 
-    const loadMovements = async (itemId: number) => {
+    const loadMovements = async (itemId: string) => {
         setMovementsLoading(true);
         try {
             const data = await fetchStockMovements(itemId);
@@ -479,22 +477,22 @@ const RegistrationPage: React.FC = () => {
             tipo: form.type,
             nome: form.name.trim(),
             descricao: form.description.trim() || undefined,
-            categoria_id: Number(form.categoryId),
-            marca_id: Number(form.brandId || 1),
-            fornecedor_id: Number(form.supplierId || 1),
+            categoria_id: form.categoryId,
+            marca_id: form.brandId || '',
+            fornecedor_id: form.supplierId || '',
             preco_compra: purchasePriceAmount,
             margem_lucro: profitMarginAmount,
             preco_venda: salePriceAmount,
             estoque: stockAmount,
             multiplicador_unidade: multiplierValue,
-            unidade_medida_id: Number(form.unitOfMeasureId || 1),
+            unidade_medida_id: form.unitOfMeasureId || '',
             codigo_interno: form.internalCode.trim() || undefined,
             referencia: form.reference.trim(),
             duracao_minutos: Number(form.durationMinutes) || 0,
             ativo: form.active,
             codigos_barras: finalBarcodes,
             unidades_medida: form.unitsOfMeasure.map(u => ({
-                unidade_medida_id: Number(u.unitOfMeasureId),
+                unidade_medida_id: u.unitOfMeasureId,
                 multiplicador_unidade: parseNumber(u.unitMultiplier) || 1,
                 principal: u.isPrincipal ? 1 : 0
             })),
@@ -503,7 +501,7 @@ const RegistrationPage: React.FC = () => {
         const servicePayload = {
             nome: form.name.trim(),
             descricao: form.description.trim() || undefined,
-            categoria_id: Number(form.categoryId),
+            categoria_id: form.categoryId,
             preco_venda: salePriceAmount,
             codigo_interno: form.internalCode.trim() || undefined,
             referencia: form.reference.trim(),
