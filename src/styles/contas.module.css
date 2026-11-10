@@ -1,0 +1,709 @@
+.contasPage {
+  padding: 8 24px;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.contasHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.contasHeader h1 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+  letter-spacing: -0.04em;
+}
+
+.contasHeader p {
+  margin: 0;
+  max-width: 560px;
+  color: var(--muted);
+}
+
+.contasActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.contasActions label,
+.contasActions button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--foreground);
+  min-height: 46px;
+}
+
+.contasActions label select,
+.contasActions label input,
+.contasActions .backupButton {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--foreground);
+  min-width: 130px;
+  height: 42px;
+}
+
+.contasActions .backupButton {
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  min-width: auto;
+}
+
+.anoInput {
+  margin-top: 0px;
+}
+
+.mesSelect {
+  margin-bottom: 8px;
+}
+
+.backupButtonGlobal {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.contasGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(300px, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.filterBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.filterBar label {
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.statusSelect {
+  margin-top: 8px;
+}
+
+.filterBar input,
+.filterBar select {
+  width: 100%;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.modalRow {
+  display: flex;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.modalEdit {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--foreground);
+  padding: 12px 14px;
+  outline: none;
+}
+
+.modalRow strong {
+  min-width: 200px;
+}
+
+.filterActions button {
+  width: 97%;
+  margin-top: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+
+  display: inline-flex;
+  /* ativa flexbox */
+  align-items: center;
+  /* centraliza verticalmente */
+  justify-content: center;
+  /* centraliza horizontalmente */
+  gap: 8px;
+  /* espaço entre ícone e texto */
+}
+
+.lastTenPanel {
+  margin-top: 24px;
+}
+
+.compactTable th,
+.compactTable td {
+  padding: 10px 8px;
+}
+
+.observacoesCell {
+  display: inline-block;
+  max-width: 200px;
+  /* limite de largura */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* detalhes de contas */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  width: min(560px, calc(100% - 32px));
+  max-height: 80vh;
+  /* limita a altura ao viewport */
+  overflow-y: auto;
+  /* ativa a rolagem vertical */
+  background: var(--surface-strong);
+  color: var(--foreground);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.modalRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.modalRow strong {
+  color: var(--muted);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.modalActions button {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  cursor: pointer;
+}
+
+.contasPanel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 15px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.contasPanel>* {
+  min-width: 0;
+}
+
+.detailPanel {
+  grid-column: 1 / 2;
+}
+
+.panelHeader h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.statusChip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.contasForm {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+
+.contasPage label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--foreground);
+}
+
+.contasPage input,
+.contasPage textarea,
+.contasPage select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--foreground);
+  padding: 12px 14px;
+  outline: none;
+}
+
+.contasPage textarea {
+  min-height: 50px;
+  resize: vertical;
+}
+
+.formActions button {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-weight: 700;
+
+  display: inline-flex;
+  /* ativa flexbox */
+  align-items: center;
+  /* centraliza verticalmente */
+  justify-content: center;
+  /* centraliza horizontalmente */
+  gap: 8px;
+  /* espaço entre ícone e texto */
+}
+
+.formActions button:first-of-type {
+  background: var(--success);
+  color: var(--text-on-accent);
+}
+
+.formActions .secondary {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+
+.secondary {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+
+.detailTableWrapper {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.contasFilterPanel {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.filterBar>div,
+.formRow>label,
+.actionsCell {
+  min-width: 0;
+}
+
+.detailTable {
+  width: 100%;
+  min-width: 820px;
+  margin-bottom: 24px;
+}
+
+.detailTable th,
+.detailTable td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.detailTable th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.actionsCell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detailTable button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text-on-accent);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.detailTable button:hover {
+  opacity: 0.95;
+}
+
+.detailTable button:nth-of-type(1) {
+  background: var(--accent);
+}
+
+.detailTable button:nth-of-type(2) {
+  background: var(--danger);
+}
+
+.payButton {
+  background: var(--success);
+}
+
+.saveButton {
+  background-color: var(--accent);
+  color: var(--foreground);
+}
+
+.cancelButton {
+  background-color: var(--danger);
+  color: var(--foreground);
+}
+
+.closeButton {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.viewButton {
+  background-color: var(--success);
+  color: var(--foreground);
+}
+
+.editButton {
+  background-color: var(--accent);
+  color: var(--foreground);
+}
+
+.deleteButton {
+  background-color: var(--danger);
+  color: var(--foreground);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.status.pendente {
+  background: rgba(248, 113, 113, 0.18);
+  color: var(--danger);
+}
+
+.status.pago {
+  background: rgba(34, 197, 94, 0.18);
+  color: var(--success);
+}
+
+.emptyRow {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* tooltip para observações em vendas*/
+.hoverEllipsis {
+  display: inline-block;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.customTooltip {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  background-color: var(--surface-strong) !important;
+  color: var(--foreground) !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  max-width: 320px !important;
+  white-space: normal !important;
+  line-height: 1.4 !important;
+  box-shadow: var(--shadow) !important;
+  letter-spacing: 0.3px !important;
+  border: 1px solid var(--border) !important;
+}
+
+.customTooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 20px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--surface-strong) transparent transparent transparent;
+}
+
+@media (max-width: 1180px) {
+  .contasGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 840px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .contasActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contasActions label,
+  .contasActions button {
+    width: 100%;
+  }
+
+  .filterBar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 630px) {
+  .contasPage {
+    padding: 16px;
+  }
+
+  .contasHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .contasHeader h1 {
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  .contasHeader p {
+    font-size: 0.85rem;
+    max-width: 100%;
+  }
+
+  .contasActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .contasActions label,
+  .contasActions button {
+    width: 100%;
+    min-height: 38px;
+    font-size: 0.9rem;
+  }
+
+  .contasActions label select,
+  .contasActions label input,
+  .contasActions .backupButton {
+    width: 100%;
+    min-width: auto;
+    font-size: 0.9rem;
+  }
+
+  .contasGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .filterBar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filterBar input,
+  .filterBar select {
+    font-size: 0.9rem;
+  }
+
+  .panelHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .formActions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .detailTable {
+    min-width: auto;
+    font-size: 0.8rem;
+  }
+
+  .detailTable th,
+  .detailTable td {
+    padding: 8px 6px;
+  }
+
+  .actionsCell {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .detailTable button {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  .modalContent {
+    width: calc(100% - 16px);
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .modalRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modalActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modalActions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .statusChip,
+  .status {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+
+  .compactTable th,
+  .compactTable td {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+
+  .emptyRow {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 436px) {
+
+  :global(html),
+  :global(body) {
+    font-size: 12px;
+  }
+
+  .detailTable {
+    min-width: unset;
+    display: block;
+    overflow-x: auto;
+    font-size: 0.7rem;
+  }
+
+  .detailTable th,
+  .detailTable td {
+    padding: 4px 3px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .formActions button,
+  .contasActions button,
+  .modalActions button {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  .contasHeader h1 {
+    font-size: 1rem;
+  }
+
+  .contasHeader p {
+    font-size: 0.75rem;
+  }
+
+  .statusChip,
+  .status {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+  }
+}

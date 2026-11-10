@@ -1,0 +1,209 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 16px;
+  justify-content: space-between;
+  background: var(--surface);
+  color: var(--foreground);
+  backdrop-filter: blur(1000px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Compensar a altura da nav */
+body {
+  padding-top: 48px; /* mesma altura da nav */
+}
+
+.rightSide {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.navItem  {
+  flex: 1;                  /* cada item ocupa espaço proporcional */
+  display: flex;            /* ícone + texto lado a lado */
+  align-items: center;
+  justify-content: center;  /* centraliza dentro do espaço */
+  gap: 6px;                 /* espaço entre ícone e texto */
+  min-width: 10vw;
+}
+
+.themeButton {
+  margin-left: 12px;
+  border-radius: 999px;
+  border: 0px solid var(--border);
+  background: var(--surface);
+  color: inherit;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: none;
+  font-size: 0.78rem;
+  outline: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.themeButton:hover,
+.themeButton:focus,
+.themeButton:focus-visible,
+.themeButton:active {
+  background: var(--surface);
+  transform: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.themeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: themeIconTransition 180ms ease-out;
+}
+
+@keyframes themeIconTransition {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.navLinks a {
+  font-size: 0.78rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.navLinks span {
+  font-size: 0.78rem;
+  opacity: 0.5;
+}
+
+/* Responsividade para 1180px */
+@media (max-width: 1180px) {
+  .nav {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .navLinks {
+    gap: 10px;
+  }
+
+  .themeButton {
+    padding: 7px 12px;
+    font-size: 0.75rem;
+  }
+
+  .navLinks a {
+    font-size: 0.75rem;
+  }
+
+  .navLinks span {
+    font-size: 0.75rem;
+  }
+}
+
+/* Responsividade para 840px */
+@media (max-width: 840px) {
+  .nav {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .navLinks {
+    gap: 8px;
+  }
+
+  .themeButton {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .navLinks a {
+    font-size: 0.7rem;
+  }
+
+  .navLinks span {
+    font-size: 0.7rem;
+  }
+}
+
+/* Responsividade para 630px */
+@media (max-width: 630px) {
+  .nav {
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .navLinks {
+    gap: 6px;
+  }
+
+  .themeButton {
+    padding: 5.5px 9px;
+    font-size: 0.68rem;
+  }
+
+  .navLinks a {
+    font-size: 0.68rem;
+  }
+
+  .navLinks span {
+    font-size: 0.68rem;
+  }
+}
+
+/* Responsividade para 436px */
+@media (max-width: 436px) {
+  .nav {
+    gap: 8px;
+    padding: 8px 8px;
+  }
+
+  .navLinks {
+    gap: 4px;
+  }
+
+  .themeButton {
+    padding: 5px 8px;
+    font-size: 0.65rem;
+  }
+
+  .navLinks a {
+    font-size: 0.65rem;
+  }
+
+  .navLinks span {
+    font-size: 0.65rem;
+  }
+}

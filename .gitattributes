@@ -1,0 +1,20 @@
+# Ensure consistent line endings for source files
+* text=auto
+
+# Force text handling for common web/typescript file types
+*.ts text
+*.tsx text
+*.js text
+*.jsx text
+*.json text
+*.css text
+*.md text
+*.yml text
+*.yaml text
+*.gitignore text
+*.gitattributes text
+
+# Treat database and binary files as binary
+*.db binary
+*.sqlite binary
+*.sqlite3 binary

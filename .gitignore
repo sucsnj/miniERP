@@ -1,0 +1,67 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js build outputs
+/.next/
+/out/
+
+# local production build folder
+/build
+
+# local database files and backups
+/vendas.db
+/contas.db
+/backup-*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# editor and OS files
+.DS_Store
+/.vscode
+/.idea
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# environment variables
+.env*
+
+# deployment
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# system
+Thumbs.db
+
+# tesseract and ocr
+/temp
+eng.traineddata
+por.traineddata
+/uploads
+temp.png
+
+# database
+notas.db
+tabela.db
+script.sql
+*.db
