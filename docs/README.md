@@ -43,6 +43,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0009-padroes-de-layout-e-formularios.md](adr/0009-padroes-de-layout-e-formularios.md) - ADR: padrão de layout e formulários baseado em `/contas-a-pagar`.
 - [adr/0010-sistema-de-botoes-com-variantes.md](adr/0010-sistema-de-botoes-com-variantes.md) - ADR:
 - [adr/0011-integracao-carrinho-estoque.md](adr/0011-integracao-carrinho-estoque.md) - ADR: integração do carrinho com estoque (devolução explícita, quantidade inteira, estoque negativo configurável, backend-first). botões com variantes funcionais, tamanhos, carregamento e `iconOnly`.
+- [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
 
 ## Páginas do Frontend
 
@@ -100,6 +101,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ## Banco de Dados
 
+- [supabase.md](supabase.md) - guia do Supabase: aplicar schema, convenções, RPCs, segurança e Vercel.
 - [src/database/db.md](src/database/db.md) - configuração e backup do banco SQLite de vendas (`vendas.db`).
 - [src/database/contasDb.md](src/database/contasDb.md) - persistência de contas a pagar.
 - [src/database/notasDb.md](src/database/notasDb.md) - persistência de notas fiscais.
