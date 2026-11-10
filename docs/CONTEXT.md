@@ -1,6 +1,6 @@
 # Contexto Rápido para Agentes
 
-> Este documento existe para que o agente entenda o projeto sem reler o código. Complementa `docs/README.md` (índice completo) e `docs/DOCS.md` (arquitetura). O estado atual do projeto (últimas mudanças, pendentes e futuras) fica em `PROJECT_STATUS.md` (raiz).
+> Este documento existe para que o agente entenda o projeto sem reler o código. Complementa `docs/README.md` (índice completo) e `docs/DOCS.md` (arquitetura). O estado atual do projeto (pendentes e futuras) fica em `PROJECT_STATUS.md` (raiz).
 
 ## O que é este projeto
 
@@ -77,7 +77,7 @@ Bancos em `db/` (SQLite). Documentação em `docs/src/database/`.
 
 ## Regras para o agente
 
-1. **Estado do projeto.** Leia `PROJECT_STATUS.md` (raiz) antes de trabalhar; ele registra o estado atual, últimas mudanças, pendentes e futuras.
+1. **Estado do projeto.** Leia `PROJECT_STATUS.md` (raiz) antes de trabalhar; ele registra o estado atual, pendentes e futuras (sem histórico).
 2. **Documentação primeiro.** Consulte `docs/` antes do código. Se precisou ler o código, atualize o doc correspondente em `docs/` (e o índice `docs/README.md` se for doc novo).
 3. **Documentar mudanças.** Ao concluir modificações de código, atualize `PROJECT_STATUS.md` e o doc afetado em `docs/` (e `docs/CONTEXT.md` se o contexto geral mudar). Siga `docs/documentation-guidelines.md` (padrão de documentação inclusive para ADRs).
 4. **Next.js novo.** Esta versão do Next tem breaking changes. Cheque `node_modules/next/dist/docs/` quando for escrever código (ver `AGENTS.md`).

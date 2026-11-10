@@ -9,7 +9,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [CONTEXT.md](CONTEXT.md) - guia de contexto rápido para agentes (evita releitura de código).
 - [ALIGNMENT.md](ALIGNMENT.md) - domínio do negócio, usuários, fluxos e pontos de atenção para a refatoração.
 - [documentation-guidelines.md](documentation-guidelines.md) - padrão de documentação: espelho de `src/`, template único, o que registrar e onde (incl. ADRs e `PROJECT_STATUS`).
-- [PROJECT_STATUS.md](../PROJECT_STATUS.md) - estado atual do projeto: últimas mudanças, pendentes e futuras.
+- [PROJECT_STATUS.md](../PROJECT_STATUS.md) - estado atual do projeto: pendentes e futuras (sem histórico).
 - [DOCS.md](DOCS.md) - documento de arquitetura geral do projeto, fluxo de dados, dependências críticas, riscos e sugestões de melhoria.
 - [adr/](adr/) - Decisões de Arquitetura (ADRs) do projeto.
 - [glossary.md](glossary.md) - glossário de termos do domínio.

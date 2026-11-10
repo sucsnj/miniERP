@@ -14,7 +14,7 @@ Este projeto tem documentação estruturada em `docs/`. **Não releia código se
 ### Documentação (obrigatória)
 
 0. **Mudança significativa exige documentação** — siga `docs/documentation-guidelines.md`. Ao concluir qualquer modificação relevante de código/regra:
-   - atualize `PROJECT_STATUS.md` (seções "Últimas mudanças", "Pendentes" e "Futuras", e a data no topo);
+   - atualize `PROJECT_STATUS.md` (estado atual, pendentes, futuras e a data no topo; **não registre histórico** — ele fica nos docs/ADRs e no Git);
    - atualize o documento correspondente em `docs/` (e o índice `docs/README.md` se houver doc novo);
    - atualize `docs/CONTEXT.md` se o contexto geral mudar (novas regras, camadas, bancos, páginas);
    - crie **ADR** em `docs/adr/` quando a mudança criar/alterar um padrão de arquitetura (impacta mais de uma camada).
@@ -26,7 +26,7 @@ Este projeto tem documentação estruturada em `docs/`. **Não releia código se
 
 ### Estado do projeto (`PROJECT_STATUS.md`)
 
-1. Antes de começar qualquer tarefa, leia `PROJECT_STATUS.md` (estado atual, últimas mudanças, pendentes e futuras) junto com `/context`.
+1. Antes de começar qualquer tarefa, leia `PROJECT_STATUS.md` (estado atual, pendentes e futuras) junto com `/context`.
 
 ### Framework e boas práticas
 

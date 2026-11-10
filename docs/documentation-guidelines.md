@@ -55,7 +55,7 @@ Todo `.md` em `docs/src/` usa **exatamente** este formato (alvo: ≤ 30 linhas; 
 
 ## Checklist ao concluir uma mudança significativa
 
-1. `PROJECT_STATUS.md` — mover para "Últimas mudanças", ajustar "Pendentes"/"Futuras" e atualizar a data.
+1. `PROJECT_STATUS.md` — atualizar "Estado atual"/"Pendentes"/"Futuras" e a data; não registrar histórico (fica nos docs/ADRs e no Git).
 2. Doc dono em `docs/` atualizado (assinaturas, comportamento, caminhos).
 3. Índice `docs/README.md` atualizado se houver doc novo ou entrada desatualizada.
 4. `docs/CONTEXT.md` atualizado se o contexto geral mudar (tabela "Tema → Documentos").
