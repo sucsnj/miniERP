@@ -57,7 +57,7 @@ const RegistrationPage: React.FC = () => {
     // Estado do formulário de Cadastro/Edição
     const [editingId, setEditingId] = useState<string | null>(null);
     const [form, setForm] = useState<ProductFormData>({
-        type: 'PRODUTO',
+        type: 'PRODUCT',
         name: '',
         description: '',
         categoryId: '',
@@ -140,29 +140,29 @@ const RegistrationPage: React.FC = () => {
     const fillFormWithItem = useCallback((item: ItemData) => {
         setEditingId(item.id);
         setForm({
-        type: item.tipo,
+        type: item.kind,
         name: item.name,
-        description: item.descricao || '',
+        description: item.description || '',
             categoryId: item.categoryId,
             brandId: item.brandId,
             supplierId: item.supplierId,
             purchasePrice: String(item.purchasePrice),
             profitMargin: String(item.profitMargin),
             salePrice: String(item.salePrice),
-        stock: String(item.estoque),
+        stock: String(item.stock),
             unitMultiplier: String(item.multiplicador_unidade ?? 1),
             unitOfMeasureId: item.unidade_medida_id,
             internalCode: item.internalCode || '',
-        reference: item.referencia || '',
+        reference: item.reference || '',
             durationMinutes: String(item.duracao_minutos ?? ''),
-        active: item.ativo ?? 1,
-            unitsOfMeasure: item.unidades_medida ? item.unidades_medida.map(u => ({
+        active: item.active ?? 1,
+            unitsOfMeasure: item.units ? item.units.map(u => ({
                 unitOfMeasureId: u.unidade_medida_id,
                 unitMultiplier: String(u.multiplicador_unidade),
         isPrincipal: u.principal === 1,
             })) : [{ unitOfMeasureId: item.unidade_medida_id, unitMultiplier: String(item.multiplicador_unidade ?? 1), isPrincipal: true }],
         });
-        setFormBarcodes(item.codigos_barras || []);
+        setFormBarcodes(item.barcodes || []);
         setNewBarcode('');
         setAdjustQuantity('');
         setAdjustDescription('');
@@ -175,7 +175,7 @@ const RegistrationPage: React.FC = () => {
     // Carrega item pelo ID (vindo da query ?id=X) para pré-preencher o formulário de edição
     const loadItemForEditing = useCallback(async (id: string) => {
         try {
-            // Tenta buscar como produto primeiro, depois como serviço
+            // Tenta buscar como product primeiro, depois como serviço
             const [productsData, servicesData] = await Promise.all([
                 fetchProducts({ page: 1, pageSize: 10000 }),
                 fetchServices({ page: 1, pageSize: 10000 }),
@@ -184,9 +184,9 @@ const RegistrationPage: React.FC = () => {
             const allProducts: ItemData[] = productsData?.items || [];
             const allServices: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
                 id: service.id,
-        tipo: 'SERVICO',
+        kind: 'SERVICE',
         name: service.name,
-        descricao: service.descricao,
+        description: service.description,
                 categoryId: service.categoryId,
                 unidade_medida_id: '21',
                 brandId: '',
@@ -194,15 +194,15 @@ const RegistrationPage: React.FC = () => {
                 purchasePrice: 0,
                 profitMargin: 0,
                 salePrice: service.salePrice,
-        estoque: 0,
+        stock: 0,
                 multiplicador_unidade: 1,
                 totalStock: 0,
                 internalCode: service.internalCode,
-        referencia: service.referencia || '',
+        reference: service.reference || '',
                 duracao_minutos: service.duracao_minutos,
                 createdAt: service.createdAt,
                 updatedAt: service.updatedAt,
-                categoria_nome: service.categoria_nome,
+                categoryName: service.categoryName,
             }));
 
             const item = [...allProducts, ...allServices].find((i) => i.id === id);
@@ -230,7 +230,7 @@ const RegistrationPage: React.FC = () => {
     // Lê a query: pré-carrega para edição (?id=X) ou preenche para cadastro rápido (?novoImport=1...)
     useEffect(() => {
         if (!router.isReady || isQueryProcessed.current) return;
-        const { id, novoImport: isNewImport, name: nameParam, purchasePrice, estoque: stockParam, unidade: unitParam, ean, internalCode } = router.query;
+        const { id, novoImport: isNewImport, name: nameParam, purchasePrice, stock: stockParam, unidade: unitParam, ean, internalCode } = router.query;
 
         if (id) {
             isQueryProcessed.current = true;
@@ -262,7 +262,7 @@ const RegistrationPage: React.FC = () => {
 
                 setEditingId(null);
                 setForm({
-        type: 'PRODUTO',
+        type: 'PRODUCT',
         name: nameValue,
         description: 'Importado via XML da NF-e',
                     categoryId: options.categories[0]?.id ?? '',
@@ -327,7 +327,7 @@ const RegistrationPage: React.FC = () => {
         setIsDirty(false);
         setEditingId(null);
         setForm({
-        type: 'PRODUTO',
+        type: 'PRODUCT',
         name: '',
         description: '',
             categoryId: '',
@@ -430,7 +430,7 @@ const RegistrationPage: React.FC = () => {
             showToast(categoryCheck.message ?? 'Selecione uma categoria.', 'error');
             return;
         }
-        if (form.type === 'PRODUTO') {
+        if (form.type === 'PRODUCT') {
             const brandCheck = validateRequired(form.brandId, 'Marca');
             if (!brandCheck.ok) {
                 showToast(brandCheck.message ?? 'Selecione uma marca.', 'error');
@@ -474,24 +474,24 @@ const RegistrationPage: React.FC = () => {
         }
 
         const payload = {
-            tipo: form.type,
+            kind: form.type,
             name: form.name.trim(),
-            descricao: form.description.trim() || undefined,
+            description: form.description.trim() || undefined,
             categoryId: form.categoryId,
             brandId: form.brandId || '',
             supplierId: form.supplierId || '',
             purchasePrice: purchasePriceAmount,
             profitMargin: profitMarginAmount,
             salePrice: salePriceAmount,
-            estoque: stockAmount,
+            stock: stockAmount,
             multiplicador_unidade: multiplierValue,
             unidade_medida_id: form.unitOfMeasureId || '',
             internalCode: form.internalCode.trim() || undefined,
-            referencia: form.reference.trim(),
+            reference: form.reference.trim(),
             duracao_minutos: Number(form.durationMinutes) || 0,
-            ativo: form.active,
-            codigos_barras: finalBarcodes,
-            unidades_medida: form.unitsOfMeasure.map(u => ({
+            active: form.active,
+            barcodes: finalBarcodes,
+            units: form.unitsOfMeasure.map(u => ({
                 unidade_medida_id: u.unitOfMeasureId,
                 multiplicador_unidade: parseNumber(u.unitMultiplier) || 1,
                 principal: u.isPrincipal ? 1 : 0
@@ -500,16 +500,16 @@ const RegistrationPage: React.FC = () => {
 
         const servicePayload = {
             name: form.name.trim(),
-            descricao: form.description.trim() || undefined,
+            description: form.description.trim() || undefined,
             categoryId: form.categoryId,
             salePrice: salePriceAmount,
             internalCode: form.internalCode.trim() || undefined,
-            referencia: form.reference.trim(),
+            reference: form.reference.trim(),
             duracao_minutos: Number(form.durationMinutes) || 0,
         };
 
         try {
-            if (form.type === 'SERVICO') {
+            if (form.type === 'SERVICE') {
                 if (editingId) {
                     await updateService(editingId, servicePayload);
                     showToast('Serviço atualizado com sucesso. Redirecionando...', 'success');
@@ -539,7 +539,7 @@ const RegistrationPage: React.FC = () => {
     const handleConfirmDelete = async () => {
         if (!itemToDelete) return;
         try {
-            if (itemToDelete.tipo === 'SERVICO') {
+            if (itemToDelete.kind === 'SERVICE') {
                 await deleteService(itemToDelete.id);
             } else {
                 await deleteProduct(itemToDelete.id);
@@ -721,7 +721,7 @@ const RegistrationPage: React.FC = () => {
                                 />
 
                                 {/* Códigos de Barras */}
-                                {form.type === 'PRODUTO' && (
+                                {form.type === 'PRODUCT' && (
                                     <BarcodeManager
                                         date={{
                                             barcodes: formBarcodes,

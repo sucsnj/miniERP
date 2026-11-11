@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const body = req.body ?? {};
       const name = body.name ?? body.name;
-      const description = body.description ?? body.descricao;
+      const description = body.description ?? body.description;
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id = req.query.id;
       const body = req.body ?? {};
       const name = body.name ?? body.name;
-      const description = body.description ?? body.descricao;
+      const description = body.description ?? body.description;
       if (!id) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }

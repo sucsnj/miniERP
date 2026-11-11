@@ -2,7 +2,7 @@ export type StockMovementType = 'ENTRADA' | 'SAIDA';
 
 export interface SaleStockItem {
   item_id?: number | null;
-  tipo: 'PRODUTO' | 'SERVICO';
+  kind: 'PRODUCT' | 'SERVICE';
   quantity: number;
 }
 
@@ -13,8 +13,8 @@ export interface StockAdjustment {
 }
 
 /**
- * Calcula os ajustes de estoque necessários ao substituir os itens de uma venda.
- * Quantidades positivas em `SAIDA` representam subtração de estoque.
+ * Calcula os ajustes de stock necessários ao substituir os itens de uma venda.
+ * Quantidades positivas em `SAIDA` representam subtração de stock.
  */
 export function getSaleStockAdjustments(
   oldItems: SaleStockItem[],
@@ -24,12 +24,12 @@ export function getSaleStockAdjustments(
   const newByItem = new Map<number, number>();
 
   for (const item of oldItems) {
-    if (item.tipo !== 'PRODUTO' || !item.item_id) continue;
+    if (item.kind !== 'PRODUCT' || !item.item_id) continue;
     oldByItem.set(item.item_id, (oldByItem.get(item.item_id) ?? 0) + Number(item.quantity || 0));
   }
 
   for (const item of newItems) {
-    if (item.tipo !== 'PRODUTO' || !item.item_id) continue;
+    if (item.kind !== 'PRODUCT' || !item.item_id) continue;
     newByItem.set(item.item_id, (newByItem.get(item.item_id) ?? 0) + Number(item.quantity || 0));
   }
 

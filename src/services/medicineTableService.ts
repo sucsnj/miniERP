@@ -1,9 +1,9 @@
 export interface TableRow {
   substance: string;
-  laboratorio: string;
+  laboratory: string;
   ean: string;
-  produto: string;
-  apresentacao: string;
+  product: string;
+  presentation: string;
   therapeuticClass: string;
   pf205: string;
   pmc205: string;

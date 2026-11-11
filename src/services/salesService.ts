@@ -16,27 +16,27 @@ export interface SaleItemData {
   id: string;
   venda_id: string;
   item_id?: string | null;
-  tipo: 'PRODUTO' | 'SERVICO';
+  kind: 'PRODUCT' | 'SERVICE';
   name: string;
   quantity: number;
   unitPrice: number;
   subtotal: number;
   internalCode?: string | null;
-  referencia?: string | null;
+  reference?: string | null;
   createdAt: string;
 }
 
 export interface SaleItemInput {
   id?: string | number;
   item_id?: string | number | null;
-  tipo: 'PRODUTO' | 'SERVICO';
+  kind: 'PRODUCT' | 'SERVICE';
   name: string;
   quantity: number;
   unitPrice?: number;
   salePrice?: number;
   internalCode?: string | null;
-  referencia?: string | null;
-  estoque?: number;
+  reference?: string | null;
+  stock?: number;
 }
 
 export interface MonthlySale {
@@ -70,13 +70,13 @@ function mapSaleItem(row: any): SaleItemData {
     id: String(row.id),
     venda_id: String(row.saleId ?? row.sale_id ?? row.venda_id ?? ''),
     item_id: row.productId ?? row.product_id ?? row.serviceId ?? row.service_id ?? row.item_id ?? null,
-    tipo: String(row.kind ?? row.tipo ?? 'PRODUTO').toUpperCase() === 'SERVICE' || String(row.kind ?? row.tipo ?? '').toUpperCase() === 'SERVICO' ? 'SERVICO' : 'PRODUTO',
+    kind: String(row.kind ?? row.kind ?? 'PRODUCT').toUpperCase() === 'SERVICE' || String(row.kind ?? row.kind ?? '').toUpperCase() === 'SERVICE' ? 'SERVICE' : 'PRODUCT',
     name: String(row.name ?? row.name ?? ''),
     quantity: Number(row.quantity ?? row.quantity ?? 0),
     unitPrice: Number(row.unitPrice ?? row.unit_price ?? row.unitPrice ?? row.salePrice ?? 0),
     subtotal: Number(row.subtotal ?? 0),
     internalCode: row.internalCode ?? row.internal_code ?? row.internalCode ?? null,
-    referencia: row.reference ?? row.referencia ?? null,
+    reference: row.reference ?? row.reference ?? null,
     createdAt: String(row.createdAt ?? row.created_at ?? row.createdAt ?? ''),
   };
 }
@@ -100,8 +100,7 @@ function mapMonthlySale(row: any): MonthlySale {
 }
 
 function toSaleItemPayload(item: SaleItemInput) {
-  const tipo = (item.tipo ?? 'PRODUTO').toString().toUpperCase();
-  const kind = tipo === 'SERVICO' || tipo === 'SERVICE' ? 'SERVICE' : 'PRODUCT';
+  const kind = (item.kind ?? 'PRODUCT').toString().toUpperCase() === 'SERVICE' ? 'SERVICE' : 'PRODUCT';
   const quantity = Number(item.quantity ?? (item as any).quantity ?? 0);
   const unitPrice = Number(item.unitPrice ?? item.salePrice ?? (item as any).unitPrice ?? 0);
   const id = item.item_id ?? item.id ?? null;
@@ -114,7 +113,7 @@ function toSaleItemPayload(item: SaleItemInput) {
     unitPrice,
     subtotal: unitPrice * quantity,
     internalCode: item.internalCode ?? null,
-    reference: item.referencia ?? null,
+    reference: item.reference ?? null,
   };
 }
 

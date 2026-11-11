@@ -31,9 +31,9 @@ interface BarcodePayload {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const { search, categoryId, brandId, supplierId, ativo, page, pageSize } = req.query;
+      const { search, categoryId, brandId, supplierId, active, page, pageSize } = req.query;
 
-      const activeParam = ativo !== undefined && ativo !== 'TODOS' ? (ativo === 'ATIVO' ? true : ativo === 'INATIVO' ? false : null) : null;
+      const activeParam = active !== undefined && active !== 'TODOS' ? (active === 'ATIVO' ? true : active === 'INATIVO' ? false : null) : null;
 
       const result = await listProducts({
         search: search ? String(search) : undefined,
@@ -58,15 +58,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (action === 'toggle-status') {
         const id = body.id;
-        const ativo = body.ativo;
+        const active = body.active;
         if (!id) return res.status(400).json({ error: 'ID é obrigatório para alterar status.' });
-        const active = ativo === 1 || ativo === true || ativo === '1';
-        await toggleProductStatus(String(id), active);
-        return res.status(200).json({ message: `Item ${active ? 'ativado' : 'desativado'} com sucesso.` });
+      const isActive = active === 1 || active === true || active === '1';
+      await toggleProductStatus(String(id), isActive);
+      return res.status(200).json({ message: `Item ${isActive ? 'ativado' : 'desativado'} com sucesso.` });
       }
 
-      const itemType = body.tipo ?? body.type ?? 'PRODUTO';
-      if (itemType !== 'PRODUTO' && itemType !== 'PRODUCT') {
+      const itemType = body.kind ?? body.type ?? 'PRODUCT';
+      if (itemType !== 'PRODUCT' && itemType !== 'PRODUCT') {
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
 
@@ -85,8 +85,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!brandId) return res.status(400).json({ error: 'Selecione uma marca válida.' });
       if (!supplierId) return res.status(400).json({ error: 'Selecione um fornecedor válido.' });
 
-      const unitsInput: UnitPayload[] = Array.isArray(body.unidades_medida ?? body.units)
-        ? (body.unidades_medida ?? body.units)
+      const unitsInput: UnitPayload[] = Array.isArray(body.units ?? body.units)
+        ? (body.units ?? body.units)
         : [];
       let unitList = unitsInput
         .map((u) => ({
@@ -125,8 +125,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      const barcodesInput: BarcodePayload[] = Array.isArray(body.codigos_barras ?? body.barcodes)
-        ? (body.codigos_barras ?? body.barcodes)
+      const barcodesInput: BarcodePayload[] = Array.isArray(body.barcodes ?? body.barcodes)
+        ? (body.barcodes ?? body.barcodes)
         : [];
       const listBarcodes = barcodesInput
         .map((cb) => ({
@@ -168,7 +168,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const purchasePrice = parseNumber(body.purchasePrice ?? body.purchasePrice ?? body.purchase_price);
       const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin);
       const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price);
-      const stock = parseNumber(body.estoque ?? body.stock);
+      const stock = parseNumber(body.stock ?? body.stock);
       const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier);
 
       const finalUnitId = mainUnit ? mainUnit.unitId : String(body.unidade_medida_id ?? body.baseUnitId ?? body.base_unit_id);
@@ -176,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const id = await createProduct({
         name: String(name).trim(),
-        description: body.descricao ?? body.description ?? null,
+        description: body.description ?? body.description ?? null,
         categoryId: String(categoryId),
         baseUnitId: finalUnitId,
         brandId: String(brandId),
@@ -187,8 +187,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         stock: Number.isFinite(stock) ? stock : 0,
         unitMultiplier: Number.isFinite(finalMultiplier) && finalMultiplier > 0 ? finalMultiplier : 1,
         internalCode: internalCode ? String(internalCode).trim() : null,
-        reference: body.referencia ?? body.reference ?? null,
-        active: body.ativo !== undefined ? (body.ativo === 1 || body.ativo === true) : true,
+        reference: body.reference ?? body.reference ?? null,
+        active: body.active !== undefined ? (body.active === 1 || body.active === true) : true,
         barcodes: listBarcodes,
         units: unitList.map((u) => ({ unitId: u.unitId, unitMultiplier: u.unitMultiplier, isPrimary: u.isPrimary })),
       });
@@ -209,8 +209,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const existing = await getProduct(String(id));
       if (!existing) return res.status(404).json({ error: 'Item não encontrado.' });
 
-      const itemType = body.tipo ?? body.type ?? 'PRODUTO';
-      if (itemType !== 'PRODUTO' && itemType !== 'PRODUCT') {
+      const itemType = body.kind ?? body.type ?? 'PRODUCT';
+      if (itemType !== 'PRODUCT' && itemType !== 'PRODUCT') {
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
 
@@ -225,8 +225,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!brandId) return res.status(400).json({ error: 'Selecione uma marca válida.' });
       if (!supplierId) return res.status(400).json({ error: 'Selecione um fornecedor válido.' });
 
-      const unitsInput: UnitPayload[] = Array.isArray(body.unidades_medida ?? body.units)
-        ? (body.unidades_medida ?? body.units)
+      const unitsInput: UnitPayload[] = Array.isArray(body.units ?? body.units)
+        ? (body.units ?? body.units)
         : [];
       let unitList = unitsInput
         .map((u) => ({
@@ -264,8 +264,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      const barcodesInput: BarcodePayload[] = Array.isArray(body.codigos_barras ?? body.barcodes)
-        ? (body.codigos_barras ?? body.barcodes)
+      const barcodesInput: BarcodePayload[] = Array.isArray(body.barcodes ?? body.barcodes)
+        ? (body.barcodes ?? body.barcodes)
         : [];
       const listBarcodes = barcodesInput
         .map((cb) => ({
@@ -307,7 +307,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const purchasePrice = parseNumber(body.purchasePrice ?? body.purchasePrice ?? body.purchase_price ?? existing.purchasePrice);
       const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin ?? existing.profitMargin);
       const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price ?? existing.salePrice);
-      const stock = parseNumber(body.estoque ?? body.stock ?? existing.stock);
+      const stock = parseNumber(body.stock ?? body.stock ?? existing.stock);
       const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier);
 
       const finalUnitId = (unitList.find((u) => u.isPrimary)?.unitId) ?? existing.baseUnitId;
@@ -315,7 +315,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await updateProduct(String(id), {
         name: String(name).trim(),
-        description: body.descricao ?? body.description ?? existing.description,
+        description: body.description ?? body.description ?? existing.description,
         categoryId: String(categoryId),
         baseUnitId: finalUnitId,
         brandId: String(brandId),
@@ -326,8 +326,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         stock: Number.isFinite(stock) ? stock : existing.stock,
         unitMultiplier: Number.isFinite(finalMultiplier) && finalMultiplier > 0 ? finalMultiplier : existing.unitMultiplier,
         internalCode: internalCode ? String(internalCode).trim() : existing.internalCode,
-        reference: body.referencia ?? body.reference ?? existing.reference,
-        active: body.ativo !== undefined ? (body.ativo === 1 || body.ativo === true) : existing.active,
+        reference: body.reference ?? body.reference ?? existing.reference,
+        active: body.active !== undefined ? (body.active === 1 || body.active === true) : existing.active,
         barcodes: listBarcodes,
         units: unitList.length > 0 ? unitList.map((u) => ({ unitId: u.unitId, unitMultiplier: u.unitMultiplier, isPrimary: u.isPrimary })) : [{ unitId: finalUnitId, unitMultiplier: finalMultiplier, isPrimary: true }],
       });

@@ -27,16 +27,16 @@ export const useCart = (onToast?: CartToast) => {
     setLoadingCatalog(true);
     try {
       const [productsData, servicesData] = await Promise.all([
-        fetchProducts({ search: query || undefined, ativo: 'ATIVO', page: 1, pageSize: 50 }),
+        fetchProducts({ search: query || undefined, active: 'ATIVO', page: 1, pageSize: 50 }),
         fetchServices({ search: query || undefined, page: 1, pageSize: 50 }),
       ]);
 
       const products = productsData?.items || [];
       const services: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
         id: service.id,
-        tipo: 'SERVICO',
+        kind: 'SERVICE',
         name: service.name,
-        descricao: service.descricao,
+        description: service.description,
         categoryId: service.categoryId,
         unidade_medida_id: '21',
         brandId: '',
@@ -44,15 +44,15 @@ export const useCart = (onToast?: CartToast) => {
         purchasePrice: 0,
         profitMargin: 0,
         salePrice: service.salePrice,
-        estoque: 0,
+        stock: 0,
         multiplicador_unidade: 1,
         totalStock: 0,
         internalCode: service.internalCode,
-        referencia: service.referencia || '',
+        reference: service.reference || '',
         duracao_minutos: service.duracao_minutos,
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
-        categoria_nome: service.categoria_nome,
+        categoryName: service.categoryName,
       }));
 
       const catalog = [...products, ...services].sort((a, b) => a.name.localeCompare(b.name));
@@ -94,12 +94,12 @@ export const useCart = (onToast?: CartToast) => {
     setCartModalOpen(true);
   }, []);
 
-  // Adiciona +1 do produto/serviço ao carrinho
+  // Adiciona +1 do product/serviço ao carrinho
   const handleAddToCart = useCallback(
     (item: ItemData) => {
       setCartItems((prevItems) => {
         const existingIndex = prevItems.findIndex(
-          (ci) => ci.id === item.id && ci.tipo === item.tipo
+          (ci) => ci.id === item.id && ci.kind === item.kind
         );
         if (existingIndex > -1) {
           const updated = [...prevItems];
@@ -113,13 +113,13 @@ export const useCart = (onToast?: CartToast) => {
             ...prevItems,
             {
               id: item.id,
-              tipo: item.tipo,
+              kind: item.kind,
               name: item.name,
               salePrice: item.salePrice,
               quantity: 1,
               internalCode: item.internalCode,
-              referencia: item.referencia,
-              estoque: item.estoque,
+              reference: item.reference,
+              stock: item.stock,
             },
           ];
         }
@@ -134,7 +134,7 @@ export const useCart = (onToast?: CartToast) => {
     (item: ItemData) => {
       setCartItems((prevItems) => {
         const existingIndex = prevItems.findIndex(
-          (ci) => ci.id === item.id && ci.tipo === item.tipo
+          (ci) => ci.id === item.id && ci.kind === item.kind
         );
         if (existingIndex === -1) return prevItems;
 
@@ -156,13 +156,13 @@ export const useCart = (onToast?: CartToast) => {
 
   // Atualiza quantity no carrinho
   const handleUpdateQuantity = useCallback(
-    (id: string, type: 'PRODUTO' | 'SERVICO', newQty: number) => {
+    (id: string, type: 'PRODUCT' | 'SERVICE', newQty: number) => {
       setCartItems((prevItems) => {
         if (newQty <= 0) {
-          return prevItems.filter((ci) => !(ci.id === id && ci.tipo === type));
+          return prevItems.filter((ci) => !(ci.id === id && ci.kind === type));
         }
         return prevItems.map((ci) => {
-          if (ci.id === id && ci.tipo === type) {
+          if (ci.id === id && ci.kind === type) {
             return { ...ci, quantity: newQty };
           }
           return ci;
@@ -174,9 +174,9 @@ export const useCart = (onToast?: CartToast) => {
 
   // Remove item completo do carrinho
   const handleRemoveItem = useCallback(
-    (id: string, type: 'PRODUTO' | 'SERVICO') => {
+    (id: string, type: 'PRODUCT' | 'SERVICE') => {
       setCartItems((prevItems) =>
-        prevItems.filter((ci) => !(ci.id === id && ci.tipo === type))
+        prevItems.filter((ci) => !(ci.id === id && ci.kind === type))
       );
       onToast?.('Item removido do carrinho.', 'info');
     },

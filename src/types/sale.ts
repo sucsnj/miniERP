@@ -6,16 +6,16 @@
  */
 
 /** Tipo de item do catálogo/carrinho. */
-export type CatalogItemType = 'PRODUTO' | 'SERVICO';
+export type CatalogItemType = 'PRODUCT' | 'SERVICE';
 
-/** Item do carrinho de uma venda (produto ou serviço). */
+/** Item do carrinho de uma venda (product ou serviço). */
 export interface CartItem {
   id: string;
-  tipo: CatalogItemType;
+  kind: CatalogItemType;
   name: string;
   salePrice: number;
   quantity: number;
   internalCode?: string;
-  referencia?: string;
-  estoque?: number;
+  reference?: string;
+  stock?: number;
 }

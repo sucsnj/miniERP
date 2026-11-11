@@ -43,8 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const salePrice = body.salePrice ?? body.salePrice ?? 0;
       const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? 0;
       const internalCode = body.internalCode ?? body.internalCode;
-      const reference = body.reference ?? body.referencia;
-      const description = body.description ?? body.descricao;
+      const reference = body.reference ?? body.reference;
+      const description = body.description ?? body.description;
 
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'O nome do serviço é obrigatório.' });
@@ -84,8 +84,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const salePrice = body.salePrice ?? body.salePrice ?? existing.salePrice;
       const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? existing.durationMinutes;
       const internalCode = body.internalCode ?? body.internalCode ?? existing.internalCode;
-      const reference = body.reference ?? body.referencia ?? existing.reference;
-      const description = body.description ?? body.descricao ?? existing.description;
+      const reference = body.reference ?? body.reference ?? existing.reference;
+      const description = body.description ?? body.description ?? existing.description;
 
       if (!name || !categoryId) {
         return res.status(400).json({ error: 'Nome e categoria do serviço são obrigatórios.' });

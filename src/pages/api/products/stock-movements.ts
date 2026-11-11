@@ -28,9 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const body = req.body ?? {};
       const productId = body.productId ?? body.item_id;
-      const movementType = body.type ?? body.tipo;
+      const movementType = body.type ?? body.kind;
       const quantity = body.quantity ?? body.quantity;
-      const description = body.description ?? body.descricao;
+      const description = body.description ?? body.description;
 
       if (!productId) {
         return res.status(400).json({ error: 'ID do item é obrigatório para registrar movimentação.' });

@@ -57,18 +57,18 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                         <tr key={item.id}>
                                             <td>
                                                 <span
-                                                    className={`${styles.badge} ${item.tipo === 'PRODUTO'
+                                                    className={`${styles.badge} ${item.kind === 'PRODUCT'
                                                         ? styles.badgeProduto
                                                         : styles.badgeServico
                                                         }`}
                                                 >
-                                                    {item.tipo === 'PRODUTO' ? 'Produto' : 'Serviço'}
+                                                    {item.kind === 'PRODUCT' ? 'Produto' : 'Serviço'}
                                                 </span>
                                             </td>
                                             <td>{item.internalCode || '—'}</td>
                                             <td>
                                                 <strong>{item.name}</strong>
-                                                {item.descricao && (
+                                                {item.description && (
                                                     <div
                                                         style={{
                                                             fontSize: '0.72rem',
@@ -76,42 +76,42 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                             marginTop: '2px',
                                                         }}
                                                     >
-                                                        {item.descricao.length > 50
-                                                            ? `${item.descricao.substring(0, 50)}...`
-                                                            : item.descricao}
+                                                        {item.description.length > 50
+                                                            ? `${item.description.substring(0, 50)}...`
+                                                            : item.description}
                                                     </div>
                                                 )}
                                             </td>
                                             <td>R$ {formatCurrency(item.salePrice || 0, 2)}</td>
                                             <td>
-                                                {item.tipo === 'SERVICO' ? '—' : `${item.totalStock ?? (item.estoque * (item.multiplicador_unidade ?? 1))} ${item.unidade_medida_sigla || ''}`.trim()}
+                                                {item.kind === 'SERVICE' ? '—' : `${item.totalStock ?? (item.stock * (item.multiplicador_unidade ?? 1))} ${item.unitAbbreviation || ''}`.trim()}
                                             </td>
 
                                             <td>
-                                                {item.tipo === 'PRODUTO' && (
+                                                {item.kind === 'PRODUCT' && (
                                                     <span
-                                                        className={`${styles.badge} ${item.ativo === 1
+                                                        className={`${styles.badge} ${item.active === 1
                                                             ? styles.badgeAtivo
                                                             : styles.badgeInativo
                                                             }`}
                                                     >
-                                                        {item.ativo === 1 ? 'Ativo' : 'Inativo'}
+                                                        {item.active === 1 ? 'Ativo' : 'Inativo'}
                                                     </span>
                                                 )}
                                             </td>
                                             <td>
                                                 <div className={styles.actionsCell}>
-                                                    {item.tipo === 'PRODUTO' && (
+                                                    {item.kind === 'PRODUCT' && (
                                                         <Button
                                                             type="button"
-                                                            variant={item.ativo === 1 ? 'warning' : 'success'}
+                                                            variant={item.active === 1 ? 'warning' : 'success'}
                                                             size="sm"
                                                             iconOnly
                                                             onClick={() => onToggleStatus(item)}
-                                                            title={item.ativo === 1 ? 'Desativar' : 'Ativar'}
-                                                            aria-label={item.ativo === 1 ? 'Desativar' : 'Ativar'}
+                                                            title={item.active === 1 ? 'Desativar' : 'Ativar'}
+                                                            aria-label={item.active === 1 ? 'Desativar' : 'Ativar'}
                                                             id={`toggle-status-${item.id}`}
-                                                            leftIcon={item.ativo === 1 ? <BlockIcon fontSize="small" /> : <CheckIcon fontSize="small" />}
+                                                            leftIcon={item.active === 1 ? <BlockIcon fontSize="small" /> : <CheckIcon fontSize="small" />}
                                                         />
                                                     )}
                                                     <Button

@@ -58,7 +58,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
 
       const itemsWithStatus: ItemWithStatus[] = result.produtos.map((p) => ({
         ...p,
-        descricaoOriginal: p.descricaoOriginal || p.descricao,
+        descricaoOriginal: p.descricaoOriginal || p.description,
         status: 'idle',
       }));
       setProducts(itemsWithStatus);
@@ -136,7 +136,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
       const item = copy[index];
       copy[index] = {
         ...item,
-        descricao: newName,
+        description: newName,
         existe: false,
         itemIdExistente: undefined,
       };
@@ -150,7 +150,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
       const item = copy[index];
       copy[index] = {
         ...item,
-        descricao: suggestion.name,
+        description: suggestion.name,
         existe: true,
         itemIdExistente: suggestion.id,
         ean: item.ean || suggestion.ean || '',
@@ -167,7 +167,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
   const handleQuickRegister = (item: ImportedProduct) => {
     const params = new URLSearchParams();
     params.append('novoImport', '1');
-    if (item.descricao) params.append('nome', item.descricao);
+    if (item.description) params.append('nome', item.description);
     if (item.valorUnitario) params.append('purchasePrice', String(item.valorUnitario));
     if (item.quantity) params.append('estoque', String(item.quantity));
     if (item.unidadeMedida) params.append('unidade', item.unidadeMedida);

@@ -24,8 +24,8 @@ interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onUpdateQuantity: (id: string, type: 'PRODUTO' | 'SERVICO', newQty: number) => void;
-  onRemoveItem: (id: string, type: 'PRODUTO' | 'SERVICO') => void;
+  onUpdateQuantity: (id: string, type: 'PRODUCT' | 'SERVICE', newQty: number) => void;
+  onRemoveItem: (id: string, type: 'PRODUCT' | 'SERVICE') => void;
   onClearCart: () => void;
 }
 
@@ -67,17 +67,17 @@ const CartModal: React.FC<CartModalProps> = ({
           {cartItems.map((item, index) => {
             const subtotal = (item.salePrice ?? 0) * item.quantity;
             return (
-              <div className={`${styles.cartItemRow}`} key={`${item.tipo}-${item.id}-${index}`}>
+              <div className={`${styles.cartItemRow}`} key={`${item.kind}-${item.id}-${index}`}>
                 {/* Informações do Item */}
                 <div className={`${styles.cartItemMain}`}>
                   <div className={`${styles.cartItemHeader}`}>
                     <span className={`${styles.cartItemName}`}>{item.name}</span>
                     <span
                       className={`${styles.cartBadgeType} ${
-                        item.tipo === 'PRODUTO' ? 'badge-produto' : 'badge-servico'
+                        item.kind === 'PRODUCT' ? 'badge-produto' : 'badge-servico'
                       }`}
                     >
-                      {item.tipo === 'PRODUTO' ? 'Produto' : 'Serviço'}
+                      {item.kind === 'PRODUCT' ? 'Produto' : 'Serviço'}
                     </span>
                   </div>
                   <div className={`${styles.cartItemDetails}`}>
@@ -99,7 +99,7 @@ const CartModal: React.FC<CartModalProps> = ({
                       size="sm"
                       iconOnly
                       className={`${styles.qtyBtn}`}
-                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantity - 1)}
+                      onClick={() => onUpdateQuantity(item.id, item.kind, item.quantity - 1)}
                       title="Diminuir quantidade"
                       aria-label="Diminuir quantidade"
                       leftIcon={<RemoveIcon fontSize="inherit" />}
@@ -112,7 +112,7 @@ const CartModal: React.FC<CartModalProps> = ({
                       onChange={(e) => {
                         const val = parseInt(e.target.value, 10);
                         if (!isNaN(val) && val > 0) {
-                          onUpdateQuantity(item.id, item.tipo, val);
+                          onUpdateQuantity(item.id, item.kind, val);
                         }
                       }}
                       aria-label={`Quantidade de ${item.name}`}
@@ -123,7 +123,7 @@ const CartModal: React.FC<CartModalProps> = ({
                       size="sm"
                       iconOnly
                       className={`${styles.qtyBtn}`}
-                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantity + 1)}
+                      onClick={() => onUpdateQuantity(item.id, item.kind, item.quantity + 1)}
                       title="Aumentar quantidade"
                       aria-label="Aumentar quantidade"
                       leftIcon={<AddIcon fontSize="inherit" />}
@@ -140,7 +140,7 @@ const CartModal: React.FC<CartModalProps> = ({
                     size="sm"
                     iconOnly
                     className={`${styles.cartRemoveBtn}`}
-                    onClick={() => onRemoveItem(item.id, item.tipo)}
+                    onClick={() => onRemoveItem(item.id, item.kind)}
                     title="Remover item do carrinho"
                     aria-label={`Remover ${item.name}`}
                     leftIcon={<DeleteIcon fontSize="small" />}

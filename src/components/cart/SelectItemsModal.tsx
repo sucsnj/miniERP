@@ -105,10 +105,10 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
           <div className={`${styles.cartCatalogEmpty}`}>Nenhum produto ou serviço encontrado</div>
         ) : (
           catalogItems.map((item) => {
-            const inCart = cartItems.find((ci) => ci.id === item.id && ci.tipo === item.tipo);
+            const inCart = cartItems.find((ci) => ci.id === item.id && ci.kind === item.kind);
             const hasInCart = Boolean(inCart && inCart.quantity > 0);
             return (
-              <div key={`${item.tipo}-${item.id}`} className={`${styles.cartCatalogItemRow}`}>
+              <div key={`${item.kind}-${item.id}`} className={`${styles.cartCatalogItemRow}`}>
                 <Button
                   type="button"
                   variant="ghost"
@@ -129,11 +129,11 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
                   <div className={`${styles.cartItemInfo}`}>
                     <span className={`${styles.cartItemName}`}>{item.name}</span>
                     <div className={`${styles.cartItemMeta}`}>
-                      <span className={`${styles.cartTypeBadge} ${item.tipo.toLowerCase()}`}>
-                        {item.tipo === 'PRODUTO' ? 'Produto' : 'Serviço'}
+                      <span className={`${styles.cartTypeBadge} ${item.kind.toLowerCase()}`}>
+                        {item.kind === 'PRODUCT' ? 'Produto' : 'Serviço'}
                       </span>
-                      {item.tipo === 'PRODUTO' && item.estoque !== undefined && (
-                        <span className={`${styles.cartItemStock}`}>Est: {item.estoque}</span>
+                      {item.kind === 'PRODUCT' && item.stock !== undefined && (
+                        <span className={`${styles.cartItemStock}`}>Est: {item.stock}</span>
                       )}
                       {item.internalCode && (
                         <span className={`${styles.cartItemCode}`}>#{item.internalCode}</span>

@@ -11,7 +11,7 @@ import Button from '@/components/common/Button';
 
 export interface ProductFiltersState {
     search: string;
-    type: 'PRODUTO' | 'SERVICO' | 'TODOS';
+    type: 'PRODUCT' | 'SERVICE' | 'TODOS';
     categoryId: number | '';
     brandId: number | '';
     supplierId: number | '';
@@ -67,13 +67,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         className={`${styles.filterSelect} headerSelect`}
                         value={state.type}
                         onChange={(e) => {
-                            setFilters(prev => ({ ...prev, type: e.target.value as 'PRODUTO' | 'SERVICO' | 'TODOS' }));
+                            setFilters(prev => ({ ...prev, type: e.target.value as 'PRODUCT' | 'SERVICE' | 'TODOS' }));
                             actions.changePage(1);
                         }}
                     >
                         <option value="TODOS">Todos</option>
-                        <option value="PRODUTO">Produto</option>
-                        <option value="SERVICO">Serviço</option>
+                        <option value="PRODUCT">Produto</option>
+                        <option value="SERVICE">Serviço</option>
                     </select>
                 </label>
 

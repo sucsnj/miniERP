@@ -6,9 +6,9 @@ export interface BarcodeData {
 
 export interface ItemData {
   id: string;
-  tipo: 'PRODUTO' | 'SERVICO';
+  kind: 'PRODUCT' | 'SERVICE';
   name: string;
-  descricao?: string;
+  description?: string;
   categoryId: string;
   unidade_medida_id: string;
   brandId: string;
@@ -16,44 +16,44 @@ export interface ItemData {
   purchasePrice: number;
   profitMargin: number;
   salePrice: number;
-  estoque: number;
+  stock: number;
   multiplicador_unidade: number;
   totalStock?: number;
   internalCode?: string;
-  referencia: string;
-  ativo?: number;
+  reference: string;
+  active?: number;
   duracao_minutos?: number;
   createdAt?: string;
   updatedAt?: string;
-  categoria_nome?: string;
-  marca_nome?: string;
-  unidade_medida_sigla?: string;
-  unidade_medida_descricao?: string;
-  codigos_barras?: BarcodeData[];
-  unidades_medida?: { unidade_medida_id: string; multiplicador_unidade: number; principal: number }[];
+  categoryName?: string;
+  brandName?: string;
+  unitAbbreviation?: string;
+  unitDescription?: string;
+  barcodes?: BarcodeData[];
+  units?: { unidade_medida_id: string; multiplicador_unidade: number; principal: number }[];
 }
 
 export interface ServiceData {
   id: string;
   name: string;
-  descricao?: string;
+  description?: string;
   categoryId: string;
   salePrice: number;
   internalCode?: string;
-  referencia?: string;
+  reference?: string;
   duracao_minutos: number;
   createdAt?: string;
   updatedAt?: string;
-  categoria_nome?: string;
+  categoryName?: string;
 }
 
 export interface ServiceInput {
   name: string;
-  descricao?: string;
+  description?: string;
   categoryId: string | number;
   salePrice: number;
   internalCode?: string;
-  referencia?: string;
+  reference?: string;
   duracao_minutos?: number;
 }
 
@@ -61,18 +61,18 @@ export interface StockMovementData {
   id: string;
   item_id: string;
   item: string;
-  tipo: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
+  kind: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
   quantity: number;
   estoque_final: number;
-  descricao?: string;
+  description?: string;
   data_movimentacao: string;
 }
 
 export interface StockMovementInput {
   item_id: string | number;
-  tipo: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
+  kind: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
   quantity: number;
-  descricao?: string;
+  description?: string;
 }
 
 export interface PagedResult<T> {
@@ -86,7 +86,7 @@ export interface PagedResult<T> {
 export interface CategoryData {
   id: string;
   name: string;
-  descricao?: string;
+  description?: string;
 }
 
 export interface BrandData {
@@ -102,15 +102,15 @@ export interface SupplierData {
 export interface UnitOfMeasureData {
   id: string;
   sigla: string;
-  descricao?: string;
+  description?: string;
 }
 
 function mapProduct(row: any): ItemData {
   return {
     id: String(row.id),
-    tipo: 'PRODUTO',
+    kind: 'PRODUCT',
     name: String(row.name ?? row.name ?? ''),
-    descricao: row.description ?? row.descricao ?? undefined,
+    description: row.description ?? row.description ?? undefined,
     categoryId: String(row.categoryId ?? row.category_id ?? row.categoryId ?? ''),
     unidade_medida_id: String(row.baseUnitId ?? row.base_unit_id ?? row.unidade_medida_id ?? ''),
     brandId: String(row.brandId ?? row.brand_id ?? row.brandId ?? ''),
@@ -118,24 +118,24 @@ function mapProduct(row: any): ItemData {
     purchasePrice: Number(row.purchasePrice ?? row.purchase_price ?? row.purchasePrice ?? 0),
     profitMargin: Number(row.profitMargin ?? row.profit_margin ?? row.profitMargin ?? 0),
     salePrice: Number(row.salePrice ?? row.sale_price ?? row.salePrice ?? 0),
-    estoque: Number(row.stock ?? row.estoque ?? 0),
+    stock: Number(row.stock ?? row.stock ?? 0),
     multiplicador_unidade: Number(row.unitMultiplier ?? row.unit_multiplier ?? row.multiplicador_unidade ?? 1),
     totalStock: Number(row.totalStock ?? row.total_stock ?? row.totalStock ?? 0),
     internalCode: row.internalCode ?? row.internal_code ?? row.internalCode ?? undefined,
-    referencia: String(row.reference ?? row.referencia ?? ''),
-    ativo: row.active === undefined ? 1 : (row.active ? 1 : 0),
+    reference: String(row.reference ?? row.reference ?? ''),
+    active: row.active === undefined ? 1 : (row.active ? 1 : 0),
     createdAt: row.createdAt ?? row.created_at ?? row.createdAt,
     updatedAt: row.updatedAt ?? row.updated_at ?? row.updatedAt,
-    categoria_nome: row.categoryName ?? row.category_name ?? row.categoria_nome,
-    marca_nome: row.brandName ?? row.brand_name ?? row.marca_nome,
-    unidade_medida_sigla: row.baseUnitAbbreviation ?? row.base_unit_abbreviation ?? row.unidade_medida_sigla,
-    unidade_medida_descricao: row.baseUnitDescription ?? row.base_unit_description ?? row.unidade_medida_descricao,
-    codigos_barras: Array.isArray(row.barcodes)
+    categoryName: row.categoryName ?? row.category_name ?? row.categoryName,
+    brandName: row.brandName ?? row.brand_name ?? row.brandName,
+    unitAbbreviation: row.baseUnitAbbreviation ?? row.base_unit_abbreviation ?? row.unitAbbreviation,
+    unitDescription: row.baseUnitDescription ?? row.base_unit_description ?? row.unitDescription,
+    barcodes: Array.isArray(row.barcodes)
       ? row.barcodes.map((b: any) => ({ codigo_barras: String(b.barcode ?? b.codigo_barras ?? ''), principal: b.isPrimary ? 1 : 0 }))
-      : row.codigos_barras,
-    unidades_medida: Array.isArray(row.units)
+      : row.barcodes,
+    units: Array.isArray(row.units)
       ? row.units.map((u: any) => ({ unidade_medida_id: String(u.unitId ?? u.unit_id ?? u.unidade_medida_id ?? ''), multiplicador_unidade: Number(u.unitMultiplier ?? u.unit_multiplier ?? u.multiplicador_unidade ?? 1), principal: u.isPrimary ? 1 : 0 }))
-      : row.unidades_medida,
+      : row.units,
   };
 }
 
@@ -143,15 +143,15 @@ function mapService(row: any): ServiceData {
   return {
     id: String(row.id),
     name: String(row.name ?? row.name ?? ''),
-    descricao: row.description ?? row.descricao ?? undefined,
+    description: row.description ?? row.description ?? undefined,
     categoryId: String(row.categoryId ?? row.category_id ?? row.categoryId ?? ''),
     salePrice: Number(row.salePrice ?? row.sale_price ?? row.salePrice ?? 0),
     internalCode: row.internalCode ?? row.internal_code ?? row.internalCode ?? undefined,
-    referencia: row.reference ?? row.referencia ?? undefined,
+    reference: row.reference ?? row.reference ?? undefined,
     duracao_minutos: Number(row.durationMinutes ?? row.duration_minutes ?? row.duracao_minutos ?? 0),
     createdAt: row.createdAt ?? row.created_at ?? row.createdAt,
     updatedAt: row.updatedAt ?? row.updated_at ?? row.updatedAt,
-    categoria_nome: row.categoryName ?? row.category_name ?? row.categoria_nome,
+    categoryName: row.categoryName ?? row.category_name ?? row.categoryName,
   };
 }
 
@@ -161,7 +161,7 @@ export const fetchProducts = async (options: {
   brandId?: number | string;
   supplierId?: number | string;
   salePrice?: number;
-  ativo?: 'ATIVO' | 'INATIVO' | 'TODOS';
+  active?: 'ATIVO' | 'INATIVO' | 'TODOS';
   page?: number;
   pageSize?: number;
 }): Promise<PagedResult<ItemData>> => {
@@ -171,7 +171,7 @@ export const fetchProducts = async (options: {
   if (options.brandId) params.append('marca_id', String(options.brandId));
   if (options.supplierId) params.append('fornecedor_id', String(options.supplierId));
   if (options.salePrice) params.append('preco_venda', String(options.salePrice));
-  if (options.ativo) params.append('ativo', options.ativo);
+  if (options.active) params.append('ativo', options.active);
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 
@@ -190,11 +190,11 @@ export const fetchProducts = async (options: {
   };
 };
 
-export const registerProduct = async (date: Omit<ItemData, 'id' | 'ativo'> & { ativo?: number }) => {
+export const registerProduct = async (date: Omit<ItemData, 'id' | 'ativo'> & { active?: number }) => {
   const payload = {
-    tipo: 'PRODUTO',
+    kind: 'PRODUCT',
     name: date.name,
-    descricao: date.descricao,
+    description: date.description,
     categoryId: date.categoryId,
     unidade_medida_id: date.unidade_medida_id,
     brandId: date.brandId,
@@ -202,13 +202,13 @@ export const registerProduct = async (date: Omit<ItemData, 'id' | 'ativo'> & { a
     purchasePrice: date.purchasePrice,
     profitMargin: date.profitMargin,
     salePrice: date.salePrice,
-    estoque: date.estoque,
+    stock: date.stock,
     multiplicador_unidade: date.multiplicador_unidade,
     internalCode: date.internalCode,
-    referencia: date.referencia,
-    ativo: date.ativo,
-    codigos_barras: date.codigos_barras,
-    unidades_medida: date.unidades_medida,
+    reference: date.reference,
+    active: date.active,
+    barcodes: date.barcodes,
+    units: date.units,
   };
   const response = await fetch('/api/products', {
     method: 'POST',
@@ -225,9 +225,9 @@ export const registerProduct = async (date: Omit<ItemData, 'id' | 'ativo'> & { a
 export const updateProduct = async (id: string | number, date: Omit<ItemData, 'id'>) => {
   const payload = {
     id: String(id),
-    tipo: 'PRODUTO',
+    kind: 'PRODUCT',
     name: date.name,
-    descricao: date.descricao,
+    description: date.description,
     categoryId: date.categoryId,
     unidade_medida_id: date.unidade_medida_id,
     brandId: date.brandId,
@@ -235,13 +235,13 @@ export const updateProduct = async (id: string | number, date: Omit<ItemData, 'i
     purchasePrice: date.purchasePrice,
     profitMargin: date.profitMargin,
     salePrice: date.salePrice,
-    estoque: date.estoque,
+    stock: date.stock,
     multiplicador_unidade: date.multiplicador_unidade,
     internalCode: date.internalCode,
-    referencia: date.referencia,
-    ativo: date.ativo,
-    codigos_barras: date.codigos_barras,
-    unidades_medida: date.unidades_medida,
+    reference: date.reference,
+    active: date.active,
+    barcodes: date.barcodes,
+    units: date.units,
   };
   const response = await fetch('/api/products', {
     method: 'PUT',
@@ -272,7 +272,7 @@ export const toggleProductStatus = async (id: string | number, active: number) =
   const response = await fetch('/api/products', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'toggle-status', id: String(id), ativo: active, tipo: 'PRODUTO' }),
+    body: JSON.stringify({ action: 'toggle-status', id: String(id), active: active, kind: 'PRODUCT' }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -321,11 +321,11 @@ export const fetchServiceById = async (id: string | number): Promise<ServiceData
 export const registerService = async (date: ServiceInput) => {
   const payload = {
     name: date.name,
-    descricao: date.descricao,
+    description: date.description,
     categoryId: date.categoryId,
     salePrice: date.salePrice,
     internalCode: date.internalCode,
-    referencia: date.referencia,
+    reference: date.reference,
     duracao_minutos: date.duracao_minutos,
   };
   const response = await fetch('/api/products/servicos', {
@@ -344,11 +344,11 @@ export const registerService = async (date: ServiceInput) => {
 export const updateService = async (id: string | number, date: ServiceInput) => {
   const payload = {
     name: date.name,
-    descricao: date.descricao,
+    description: date.description,
     categoryId: date.categoryId,
     salePrice: date.salePrice,
     internalCode: date.internalCode,
-    referencia: date.referencia,
+    reference: date.reference,
     duracao_minutos: date.duracao_minutos,
   };
   const response = await fetch(`/api/products/servicos?id=${id}`, {
@@ -386,10 +386,10 @@ export const fetchStockMovements = async (itemId: string | number): Promise<Stoc
         id: String(row.id),
         item_id: String(row.productId ?? row.product_id ?? row.item_id ?? itemId),
         item: String(row.productName ?? row.product_name ?? row.item ?? ''),
-        tipo: String(row.type ?? row.tipo ?? 'ADJUST').toUpperCase() === 'IN' || String(row.type ?? row.tipo ?? '').toUpperCase() === 'ENTRADA' ? 'ENTRADA' : String(row.type ?? row.tipo ?? '').toUpperCase() === 'OUT' || String(row.type ?? row.tipo ?? '').toUpperCase() === 'SAIDA' ? 'SAIDA' : 'AJUSTE',
+        kind: String(row.type ?? row.kind ?? 'ADJUST').toUpperCase() === 'IN' || String(row.type ?? row.kind ?? '').toUpperCase() === 'ENTRADA' ? 'ENTRADA' : String(row.type ?? row.kind ?? '').toUpperCase() === 'OUT' || String(row.type ?? row.kind ?? '').toUpperCase() === 'SAIDA' ? 'SAIDA' : 'AJUSTE',
         quantity: Number(row.quantity ?? row.quantity ?? 0),
         estoque_final: Number(row.finalStock ?? row.final_stock ?? row.estoque_final ?? 0),
-        descricao: row.description ?? row.descricao ?? undefined,
+        description: row.description ?? row.description ?? undefined,
         data_movimentacao: String(row.movedAt ?? row.moved_at ?? row.data_movimentacao ?? ''),
       }))
     : [];
@@ -399,7 +399,7 @@ export const registerStockMovement = async (date: StockMovementInput) => {
   const response = await fetch('/api/products/movimentacoes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ item_id: date.item_id, tipo: date.tipo, quantity: date.quantity, descricao: date.descricao }),
+    body: JSON.stringify({ item_id: date.item_id, kind: date.kind, quantity: date.quantity, description: date.description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -413,7 +413,7 @@ export const fetchCategories = async (): Promise<CategoryData[]> => {
   if (!response.ok) throw new Error('Erro ao buscar categorias.');
   const date = await response.json();
   return Array.isArray(date)
-    ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), descricao: row.description ?? row.descricao ?? undefined }))
+    ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), description: row.description ?? row.description ?? undefined }))
     : [];
 };
 
@@ -421,7 +421,7 @@ export const createCategory = async (name: string, description?: string): Promis
   const response = await fetch('/api/products/categorias', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, descricao: description }),
+    body: JSON.stringify({ name: name, description: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -445,7 +445,7 @@ export const updateCategory = async (id: string | number, name: string, descript
   const response = await fetch(`/api/products/categorias?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, descricao: description }),
+    body: JSON.stringify({ name: name, description: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -546,14 +546,14 @@ export const fetchUnitsOfMeasure = async (): Promise<UnitOfMeasureData[]> => {
   const response = await fetch('/api/products/unidades-medida');
   if (!response.ok) throw new Error('Erro ao buscar unidades de medida.');
   const date = await response.json();
-  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), sigla: String(row.abbreviation ?? row.sigla ?? ''), descricao: row.description ?? row.descricao ?? undefined })) : [];
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), sigla: String(row.abbreviation ?? row.sigla ?? ''), description: row.description ?? row.description ?? undefined })) : [];
 };
 
 export const createUnitOfMeasure = async (abbreviation: string, description?: string): Promise<{ id: string; message: string }> => {
   const response = await fetch('/api/products/unidades-medida', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sigla: abbreviation, descricao: description }),
+    body: JSON.stringify({ sigla: abbreviation, description: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -577,7 +577,7 @@ export const updateUnitOfMeasure = async (id: string | number, abbreviation: str
   const response = await fetch(`/api/products/unidades-medida?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sigla: abbreviation, descricao: description }),
+    body: JSON.stringify({ sigla: abbreviation, description: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -589,7 +589,7 @@ export const updateUnitOfMeasure = async (id: string | number, abbreviation: str
 export interface ImportedProduct {
   cProd?: string;
   ean: string;
-  descricao: string;
+  description: string;
   descricaoOriginal?: string;
   unidadeMedida: string;
   quantity: number;
@@ -630,7 +630,7 @@ export async function importInvoiceItem(product: ImportedProduct): Promise<Invoi
   const response = await fetch('/api/products/itens', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ importar: true, produto: product }),
+    body: JSON.stringify({ importar: true, product: product }),
   });
   const result = await response.json();
   if (!response.ok || result.error) {

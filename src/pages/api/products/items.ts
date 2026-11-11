@@ -20,14 +20,14 @@ interface ExistingItem {
   id: string;
   name: string;
   salePrice: number;
-  estoque: number;
+  stock: number;
   isService: boolean;
 }
 
 interface ProductPreview {
   cProd: string;
   ean: string;
-  descricao: string;
+  description: string;
   descricaoOriginal: string;
   unidadeMedida: string;
   quantity: number;
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { xml, preview, importar: shouldImport, produto: productPayload } = req.body;
+    const { xml, preview, importar: shouldImport, product: productPayload } = req.body;
 
     if (preview) {
       if (!xml) {
@@ -76,28 +76,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (ean) {
           const product = await findProductByBarcode(ean);
           if (product) {
-            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, estoque: product.stock, isService: false };
+            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           }
         }
         if (!existingItem && cProd) {
           const product = await findProductByInternalCode(cProd);
           if (product) {
-            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, estoque: product.stock, isService: false };
+            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           } else {
             const service = await findServiceByInternalCode(cProd);
             if (service) {
-              existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, estoque: 0, isService: true };
+              existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, stock: 0, isService: true };
             }
           }
         }
         if (!existingItem && description) {
           const product = await findProductByName(description);
           if (product) {
-            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, estoque: product.stock, isService: false };
+            existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           } else {
             const service = await findServiceByName(description);
             if (service) {
-              existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, estoque: 0, isService: true };
+              existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, stock: 0, isService: true };
             }
           }
         }
@@ -109,7 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           previewItems.push({
             cProd,
             ean,
-            descricao: existingItem ? existingItem.name : description,
+            description: existingItem ? existingItem.name : description,
             descricaoOriginal: description,
             unidadeMedida: unitOfMeasure,
             quantity: quantity,
@@ -129,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (shouldImport && productPayload) {
       const {
         ean,
-        descricao: description,
+        description: description,
         quantity: quantity,
         valorUnitario: unitValue,
         tipoMovimentacao: movementType,

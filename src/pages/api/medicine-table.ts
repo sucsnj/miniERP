@@ -88,10 +88,10 @@ const parseTableWorksheet = (filePath: string) => {
 
 interface TableRow {
   substance: string;
-  laboratorio: string;
+  laboratory: string;
   ean: string;
-  produto: string;
-  apresentacao: string;
+  product: string;
+  presentation: string;
   therapeuticClass: string;
   pf205: string;
   pmc205: string;
@@ -142,17 +142,17 @@ const searchTableData = (query: string, table: Record<string, unknown>[]) => {
     .map((row) => {
       const values = {
         substance: String(row.substance ?? '').trim(),
-        laboratorio: String(row.laboratorio ?? '').trim(),
+        laboratory: String(row.laboratory ?? '').trim(),
         ean: String(row.ean ?? '').trim(),
-        produto: String(row.produto ?? '').trim(),
-        apresentacao: String(row.apresentacao ?? '').trim(),
+        product: String(row.product ?? '').trim(),
+        presentation: String(row.presentation ?? '').trim(),
         therapeuticClass: String(row.therapeuticClass ?? '').trim(),
         pf205: String(row.pf205 ?? '').trim(),
         pmc205: String(row.pmc205 ?? '').trim(),
       };
 
       const searchText = normalizeText(
-        `${values.substance} ${values.laboratorio} ${values.ean} ${values.produto} ${values.apresentacao} ${values.therapeuticClass} ${values.pf205} ${values.pmc205}`
+        `${values.substance} ${values.laboratory} ${values.ean} ${values.product} ${values.presentation} ${values.therapeuticClass} ${values.pf205} ${values.pmc205}`
       );
 
       const substanceText = normalizeText(values.substance);
@@ -173,7 +173,7 @@ const searchTableData = (query: string, table: Record<string, unknown>[]) => {
       if (searchText.includes(normalizedQuery)) {
         score += 10;
       }
-      if (String(values.produto).toLowerCase().includes(query.toLowerCase())) {
+      if (String(values.product).toLowerCase().includes(query.toLowerCase())) {
         score += 2;
       }
 
@@ -234,16 +234,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           return {
             substance: String(row.substance || row.substance1 || row['substância'] || '').trim(),
-            laboratorio: String(row.laboratorio || '').trim(),
+            laboratory: String(row.laboratory || '').trim(),
             ean: String(row.ean1 || row.ean || '').trim(),
-            produto: String(row.produto || '').trim(),
-            apresentacao: String(row.apresentacao || '').trim(),
+            product: String(row.product || '').trim(),
+            presentation: String(row.presentation || '').trim(),
             therapeuticClass: String(row.classeterapeutica || row['classe terapeutica'] || '').trim(),
             pf205: pfValue !== null ? String(pfValue).trim() : String(row.pf205 ?? row['pf205'] ?? row['pf205%'] ?? row['pf205percent'] ?? row['pf20_5'] ?? row['pf20,5'] ?? '').trim(),
             pmc205: pmcValue !== null ? String(pmcValue).trim() : String(row.pmc205 ?? row['pmc205'] ?? row['pmc205%'] ?? row['pmc20,5'] ?? '').trim(),
           };
         })
-        .filter((item) => item.substance || item.produto || item.ean);
+        .filter((item) => item.substance || item.product || item.ean);
 
       if (normalizedRows.length === 0) {
         fs.unlinkSync(file.path);

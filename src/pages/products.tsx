@@ -83,21 +83,21 @@ const ProductsPage: React.FC = () => {
     }
   }, [showToast]);
 
-  // Carrega o catálogo a partir das tabelas específicas de cada tipo
+  // Carrega o catálogo a partir das tabelas específicas de cada kind
   const loadItems = useCallback(async () => {
     setLoading(true);
     try {
       const [productsData, servicesData] = await Promise.all([
-        state.type === 'SERVICO' ? Promise.resolve(null) : fetchProducts({
+        state.type === 'SERVICE' ? Promise.resolve(null) : fetchProducts({
           search: searchQuery || undefined,
           categoryId: state.categoryId || undefined,
           brandId: state.brandId || undefined,
           supplierId: state.supplierId || undefined,
-          ativo: state.status,
+          active: state.status,
           page: 1,
           pageSize: 10000,
         }),
-        state.type === 'PRODUTO' || state.status !== 'TODOS' ? Promise.resolve(null) : fetchServices({
+        state.type === 'PRODUCT' || state.status !== 'TODOS' ? Promise.resolve(null) : fetchServices({
           search: searchQuery || undefined,
           categoryId: state.categoryId || undefined,
           page: 1,
@@ -108,9 +108,9 @@ const ProductsPage: React.FC = () => {
       const products = productsData?.items || [];
       const services: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
         id: service.id,
-        tipo: 'SERVICO',
+        kind: 'SERVICE',
         name: service.name,
-        descricao: service.descricao,
+        description: service.description,
         categoryId: service.categoryId,
         unidade_medida_id: '21',
         brandId: '',
@@ -118,15 +118,15 @@ const ProductsPage: React.FC = () => {
         purchasePrice: 0,
         profitMargin: 0,
         salePrice: service.salePrice,
-        estoque: 0,
+        stock: 0,
         multiplicador_unidade: 1,
         totalStock: 0,
         internalCode: service.internalCode,
-        referencia: service.referencia || '',
+        reference: service.reference || '',
         duracao_minutos: service.duracao_minutos,
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
-        categoria_nome: service.categoria_nome,
+        categoryName: service.categoryName,
       }));
 
       const catalog = [...products, ...services].sort((a, b) => a.name.localeCompare(b.name));
@@ -184,9 +184,9 @@ const ProductsPage: React.FC = () => {
 
   // Alterna o status Ativo/Inativo
   const handleToggleStatus = async (item: ItemData) => {
-    const novoStatus = item.ativo === 1 ? 0 : 1;
+    const novoStatus = item.active === 1 ? 0 : 1;
     try {
-      if (item.tipo === 'PRODUTO') {
+      if (item.kind === 'PRODUCT') {
         await toggleProductStatus(item.id, novoStatus);
       }
       showToast(
@@ -209,7 +209,7 @@ const ProductsPage: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (!itemToDelete) return;
     try {
-      if (itemToDelete.tipo === 'SERVICO') {
+      if (itemToDelete.kind === 'SERVICE') {
         await deleteService(itemToDelete.id);
       } else {
         await deleteProduct(itemToDelete.id);

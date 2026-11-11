@@ -127,7 +127,7 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Valida e classifica uma chave PIX. Retorna o tipo, a chave normalizada
+ * Valida e classifica uma chave PIX. Retorna o kind, a chave normalizada
  * e um eventual erro.
  */
 export function validatePixKey(
@@ -177,7 +177,7 @@ export function validatePixKey(
           options,
         };
       }
-      // Sem tipo forçado: prefere CPF quando válido, senão assume celular.
+      // Sem kind forçado: prefere CPF quando válido, senão assume celular.
       if (cpfValid) {
         return {
           type: 'cpf',

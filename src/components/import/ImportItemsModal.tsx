@@ -202,9 +202,9 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
                       <td className={importStyles.colNfProduto}>
                         <div
                           className={importStyles.nomeNfTexto}
-                          title={p.descricaoOriginal || p.descricao}
+                          title={p.descricaoOriginal || p.description}
                         >
-                          {p.descricaoOriginal || p.descricao}
+                          {p.descricaoOriginal || p.description}
                         </div>
                         {(p.ean || p.cProd) && (
                           <div className={importStyles.subCode}>

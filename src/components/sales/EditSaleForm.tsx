@@ -60,12 +60,12 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
       setCartItems(
         items.map((item) => ({
           id: item.item_id ?? item.id,
-          tipo: item.tipo,
+          kind: item.kind,
           name: item.name,
           salePrice: item.unitPrice,
           quantity: item.quantity,
           internalCode: item.internalCode ?? undefined,
-          referencia: item.referencia ?? undefined,
+          reference: item.reference ?? undefined,
         }))
       );
       setLoadingItems(false);
@@ -104,12 +104,12 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
         editNotes,
         cartItems.map((item) => ({
           item_id: item.id,
-          tipo: item.tipo,
+          kind: item.kind,
           name: item.name,
           quantity: item.quantity,
           unitPrice: item.salePrice,
           internalCode: item.internalCode ?? null,
-          referencia: item.referencia ?? null,
+          reference: item.reference ?? null,
         }))
       );
       onToast("Venda atualizada com sucesso.", "success");

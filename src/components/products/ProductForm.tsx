@@ -20,7 +20,7 @@ import {
 } from '../../services/productsService';
 
 export interface ProductFormData {
-    type: 'PRODUTO' | 'SERVICO';
+    type: 'PRODUCT' | 'SERVICE';
     name: string;
     description: string;
     categoryId: string;
@@ -439,7 +439,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                             >
                                 {options.unitsOfMeasure.map((u) => (
                                     <option key={u.id} value={u.id}>
-                                        {u.sigla} - {u.descricao}
+                                        {u.sigla} - {u.description}
                                     </option>
                                 ))}
                             </select>

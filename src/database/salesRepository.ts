@@ -99,7 +99,7 @@ function mapSaleItem(row: unknown): SaleItem {
   return {
     id: String(r.id),
     saleId: String(r.sale_id ?? r.saleId ?? ''),
-    kind: String(r.kind ?? r.tipo ?? 'PRODUCT').toUpperCase() as SaleItem['kind'],
+    kind: String(r.kind ?? r.kind ?? 'PRODUCT').toUpperCase() as SaleItem['kind'],
     productId: toStringOrNull(r.product_id ?? r.productId ?? r.item_id),
     serviceId: toStringOrNull(r.service_id ?? r.serviceId),
     name: String(r.name ?? r.name ?? ''),
@@ -107,7 +107,7 @@ function mapSaleItem(row: unknown): SaleItem {
     unitPrice: toNumber(r.unit_price ?? r.unitPrice ?? r.salePrice),
     subtotal: toNumber(r.subtotal),
     internalCode: toStringOrNull(r.internal_code ?? r.internalCode),
-    reference: toStringOrNull(r.reference ?? r.referencia),
+    reference: toStringOrNull(r.reference ?? r.reference),
     createdAt: String(r.created_at ?? r.createdAt ?? ''),
   };
 }

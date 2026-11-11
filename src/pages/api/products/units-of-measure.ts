@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const body = req.body ?? {};
       const abbreviation = body.abbreviation ?? body.sigla;
-      const description = body.description ?? body.descricao;
+      const description = body.description ?? body.description;
       if (!abbreviation || !String(abbreviation).trim()) {
         return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
       }
@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id = req.query.id;
       const body = req.body ?? {};
       const abbreviation = body.abbreviation ?? body.sigla;
-      const description = body.description ?? body.descricao;
+      const description = body.description ?? body.description;
       if (!id) return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
       if (!abbreviation || !String(abbreviation).trim()) return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
       await updateUnitOfMeasure(String(id), String(abbreviation).trim(), description ? String(description) : undefined);

@@ -1,7 +1,7 @@
 /**
  * src/utils/productUnits.ts
  *
- * Regras puras das unidades de medida do formulário de produto
+ * Regras puras das unidades de medida do formulário de product
  * (seleção de isPrincipal, atualização e remoção com sincronização dos
  * campos "resumo" unitOfMeasureId/unitMultiplier).
  * Extraídas dos handlers inline de `ProductForm` (ver docs).

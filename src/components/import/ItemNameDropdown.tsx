@@ -15,7 +15,7 @@ import type { ItemWithStatus } from '../../hooks/useImportItems';
 
 export interface SuggestionItem {
   id: string;
-  type: 'PRODUTO' | 'SERVICO';
+  type: 'PRODUCT' | 'SERVICE';
   name: string;
   salePrice: number;
   stock?: number;
@@ -37,8 +37,8 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
   onTextChange,
   disabled = false,
 }) => {
-  const [term, setTerm] = useState(item.descricao || '');
-  const [prevDescription, setPrevDescription] = useState(item.descricao || '');
+  const [term, setTerm] = useState(item.description || '');
+  const [prevDescription, setPrevDescription] = useState(item.description || '');
   const [suggestions, setSuggestions] = useState<SuggestionItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -46,9 +46,9 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  if (item.descricao !== prevDescription) {
-    setPrevDescription(item.descricao || '');
-    setTerm(item.descricao || '');
+  if (item.description !== prevDescription) {
+    setPrevDescription(item.description || '');
+    setTerm(item.description || '');
   }
 
   useEffect(() => {
@@ -81,25 +81,25 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
 
       const products: SuggestionItem[] = (prodRes.items || []).map((p) => ({
         id: p.id,
-        type: 'PRODUTO',
+        type: 'PRODUCT',
         name: p.name,
         salePrice: p.salePrice,
-        stock: p.estoque,
+        stock: p.stock,
         internalCode: p.internalCode,
         ean:
-          p.codigos_barras?.find((b) => b.principal === 1)?.codigo_barras ||
-          p.codigos_barras?.[0]?.codigo_barras ||
+          p.barcodes?.find((b) => b.principal === 1)?.codigo_barras ||
+          p.barcodes?.[0]?.codigo_barras ||
           '',
-        categoryName: p.categoria_nome,
+        categoryName: p.categoryName,
       }));
 
       const services: SuggestionItem[] = (servRes.items || []).map((s) => ({
         id: s.id,
-        type: 'SERVICO',
+        type: 'SERVICE',
         name: s.name,
         salePrice: s.salePrice,
         internalCode: s.internalCode,
-        categoryName: s.categoria_nome,
+        categoryName: s.categoryName,
       }));
 
       setSuggestions([...products, ...services]);
@@ -180,12 +180,12 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
                       <span className={importStyles.dropdownItemNome}>{s.name}</span>
                       <span
                         className={
-                          s.type === 'PRODUTO'
+                          s.type === 'PRODUCT'
                             ? importStyles.typeBadgeProd
                             : importStyles.typeBadgeServ
                         }
                       >
-                        {s.type === 'PRODUTO' ? 'PRODUTO' : 'SERVIÇO'}
+                        {s.type === 'PRODUCT' ? 'PRODUCT' : 'SERVIÇO'}
                       </span>
                     </div>
                     <div className={importStyles.dropdownItemMeta}>
@@ -196,7 +196,7 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
                           maximumFractionDigits: 2,
                         })}
                       </span>
-                      {s.type === 'PRODUTO' && <span>Estoque: {s.stock ?? 0}</span>}
+                      {s.type === 'PRODUCT' && <span>Estoque: {s.stock ?? 0}</span>}
                       {s.ean && <span>EAN: {s.ean}</span>}
                       {s.internalCode && <span>Cód: {s.internalCode}</span>}
                     </div>

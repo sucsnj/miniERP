@@ -53,10 +53,10 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             id="form-tipo"
                             className={styles.selectField}
                             value={form.type}
-                            onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as 'PRODUTO' | 'SERVICO' }))}
+                            onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as 'PRODUCT' | 'SERVICE' }))}
                         >
-                            <option value="PRODUTO">Produto</option>
-                            <option value="SERVICO">Serviço</option>
+                            <option value="PRODUCT">Produto</option>
+                            <option value="SERVICE">Serviço</option>
                         </select>
 
                     </div>
@@ -86,7 +86,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                 </div>
             </div>
 
-            {form.type === 'PRODUTO' ? (
+            {form.type === 'PRODUCT' ? (
                 <ProductForm
                     editingProductId={editingProductId}
                     form={form}

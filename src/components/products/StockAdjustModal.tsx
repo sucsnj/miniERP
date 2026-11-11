@@ -104,10 +104,10 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({
                   {movements.map((mov) => (
                     <tr key={mov.id}>
                       <td>{mov.data_movimentacao}</td>
-                      <td>{mov.tipo}</td>
+                      <td>{mov.kind}</td>
                       <td>{mov.quantity}</td>
                       <td>{mov.estoque_final}</td>
-                      <td>{mov.descricao || '-'}</td>
+                      <td>{mov.description || '-'}</td>
                     </tr>
                   ))}
                 </tbody>

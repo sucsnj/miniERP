@@ -12,7 +12,6 @@ import { canEdit } from '../../utils/edit';
 
 interface SaleItemApi {
   kind?: 'PRODUCT' | 'SERVICE';
-  tipo?: 'PRODUTO' | 'SERVICO';
   productId?: string | null;
   serviceId?: string | null;
   item_id?: number | string | null;
@@ -24,7 +23,6 @@ interface SaleItemApi {
   subtotal?: number;
   internalCode?: string | null;
   reference?: string | null;
-  referencia?: string | null;
 }
 
 function normalizeItem(item: SaleItemApi): {
@@ -38,8 +36,8 @@ function normalizeItem(item: SaleItemApi): {
   internalCode: string | null;
   reference: string | null;
 } {
-  const kindSource = (item.kind ?? item.tipo ?? 'PRODUTO').toString().toUpperCase();
-  const kind = kindSource === 'SERVICE' || kindSource === 'SERVICO' ? 'SERVICE' : 'PRODUCT';
+  const kindSource = (item.kind ?? item.kind ?? 'PRODUCT').toString().toUpperCase();
+  const kind = kindSource === 'SERVICE' || kindSource === 'SERVICE' ? 'SERVICE' : 'PRODUCT';
   const quantity = Number(item.quantity ?? item.quantity ?? 0);
   const unitPrice = Number(item.unitPrice ?? item.unitPrice ?? item.salePrice ?? 0);
   const productId = item.productId ?? item.item_id ?? item.id ?? null;
@@ -53,7 +51,7 @@ function normalizeItem(item: SaleItemApi): {
     unitPrice,
     subtotal: item.subtotal ?? unitPrice * quantity,
     internalCode: item.internalCode ?? item.internalCode ?? null,
-    reference: item.reference ?? item.referencia ?? null,
+    reference: item.reference ?? item.reference ?? null,
   };
 }
 
