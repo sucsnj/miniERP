@@ -5,6 +5,7 @@ import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
 import { useToast } from '../hooks/useToast';
+import { useSettings } from '../contexts/SettingsContext';
 import { useSales } from '../hooks/useSales';
 import { capitalize } from '../utils/captalize';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -35,6 +36,7 @@ const Home: React.FC = () => {
 
   // Notificações (toast) exibidas na página
   const { showToast } = useToast();
+  const { recentSalesCount } = useSettings();
   // Estado e ações de vendas (carregar, editar, excluir, consolidar, backup)
   const {
     sales,
@@ -53,7 +55,7 @@ const Home: React.FC = () => {
     loadSales();
   }, [loadSales]);
 
-  // Últimas 4 vendas (por date e id, da mais recente para a mais antiga)
+  // Últimas vendas recentes conforme configuração (0 a 8, em pares)
   const recentSales = [...sales]
     .sort((a, b) => {
       const dateA = toTimestamp(`${a.date}T00:00:00`);
@@ -61,7 +63,7 @@ const Home: React.FC = () => {
       if (dateA !== dateB) return dateB - dateA;
       return String(b.createdAt).localeCompare(String(a.createdAt));
     })
-    .slice(0, 4);
+    .slice(0, recentSalesCount);
 
   return (
     <>
@@ -73,6 +75,7 @@ const Home: React.FC = () => {
           sales={sales}
           selectedDay={selectedDate}
           recentSales={recentSales}
+          recentSalesCount={recentSalesCount}
           onEditSale={handleEditSale}
           onDeleteSale={handleDeleteSale}
         >

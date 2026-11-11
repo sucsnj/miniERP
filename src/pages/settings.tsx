@@ -5,6 +5,7 @@ import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
 import { useThemeMode, type ThemeMode } from '../contexts/ThemeContext';
+import { useSettings, type RecentSalesCount } from '../contexts/SettingsContext';
 
 const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
   { value: 'system', label: 'Sistema', description: 'Segue o tema do sistema operacional.' },
@@ -14,6 +15,7 @@ const themeOptions: { value: ThemeMode; label: string; description: string }[] =
 
 const SettingsPage = () => {
   const { themeMode, setThemeMode } = useThemeMode();
+  const { recentSalesCount, setRecentSalesCount } = useSettings();
 
   return (
     <>
@@ -33,6 +35,22 @@ const SettingsPage = () => {
                 onClick={() => setThemeMode(option.value)}
               >
                 {option.label} — {option.description}
+              </Button>
+            ))}
+          </div>
+        </Panel>
+        <Panel>
+          <PanelHeader title="Histórico de vendas recentes" />
+          <p>Quantidade de vendas exibidas no histórico (0 a 8, em pares).</p>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {([0, 2, 4, 6, 8] as RecentSalesCount[]).map((value) => (
+              <Button
+                key={value}
+                type="button"
+                variant={recentSalesCount === value ? 'primary' : 'outline'}
+                onClick={() => setRecentSalesCount(value)}
+              >
+                {value}
               </Button>
             ))}
           </div>

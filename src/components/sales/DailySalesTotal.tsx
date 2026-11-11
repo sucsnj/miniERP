@@ -13,12 +13,13 @@ interface DailySalesTotalProps {
   sales: DailySale[];
   selectedDay?: string;
   recentSales?: DailySale[];
+  recentSalesCount?: number;
   onEditSale?: (sale: DailySale) => void;
   onDeleteSale?: (id: string) => void;
   children?: ReactNode;
 }
 
-const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, recentSales = [], onEditSale, onDeleteSale, children }) => {
+const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, recentSales = [], recentSalesCount = 4, onEditSale, onDeleteSale, children }) => {
   
   const total = sales.reduce((sum, sale) => sum + sale.amount, 0);
   const salesCount = sales.length;
@@ -91,7 +92,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
 
           {recentSales.length > 0 ? (
             <div className={`${styles.historyCard}`}>
-              <span className={`${styles.summaryCardTitle}`}>Últimas 4 vendas</span>
+              <span className={`${styles.summaryCardTitle}`}>Últimas {recentSalesCount} vendas</span>
 
               <div className={`${styles.recentSalesGrid}`}>
                 {[...recentSales]
