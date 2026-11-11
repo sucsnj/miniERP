@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useToast } from '../../hooks/useToast';
+import { readStoredString, writeStoredValue } from '../../utils/storage';
 import styles from '../../styles/ocrUpload.module.css';
 
 interface OcrResult {
@@ -12,7 +13,7 @@ interface OcrResult {
 export default function OcrUpload() {
     const readRecentOcr = (): OcrResult[] | null => {
         try {
-            const ocrJson = localStorage.getItem("ocrRecente");
+            const ocrJson = readStoredString('ocrRecente');
             return ocrJson ? (JSON.parse(ocrJson) as OcrResult[]) : null;
         } catch {
             return null;
@@ -48,7 +49,7 @@ export default function OcrUpload() {
 
             // coloca o ocr recente num json
             const ocrJson = JSON.stringify(date);
-            localStorage.setItem("ocrRecente", ocrJson);
+            writeStoredValue('ocrRecente', ocrJson);
 
             // Atualiza Toast para sucesso
             showToast("OCR finalizado!", "success");

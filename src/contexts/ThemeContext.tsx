@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { readStoredString, writeStoredValue } from '../utils/storage';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
@@ -14,7 +15,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
 
   useEffect(() => {
-    const saved = localStorage.getItem('themeMode');
+    const saved = readStoredString('themeMode');
     if (saved === 'light' || saved === 'dark' || saved === 'system') {
       const id = window.setTimeout(() => setThemeMode(saved), 0);
       return () => window.clearTimeout(id);
@@ -30,7 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.dataset.theme = themeMode;
     }
     if (typeof window !== 'undefined') {
-      localStorage.setItem('themeMode', themeMode);
+      writeStoredValue('themeMode', themeMode);
     }
   }, [themeMode]);
 

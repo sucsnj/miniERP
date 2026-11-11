@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { readStoredNumber, writeStoredValue } from '../utils/storage';
 
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 
@@ -16,7 +17,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [recentSalesCount, setRecentSalesCountState] = useState<RecentSalesCount>(4);
 
   useEffect(() => {
-    const saved = Number(localStorage.getItem('recentSalesCount'));
+    const saved = readStoredNumber('recentSalesCount', 4);
     if (VALID_COUNTS.includes(saved as RecentSalesCount)) {
       const id = window.setTimeout(() => setRecentSalesCountState(saved as RecentSalesCount), 0);
       return () => window.clearTimeout(id);
@@ -26,7 +27,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setRecentSalesCount = (value: RecentSalesCount) => {
     setRecentSalesCountState(value);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('recentSalesCount', String(value));
+    writeStoredValue('recentSalesCount', value);
     }
   };
 

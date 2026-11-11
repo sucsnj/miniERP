@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../hooks/useToast';
+import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
 import PayablesHeader from '@/components/payables/PayablesHeader';
@@ -45,11 +46,11 @@ const Payables: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'Todos' | 'Pendente' | 'Pago'>('Todos');
   const [dueDateFromFilter, setDueDateFromFilter] = useState(() => {
     if (typeof window === 'undefined') return today;
-    return localStorage.getItem('filtroVencimentoDe') || today;
+    return readStoredString('filtroVencimentoDe', today);
   });
   const [dueDateToFilter, setDueDateToFilter] = useState(() => {
     if (typeof window === 'undefined') return today;
-    return localStorage.getItem('filtroVencimentoAte') || today;
+    return readStoredString('filtroVencimentoAte', today);
   });
   const distributorInputRef = useRef<HTMLInputElement | null>(null);
   const amountInputRef = useRef<HTMLInputElement | null>(null);
@@ -62,9 +63,9 @@ const Payables: React.FC = () => {
   const handleDueDateFromChange = (value: string) => {
     setDueDateFromFilter(value);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('filtroVencimentoDe', value);
+      writeStoredValue('filtroVencimentoDe', value);
       if (value > dueDateToFilter) {
-        localStorage.setItem('filtroVencimentoAte', value);
+        writeStoredValue('filtroVencimentoAte', value);
       }
     }
     if (value > dueDateToFilter) {
@@ -75,9 +76,9 @@ const Payables: React.FC = () => {
   const handleDueDateToChange = (value: string) => {
     setDueDateToFilter(value);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('filtroVencimentoAte', value);
+      writeStoredValue('filtroVencimentoAte', value);
       if (value < dueDateFromFilter) {
-        localStorage.setItem('filtroVencimentoDe', value);
+        writeStoredValue('filtroVencimentoDe', value);
       }
     }
     if (value < dueDateFromFilter) {
@@ -367,8 +368,8 @@ const Payables: React.FC = () => {
               setDueDateToFilter(today);
 
               if (typeof window !== 'undefined') {
-                localStorage.removeItem('filtroVencimentoDe');
-                localStorage.removeItem('filtroVencimentoAte');
+                removeStoredValue('filtroVencimentoDe');
+                removeStoredValue('filtroVencimentoAte');
               }
             }}
           />

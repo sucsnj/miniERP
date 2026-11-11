@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import { toTimestamp } from '../../utils/date';
+import { readStoredNumber, writeStoredValue } from '../../utils/storage';
 
 interface SalesTableProps {
   sales: DailySale[];
@@ -21,12 +22,7 @@ interface SalesTableProps {
 const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale }) => {
   const totalSales = sales.reduce((total, sale) => total + sale.amount, 0);
 
-  const [maxSales, setMaxSales] = React.useState(() => {
-    if (typeof window === 'undefined') return 5;
-    const saved = localStorage.getItem("maxSales");
-    const parsed = saved ? parseInt(saved) : NaN;
-    return Number.isNaN(parsed) ? 5 : parsed;
-  });
+  const [maxSales, setMaxSales] = React.useState(() => readStoredNumber('maxSales', 5));
 
   // estado para o diálogo
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -34,7 +30,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
 
   const changeMaxSales = (value: number) => {
     setMaxSales(value);
-    localStorage.setItem("maxSales", String(value));
+    writeStoredValue('maxSales', value);
   };
 
   const openConfirm = (id: string) => {
