@@ -1,4 +1,4 @@
-# `src/pages/api/products/itens.ts`
+# `src/pages/api/products/items.ts`
 
 > Importação de itens a partir de XML de NF-e (somente `POST`), em dois modos.
 

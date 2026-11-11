@@ -1,4 +1,4 @@
-# `src/pages/api/products/unidades-medida.ts`
+# `src/pages/api/products/units-of-measure.ts`
 
 ## Descrição
 
@@ -6,11 +6,11 @@ CRUD de unidades de medida. Usa `db/products.db` (tabela `unidades_medida`).
 
 ## Métodos
 
-### `GET /api/products/unidades-medida`
+### `GET /api/products/units-of-measure`
 
 **Resposta 200:** `[{ "id": 1, "sigla": "UN", "descricao": null }, ...]` ordenadas por abbreviation.
 
-### `POST /api/products/unidades-medida`
+### `POST /api/products/units-of-measure`
 
 **Body:** `{ "sigla": "...", "descricao": "..." }`.
 
@@ -18,13 +18,13 @@ CRUD de unidades de medida. Usa `db/products.db` (tabela `unidades_medida`).
 
 **Resposta:** `201 {"id": <id>, "message": "Unidade de medida cadastrada com sucesso."}`.
 
-### `PUT /api/products/unidades-medida?id=`
+### `PUT /api/products/units-of-measure?id=`
 
 **Body:** `{ "sigla": "...", "descricao": "..." }`. `id` na query.
 
 **Resposta:** `200 {"message": "Unidade de medida atualizada com sucesso."}`.
 
-### `DELETE /api/products/unidades-medida?id=`
+### `DELETE /api/products/units-of-measure?id=`
 
 **Resposta:** `200 {"message": "Unidade de medida apagada com sucesso."}`.
 

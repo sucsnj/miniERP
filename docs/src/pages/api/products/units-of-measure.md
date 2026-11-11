@@ -1,4 +1,4 @@
-# `src/pages/api/products/unidades-medida.ts`
+# `src/pages/api/products/units-of-measure.ts`
 
 > CRUD de unidades de medida (`unidades_medida` em `db/products.db`).
 

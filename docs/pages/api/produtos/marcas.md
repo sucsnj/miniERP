@@ -1,4 +1,4 @@
-# `src/pages/api/products/marcas.ts`
+# `src/pages/api/products/brands.ts`
 
 ## Descrição
 
@@ -6,11 +6,11 @@ CRUD de marcas. Usa `db/products.db` (tabela `marcas`).
 
 ## Métodos
 
-### `GET /api/products/marcas`
+### `GET /api/products/brands`
 
 **Resposta 200:** `[{ "id": 1, "nome": "Outros" }, ...]` ordenadas por nome.
 
-### `POST /api/products/marcas`
+### `POST /api/products/brands`
 
 **Body:** `{ "nome": "..." }`.
 
@@ -18,13 +18,13 @@ CRUD de marcas. Usa `db/products.db` (tabela `marcas`).
 
 **Resposta:** `201 {"id": <id>, "message": "Marca cadastrada com sucesso."}`.
 
-### `PUT /api/products/marcas?id=`
+### `PUT /api/products/brands?id=`
 
 **Body:** `{ "nome": "..." }`. `id` na query.
 
 **Resposta:** `200 {"message": "Marca atualizada com sucesso."}`.
 
-### `DELETE /api/products/marcas?id=`
+### `DELETE /api/products/brands?id=`
 
 **Resposta:** `200 {"message": "Marca apagada com sucesso."}`.
 

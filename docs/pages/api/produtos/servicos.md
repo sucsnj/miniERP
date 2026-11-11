@@ -1,4 +1,4 @@
-# `src/pages/api/products/servicos.ts`
+# `src/pages/api/products/services.ts`
 
 ## Descrição
 
@@ -6,14 +6,14 @@ Endpoint REST de **serviços** do catálogo (tabela `servicos` em `db/products.d
 
 ## Métodos
 
-### `GET /api/products/servicos`
+### `GET /api/products/services`
 
 - Sem `id` — listagem paginada:
   - **Query params:** `search` (nome/código interno/referência), `categoria_id`, `page` (default 1), `pageSize` (default 10).
   - **Resposta 200:** `{ "items": ServicoData[], "total", "page", "pageSize", "totalPages" }`.
 - Com `?id=` — retorna `ServicoData` ou `null` (204 sem corpo não é usado; sempre 200).
 
-### `POST /api/products/servicos`
+### `POST /api/products/services`
 
 **Body:**
 
@@ -28,13 +28,13 @@ Endpoint REST de **serviços** do catálogo (tabela `servicos` em `db/products.d
 
 **Respostas:** `201` com o serviço criado (`getServicoById(id)`); `500 {"error": ...}` em falha.
 
-### `PUT /api/products/servicos?id=`
+### `PUT /api/products/services?id=`
 
 **Body** igual ao POST (id na query).
 
 **Respostas:** `200` com o serviço atualizado; `400` sem id ou sem nome/categoria; `404` serviço não encontrado.
 
-### `DELETE /api/products/servicos?id=`
+### `DELETE /api/products/services?id=`
 
 **Respostas:** `200 {"message": "Serviço excluído com sucesso."}`; `400` sem id; `404` não encontrado.
 

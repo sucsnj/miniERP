@@ -80,9 +80,9 @@ interface BarcodeData { codigo_barras: string; principal: number; }
 ## Endpoints consumidos
 
 - `GET/POST/PUT/DELETE /api/products` (produtos; `toggle-status` via POST `{ action: 'toggle-status' }`).
-- `GET/POST `/api/products/servicos`, `PUT/DELETE /api/products/servicos?id=`.
-- `GET /api/products/movimentacoes?item_id=`, `POST /api/products/movimentacoes`.
-- `GET/POST/PUT/DELETE /api/products/categorias`, `.../marcas`, `.../fornecedores`, `.../unidades-medida`.
+- `GET/POST `/api/products/services`, `PUT/DELETE /api/products/services?id=`.
+- `GET /api/products/stock-movements?item_id=`, `POST /api/products/stock-movements`.
+- `GET/POST/PUT/DELETE /api/products/categories`, `.../marcas`, `.../fornecedores`, `.../unidades-medida`.
 
 ## Observações
 

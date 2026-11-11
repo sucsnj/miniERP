@@ -1,4 +1,4 @@
-# `src/pages/api/products/categorias.ts`
+# `src/pages/api/products/categories.ts`
 
 > CRUD de categorias de produtos (`categorias` em `db/products.db`).
 

@@ -1,4 +1,4 @@
-# `src/pages/api/products/fornecedores.ts`
+# `src/pages/api/products/suppliers.ts`
 
 > CRUD de fornecedores (`fornecedores` em `db/products.db`).
 

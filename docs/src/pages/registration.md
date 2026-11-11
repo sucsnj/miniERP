@@ -12,7 +12,7 @@
 ## Relações
 
 - **Usa:** `productsService`; `ItemForm`, `BarcodeManager`, [CatalogEntityModal](../components/catalog/CatalogEntityModal.md) e modais de estoque/import; hooks `useCategory`, `useBrand`, `useSupplier`, `useUnitOfMeasure`.
-- **Usado por:** `./products.md` (edição via `?id=`) e `./api/products/itens.md` (cadastro rápido).
+- **Usado por:** `./products.md` (edição via `?id=`) e `./api/products/items.md` (cadastro rápido).
 
 ## Notas
 

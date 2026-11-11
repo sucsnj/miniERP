@@ -1,4 +1,4 @@
-# `src/pages/api/products/itens.ts`
+# `src/pages/api/products/items.ts`
 
 ## Descrição
 
@@ -8,7 +8,7 @@ Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-
 
 ## Métodos
 
-### `POST /api/products/itens` — Modo 1: Preview
+### `POST /api/products/items` — Modo 1: Preview
 
 **Body:** `{ "preview": true, "xml": "<conteudo do XML>", ... }`.
 
@@ -26,7 +26,7 @@ Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-
   "tipoMovimentacao": "ENTRADA", "existe": false, "itemIdExistente": null }] }
 ```
 
-### `POST /api/products/itens` — Modo 2: Importar produto
+### `POST /api/products/items` — Modo 2: Importar produto
 
 **Body:** `{ "importar": true, "produto": { ...campos do preview, ... } }`.
 

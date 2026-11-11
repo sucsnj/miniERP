@@ -85,4 +85,4 @@ Contratos de API/UI seguem o mesmo padrão: `mes/ano` → `month/year`, `valor` 
 - `docs/adr/0004-padrao-de-nomenclatura-dos-identificadores.md`
 - `docs/adr/0011-integracao-carrinho-estoque.md`
 - `src/database/db.ts`, `src/database/contasDb.ts`, `src/database/notasDb.ts`, `src/database/medicine-tableDb.ts`, `src/database/productsDb.ts`
-- `src/pages/api/vendas.ts`, `src/pages/api/products/itens.ts`
+- `src/pages/api/vendas.ts`, `src/pages/api/products/items.ts`

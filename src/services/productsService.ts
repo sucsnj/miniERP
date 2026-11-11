@@ -293,7 +293,7 @@ export const fetchServices = async (options: {
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 
-  const response = await fetch(`/api/products/servicos?${params.toString()}`);
+  const response = await fetch(`/api/products/services?${params.toString()}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar serviços.');
@@ -309,7 +309,7 @@ export const fetchServices = async (options: {
 };
 
 export const fetchServiceById = async (id: string | number): Promise<ServiceData | null> => {
-  const response = await fetch(`/api/products/servicos?id=${id}`);
+  const response = await fetch(`/api/products/services?id=${id}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar serviço.');
@@ -328,7 +328,7 @@ export const registerService = async (date: ServiceInput) => {
     reference: date.reference,
     duration_minutes: date.duration_minutes,
   };
-  const response = await fetch('/api/products/servicos', {
+  const response = await fetch('/api/products/services', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -351,7 +351,7 @@ export const updateService = async (id: string | number, date: ServiceInput) => 
     reference: date.reference,
     duration_minutes: date.duration_minutes,
   };
-  const response = await fetch(`/api/products/servicos?id=${id}`, {
+  const response = await fetch(`/api/products/services?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -364,7 +364,7 @@ export const updateService = async (id: string | number, date: ServiceInput) => 
 };
 
 export const deleteService = async (id: string | number) => {
-  const response = await fetch(`/api/products/servicos?id=${id}`, {
+  const response = await fetch(`/api/products/services?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -375,7 +375,7 @@ export const deleteService = async (id: string | number) => {
 };
 
 export const fetchStockMovements = async (itemId: string | number): Promise<StockMovementData[]> => {
-  const response = await fetch(`/api/products/movimentacoes?item_id=${itemId}`);
+  const response = await fetch(`/api/products/stock-movements?item_id=${itemId}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar movimentações de estoque.');
@@ -396,7 +396,7 @@ export const fetchStockMovements = async (itemId: string | number): Promise<Stoc
 };
 
 export const registerStockMovement = async (date: StockMovementInput) => {
-  const response = await fetch('/api/products/movimentacoes', {
+  const response = await fetch('/api/products/stock-movements', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ item_id: date.item_id, kind: date.kind, quantity: date.quantity, description: date.description }),
@@ -409,7 +409,7 @@ export const registerStockMovement = async (date: StockMovementInput) => {
 };
 
 export const fetchCategories = async (): Promise<CategoryData[]> => {
-  const response = await fetch('/api/products/categorias');
+  const response = await fetch('/api/products/categories');
   if (!response.ok) throw new Error('Erro ao buscar categorias.');
   const date = await response.json();
   return Array.isArray(date)
@@ -418,7 +418,7 @@ export const fetchCategories = async (): Promise<CategoryData[]> => {
 };
 
 export const createCategory = async (name: string, description?: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/products/categorias', {
+  const response = await fetch('/api/products/categories', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name, description: description }),
@@ -431,7 +431,7 @@ export const createCategory = async (name: string, description?: string): Promis
 };
 
 export const deleteCategory = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/categorias?id=${id}`, {
+  const response = await fetch(`/api/products/categories?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -442,7 +442,7 @@ export const deleteCategory = async (id: string | number): Promise<{ message: st
 };
 
 export const updateCategory = async (id: string | number, name: string, description?: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/categorias?id=${id}`, {
+  const response = await fetch(`/api/products/categories?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name, description: description }),
@@ -455,14 +455,14 @@ export const updateCategory = async (id: string | number, name: string, descript
 };
 
 export const fetchBrands = async (): Promise<BrandData[]> => {
-  const response = await fetch('/api/products/marcas');
+  const response = await fetch('/api/products/brands');
   if (!response.ok) throw new Error('Erro ao buscar marcas.');
   const date = await response.json();
   return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
 };
 
 export const createBrand = async (name: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/products/marcas', {
+  const response = await fetch('/api/products/brands', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name }),
@@ -475,7 +475,7 @@ export const createBrand = async (name: string): Promise<{ id: string; message: 
 };
 
 export const deleteBrand = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/marcas?id=${id}`, {
+  const response = await fetch(`/api/products/brands?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -486,7 +486,7 @@ export const deleteBrand = async (id: string | number): Promise<{ message: strin
 };
 
 export const updateBrand = async (id: string | number, name: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/marcas?id=${id}`, {
+  const response = await fetch(`/api/products/brands?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name }),
@@ -499,14 +499,14 @@ export const updateBrand = async (id: string | number, name: string): Promise<{ 
 };
 
 export const fetchSuppliers = async (): Promise<SupplierData[]> => {
-  const response = await fetch('/api/products/fornecedores');
+  const response = await fetch('/api/products/suppliers');
   if (!response.ok) throw new Error('Erro ao buscar fornecedores.');
   const date = await response.json();
   return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
 };
 
 export const createSupplier = async (name: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/products/fornecedores', {
+  const response = await fetch('/api/products/suppliers', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name }),
@@ -519,7 +519,7 @@ export const createSupplier = async (name: string): Promise<{ id: string; messag
 };
 
 export const deleteSupplier = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/fornecedores?id=${id}`, {
+  const response = await fetch(`/api/products/suppliers?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -530,7 +530,7 @@ export const deleteSupplier = async (id: string | number): Promise<{ message: st
 };
 
 export const updateSupplier = async (id: string | number, name: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/fornecedores?id=${id}`, {
+  const response = await fetch(`/api/products/suppliers?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name }),
@@ -543,14 +543,14 @@ export const updateSupplier = async (id: string | number, name: string): Promise
 };
 
 export const fetchUnitsOfMeasure = async (): Promise<UnitOfMeasureData[]> => {
-  const response = await fetch('/api/products/unidades-medida');
+  const response = await fetch('/api/products/units-of-measure');
   if (!response.ok) throw new Error('Erro ao buscar unidades de medida.');
   const date = await response.json();
   return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), abbreviation: String(row.abbreviation ?? row.abbreviation ?? ''), description: row.description ?? row.description ?? undefined })) : [];
 };
 
 export const createUnitOfMeasure = async (abbreviation: string, description?: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/products/unidades-medida', {
+  const response = await fetch('/api/products/units-of-measure', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ abbreviation: abbreviation, description: description }),
@@ -563,7 +563,7 @@ export const createUnitOfMeasure = async (abbreviation: string, description?: st
 };
 
 export const deleteUnitOfMeasure = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/unidades-medida?id=${id}`, {
+  const response = await fetch(`/api/products/units-of-measure?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -574,7 +574,7 @@ export const deleteUnitOfMeasure = async (id: string | number): Promise<{ messag
 };
 
 export const updateUnitOfMeasure = async (id: string | number, abbreviation: string, description?: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/products/unidades-medida?id=${id}`, {
+  const response = await fetch(`/api/products/units-of-measure?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ abbreviation: abbreviation, description: description }),
@@ -607,7 +607,7 @@ export interface InvoiceItemsPreviewResult {
 }
 
 export async function previewInvoiceItems(xml: string): Promise<InvoiceItemsPreviewResult> {
-  const response = await fetch('/api/products/itens', {
+  const response = await fetch('/api/products/items', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xml, preview: true }),
@@ -627,7 +627,7 @@ export interface InvoiceItemImportResult {
 }
 
 export async function importInvoiceItem(product: ImportedProduct): Promise<InvoiceItemImportResult> {
-  const response = await fetch('/api/products/itens', {
+  const response = await fetch('/api/products/items', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ importar: true, product: product }),

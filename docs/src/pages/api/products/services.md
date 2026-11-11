@@ -1,4 +1,4 @@
-# `src/pages/api/products/servicos.ts`
+# `src/pages/api/products/services.ts`
 
 > REST de serviços do catálogo (`servicos` em `db/products.db`).
 

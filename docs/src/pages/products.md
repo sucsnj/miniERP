@@ -12,7 +12,7 @@
 ## Relações
 
 - **Usa:** `productsService`; componentes `ProductList`, `ProductFilters`, `ProductDeleteModal`.
-- **Usado por:** consome `./api/products.md` e `./api/products/servicos.md`.
+- **Usado por:** consome `./api/products.md` e `./api/products/services.md`.
 
 ## Notas
 

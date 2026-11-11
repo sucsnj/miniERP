@@ -1,4 +1,4 @@
-# `src/pages/api/products/categorias.ts`
+# `src/pages/api/products/categories.ts`
 
 ## Descrição
 
@@ -6,11 +6,11 @@ CRUD de categorias de produtos. Usa `db/products.db` (tabela `categorias`).
 
 ## Métodos
 
-### `GET /api/products/categorias`
+### `GET /api/products/categories`
 
 **Resposta 200:** `[{ "id": 1, "nome": "Geral", "descricao": null }, ...]` ordenadas por nome.
 
-### `POST /api/products/categorias`
+### `POST /api/products/categories`
 
 **Body:** `{ "nome": "...", "descricao": "..." }`.
 
@@ -18,13 +18,13 @@ CRUD de categorias de produtos. Usa `db/products.db` (tabela `categorias`).
 
 **Resposta:** `201 {"id": <id>, "message": "Categoria cadastrada com sucesso."}`.
 
-### `PUT /api/products/categorias?id=`
+### `PUT /api/products/categories?id=`
 
 **Body:** `{ "nome": "...", "descricao": "..." }`. `id` na query (obrigatório e numérico).
 
 **Resposta:** `200 {"message": "Categoria atualizada com sucesso."}`.
 
-### `DELETE /api/products/categorias?id=`
+### `DELETE /api/products/categories?id=`
 
 **Resposta:** `200 {"message": "Categoria apagada com sucesso."}`.
 

@@ -1,4 +1,4 @@
-# `src/pages/api/products/marcas.ts`
+# `src/pages/api/products/brands.ts`
 
 > CRUD de marcas (`marcas` em `db/products.db`).
 

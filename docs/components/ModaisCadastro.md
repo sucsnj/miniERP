@@ -38,7 +38,7 @@ Cada entidade tem um par de modais: criação (campos obrigatórios marcados com
 
 ## `src/components/ModalImportItens.tsx`
 
-Importação de **produtos via XML de NF-e** (endpoint `POST /api/products/itens`).
+Importação de **produtos via XML de NF-e** (endpoint `POST /api/products/items`).
 
 ### Props
 
@@ -53,7 +53,7 @@ interface ModalImportItensProps {
 ### Comportamento
 
 - Upload via **drag & drop** ou clique (aceita `.xml`). Ao soltar, dispara `processarArquivo` (para `initialFile`, roda via `useEffect` ao montar).
-- Preview: `POST /api/products/itens` com `{ xml, preview: true }` → lista de `ProdutoImportado` com status `idle`.
+- Preview: `POST /api/products/items` com `{ xml, preview: true }` → lista de `ProdutoImportado` com status `idle`.
 - Cada linha tem `ItemNomeDropdown` (autocomplete com **debounce de 250ms**, busca `buscarProdutos` + `buscarServicos`, 8 resultados cada) para **vincular** o item da NF-e a um item existente.
 - Ações por linha: "Cadastro rápido" (abre `/registration?novoImport=1&nome=&precoCompra=&estoque=&unidade=&ean=&codigoInterno=` em nova aba) ou, se vincular a item existente, "Editar item" (`/registration?id=X`).
 - Importação: itera os itens fazendo `POST` com `{ importar: true, produto }`; status final por item: `ok` | `duplicado` | `estoque_atualizado` | `erro`. Ao final, `onImportSuccess()` e banner com resumo.

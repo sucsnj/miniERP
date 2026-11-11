@@ -4,7 +4,7 @@
 
 Endpoint REST do catálogo de **produtos** (domínio Produtos/Estoque). Gerencia itens do tipo `PRODUTO`, validação de duplicidade, unidades de medida/barcodes e alternância de status. Usa `db/products.db`.
 
-> Serviços NÃO passam por esta rota — usam `/api/products/servicos`.
+> Serviços NÃO passam por esta rota — usam `/api/products/services`.
 
 ## Métodos
 

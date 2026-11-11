@@ -44,6 +44,6 @@ O carrinho de vendas (`useCart`) registra itens em `venda_itens`, mas a venda nÃ
 - `src/pages/api/vendas.ts`
 - `src/database/db.ts`
 - `src/database/productsDb.ts`
-- `src/pages/api/products/movimentacoes.ts`
+- `src/pages/api/products/stock-movements.ts`
 - `docs/src/components/cart/CartModal.md`
 - `docs/src/hooks/useCart.md`

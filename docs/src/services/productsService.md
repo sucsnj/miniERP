@@ -6,14 +6,14 @@
 
 - Define interfaces: `BarcodeData`, `ItemData`, `ServiceData`, `ServiceInput`, `StockMovementData`, `StockMovementInput`, `PagedResult<T>`, `CategoryData`, `BrandData`, `SupplierData`, `UnitOfMeasureData`, `ImportedProduct`, `InvoiceItemsPreviewResult`, `InvoiceItemImportResult`.
 - Produtos: `fetchProducts`, `registerProduct`, `updateProduct`, `deleteProduct`, `toggleProductStatus` (chama `/api/products`, com tratamento de erro via `response.json()`).
-- Serviços: `fetchServices`, `fetchServiceById`, `registerService`, `updateService`, `deleteService` (chama `/api/products/servicos`).
-- Movimentações de estoque: `fetchStockMovements`, `registerStockMovement` (chama `/api/products/movimentacoes`).
+- Serviços: `fetchServices`, `fetchServiceById`, `registerService`, `updateService`, `deleteService` (chama `/api/products/services`).
+- Movimentações de estoque: `fetchStockMovements`, `registerStockMovement` (chama `/api/products/stock-movements`).
 - Cadastros auxiliares: CRUD completo para categorias, marcas, fornecedores e unidades de medida via endpoints `/api/products/<entidade>`.
-- Importação NF-e: `previewInvoiceItems(xml)` (POST `/api/products/itens` com `{xml, preview:true}`) e `importInvoiceItem(product)` (POST com `{importar:true, produto}`), retornando resultados normalizados (`ok`, flags, `error`).
+- Importação NF-e: `previewInvoiceItems(xml)` (POST `/api/products/items` com `{xml, preview:true}`) e `importInvoiceItem(product)` (POST com `{importar:true, produto}`), retornando resultados normalizados (`ok`, flags, `error`).
 
 ## Relações
 
-- **Usa:** [`/api/products`](../pages/api/products.md), [`/api/products/servicos`](../pages/api/products/services.md), [`/api/products/movimentacoes`](../pages/api/products/stock-movements.md), [`/api/products/categorias`](../pages/api/products/categories.md), [`/api/products/marcas`](../pages/api/products/brands.md), [`/api/products/fornecedores`](../pages/api/products/suppliers.md), [`/api/products/unidades-medida`](../pages/api/products/units-of-measure.md), [`/api/products/itens`](../pages/api/products/items.md)
+- **Usa:** [`/api/products`](../pages/api/products.md), [`/api/products/services`](../pages/api/products/services.md), [`/api/products/stock-movements`](../pages/api/products/stock-movements.md), [`/api/products/categories`](../pages/api/products/categories.md), [`/api/products/brands`](../pages/api/products/brands.md), [`/api/products/suppliers`](../pages/api/products/suppliers.md), [`/api/products/units-of-measure`](../pages/api/products/units-of-measure.md), [`/api/products/items`](../pages/api/products/items.md)
 - **Usado por:** páginas/componentes de Produtos/Catálogo e fluxos de importação de NF-e
 
 ## Notas

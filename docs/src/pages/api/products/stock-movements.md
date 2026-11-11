@@ -1,4 +1,4 @@
-# `src/pages/api/products/movimentacoes.ts`
+# `src/pages/api/products/stock-movements.ts`
 
 > Movimentações de estoque (`movimentacoes_estoque` em `db/products.db`).
 

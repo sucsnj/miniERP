@@ -1,4 +1,4 @@
-# `src/pages/api/products/fornecedores.ts`
+# `src/pages/api/products/suppliers.ts`
 
 ## Descrição
 
@@ -6,11 +6,11 @@ CRUD de fornecedores. Usa `db/products.db` (tabela `fornecedores`).
 
 ## Métodos
 
-### `GET /api/products/fornecedores`
+### `GET /api/products/suppliers`
 
 **Resposta 200:** `[{ "id": 1, "nome": "Sem fornecedor" }, ...]` ordenados por nome.
 
-### `POST /api/products/fornecedores`
+### `POST /api/products/suppliers`
 
 **Body:** `{ "nome": "..." }`.
 
@@ -18,13 +18,13 @@ CRUD de fornecedores. Usa `db/products.db` (tabela `fornecedores`).
 
 **Resposta:** `201 {"id": <id>, "message": "Fornecedor cadastrado com sucesso."}`.
 
-### `PUT /api/products/fornecedores?id=`
+### `PUT /api/products/suppliers?id=`
 
 **Body:** `{ "nome": "..." }`. `id` na query.
 
 **Resposta:** `200 {"message": "Fornecedor atualizado com sucesso."}`.
 
-### `DELETE /api/products/fornecedores?id=`
+### `DELETE /api/products/suppliers?id=`
 
 **Resposta:** `200 {"message": "Fornecedor apagado com sucesso."}`.
 
