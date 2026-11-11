@@ -10,9 +10,9 @@ const TotalsByDistributor: React.FC<TotalsByDistributorProps> = ({ totalsByDistr
     return (
         <div>
             <div className={`${styles.summaryCard} ${styles.small}`}>
-                <h3>Totais por distribuidora</h3>
+                <h3>Totais por supplierName</h3>
                 {Object.keys(totalsByDistributor).length === 0 ? (
-                    <p>Sem pendências por distribuidora.</p>
+                    <p>Sem pendências por supplierName.</p>
                 ) : (
                     <ul>
                         {Object.entries(totalsByDistributor).map(([distributor, amount]) => (

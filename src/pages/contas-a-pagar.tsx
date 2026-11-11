@@ -89,8 +89,8 @@ const Payables: React.FC = () => {
 
   const loadMonthAccounts = useCallback(async () => {
     try {
-      const data = await fetchAccounts(year, month);
-      setAccountsMonth(data);
+      const date = await fetchAccounts(year, month);
+      setAccountsMonth(date);
     } catch {
       showToast('Não foi possível carregar as contas do mês.', 'error');
     }
@@ -98,8 +98,8 @@ const Payables: React.FC = () => {
 
   const loadYearAccounts = useCallback(async () => {
     try {
-      const data = await fetchAccounts(year);
-      setAccountsYear(data);
+      const date = await fetchAccounts(year);
+      setAccountsYear(date);
     } catch {
       showToast('Não foi possível carregar o resumo anual.', 'error');
     }
@@ -206,11 +206,11 @@ const Payables: React.FC = () => {
 
   const handleEdit = (account: AccountDetails) => {
     setEditingAccount(account);
-    setDistributor(account.distribuidora);
-    setAmount(account.valor.toFixed(2));
-    setDueDate(account.vencimento);
-    setDocumentNumber(account.documento);
-    setBankNotes(account.banco_observacoes ?? '');
+    setDistributor(account.supplierName);
+    setAmount(account.amount.toFixed(2));
+    setDueDate(account.dueDate);
+    setDocumentNumber(account.document);
+    setBankNotes(account.bankNotes ?? '');
     distributorInputRef.current?.focus();
   };
 
@@ -236,10 +236,10 @@ const Payables: React.FC = () => {
     try {
       await updateAccount(
         selectedAccount.id,
-        selectedAccount.distribuidora,
-        selectedAccount.valor,
-        selectedAccount.vencimento,
-        selectedAccount.documento,
+        selectedAccount.supplierName,
+        selectedAccount.amount,
+        selectedAccount.dueDate,
+        selectedAccount.document,
         paymentNotes
       );
 
@@ -283,7 +283,7 @@ const Payables: React.FC = () => {
 
         const text = await file.text();
 
-        const response = await fetch('/api/contas/import', {
+        const response = await fetch('/api/payables/import', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ xml: text }),
@@ -310,12 +310,12 @@ const Payables: React.FC = () => {
 
   const filteredAccounts = useMemo(() => {
     return accountsYear.filter((account) => {
-      const matchesDistribuidora = account.distribuidora
+      const matchesDistribuidora = account.supplierName
         .toLowerCase()
         .includes(distributorFilter.toLowerCase());
       const matchesStatus = statusFilter === 'Todos' || account.status === statusFilter;
-      const matchesDueDateFrom = dueDateFromFilter ? account.vencimento >= dueDateFromFilter : true;
-      const matchesDueDateTo = dueDateToFilter ? account.vencimento <= dueDateToFilter : true;
+      const matchesDueDateFrom = dueDateFromFilter ? account.dueDate >= dueDateFromFilter : true;
+      const matchesDueDateTo = dueDateToFilter ? account.dueDate <= dueDateToFilter : true;
       return matchesDistribuidora && matchesStatus && matchesDueDateFrom && matchesDueDateTo;
     });
   }, [accountsYear, distributorFilter, statusFilter, dueDateFromFilter, dueDateToFilter]);
@@ -323,8 +323,8 @@ const Payables: React.FC = () => {
   const latestAccounts = useMemo(() => {
     return [...accountsYear]
       .sort((a, b) => {
-        const dateA = toTimestamp(a.criado_em || '1970-01-01T00:00:00');
-        const dateB = toTimestamp(b.criado_em || '1970-01-01T00:00:00');
+        const dateA = toTimestamp(a.createdAt || '1970-01-01T00:00:00');
+        const dateB = toTimestamp(b.createdAt || '1970-01-01T00:00:00');
         return dateB - dateA;
       })
       .slice(0, 10);
@@ -357,7 +357,7 @@ const Payables: React.FC = () => {
             handleEdit={handleEdit}
             handleStartPayment={(account) => {
               setSelectedAccount(account);
-              setPaymentNotes(account.banco_observacoes || '');
+              setPaymentNotes(account.bankNotes || '');
               setPayModalOpen(true);
             }}
             onClearFilters={() => {
@@ -433,7 +433,7 @@ const Payables: React.FC = () => {
         onCancelEdit={handleCancelEdit}
         onStartPayment={(account) => {
           setSelectedAccount(account);
-          setPaymentNotes(account.banco_observacoes || '');
+          setPaymentNotes(account.bankNotes || '');
           setPayModalOpen(true);
         }}
         onConfirmPayment={() => {

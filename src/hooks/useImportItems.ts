@@ -169,7 +169,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
     params.append('novoImport', '1');
     if (item.descricao) params.append('nome', item.descricao);
     if (item.valorUnitario) params.append('purchasePrice', String(item.valorUnitario));
-    if (item.quantidade) params.append('estoque', String(item.quantidade));
+    if (item.quantity) params.append('estoque', String(item.quantity));
     if (item.unidadeMedida) params.append('unidade', item.unidadeMedida);
     if (item.ean) params.append('ean', item.ean);
     if (item.cProd) params.append('internalCode', item.cProd);

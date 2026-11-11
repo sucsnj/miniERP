@@ -43,7 +43,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
 
     const dataToExport =
       mode === 'day'
-        ? sales.filter((sale) => sale.data === selectedDate)
+        ? sales.filter((sale) => sale.date === selectedDate)
         : sales;
 
     if (dataToExport.length === 0) {
@@ -109,9 +109,9 @@ const ExportButtons: FC<ExportButtonsProps> = ({
     if (!file) return;
 
     try { // Pega o arquivo, importa o XLSX, cria a planilha, adiciona ao workbook, escreve o workbook e cria um blob.
-      const data = await file.arrayBuffer();
+      const date = await file.arrayBuffer();
       const XLSX = await import('xlsx');
-      const workbook = XLSX.read(data, { type: 'array' });
+      const workbook = XLSX.read(date, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, {
@@ -123,7 +123,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
         return;
       }
 
-      const parsedItems: Array<{ data: string; valor: number; observacoes?: string, criado_em?: string }> = [];
+      const parsedItems: Array<{ date: string; amount: number; notes?: string, createdAt?: string }> = [];
       const errors: string[] = [];
 
       rows.forEach((row, index) => {
@@ -152,7 +152,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
           normalizedRow['created_at'] ||
           '';
 
-        // Se não houver data
+        // Se não houver date
         if (!dataValue) {
           if (mode === 'day') {
             dataValue = selectedDate ?? '';
@@ -184,10 +184,10 @@ const ExportButtons: FC<ExportButtonsProps> = ({
         }
 
         parsedItems.push({
-          data: dataValue,
-          valor: amount,
-          observacoes: String(notesValue).trim() || undefined,
-          criado_em: String(createdAtValue).trim() || undefined,
+          date: dataValue,
+          amount: amount,
+          notes: String(notesValue).trim() || undefined,
+          createdAt: String(createdAtValue).trim() || undefined,
         });
       });
 
@@ -203,7 +203,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
 
       await Promise.all(
         parsedItems.map((item) =>
-          registerSaleWithCreatedAt(item.data, item.valor, item.observacoes, item.criado_em)
+          registerSaleWithCreatedAt(item.date, item.amount, item.notes, item.createdAt)
         )
       );
 
@@ -215,12 +215,12 @@ const ExportButtons: FC<ExportButtonsProps> = ({
     }
   };
 
-  // Formata o valor.
+  // Formata o amount.
   const formatValue = (value: unknown) => {
     return parseNumber(value);
   };
 
-  // Verifica se a data pertence ao mês.
+  // Verifica se a date pertence ao mês.
   const dateMatchesMonth = (dateValue: string) => {
     const parsed = parseDate(`${dateValue}T00:00:00`);
     return (
@@ -270,7 +270,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
         type="file"
         accept=".xlsx,.xls"
         className="hidden"
-        data-mode="month"
+        date-mode="month"
         onChange={handleFileChange}
       />
     </Panel>

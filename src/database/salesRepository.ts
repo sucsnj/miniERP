@@ -88,9 +88,9 @@ function mapDailySale(row: unknown): DailySale {
   return {
     id: String(r.id),
     saleDate: String(r.sale_date ?? r.saleDate ?? ''),
-    amount: toNumber(r.amount ?? r.valor),
-    notes: toStringOrNull(r.notes ?? r.observacoes),
-    createdAt: String(r.created_at ?? r.criado_em ?? ''),
+    amount: toNumber(r.amount ?? r.amount),
+    notes: toStringOrNull(r.notes ?? r.notes),
+    createdAt: String(r.created_at ?? r.createdAt ?? ''),
   };
 }
 
@@ -102,13 +102,13 @@ function mapSaleItem(row: unknown): SaleItem {
     kind: String(r.kind ?? r.tipo ?? 'PRODUCT').toUpperCase() as SaleItem['kind'],
     productId: toStringOrNull(r.product_id ?? r.productId ?? r.item_id),
     serviceId: toStringOrNull(r.service_id ?? r.serviceId),
-    name: String(r.name ?? r.nome ?? ''),
-    quantity: toNumber(r.quantity ?? r.quantidade),
-    unitPrice: toNumber(r.unit_price ?? r.preco_unitario ?? r.preco_venda),
+    name: String(r.name ?? r.name ?? ''),
+    quantity: toNumber(r.quantity ?? r.quantity),
+    unitPrice: toNumber(r.unit_price ?? r.unitPrice ?? r.salePrice),
     subtotal: toNumber(r.subtotal),
-    internalCode: toStringOrNull(r.internal_code ?? r.codigo_interno),
+    internalCode: toStringOrNull(r.internal_code ?? r.internalCode),
     reference: toStringOrNull(r.reference ?? r.referencia),
-    createdAt: String(r.created_at ?? r.criado_em ?? ''),
+    createdAt: String(r.created_at ?? r.createdAt ?? ''),
   };
 }
 
@@ -116,8 +116,8 @@ function mapMonthlySale(row: unknown): MonthlySale {
   const r = asRecord(row);
   return {
     id: String(r.id),
-    month: toNumber(r.month ?? r.mes),
-    year: toNumber(r.year ?? r.ano),
+    month: toNumber(r.month ?? r.month),
+    year: toNumber(r.year ?? r.year),
     averageTicket: toNumber(r.average_ticket ?? r.ticketMedio),
     averageCustomers: toNumber(r.average_customers ?? r.mediaClientes),
     averageSpecialCustomers: toNumber(r.average_special_customers ?? r.mediaClientesEsp),

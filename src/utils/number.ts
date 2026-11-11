@@ -23,7 +23,7 @@ export function parseNumber(value: unknown): number {
 }
 
 /**
- * Normaliza um valor monetário (string ou número) e devolve `number | null`.
+ * Normaliza um amount monetário (string ou número) e devolve `number | null`.
  * Desacoplado da validação: não emite mensagens, só converte/limpa.
  * Aceita vírgulas como separador decimal e expressões numéricas simples.
  * @param value - string com representação de número (ex: "1.234,56" ou "1234.56")

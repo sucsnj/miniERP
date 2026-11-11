@@ -43,11 +43,11 @@ export default function OcrUpload() {
                 body: formData,
             });
 
-            const data = await response.json();
-            setResults(data);
+            const date = await response.json();
+            setResults(date);
 
             // coloca o ocr recente num json
-            const ocrJson = JSON.stringify(data);
+            const ocrJson = JSON.stringify(date);
             localStorage.setItem("ocrRecente", ocrJson);
 
             // Atualiza Toast para sucesso

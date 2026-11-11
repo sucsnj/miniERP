@@ -90,16 +90,16 @@ const ProductsPage: React.FC = () => {
       const [productsData, servicesData] = await Promise.all([
         state.type === 'SERVICO' ? Promise.resolve(null) : fetchProducts({
           search: searchQuery || undefined,
-          categoria_id: state.categoryId || undefined,
-          marca_id: state.brandId || undefined,
-          fornecedor_id: state.supplierId || undefined,
+          categoryId: state.categoryId || undefined,
+          brandId: state.brandId || undefined,
+          supplierId: state.supplierId || undefined,
           ativo: state.status,
           page: 1,
           pageSize: 10000,
         }),
         state.type === 'PRODUTO' || state.status !== 'TODOS' ? Promise.resolve(null) : fetchServices({
           search: searchQuery || undefined,
-          categoria_id: state.categoryId || undefined,
+          categoryId: state.categoryId || undefined,
           page: 1,
           pageSize: 10000,
         }),
@@ -109,27 +109,27 @@ const ProductsPage: React.FC = () => {
       const services: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
         id: service.id,
         tipo: 'SERVICO',
-        nome: service.nome,
+        name: service.name,
         descricao: service.descricao,
-        categoria_id: service.categoria_id,
+        categoryId: service.categoryId,
         unidade_medida_id: '21',
-        marca_id: '',
-        fornecedor_id: '',
-        preco_compra: 0,
-        margem_lucro: 0,
-        preco_venda: service.preco_venda,
+        brandId: '',
+        supplierId: '',
+        purchasePrice: 0,
+        profitMargin: 0,
+        salePrice: service.salePrice,
         estoque: 0,
         multiplicador_unidade: 1,
-        estoque_total: 0,
-        codigo_interno: service.codigo_interno,
+        totalStock: 0,
+        internalCode: service.internalCode,
         referencia: service.referencia || '',
         duracao_minutos: service.duracao_minutos,
-        data_criacao: service.data_criacao,
-        data_atualizacao: service.data_atualizacao,
+        createdAt: service.createdAt,
+        updatedAt: service.updatedAt,
         categoria_nome: service.categoria_nome,
       }));
 
-      const catalog = [...products, ...services].sort((a, b) => a.nome.localeCompare(b.nome));
+      const catalog = [...products, ...services].sort((a, b) => a.name.localeCompare(b.name));
       const offset = (page - 1) * 10;
       setItems(catalog.slice(offset, offset + 10));
       setTotal(catalog.length);
@@ -247,7 +247,7 @@ const ProductsPage: React.FC = () => {
             {/* Filtros */}
             <ProductFilters
               state={state}
-              data={options}
+              date={options}
               setFilters={setState}
               actions={{
                 search: handleSearchSubmit,

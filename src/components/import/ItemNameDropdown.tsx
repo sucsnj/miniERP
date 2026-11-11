@@ -82,10 +82,10 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
       const products: SuggestionItem[] = (prodRes.items || []).map((p) => ({
         id: p.id,
         type: 'PRODUTO',
-        name: p.nome,
-        salePrice: p.preco_venda,
+        name: p.name,
+        salePrice: p.salePrice,
         stock: p.estoque,
-        internalCode: p.codigo_interno,
+        internalCode: p.internalCode,
         ean:
           p.codigos_barras?.find((b) => b.principal === 1)?.codigo_barras ||
           p.codigos_barras?.[0]?.codigo_barras ||
@@ -96,9 +96,9 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
       const services: SuggestionItem[] = (servRes.items || []).map((s) => ({
         id: s.id,
         type: 'SERVICO',
-        name: s.nome,
-        salePrice: s.preco_venda,
-        internalCode: s.codigo_interno,
+        name: s.name,
+        salePrice: s.salePrice,
+        internalCode: s.internalCode,
         categoryName: s.categoria_nome,
       }));
 

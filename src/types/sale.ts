@@ -12,10 +12,10 @@ export type CatalogItemType = 'PRODUTO' | 'SERVICO';
 export interface CartItem {
   id: string;
   tipo: CatalogItemType;
-  nome: string;
-  preco_venda: number;
-  quantidade: number;
-  codigo_interno?: string;
+  name: string;
+  salePrice: number;
+  quantity: number;
+  internalCode?: string;
   referencia?: string;
   estoque?: number;
 }

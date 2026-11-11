@@ -15,21 +15,21 @@ import Button from '@/components/common/Button';
 import { formatCurrency, formatCurrencyNumber } from '../../utils/formatter';
 
 interface SalesChartProps {
-  data: DailySale[];
+  date: DailySale[];
 }
 
-const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
+const SalesChart: React.FC<SalesChartProps> = ({ date }) => {
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const [range, setRange] = useState<30 | 7 | 3>(30);
 
-  const sortedData = [...data].sort((a, b) => String(a.criado_em).localeCompare(String(b.criado_em)));
+  const sortedData = [...date].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
   
   // Filtra os dados pelo alcance escolhido
   const chartData = sortedData
   .slice(-range)
   .map((sale) => ({
-    data: sale.criado_em,
-    valor: formatCurrencyNumber(sale.valor, 2),
+    date: sale.createdAt,
+    amount: formatCurrencyNumber(sale.amount, 2),
   }));
 
   return (

@@ -32,13 +32,13 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   // Aplica os padrões quando a opção não é informada
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
 
-  // Busca as vendas do mês/ano conforme o filtro e, opcionalmente, dispara a consolidação automática.
-  // useCallback mantém a referência estável enquanto mes/ano/filter não mudarem.
+  // Busca as vendas do mês/year conforme o filtro e, opcionalmente, dispara a consolidação automática.
+  // useCallback mantém a referência estável enquanto month/year/filter não mudarem.
   const loadSales = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchDailySales(month, year, filter);
-      setSales(data);
+      const date = await fetchDailySales(month, year, filter);
+      setSales(date);
 
       if (autoConsolidateEnabled) {
         await autoConsolidate();
@@ -77,13 +77,13 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   // Exclui uma venda, respeitando a regra de edição/exclusão
   const handleDeleteSale = async (id: string) => {
     const sale = sales.find((sale) => sale.id === id);
-    // Venda inexistente: avisa e interrompe sem chamar canEdit com data vazia
+    // Venda inexistente: avisa e interrompe sem chamar canEdit com date vazia
     if (!sale) {
       showToast('Venda não encontrada.', 'error');
       return;
     }
     // Verifica se a venda ainda pode ser editada/excluída (janela de 2 dias)
-    const edit = canEdit(sale.data);
+    const edit = canEdit(sale.date);
     try {
       // mostra outro toast quando a venda tiver mais de 2 dias
       if (edit) {

@@ -14,19 +14,19 @@ import {
 function mapPayable(p: any) {
   return {
     id: String(p.id),
-    distribuidora: p.supplierName,
-    valor: p.amount,
-    vencimento: p.dueDate,
-    documento: p.document,
+    supplierName: p.supplierName,
+    amount: p.amount,
+    dueDate: p.dueDate,
+    document: p.document,
     status: p.status === 'PAID' ? 'Pago' : 'Pendente',
-    banco_observacoes: p.bankNotes,
-    criado_em: p.createdAt,
+    bankNotes: p.bankNotes,
+    createdAt: p.createdAt,
   };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { ano: yearParam, mes: monthParam } = req.query;
+    const { year: yearParam, month: monthParam } = req.query;
     if (!yearParam) {
       return res.status(400).json({ error: 'Ano é obrigatório' });
     }
@@ -55,11 +55,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ message: 'Pagamento cancelado e conta voltou a Pendente' });
     }
 
-    const distributor = body.distribuidora ?? body.supplierName;
-    const amount = body.valor ?? body.amount;
-    const dueDate = body.vencimento ?? body.dueDate;
-    const documentNumber = body.documento ?? body.document;
-    const bankNotes = body.bancoObservacoes ?? body.bankNotes;
+    const distributor = body.supplierName ?? body.supplierName;
+    const amount = body.amount ?? body.amount;
+    const dueDate = body.dueDate ?? body.dueDate;
+    const documentNumber = body.document ?? body.document;
+    const bankNotes = body.bankNotes ?? body.bankNotes;
 
     if (!distributor || typeof amount !== 'number' || !dueDate || !documentNumber) {
       return res.status(400).json({ error: 'Dados inválidos para criação de conta' });
@@ -78,11 +78,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'PUT') {
     const body = req.body ?? {};
     const id = body.id;
-    const distributor = body.distribuidora ?? body.supplierName;
-    const amount = body.valor ?? body.amount;
-    const dueDate = body.vencimento ?? body.dueDate;
-    const documentNumber = body.documento ?? body.document;
-    const bankNotes = body.bancoObservacoes ?? body.bankNotes;
+    const distributor = body.supplierName ?? body.supplierName;
+    const amount = body.amount ?? body.amount;
+    const dueDate = body.dueDate ?? body.dueDate;
+    const documentNumber = body.document ?? body.document;
+    const bankNotes = body.bankNotes ?? body.bankNotes;
 
     if (!id || !distributor || typeof amount !== 'number' || !dueDate || !documentNumber) {
       return res.status(400).json({ error: 'Dados inválidos para atualização de conta' });

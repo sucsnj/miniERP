@@ -6,7 +6,7 @@ export type SalesFilter = 'todas' | 'positivas' | 'negativas';
 // Chave usada no localStorage para lembrar o último filtro escolhido
 const STORAGE_KEY = 'historicoFiltro';
 
-// Valida se o valor salvo é um filtro válido
+// Valida se o amount salvo é um filtro válido
 const isValidFilter = (value: string | null): value is SalesFilter =>
   value === 'todas' || value === 'positivas' || value === 'negativas';
 

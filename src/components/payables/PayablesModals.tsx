@@ -120,7 +120,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                   onChange={(e) => setDistributor(e.target.value)}
                 />
               ) : (
-                <span>{selectedAccount.distribuidora}</span>
+                <span>{selectedAccount.supplierName}</span>
               )}
             </div>
             <div className={styles.modalRow}>
@@ -134,7 +134,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                   onChange={(e) => setAmount(e.target.value)}
                 />
               ) : (
-                <span>R$ {formatCurrency(selectedAccount.valor, 2)}</span>
+                <span>R$ {formatCurrency(selectedAccount.amount, 2)}</span>
               )}
             </div>
             <div className={styles.modalRow}>
@@ -147,7 +147,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                   onChange={(e) => setDueDate(e.target.value)}
                 />
               ) : (
-                <span>{selectedAccount.vencimento}</span>
+                <span>{selectedAccount.dueDate}</span>
               )}
             </div>
             <div className={styles.modalRow}>
@@ -160,7 +160,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                   onChange={(e) => setDocument(e.target.value)}
                 />
               ) : (
-                <span>{selectedAccount.documento}</span>
+                <span>{selectedAccount.document}</span>
               )}
             </div>
             <div className={styles.modalRow}>
@@ -177,7 +177,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                   onChange={(e) => setBankNotes(e.target.value)}
                 />
               ) : (
-                <span>{selectedAccount.banco_observacoes || 'Sem observações'}</span>
+                <span>{selectedAccount.bankNotes || 'Sem observações'}</span>
               )}
             </div>
             <div className={styles.modalActions}>

@@ -139,7 +139,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     >
                         {options.categories.map((c) => (
                             <option key={c.id} value={c.id}>
-                                {c.nome}
+                                {c.name}
                             </option>
                         ))}
                     </select>
@@ -191,7 +191,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     >
                         {options.brands.map((m) => (
                             <option key={m.id} value={m.id}>
-                                {m.nome}
+                                {m.name}
                             </option>
                         ))}
                     </select>
@@ -243,7 +243,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     >
                         {options.suppliers.map((f) => (
                             <option key={f.id} value={f.id}>
-                                {f.nome}
+                                {f.name}
                             </option>
                         ))}
                     </select>

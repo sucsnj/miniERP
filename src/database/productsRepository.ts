@@ -178,7 +178,7 @@ function mapCategory(row: unknown): Category {
   const r = asRecord(row);
   return {
     id: String(r.id),
-    name: String(r.name ?? r.nome ?? ''),
+    name: String(r.name ?? r.name ?? ''),
     description: toStringOrNull(r.description ?? r.descricao),
     isDefault: toBoolean(r.is_default ?? r.isDefault),
     isSystem: toBoolean(r.is_system ?? r.isSystem),
@@ -191,7 +191,7 @@ function mapBrand(row: unknown): Brand {
   const r = asRecord(row);
   return {
     id: String(r.id),
-    name: String(r.name ?? r.nome ?? ''),
+    name: String(r.name ?? r.name ?? ''),
     isDefault: toBoolean(r.is_default ?? r.isDefault),
     isSystem: toBoolean(r.is_system ?? r.isSystem),
     createdAt: toStringOrNull(r.created_at ?? r.createdAt) ?? undefined,
@@ -203,7 +203,7 @@ function mapSupplier(row: unknown): Supplier {
   const r = asRecord(row);
   return {
     id: String(r.id),
-    name: String(r.name ?? r.nome ?? ''),
+    name: String(r.name ?? r.name ?? ''),
     isDefault: toBoolean(r.is_default ?? r.isDefault),
     isSystem: toBoolean(r.is_system ?? r.isSystem),
     createdAt: toStringOrNull(r.created_at ?? r.createdAt) ?? undefined,
@@ -346,7 +346,7 @@ function mapProduct(row: unknown): Product {
   });
   return {
     id: String(r.id),
-    name: String(r.name ?? r.nome ?? ''),
+    name: String(r.name ?? r.name ?? ''),
     description: toStringOrNull(r.description ?? r.descricao),
     categoryId: String(r.categoryId ?? r.category_id ?? ''),
     baseUnitId: String(r.baseUnitId ?? r.base_unit_id ?? ''),
@@ -357,12 +357,12 @@ function mapProduct(row: unknown): Product {
     salePrice: toNumber(r.salePrice ?? r.sale_price),
     stock: toNumber(r.stock ?? r.estoque),
     unitMultiplier: toNumber(r.unitMultiplier ?? r.unit_multiplier ?? r.multiplicador_unidade),
-    totalStock: toNumber(r.totalStock ?? r.total_stock ?? r.estoque_total),
-    internalCode: toStringOrNull(r.internalCode ?? r.internal_code ?? r.codigo_interno),
+    totalStock: toNumber(r.totalStock ?? r.total_stock ?? r.totalStock),
+    internalCode: toStringOrNull(r.internalCode ?? r.internal_code ?? r.internalCode),
     reference: toStringOrNull(r.reference ?? r.referencia),
     active: r.active === undefined && r.ativo === undefined ? true : toBoolean(r.active ?? r.ativo ?? 1),
-    createdAt: toStringOrNull(r.createdAt ?? r.created_at ?? r.data_criacao) ?? undefined,
-    updatedAt: toStringOrNull(r.updatedAt ?? r.updated_at ?? r.data_atualizacao) ?? undefined,
+    createdAt: toStringOrNull(r.createdAt ?? r.created_at ?? r.createdAt) ?? undefined,
+    updatedAt: toStringOrNull(r.updatedAt ?? r.updated_at ?? r.updatedAt) ?? undefined,
     categoryName: toStringOrNull(r.categoryName ?? r.category_name ?? r.categoria_nome) ?? undefined,
     brandName: toStringOrNull(r.brandName ?? r.brand_name ?? r.marca_nome) ?? undefined,
     baseUnitAbbreviation: toStringOrNull(r.baseUnitAbbreviation ?? r.base_unit_abbreviation ?? r.unidade_medida_sigla) ?? undefined,

@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const result = await listServices({
         search: typeof req.query.search === 'string' ? req.query.search : undefined,
-        categoryId: req.query.categoria_id ? String(req.query.categoria_id) : undefined,
+        categoryId: req.query.categoryId ? String(req.query.categoryId) : undefined,
         page: req.query.page ? Number(req.query.page) : undefined,
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
       });
@@ -38,11 +38,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const body = req.body ?? {};
-      const name = body.name ?? body.nome;
-      const categoryId = body.categoryId ?? body.categoria_id;
-      const salePrice = body.salePrice ?? body.preco_venda ?? 0;
+      const name = body.name ?? body.name;
+      const categoryId = body.categoryId ?? body.categoryId;
+      const salePrice = body.salePrice ?? body.salePrice ?? 0;
       const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? 0;
-      const internalCode = body.internalCode ?? body.codigo_interno;
+      const internalCode = body.internalCode ?? body.internalCode;
       const reference = body.reference ?? body.referencia;
       const description = body.description ?? body.descricao;
 
@@ -79,11 +79,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const existing = await getService(id);
       if (!existing) return res.status(404).json({ error: 'Serviço não encontrado.' });
 
-      const name = body.name ?? body.nome ?? existing.name;
-      const categoryId = body.categoryId ?? body.categoria_id ?? existing.categoryId;
-      const salePrice = body.salePrice ?? body.preco_venda ?? existing.salePrice;
+      const name = body.name ?? body.name ?? existing.name;
+      const categoryId = body.categoryId ?? body.categoryId ?? existing.categoryId;
+      const salePrice = body.salePrice ?? body.salePrice ?? existing.salePrice;
       const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? existing.durationMinutes;
-      const internalCode = body.internalCode ?? body.codigo_interno ?? existing.internalCode;
+      const internalCode = body.internalCode ?? body.internalCode ?? existing.internalCode;
       const reference = body.reference ?? body.referencia ?? existing.reference;
       const description = body.description ?? body.descricao ?? existing.description;
 

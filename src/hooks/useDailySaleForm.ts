@@ -24,7 +24,7 @@ import { calculateResult, sanitizeExpression, insertKey } from '@/lib/calc/calcu
 import { useCart } from './useCart';
 import { useToast } from './useToast';
 
-// Teclas de navegação/edição sempre permitidas no campo de valor
+// Teclas de navegação/edição sempre permitidas no campo de amount
 const ALLOWED_SALE_KEYS = [
   'Backspace',
   'Delete',
@@ -86,14 +86,14 @@ export const useDailySaleForm = ({
     totalCartValue,
   } = useCart(showToast);
 
-  // Aplica/limpa o somatório do campo de valor a partir da expressão digitada
+  // Aplica/limpa o somatório do campo de amount a partir da expressão digitada
   const calculateValue = (input: string) => {
     const result = calculateResult(input);
     setCalculatedValue(result);
     setIsValueInvalid(input.trim() !== '' && result === null);
   };
 
-  // Filtra as teclas do input de valor: números, operadores matemáticos,
+  // Filtra as teclas do input de amount: números, operadores matemáticos,
   // parênteses, vírgula/ponto e teclas de navegação
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = event;
@@ -111,7 +111,7 @@ export const useDailySaleForm = ({
     }
   };
 
-  // Sanitiza o input de valor e recalcula a expressão
+  // Sanitiza o input de amount e recalcula a expressão
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const cursor = event.target.selectionStart ?? event.target.value.length;
     const sanitizedBefore = sanitizeExpression(event.target.value.slice(0, cursor));
@@ -128,7 +128,7 @@ export const useDailySaleForm = ({
 
   const formatCartValue = (val: number): string => val.toFixed(2);
 
-  // Sempre que o valor total do carrinho mudar, atualiza o campo input
+  // Sempre que o amount total do carrinho mudar, atualiza o campo input
   // adicionando/removendo "+valor_do_carrinho"
   useEffect(() => {
     const prevCartVal = prevCartValueRef.current;
@@ -178,7 +178,7 @@ export const useDailySaleForm = ({
     prevCartValueRef.current = 0;
   });
 
-  // Botão para limpar valor e observações (foco volta para o input de valor)
+  // Botão para limpar amount e observações (foco volta para o input de amount)
   const handleClear = () => {
     setClearing(true);
     setCartItems([]);
@@ -243,7 +243,7 @@ export const useDailySaleForm = ({
     setLoading(true);
 
     try {
-      // Validar data e valor antes de enviar (contrato ADR 0002)
+      // Validar date e amount antes de enviar (contrato ADR 0002)
       const dateCheck = validateDate(selectedDate);
       if (!dateCheck.ok) {
         showToast(dateCheck.message ?? 'Data inválida.', 'error');
@@ -319,7 +319,7 @@ export const useDailySaleForm = ({
     setLoading(false);
   };
 
-  // Mantém o input de valor visível a cada 3 minutos
+  // Mantém o input de amount visível a cada 3 minutos
   useEffect(() => {
     const interval = setInterval(() => {
       const input = valueInputRef.current;
@@ -350,7 +350,7 @@ export const useDailySaleForm = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Adiciona um operador matemático ao campo de valor
+  // Adiciona um operador matemático ao campo de amount
   const addOperator = (operator: string) => {
     const nextValue = insertKey(value, operator);
     setValue(nextValue);

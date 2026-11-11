@@ -3,7 +3,7 @@ export type StockMovementType = 'ENTRADA' | 'SAIDA';
 export interface SaleStockItem {
   item_id?: number | null;
   tipo: 'PRODUTO' | 'SERVICO';
-  quantidade: number;
+  quantity: number;
 }
 
 export interface StockAdjustment {
@@ -25,12 +25,12 @@ export function getSaleStockAdjustments(
 
   for (const item of oldItems) {
     if (item.tipo !== 'PRODUTO' || !item.item_id) continue;
-    oldByItem.set(item.item_id, (oldByItem.get(item.item_id) ?? 0) + Number(item.quantidade || 0));
+    oldByItem.set(item.item_id, (oldByItem.get(item.item_id) ?? 0) + Number(item.quantity || 0));
   }
 
   for (const item of newItems) {
     if (item.tipo !== 'PRODUTO' || !item.item_id) continue;
-    newByItem.set(item.item_id, (newByItem.get(item.item_id) ?? 0) + Number(item.quantidade || 0));
+    newByItem.set(item.item_id, (newByItem.get(item.item_id) ?? 0) + Number(item.quantity || 0));
   }
 
   const itemIds = new Set<number>([...oldByItem.keys(), ...newByItem.keys()]);

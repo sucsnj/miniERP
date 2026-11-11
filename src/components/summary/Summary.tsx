@@ -19,13 +19,13 @@ interface SummaryProps {
 
 const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, setMonth }) => {
     const summary = useMemo(() => {
-        const paidTotal = accountsYear.filter((account) => account.status === 'Pago').reduce((sum, account) => sum + account.valor, 0);
-        const pendingTotal = accountsYear.filter((account) => account.status === 'Pendente').reduce((sum, account) => sum + account.valor, 0);
+        const paidTotal = accountsYear.filter((account) => account.status === 'Pago').reduce((sum, account) => sum + account.amount, 0);
+        const pendingTotal = accountsYear.filter((account) => account.status === 'Pendente').reduce((sum, account) => sum + account.amount, 0);
         
-        // Conta a quantidade pendente
+        // Conta a quantity pendente
         const pendingCount = accountsYear.filter((account) => account.status === 'Pendente').length;
 
-        // Conta a quantidade de contas pagas
+        // Conta a quantity de contas pagas
         const paidCount = accountsYear.filter((account) => account.status === 'Pago').length;
 
         // Conta o total de contas
@@ -33,7 +33,7 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
 
         const totalsByDistributor = accountsYear.reduce<Record<string, number>>((acc, account) => {
             if (account.status === 'Pendente') {
-                acc[account.distribuidora] = (acc[account.distribuidora] || 0) + account.valor;
+                acc[account.supplierName] = (acc[account.supplierName] || 0) + account.amount;
             }
             
             return acc;
@@ -41,11 +41,11 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
 
         const months = Array.from({ length: 12 }, (_, i) => {
             const monthIndex = i + 1;
-            const accountsInMonth = accountsYear.filter((account) => parseDate(`${account.vencimento}T00:00:00`).month() + 1 === monthIndex);
+            const accountsInMonth = accountsYear.filter((account) => parseDate(`${account.dueDate}T00:00:00`).month() + 1 === monthIndex);
             return {
                 month: monthIndex,
-                paid: accountsInMonth.filter((account) => account.status === 'Pago').reduce((sum, account) => sum + account.valor, 0),
-                pending: accountsInMonth.filter((account) => account.status === 'Pendente').reduce((sum, account) => sum + account.valor, 0),
+                paid: accountsInMonth.filter((account) => account.status === 'Pago').reduce((sum, account) => sum + account.amount, 0),
+                pending: accountsInMonth.filter((account) => account.status === 'Pendente').reduce((sum, account) => sum + account.amount, 0),
             };
         });
 
@@ -115,7 +115,7 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                     </table>
 
                 </div>
-                {/* #Totais por distribuidora */}
+                {/* #Totais por supplierName */}
                 <TotalsByDistributor totalsByDistributor={summary.totalsByDistributor} />
 
                 { /* #Consolidação mensal */}

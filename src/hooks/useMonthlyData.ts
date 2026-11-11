@@ -17,8 +17,8 @@ export const useMonthlyData = (showToast: ToastFn) => {
   // Busca todas as consolidações mensais e atualiza o estado.
   // useCallback mantém a referência estável (usado em useEffect).
   const loadMensais = useCallback(async () => {
-    const data = await fetchAllMonthly();
-    setMensais(data);
+    const date = await fetchAllMonthly();
+    setMensais(date);
   }, []);
 
   // Exclui a consolidação de um mês e recarrega a lista

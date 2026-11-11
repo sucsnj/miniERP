@@ -31,15 +31,15 @@ interface BarcodePayload {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const { search, categoria_id, categoryId, marca_id, brandId, fornecedor_id, supplierId, ativo, page, pageSize } = req.query;
+      const { search, categoryId, brandId, supplierId, ativo, page, pageSize } = req.query;
 
       const activeParam = ativo !== undefined && ativo !== 'TODOS' ? (ativo === 'ATIVO' ? true : ativo === 'INATIVO' ? false : null) : null;
 
       const result = await listProducts({
         search: search ? String(search) : undefined,
-        categoryId: (categoryId ?? categoria_id) ? String(categoryId ?? categoria_id) : undefined,
-        brandId: (brandId ?? marca_id) ? String(brandId ?? marca_id) : undefined,
-        supplierId: (supplierId ?? fornecedor_id) ? String(supplierId ?? fornecedor_id) : undefined,
+        categoryId: (categoryId ?? categoryId) ? String(categoryId ?? categoryId) : undefined,
+        brandId: (brandId ?? brandId) ? String(brandId ?? brandId) : undefined,
+        supplierId: (supplierId ?? supplierId) ? String(supplierId ?? supplierId) : undefined,
         active: activeParam,
         page: page ? Number(page) : 1,
         pageSize: pageSize ? Number(pageSize) : 10,
@@ -70,18 +70,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
 
-      const name = body.nome ?? body.name;
+      const name = body.name ?? body.name;
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'O nome é obrigatório.' });
       }
 
-      const categoryId = body.categoria_id ?? body.categoryId ?? body.category_id;
+      const categoryId = body.categoryId ?? body.categoryId ?? body.category_id;
       if (!categoryId) {
         return res.status(400).json({ error: 'Selecione uma categoria válida.' });
       }
 
-      const brandId = body.marca_id ?? body.brandId ?? body.brand_id;
-      const supplierId = body.fornecedor_id ?? body.supplierId ?? body.supplier_id;
+      const brandId = body.brandId ?? body.brandId ?? body.brand_id;
+      const supplierId = body.supplierId ?? body.supplierId ?? body.supplier_id;
       if (!brandId) return res.status(400).json({ error: 'Selecione uma marca válida.' });
       if (!supplierId) return res.status(400).json({ error: 'Selecione um fornecedor válido.' });
 
@@ -160,14 +160,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      const internalCode = body.codigo_interno ?? body.internalCode ?? body.internal_code;
+      const internalCode = body.internalCode ?? body.internalCode ?? body.internal_code;
       if (internalCode && await checkDuplicateInternalCode(String(internalCode))) {
         return res.status(400).json({ error: `O código interno "${internalCode}" já está cadastrado.` });
       }
 
-      const purchasePrice = parseNumber(body.preco_compra ?? body.purchasePrice ?? body.purchase_price);
-      const profitMargin = parseNumber(body.margem_lucro ?? body.profitMargin ?? body.profit_margin);
-      const salePrice = parseNumber(body.preco_venda ?? body.salePrice ?? body.sale_price);
+      const purchasePrice = parseNumber(body.purchasePrice ?? body.purchasePrice ?? body.purchase_price);
+      const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin);
+      const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price);
       const stock = parseNumber(body.estoque ?? body.stock);
       const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier);
 
@@ -214,14 +214,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Esta rota aceita apenas produtos.' });
       }
 
-      const name = body.nome ?? body.name;
+      const name = body.name ?? body.name;
       if (!name || !String(name).trim()) return res.status(400).json({ error: 'O nome é obrigatório.' });
 
-      const categoryId = body.categoria_id ?? body.categoryId ?? body.category_id;
+      const categoryId = body.categoryId ?? body.categoryId ?? body.category_id;
       if (!categoryId) return res.status(400).json({ error: 'Selecione uma categoria válida.' });
 
-      const brandId = body.marca_id ?? body.brandId ?? body.brand_id;
-      const supplierId = body.fornecedor_id ?? body.supplierId ?? body.supplier_id;
+      const brandId = body.brandId ?? body.brandId ?? body.brand_id;
+      const supplierId = body.supplierId ?? body.supplierId ?? body.supplier_id;
       if (!brandId) return res.status(400).json({ error: 'Selecione uma marca válida.' });
       if (!supplierId) return res.status(400).json({ error: 'Selecione um fornecedor válido.' });
 
@@ -299,14 +299,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      const internalCode = body.codigo_interno ?? body.internalCode ?? body.internal_code ?? existing.internalCode;
+      const internalCode = body.internalCode ?? body.internalCode ?? body.internal_code ?? existing.internalCode;
       if (internalCode && existing.internalCode && String(internalCode).trim() !== existing.internalCode) {
         return res.status(400).json({ error: 'O código interno não pode ser alterado.' });
       }
 
-      const purchasePrice = parseNumber(body.preco_compra ?? body.purchasePrice ?? body.purchase_price ?? existing.purchasePrice);
-      const profitMargin = parseNumber(body.margem_lucro ?? body.profitMargin ?? body.profit_margin ?? existing.profitMargin);
-      const salePrice = parseNumber(body.preco_venda ?? body.salePrice ?? body.sale_price ?? existing.salePrice);
+      const purchasePrice = parseNumber(body.purchasePrice ?? body.purchasePrice ?? body.purchase_price ?? existing.purchasePrice);
+      const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin ?? existing.profitMargin);
+      const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price ?? existing.salePrice);
       const stock = parseNumber(body.estoque ?? body.stock ?? existing.stock);
       const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier);
 

@@ -22,18 +22,18 @@ export function getLastDayOfMonth(year: number, month: number): number {
 }
 
 // Função genérica para criar um objeto dayjs já com timezone.
-// Se o valor já contém offset (ex: 2026-07-31T22:08:01-03:00), dayjs.tz(value, TZ)
+// Se o amount já contém offset (ex: 2026-07-31T22:08:01-03:00), dayjs.tz(value, TZ)
 // ignoraria o offset e reinterpretaria como horário local — causando troca de dia.
 // Por isso usamos dayjs(value) primeiro (respeita o offset) e depois convertemos para TZ.
 export function parseDate(value: string) {
-  // Detecta se o valor tem offset explícito (Z ou ±HH:MM)
+  // Detecta se o amount tem offset explícito (Z ou ±HH:MM)
   if (/[Zz]|[+-]\d{2}:\d{2}$/.test(value)) {
     return dayjs(value).tz(TZ);
   }
   return dayjs.tz(value, TZ);
 }
 
-// Timestamp de um valor
+// Timestamp de um amount
 export function toTimestamp(value: string): number {
   return parseDate(value).valueOf();
 }
@@ -81,7 +81,7 @@ export function toDateFromISO(value: string): Date | null {
   return d.isValid() ? d.toDate() : null;
 }
 
-// Arrays de data/hora
+// Arrays de date/hora
 export function getDateArray(): [number, number, number] {
   const d = now();
   return [d.date(), d.month() + 1, d.year()];

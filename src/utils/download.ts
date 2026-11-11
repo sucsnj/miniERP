@@ -5,7 +5,7 @@
  */
 
 /**
- * Baixa um Data URL (ex.: PNG) com o nome de arquivo informado.
+ * Baixa um Data URL (ex.: PNG) com o name de arquivo informado.
  */
 export function downloadDataUrl(dataUrl: string, filename: string): void {
   const link = document.createElement('a');

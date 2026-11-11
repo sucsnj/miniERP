@@ -22,7 +22,7 @@ const ProductDeleteModal: React.FC<ProductDeleteModalProps> = ({
             title="Confirmar Exclusão"
             message={(
                 <>
-                    <p>Tem certeza de que deseja excluir o item <strong>{item.nome}</strong>?</p>
+                    <p>Tem certeza de que deseja excluir o item <strong>{item.name}</strong>?</p>
                     <p className="danger-text">Esta ação é irreversível e excluirá todos os códigos de barras associados a ele.</p>
                 </>
             )}

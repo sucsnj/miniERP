@@ -105,7 +105,7 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({
                     <tr key={mov.id}>
                       <td>{mov.data_movimentacao}</td>
                       <td>{mov.tipo}</td>
-                      <td>{mov.quantidade}</td>
+                      <td>{mov.quantity}</td>
                       <td>{mov.estoque_final}</td>
                       <td>{mov.descricao || '-'}</td>
                     </tr>

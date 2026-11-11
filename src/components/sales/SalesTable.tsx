@@ -19,7 +19,7 @@ interface SalesTableProps {
 }
 
 const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale }) => {
-  const totalSales = sales.reduce((total, sale) => total + sale.valor, 0);
+  const totalSales = sales.reduce((total, sale) => total + sale.amount, 0);
 
   const [maxSales, setMaxSales] = React.useState(() => {
     if (typeof window === 'undefined') return 5;
@@ -102,7 +102,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
           {[...sales]
             .sort((a, b) => {
               const diffDate =
-                toTimestamp(b.data) - toTimestamp(a.data);
+                toTimestamp(b.date) - toTimestamp(a.date);
 
               if (diffDate !== 0) return diffDate;
 
@@ -111,23 +111,23 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
             .slice(0, maxSales)
             .map((sale) => (
               <tr key={sale.id}>
-                <td>{formatDateString(sale.criado_em, 'DD-MM-YYYY HH:mm:ss')}</td>
-                <td>{sale.data}</td>
-                <td>R$ {formatCurrency(sale.valor, 2)}</td>
+                <td>{formatDateString(sale.createdAt, 'DD-MM-YYYY HH:mm:ss')}</td>
+                <td>{sale.date}</td>
+                <td>R$ {formatCurrency(sale.amount, 2)}</td>
                 <td>
                   <Tooltip
-                    title={sale.observacoes || 'Sem observações'}
+                    title={sale.notes || 'Sem observações'}
                     enterTouchDelay={0}
                     leaveTouchDelay={5000}
                     classes={{ tooltip: styles.customTooltip }}
                   >
                     <span className={styles.hoverEllipsis}>
-                      {sale.observacoes || 'Sem observações'}
+                      {sale.notes || 'Sem observações'}
                     </span>
                   </Tooltip>
                 </td>
                 <td>
-                  {canEdit(sale.data) ? (
+                  {canEdit(sale.date) ? (
                     <>
                       {onEditSale ? (
                         <Button type="button" variant="info" size="sm" onClick={() => onEditSale(sale)} leftIcon={<EditIcon />}>

@@ -51,17 +51,17 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | --- | --- |
 | Alinhamento / domínio / refatoração | `docs/ALIGNMENT.md` (domínio, usuários, fluxos, pontos de atenção) |
 | Arquitetura geral / fluxo de dados | `docs/DOCS.md` |
-| Dashboard / vendas do dia | `docs/src/pages/index.md`, `docs/src/pages/api/vendas.md`, `docs/src/pages/api/venda-itens.md`, `docs/src/services/vendasService.md` |
-| Histórico / relatórios | `docs/src/pages/historico.md`, `docs/src/pages/resumo.md`, `docs/src/pages/api/mensais.md` |
-| Contas a pagar | `docs/src/pages/contas-a-pagar.md`, `docs/src/database/contasDb.md`, `docs/src/services/contasService.md`, `docs/src/pages/api/contas.md`, `docs/src/pages/api/contas/import.md`, `docs/src/pages/api/contas/backup.md` |
-| Produtos / estoque | `docs/src/pages/produtos.md`, `docs/src/database/produtosDb.md`, `docs/src/pages/api/produtos.md`, `docs/src/pages/api/produtos/*.md`, `docs/src/services/produtosService.md` |
+| Dashboard / vendas do dia | `docs/src/pages/index.md`, `docs/src/pages/api/sales.md`, `docs/src/pages/api/sale-items.md`, `docs/src/services/vendasService.md` |
+| Histórico / relatórios | `docs/src/pages/historico.md`, `docs/src/pages/resumo.md`, `docs/src/pages/api/monthly-sales.md` |
+| Contas a pagar | `docs/src/pages/contas-a-pagar.md`, `docs/src/database/contasDb.md`, `docs/src/services/contasService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
+| Produtos / estoque | `docs/src/pages/produtos.md`, `docs/src/database/produtosDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/produtos/*.md`, `docs/src/services/produtosService.md` |
 | Cadastros auxiliares | `docs/src/pages/cadastro.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |
 | Formulários de venda (dia/item) | `docs/src/components/sales/DailySaleForm.md`, `docs/src/components/products/ItemForm.md`, `docs/src/components/sales/EditSaleForm.md` |
 | OCR / importação | `docs/src/pages/api/ocr.md`, `docs/src/services/ocrService.md`, `docs/src/services/pdfService.md`, `docs/src/components/import/OcrUpload.md` |
 | Tabela de medicamentos | `docs/src/pages/tabela.md`, `docs/src/database/tabelaDb.md` |
-| Notas fiscais | `docs/src/pages/api/notas.md`, `docs/src/database/notasDb.md` |
+| Notas fiscais | `docs/src/pages/api/invoices.md`, `docs/src/database/notasDb.md` |
 | Backup | `docs/src/pages/api/backup.md`, `docs/src/pages/api/contas/backup.md` |
 | Componente/hook/util específico | navegar em `docs/src/` pelo mesmo caminho do arquivo em `src/` |
 | Validação de campos / formulários | `docs/adr/0002-padrao-de-validacao-de-campos.md`, `docs/src/utils/validation.md` e `docs/src/utils/forms.md` |

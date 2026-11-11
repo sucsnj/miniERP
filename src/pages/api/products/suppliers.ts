@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const body = req.body ?? {};
-      const name = body.name ?? body.nome;
+      const name = body.name ?? body.name;
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome do fornecedor é obrigatório.' });
       }
@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const id = req.query.id;
       const body = req.body ?? {};
-      const name = body.name ?? body.nome;
+      const name = body.name ?? body.name;
       if (!id) return res.status(400).json({ error: 'ID do fornecedor é inválido.' });
       if (!name || !String(name).trim()) return res.status(400).json({ error: 'Nome do fornecedor é obrigatório.' });
       await updateSupplier(String(id), String(name).trim());

@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const items = await getSaleItems(String(saleId));
       return res.status(200).json(items);
     } catch (error) {
-      console.error('Erro na API GET /api/venda-itens:', error);
+      console.error('Erro na API GET /api/sale-items:', error);
       return res.status(500).json({ error: 'Erro ao buscar itens da venda', details: String(error) });
     }
   }

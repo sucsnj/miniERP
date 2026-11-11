@@ -16,7 +16,7 @@ import Button from '@/components/common/Button';
 // Lista as vendas do período com filtro (todas/positivas/negativas), permitindo
 // editar e excluir. Usa os hooks useToast, useSales e useFilter.
 const History: React.FC = () => {
-  // Período selecionado (mês e ano), usado para carregar as vendas
+  // Período selecionado (mês e year), usado para carregar as vendas
   const [month, setMonth] = useState(getDateArray()[1]);
   const [year, setYear] = useState(getDateArray()[2]);
 
@@ -45,7 +45,7 @@ const History: React.FC = () => {
     <>
       <PageShell>
         <PageHeader title="Histórico de Vendas" />
-        {/* Filtro de período e botões de valor */}
+        {/* Filtro de período e botões de amount */}
         <Panel>
           <div className="page-actions">
             <label>
@@ -67,7 +67,7 @@ const History: React.FC = () => {
                 onChange={(e) => setYear(parseInt(e.target.value))}
               />
             </label>
-            {/* Botões de filtro por valor da venda */}
+            {/* Botões de filtro por amount da venda */}
             <div className="buttons-filter">
               <Button variant={filter === 'todas' ? 'primary' : 'ghost'} size="sm" aria-pressed={filter === 'todas'} onClick={() => changeFilter('todas')}>
                 Todas

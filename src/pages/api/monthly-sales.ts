@@ -3,7 +3,7 @@ import { getMonthlyTotal, listMonthlySales, consolidateMonthly, deleteMonthlySal
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { mes: monthParam, ano: yearParam } = req.query;
+    const { month: monthParam, year: yearParam } = req.query;
     if (monthParam && yearParam) {
       try {
         const total = await getMonthlyTotal(parseInt(monthParam as string), parseInt(yearParam as string));
@@ -21,8 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'POST') {
     const body = req.body ?? {};
-    const month = body.month ?? body.mes;
-    const year = body.year ?? body.ano;
+    const month = body.month ?? body.month;
+    const year = body.year ?? body.year;
     try {
       await consolidateMonthly(Number(month), Number(year));
       res.status(200).json({ message: 'Consolidação realizada' });
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await deleteMonthlySale(String(id));
       res.status(200).json({ message: 'Mês excluído com sucesso' });
     } catch (error) {
-      console.error('Erro na API DELETE /api/mensais:', error);
+      console.error('Erro na API DELETE /api/monthly-sales:', error);
       res.status(500).json({ error: 'Erro ao excluir mês', details: String(error) });
     }
   } else {

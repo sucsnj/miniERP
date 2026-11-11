@@ -17,7 +17,7 @@ const fail = (message: string): ValidationResult => ({ ok: false, message });
 /**
  * Valida campo obrigatório.
  * Retorna `{ ok, message }`. Considera vazio: `null`, `undefined`, string somente espaços.
- * @param value - valor a validar
+ * @param value - amount a validar
  * @param label - rótulo do campo para personalizar a mensagem ("Cliente", "Valor"...)
  */
 export function validateRequired(value: unknown, label?: string): ValidationResult {
@@ -38,7 +38,7 @@ export function validateEmail(email: string): ValidationResult {
 }
 
 /**
- * Valida valor monetário (string ou número).
+ * Valida amount monetário (string ou número).
  * Retorna `{ ok, message }`. A normalização fica em `parseCurrency` (`utils/number.ts`).
  */
 export function validateCurrency(value: string | number): ValidationResult {
@@ -54,7 +54,7 @@ export function validateNumber(value: unknown): ValidationResult {
 }
 
 /**
- * Valida data (ISO, YYYY-MM-DD ou formatos aceitos por `toDate`).
+ * Valida date (ISO, YYYY-MM-DD ou formatos aceitos por `toDate`).
  * Retorna `{ ok, message }`. A normalização fica em `toDate` (`utils/date.ts`).
  */
 export function validateDate(input: string): ValidationResult {

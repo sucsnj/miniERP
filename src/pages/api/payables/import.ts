@@ -22,7 +22,7 @@ const formatDistributor = (name: string) => {
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 };
 
-// Funções auxiliares para ajustar valores por distribuidora
+// Funções auxiliares para ajustar valores por supplierName
 const adjustAmountByDistributor = (name: string, amount: number) => {
   if (name.toLowerCase() === 'cimed') return amount + 3.99;
   if (name.toLowerCase() === 'pro') return amount + 1.39;
@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let distributor = formatDistributor(rawDistributorName);
     const documentBase = normalizeDocument(invoiceNumber);
 
-    const records: { distribuidora: string; valor: number; vencimento: string; documento: string }[] = [];
+    const records: { supplierName: string; amount: number; dueDate: string; document: string }[] = [];
 
     for (let i = 0; i < duplicates.length; i++) {
       let amount = parseNumber(duplicates[i].vDup[0]);
@@ -81,13 +81,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       dueDate = validatedDueDate ? validatedDueDate.toISOString().split('T')[0] : dueDate;
       const documentNumber = `${documentBase}${i + 1}`;
 
-      // se for distribuidora for igual a 'Distribuidora de medicamentos ltda', muda para 'Mbca'
+      // se for supplierName for igual a 'Distribuidora de medicamentos ltda', muda para 'Mbca'
       if (distributor.toLowerCase() === 'distribuidora de medicamentos ltda') {
         distributor = 'Mbca';
       }
 
       const allAccounts = await listAllPayables();
-      // se já existir uma conta com a mesma distribuidora e documento, pule para a próxima
+      // se já existir uma conta com a mesma supplierName e document, pule para a próxima
       const duplicateAccount = allAccounts.find(c => c.supplierName === distributor && c.document === documentNumber);
       if (duplicateAccount) {
         continue; // pula pra proxima duplicata
@@ -95,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber });
 
-      records.push({ distribuidora: distributor, valor: amount, vencimento: dueDate, documento: documentNumber });
+      records.push({ supplierName: distributor, amount: amount, dueDate: dueDate, document: documentNumber });
     }
 
     // flag para saber se alguma nota foi inserida

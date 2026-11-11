@@ -20,13 +20,13 @@ export interface BarcodeManagerActions {
 }
 
 interface BarcodeManagerProps {
-  data: BarcodeManagerData;
+  date: BarcodeManagerData;
   actions: BarcodeManagerActions;
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const BarcodeManager: React.FC<BarcodeManagerProps> = ({
-  data,
+  date,
   actions,
   inputRef,
 }) => {
@@ -39,7 +39,7 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
           type="text"
           className={styles.inputField}
           placeholder="Digitar código de barras..."
-          value={data.newBarcode}
+          value={date.newBarcode}
           onChange={(e) => actions.change(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -60,7 +60,7 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
         </Button>
       </div>
 
-      {data.barcodes.length === 0 ? (
+      {date.barcodes.length === 0 ? (
         <div
           style={{
             textAlign: 'center',
@@ -73,7 +73,7 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
         </div>
       ) : (
         <div className={styles.barcodeList}>
-          {data.barcodes.map((cb) => (
+          {date.barcodes.map((cb) => (
             <div key={cb.codigo_barras} className={styles.barcodeItem}>
               <div className={styles.barcodeLeft}>
                 <span style={{ fontWeight: 'bold' }}>{cb.codigo_barras}</span>

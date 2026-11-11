@@ -87,12 +87,12 @@ const parseTableWorksheet = (filePath: string) => {
 };
 
 interface TableRow {
-  substancia: string;
+  substance: string;
   laboratorio: string;
   ean: string;
   produto: string;
   apresentacao: string;
-  classeTerapeutica: string;
+  therapeuticClass: string;
   pf205: string;
   pmc205: string;
 }
@@ -141,21 +141,21 @@ const searchTableData = (query: string, table: Record<string, unknown>[]) => {
   const results = table
     .map((row) => {
       const values = {
-        substancia: String(row.substancia ?? '').trim(),
+        substance: String(row.substance ?? '').trim(),
         laboratorio: String(row.laboratorio ?? '').trim(),
         ean: String(row.ean ?? '').trim(),
         produto: String(row.produto ?? '').trim(),
         apresentacao: String(row.apresentacao ?? '').trim(),
-        classeTerapeutica: String(row.classeTerapeutica ?? '').trim(),
+        therapeuticClass: String(row.therapeuticClass ?? '').trim(),
         pf205: String(row.pf205 ?? '').trim(),
         pmc205: String(row.pmc205 ?? '').trim(),
       };
 
       const searchText = normalizeText(
-        `${values.substancia} ${values.laboratorio} ${values.ean} ${values.produto} ${values.apresentacao} ${values.classeTerapeutica} ${values.pf205} ${values.pmc205}`
+        `${values.substance} ${values.laboratorio} ${values.ean} ${values.produto} ${values.apresentacao} ${values.therapeuticClass} ${values.pf205} ${values.pmc205}`
       );
 
-      const substanciaText = normalizeText(values.substancia);
+      const substanceText = normalizeText(values.substance);
       const exactEan = normalizeText(values.ean) === normalizedQuery;
       const containsMatch = searchText.includes(normalizedQuery);
 
@@ -164,7 +164,7 @@ const searchTableData = (query: string, table: Record<string, unknown>[]) => {
       }
 
       let score = 0;
-      if (substanciaText.includes(normalizedQuery)) {
+      if (substanceText.includes(normalizedQuery)) {
         score += 100;
       }
       if (exactEan) {
@@ -233,17 +233,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           );
 
           return {
-            substancia: String(row.substancia || row.substancia1 || row['substância'] || '').trim(),
+            substance: String(row.substance || row.substance1 || row['substância'] || '').trim(),
             laboratorio: String(row.laboratorio || '').trim(),
             ean: String(row.ean1 || row.ean || '').trim(),
             produto: String(row.produto || '').trim(),
             apresentacao: String(row.apresentacao || '').trim(),
-            classeTerapeutica: String(row.classeterapeutica || row['classe terapeutica'] || '').trim(),
+            therapeuticClass: String(row.classeterapeutica || row['classe terapeutica'] || '').trim(),
             pf205: pfValue !== null ? String(pfValue).trim() : String(row.pf205 ?? row['pf205'] ?? row['pf205%'] ?? row['pf205percent'] ?? row['pf20_5'] ?? row['pf20,5'] ?? '').trim(),
             pmc205: pmcValue !== null ? String(pmcValue).trim() : String(row.pmc205 ?? row['pmc205'] ?? row['pmc205%'] ?? row['pmc20,5'] ?? '').trim(),
           };
         })
-        .filter((item) => item.substancia || item.produto || item.ean);
+        .filter((item) => item.substance || item.produto || item.ean);
 
       if (normalizedRows.length === 0) {
         fs.unlinkSync(file.path);

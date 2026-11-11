@@ -33,26 +33,26 @@ export async function downloadQrPng(payload: string): Promise<void> {
  * Preenche a folha de impressão com os dados atuais + QR Code (alta resolução)
  * e dispara o window.print().
  */
-export async function printPixSheet(data: PrintSheetData): Promise<void> {
+export async function printPixSheet(date: PrintSheetData): Promise<void> {
   const canvas = document.getElementById('print-canvas') as HTMLCanvasElement | null;
   if (!canvas) return;
 
-  await generatePrintQr(canvas, data.payload);
+  await generatePrintQr(canvas, date.payload);
 
   const setTextContent = (id: string, text: string) => {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
   };
 
-  setTextContent('print-name', data.name || '—');
-  setTextContent('print-bank', data.bank || '—');
-  setTextContent('print-amount', data.amount ? formatBRL(data.amount) : 'Valor aberto');
-  setTextContent('print-key', data.key || '—');
+  setTextContent('print-name', date.name || '—');
+  setTextContent('print-bank', date.bank || '—');
+  setTextContent('print-amount', date.amount ? formatBRL(date.amount) : 'Valor aberto');
+  setTextContent('print-key', date.key || '—');
   setTextContent(
     'print-date',
     new Date().toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })
   );
-  setTextContent('print-code', data.payload);
+  setTextContent('print-code', date.payload);
 
   document.body.classList.add('printing');
   window.print();

@@ -7,24 +7,24 @@ export interface BarcodeData {
 export interface ItemData {
   id: string;
   tipo: 'PRODUTO' | 'SERVICO';
-  nome: string;
+  name: string;
   descricao?: string;
-  categoria_id: string;
+  categoryId: string;
   unidade_medida_id: string;
-  marca_id: string;
-  fornecedor_id: string;
-  preco_compra: number;
-  margem_lucro: number;
-  preco_venda: number;
+  brandId: string;
+  supplierId: string;
+  purchasePrice: number;
+  profitMargin: number;
+  salePrice: number;
   estoque: number;
   multiplicador_unidade: number;
-  estoque_total?: number;
-  codigo_interno?: string;
+  totalStock?: number;
+  internalCode?: string;
   referencia: string;
   ativo?: number;
   duracao_minutos?: number;
-  data_criacao?: string;
-  data_atualizacao?: string;
+  createdAt?: string;
+  updatedAt?: string;
   categoria_nome?: string;
   marca_nome?: string;
   unidade_medida_sigla?: string;
@@ -35,24 +35,24 @@ export interface ItemData {
 
 export interface ServiceData {
   id: string;
-  nome: string;
+  name: string;
   descricao?: string;
-  categoria_id: string;
-  preco_venda: number;
-  codigo_interno?: string;
+  categoryId: string;
+  salePrice: number;
+  internalCode?: string;
   referencia?: string;
   duracao_minutos: number;
-  data_criacao?: string;
-  data_atualizacao?: string;
+  createdAt?: string;
+  updatedAt?: string;
   categoria_nome?: string;
 }
 
 export interface ServiceInput {
-  nome: string;
+  name: string;
   descricao?: string;
-  categoria_id: string | number;
-  preco_venda: number;
-  codigo_interno?: string;
+  categoryId: string | number;
+  salePrice: number;
+  internalCode?: string;
   referencia?: string;
   duracao_minutos?: number;
 }
@@ -62,7 +62,7 @@ export interface StockMovementData {
   item_id: string;
   item: string;
   tipo: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
-  quantidade: number;
+  quantity: number;
   estoque_final: number;
   descricao?: string;
   data_movimentacao: string;
@@ -71,7 +71,7 @@ export interface StockMovementData {
 export interface StockMovementInput {
   item_id: string | number;
   tipo: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
-  quantidade: number;
+  quantity: number;
   descricao?: string;
 }
 
@@ -85,18 +85,18 @@ export interface PagedResult<T> {
 
 export interface CategoryData {
   id: string;
-  nome: string;
+  name: string;
   descricao?: string;
 }
 
 export interface BrandData {
   id: string;
-  nome: string;
+  name: string;
 }
 
 export interface SupplierData {
   id: string;
-  nome: string;
+  name: string;
 }
 
 export interface UnitOfMeasureData {
@@ -109,23 +109,23 @@ function mapProduct(row: any): ItemData {
   return {
     id: String(row.id),
     tipo: 'PRODUTO',
-    nome: String(row.name ?? row.nome ?? ''),
+    name: String(row.name ?? row.name ?? ''),
     descricao: row.description ?? row.descricao ?? undefined,
-    categoria_id: String(row.categoryId ?? row.category_id ?? row.categoria_id ?? ''),
+    categoryId: String(row.categoryId ?? row.category_id ?? row.categoryId ?? ''),
     unidade_medida_id: String(row.baseUnitId ?? row.base_unit_id ?? row.unidade_medida_id ?? ''),
-    marca_id: String(row.brandId ?? row.brand_id ?? row.marca_id ?? ''),
-    fornecedor_id: String(row.supplierId ?? row.supplier_id ?? row.fornecedor_id ?? ''),
-    preco_compra: Number(row.purchasePrice ?? row.purchase_price ?? row.preco_compra ?? 0),
-    margem_lucro: Number(row.profitMargin ?? row.profit_margin ?? row.margem_lucro ?? 0),
-    preco_venda: Number(row.salePrice ?? row.sale_price ?? row.preco_venda ?? 0),
+    brandId: String(row.brandId ?? row.brand_id ?? row.brandId ?? ''),
+    supplierId: String(row.supplierId ?? row.supplier_id ?? row.supplierId ?? ''),
+    purchasePrice: Number(row.purchasePrice ?? row.purchase_price ?? row.purchasePrice ?? 0),
+    profitMargin: Number(row.profitMargin ?? row.profit_margin ?? row.profitMargin ?? 0),
+    salePrice: Number(row.salePrice ?? row.sale_price ?? row.salePrice ?? 0),
     estoque: Number(row.stock ?? row.estoque ?? 0),
     multiplicador_unidade: Number(row.unitMultiplier ?? row.unit_multiplier ?? row.multiplicador_unidade ?? 1),
-    estoque_total: Number(row.totalStock ?? row.total_stock ?? row.estoque_total ?? 0),
-    codigo_interno: row.internalCode ?? row.internal_code ?? row.codigo_interno ?? undefined,
+    totalStock: Number(row.totalStock ?? row.total_stock ?? row.totalStock ?? 0),
+    internalCode: row.internalCode ?? row.internal_code ?? row.internalCode ?? undefined,
     referencia: String(row.reference ?? row.referencia ?? ''),
     ativo: row.active === undefined ? 1 : (row.active ? 1 : 0),
-    data_criacao: row.createdAt ?? row.created_at ?? row.data_criacao,
-    data_atualizacao: row.updatedAt ?? row.updated_at ?? row.data_atualizacao,
+    createdAt: row.createdAt ?? row.created_at ?? row.createdAt,
+    updatedAt: row.updatedAt ?? row.updated_at ?? row.updatedAt,
     categoria_nome: row.categoryName ?? row.category_name ?? row.categoria_nome,
     marca_nome: row.brandName ?? row.brand_name ?? row.marca_nome,
     unidade_medida_sigla: row.baseUnitAbbreviation ?? row.base_unit_abbreviation ?? row.unidade_medida_sigla,
@@ -142,75 +142,75 @@ function mapProduct(row: any): ItemData {
 function mapService(row: any): ServiceData {
   return {
     id: String(row.id),
-    nome: String(row.name ?? row.nome ?? ''),
+    name: String(row.name ?? row.name ?? ''),
     descricao: row.description ?? row.descricao ?? undefined,
-    categoria_id: String(row.categoryId ?? row.category_id ?? row.categoria_id ?? ''),
-    preco_venda: Number(row.salePrice ?? row.sale_price ?? row.preco_venda ?? 0),
-    codigo_interno: row.internalCode ?? row.internal_code ?? row.codigo_interno ?? undefined,
+    categoryId: String(row.categoryId ?? row.category_id ?? row.categoryId ?? ''),
+    salePrice: Number(row.salePrice ?? row.sale_price ?? row.salePrice ?? 0),
+    internalCode: row.internalCode ?? row.internal_code ?? row.internalCode ?? undefined,
     referencia: row.reference ?? row.referencia ?? undefined,
     duracao_minutos: Number(row.durationMinutes ?? row.duration_minutes ?? row.duracao_minutos ?? 0),
-    data_criacao: row.createdAt ?? row.created_at ?? row.data_criacao,
-    data_atualizacao: row.updatedAt ?? row.updated_at ?? row.data_atualizacao,
+    createdAt: row.createdAt ?? row.created_at ?? row.createdAt,
+    updatedAt: row.updatedAt ?? row.updated_at ?? row.updatedAt,
     categoria_nome: row.categoryName ?? row.category_name ?? row.categoria_nome,
   };
 }
 
 export const fetchProducts = async (options: {
   search?: string;
-  categoria_id?: number | string;
-  marca_id?: number | string;
-  fornecedor_id?: number | string;
-  preco_venda?: number;
+  categoryId?: number | string;
+  brandId?: number | string;
+  supplierId?: number | string;
+  salePrice?: number;
   ativo?: 'ATIVO' | 'INATIVO' | 'TODOS';
   page?: number;
   pageSize?: number;
 }): Promise<PagedResult<ItemData>> => {
   const params = new URLSearchParams();
   if (options.search) params.append('search', options.search);
-  if (options.categoria_id) params.append('categoria_id', String(options.categoria_id));
-  if (options.marca_id) params.append('marca_id', String(options.marca_id));
-  if (options.fornecedor_id) params.append('fornecedor_id', String(options.fornecedor_id));
-  if (options.preco_venda) params.append('preco_venda', String(options.preco_venda));
+  if (options.categoryId) params.append('categoria_id', String(options.categoryId));
+  if (options.brandId) params.append('marca_id', String(options.brandId));
+  if (options.supplierId) params.append('fornecedor_id', String(options.supplierId));
+  if (options.salePrice) params.append('preco_venda', String(options.salePrice));
   if (options.ativo) params.append('ativo', options.ativo);
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 
-  const response = await fetch(`/api/produtos?${params.toString()}`);
+  const response = await fetch(`/api/products?${params.toString()}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar produtos.');
   }
-  const data = await response.json();
+  const date = await response.json();
   return {
-    items: Array.isArray(data.items) ? data.items.map(mapProduct) : [],
-    total: Number(data.total ?? 0),
-    page: Number(data.page ?? 1),
-    pageSize: Number(data.pageSize ?? 10),
-    totalPages: Number(data.totalPages ?? 0),
+    items: Array.isArray(date.items) ? date.items.map(mapProduct) : [],
+    total: Number(date.total ?? 0),
+    page: Number(date.page ?? 1),
+    pageSize: Number(date.pageSize ?? 10),
+    totalPages: Number(date.totalPages ?? 0),
   };
 };
 
-export const registerProduct = async (data: Omit<ItemData, 'id' | 'ativo'> & { ativo?: number }) => {
+export const registerProduct = async (date: Omit<ItemData, 'id' | 'ativo'> & { ativo?: number }) => {
   const payload = {
     tipo: 'PRODUTO',
-    nome: data.nome,
-    descricao: data.descricao,
-    categoria_id: data.categoria_id,
-    unidade_medida_id: data.unidade_medida_id,
-    marca_id: data.marca_id,
-    fornecedor_id: data.fornecedor_id,
-    preco_compra: data.preco_compra,
-    margem_lucro: data.margem_lucro,
-    preco_venda: data.preco_venda,
-    estoque: data.estoque,
-    multiplicador_unidade: data.multiplicador_unidade,
-    codigo_interno: data.codigo_interno,
-    referencia: data.referencia,
-    ativo: data.ativo,
-    codigos_barras: data.codigos_barras,
-    unidades_medida: data.unidades_medida,
+    name: date.name,
+    descricao: date.descricao,
+    categoryId: date.categoryId,
+    unidade_medida_id: date.unidade_medida_id,
+    brandId: date.brandId,
+    supplierId: date.supplierId,
+    purchasePrice: date.purchasePrice,
+    profitMargin: date.profitMargin,
+    salePrice: date.salePrice,
+    estoque: date.estoque,
+    multiplicador_unidade: date.multiplicador_unidade,
+    internalCode: date.internalCode,
+    referencia: date.referencia,
+    ativo: date.ativo,
+    codigos_barras: date.codigos_barras,
+    unidades_medida: date.unidades_medida,
   };
-  const response = await fetch('/api/produtos', {
+  const response = await fetch('/api/products', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -222,28 +222,28 @@ export const registerProduct = async (data: Omit<ItemData, 'id' | 'ativo'> & { a
   return response.json();
 };
 
-export const updateProduct = async (id: string | number, data: Omit<ItemData, 'id'>) => {
+export const updateProduct = async (id: string | number, date: Omit<ItemData, 'id'>) => {
   const payload = {
     id: String(id),
     tipo: 'PRODUTO',
-    nome: data.nome,
-    descricao: data.descricao,
-    categoria_id: data.categoria_id,
-    unidade_medida_id: data.unidade_medida_id,
-    marca_id: data.marca_id,
-    fornecedor_id: data.fornecedor_id,
-    preco_compra: data.preco_compra,
-    margem_lucro: data.margem_lucro,
-    preco_venda: data.preco_venda,
-    estoque: data.estoque,
-    multiplicador_unidade: data.multiplicador_unidade,
-    codigo_interno: data.codigo_interno,
-    referencia: data.referencia,
-    ativo: data.ativo,
-    codigos_barras: data.codigos_barras,
-    unidades_medida: data.unidades_medida,
+    name: date.name,
+    descricao: date.descricao,
+    categoryId: date.categoryId,
+    unidade_medida_id: date.unidade_medida_id,
+    brandId: date.brandId,
+    supplierId: date.supplierId,
+    purchasePrice: date.purchasePrice,
+    profitMargin: date.profitMargin,
+    salePrice: date.salePrice,
+    estoque: date.estoque,
+    multiplicador_unidade: date.multiplicador_unidade,
+    internalCode: date.internalCode,
+    referencia: date.referencia,
+    ativo: date.ativo,
+    codigos_barras: date.codigos_barras,
+    unidades_medida: date.unidades_medida,
   };
-  const response = await fetch('/api/produtos', {
+  const response = await fetch('/api/products', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -256,7 +256,7 @@ export const updateProduct = async (id: string | number, data: Omit<ItemData, 'i
 };
 
 export const deleteProduct = async (id: string | number) => {
-  const response = await fetch('/api/produtos', {
+  const response = await fetch('/api/products', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: String(id) }),
@@ -269,7 +269,7 @@ export const deleteProduct = async (id: string | number) => {
 };
 
 export const toggleProductStatus = async (id: string | number, active: number) => {
-  const response = await fetch('/api/produtos', {
+  const response = await fetch('/api/products', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'toggle-status', id: String(id), ativo: active, tipo: 'PRODUTO' }),
@@ -283,52 +283,52 @@ export const toggleProductStatus = async (id: string | number, active: number) =
 
 export const fetchServices = async (options: {
   search?: string;
-  categoria_id?: number | string;
+  categoryId?: number | string;
   page?: number;
   pageSize?: number;
 }): Promise<PagedResult<ServiceData>> => {
   const params = new URLSearchParams();
   if (options.search) params.append('search', options.search);
-  if (options.categoria_id) params.append('categoria_id', String(options.categoria_id));
+  if (options.categoryId) params.append('categoria_id', String(options.categoryId));
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 
-  const response = await fetch(`/api/produtos/servicos?${params.toString()}`);
+  const response = await fetch(`/api/products/servicos?${params.toString()}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar serviços.');
   }
-  const data = await response.json();
+  const date = await response.json();
   return {
-    items: Array.isArray(data.items) ? data.items.map(mapService) : [],
-    total: Number(data.total ?? 0),
-    page: Number(data.page ?? 1),
-    pageSize: Number(data.pageSize ?? 10),
-    totalPages: Number(data.totalPages ?? 0),
+    items: Array.isArray(date.items) ? date.items.map(mapService) : [],
+    total: Number(date.total ?? 0),
+    page: Number(date.page ?? 1),
+    pageSize: Number(date.pageSize ?? 10),
+    totalPages: Number(date.totalPages ?? 0),
   };
 };
 
 export const fetchServiceById = async (id: string | number): Promise<ServiceData | null> => {
-  const response = await fetch(`/api/produtos/servicos?id=${id}`);
+  const response = await fetch(`/api/products/servicos?id=${id}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar serviço.');
   }
-  const data = await response.json();
-  return data ? mapService(data) : null;
+  const date = await response.json();
+  return date ? mapService(date) : null;
 };
 
-export const registerService = async (data: ServiceInput) => {
+export const registerService = async (date: ServiceInput) => {
   const payload = {
-    nome: data.nome,
-    descricao: data.descricao,
-    categoria_id: data.categoria_id,
-    preco_venda: data.preco_venda,
-    codigo_interno: data.codigo_interno,
-    referencia: data.referencia,
-    duracao_minutos: data.duracao_minutos,
+    name: date.name,
+    descricao: date.descricao,
+    categoryId: date.categoryId,
+    salePrice: date.salePrice,
+    internalCode: date.internalCode,
+    referencia: date.referencia,
+    duracao_minutos: date.duracao_minutos,
   };
-  const response = await fetch('/api/produtos/servicos', {
+  const response = await fetch('/api/products/servicos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -341,17 +341,17 @@ export const registerService = async (data: ServiceInput) => {
   return result;
 };
 
-export const updateService = async (id: string | number, data: ServiceInput) => {
+export const updateService = async (id: string | number, date: ServiceInput) => {
   const payload = {
-    nome: data.nome,
-    descricao: data.descricao,
-    categoria_id: data.categoria_id,
-    preco_venda: data.preco_venda,
-    codigo_interno: data.codigo_interno,
-    referencia: data.referencia,
-    duracao_minutos: data.duracao_minutos,
+    name: date.name,
+    descricao: date.descricao,
+    categoryId: date.categoryId,
+    salePrice: date.salePrice,
+    internalCode: date.internalCode,
+    referencia: date.referencia,
+    duracao_minutos: date.duracao_minutos,
   };
-  const response = await fetch(`/api/produtos/servicos?id=${id}`, {
+  const response = await fetch(`/api/products/servicos?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -364,7 +364,7 @@ export const updateService = async (id: string | number, data: ServiceInput) => 
 };
 
 export const deleteService = async (id: string | number) => {
-  const response = await fetch(`/api/produtos/servicos?id=${id}`, {
+  const response = await fetch(`/api/products/servicos?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -375,19 +375,19 @@ export const deleteService = async (id: string | number) => {
 };
 
 export const fetchStockMovements = async (itemId: string | number): Promise<StockMovementData[]> => {
-  const response = await fetch(`/api/produtos/movimentacoes?item_id=${itemId}`);
+  const response = await fetch(`/api/products/movimentacoes?item_id=${itemId}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || 'Erro ao buscar movimentações de estoque.');
   }
-  const data = await response.json();
-  return Array.isArray(data)
-    ? data.map((row: any) => ({
+  const date = await response.json();
+  return Array.isArray(date)
+    ? date.map((row: any) => ({
         id: String(row.id),
         item_id: String(row.productId ?? row.product_id ?? row.item_id ?? itemId),
         item: String(row.productName ?? row.product_name ?? row.item ?? ''),
         tipo: String(row.type ?? row.tipo ?? 'ADJUST').toUpperCase() === 'IN' || String(row.type ?? row.tipo ?? '').toUpperCase() === 'ENTRADA' ? 'ENTRADA' : String(row.type ?? row.tipo ?? '').toUpperCase() === 'OUT' || String(row.type ?? row.tipo ?? '').toUpperCase() === 'SAIDA' ? 'SAIDA' : 'AJUSTE',
-        quantidade: Number(row.quantity ?? row.quantidade ?? 0),
+        quantity: Number(row.quantity ?? row.quantity ?? 0),
         estoque_final: Number(row.finalStock ?? row.final_stock ?? row.estoque_final ?? 0),
         descricao: row.description ?? row.descricao ?? undefined,
         data_movimentacao: String(row.movedAt ?? row.moved_at ?? row.data_movimentacao ?? ''),
@@ -395,11 +395,11 @@ export const fetchStockMovements = async (itemId: string | number): Promise<Stoc
     : [];
 };
 
-export const registerStockMovement = async (data: StockMovementInput) => {
-  const response = await fetch('/api/produtos/movimentacoes', {
+export const registerStockMovement = async (date: StockMovementInput) => {
+  const response = await fetch('/api/products/movimentacoes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ item_id: data.item_id, tipo: data.tipo, quantidade: data.quantidade, descricao: data.descricao }),
+    body: JSON.stringify({ item_id: date.item_id, tipo: date.tipo, quantity: date.quantity, descricao: date.descricao }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -409,19 +409,19 @@ export const registerStockMovement = async (data: StockMovementInput) => {
 };
 
 export const fetchCategories = async (): Promise<CategoryData[]> => {
-  const response = await fetch('/api/produtos/categorias');
+  const response = await fetch('/api/products/categorias');
   if (!response.ok) throw new Error('Erro ao buscar categorias.');
-  const data = await response.json();
-  return Array.isArray(data)
-    ? data.map((row: any) => ({ id: String(row.id), nome: String(row.name ?? row.nome ?? ''), descricao: row.description ?? row.descricao ?? undefined }))
+  const date = await response.json();
+  return Array.isArray(date)
+    ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), descricao: row.description ?? row.descricao ?? undefined }))
     : [];
 };
 
 export const createCategory = async (name: string, description?: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/produtos/categorias', {
+  const response = await fetch('/api/products/categorias', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name, descricao: description }),
+    body: JSON.stringify({ name: name, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -431,7 +431,7 @@ export const createCategory = async (name: string, description?: string): Promis
 };
 
 export const deleteCategory = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/categorias?id=${id}`, {
+  const response = await fetch(`/api/products/categorias?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -442,10 +442,10 @@ export const deleteCategory = async (id: string | number): Promise<{ message: st
 };
 
 export const updateCategory = async (id: string | number, name: string, description?: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/categorias?id=${id}`, {
+  const response = await fetch(`/api/products/categorias?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name, descricao: description }),
+    body: JSON.stringify({ name: name, descricao: description }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -455,17 +455,17 @@ export const updateCategory = async (id: string | number, name: string, descript
 };
 
 export const fetchBrands = async (): Promise<BrandData[]> => {
-  const response = await fetch('/api/produtos/marcas');
+  const response = await fetch('/api/products/marcas');
   if (!response.ok) throw new Error('Erro ao buscar marcas.');
-  const data = await response.json();
-  return Array.isArray(data) ? data.map((row: any) => ({ id: String(row.id), nome: String(row.name ?? row.nome ?? '') })) : [];
+  const date = await response.json();
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
 };
 
 export const createBrand = async (name: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/produtos/marcas', {
+  const response = await fetch('/api/products/marcas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name }),
+    body: JSON.stringify({ name: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -475,7 +475,7 @@ export const createBrand = async (name: string): Promise<{ id: string; message: 
 };
 
 export const deleteBrand = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/marcas?id=${id}`, {
+  const response = await fetch(`/api/products/marcas?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -486,10 +486,10 @@ export const deleteBrand = async (id: string | number): Promise<{ message: strin
 };
 
 export const updateBrand = async (id: string | number, name: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/marcas?id=${id}`, {
+  const response = await fetch(`/api/products/marcas?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name }),
+    body: JSON.stringify({ name: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -499,17 +499,17 @@ export const updateBrand = async (id: string | number, name: string): Promise<{ 
 };
 
 export const fetchSuppliers = async (): Promise<SupplierData[]> => {
-  const response = await fetch('/api/produtos/fornecedores');
+  const response = await fetch('/api/products/fornecedores');
   if (!response.ok) throw new Error('Erro ao buscar fornecedores.');
-  const data = await response.json();
-  return Array.isArray(data) ? data.map((row: any) => ({ id: String(row.id), nome: String(row.name ?? row.nome ?? '') })) : [];
+  const date = await response.json();
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
 };
 
 export const createSupplier = async (name: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/produtos/fornecedores', {
+  const response = await fetch('/api/products/fornecedores', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name }),
+    body: JSON.stringify({ name: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -519,7 +519,7 @@ export const createSupplier = async (name: string): Promise<{ id: string; messag
 };
 
 export const deleteSupplier = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/fornecedores?id=${id}`, {
+  const response = await fetch(`/api/products/fornecedores?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -530,10 +530,10 @@ export const deleteSupplier = async (id: string | number): Promise<{ message: st
 };
 
 export const updateSupplier = async (id: string | number, name: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/fornecedores?id=${id}`, {
+  const response = await fetch(`/api/products/fornecedores?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name }),
+    body: JSON.stringify({ name: name }),
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -543,14 +543,14 @@ export const updateSupplier = async (id: string | number, name: string): Promise
 };
 
 export const fetchUnitsOfMeasure = async (): Promise<UnitOfMeasureData[]> => {
-  const response = await fetch('/api/produtos/unidades-medida');
+  const response = await fetch('/api/products/unidades-medida');
   if (!response.ok) throw new Error('Erro ao buscar unidades de medida.');
-  const data = await response.json();
-  return Array.isArray(data) ? data.map((row: any) => ({ id: String(row.id), sigla: String(row.abbreviation ?? row.sigla ?? ''), descricao: row.description ?? row.descricao ?? undefined })) : [];
+  const date = await response.json();
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), sigla: String(row.abbreviation ?? row.sigla ?? ''), descricao: row.description ?? row.descricao ?? undefined })) : [];
 };
 
 export const createUnitOfMeasure = async (abbreviation: string, description?: string): Promise<{ id: string; message: string }> => {
-  const response = await fetch('/api/produtos/unidades-medida', {
+  const response = await fetch('/api/products/unidades-medida', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sigla: abbreviation, descricao: description }),
@@ -563,7 +563,7 @@ export const createUnitOfMeasure = async (abbreviation: string, description?: st
 };
 
 export const deleteUnitOfMeasure = async (id: string | number): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/unidades-medida?id=${id}`, {
+  const response = await fetch(`/api/products/unidades-medida?id=${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -574,7 +574,7 @@ export const deleteUnitOfMeasure = async (id: string | number): Promise<{ messag
 };
 
 export const updateUnitOfMeasure = async (id: string | number, abbreviation: string, description?: string): Promise<{ message: string }> => {
-  const response = await fetch(`/api/produtos/unidades-medida?id=${id}`, {
+  const response = await fetch(`/api/products/unidades-medida?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sigla: abbreviation, descricao: description }),
@@ -592,7 +592,7 @@ export interface ImportedProduct {
   descricao: string;
   descricaoOriginal?: string;
   unidadeMedida: string;
-  quantidade: number;
+  quantity: number;
   valorUnitario: number;
   ncm?: string;
   cfop?: string;
@@ -607,7 +607,7 @@ export interface InvoiceItemsPreviewResult {
 }
 
 export async function previewInvoiceItems(xml: string): Promise<InvoiceItemsPreviewResult> {
-  const response = await fetch('/api/produtos/itens', {
+  const response = await fetch('/api/products/itens', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xml, preview: true }),
@@ -627,7 +627,7 @@ export interface InvoiceItemImportResult {
 }
 
 export async function importInvoiceItem(product: ImportedProduct): Promise<InvoiceItemImportResult> {
-  const response = await fetch('/api/produtos/itens', {
+  const response = await fetch('/api/products/itens', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ importar: true, produto: product }),

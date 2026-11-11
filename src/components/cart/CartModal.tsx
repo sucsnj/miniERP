@@ -4,7 +4,7 @@
  * Modal do carrinho de vendas. Apresentacional — sem estado próprio:
  * lógica fica no `useCart` (pai) e a casca visual no `CartModalShell`.
  * Estilos: classes globais `cart-modal-*` para o chrome e `<style jsx>`
- * local apenas para itens/quantidade/ações.
+ * local apenas para itens/quantity/ações.
  * Ver docs/components/CartModal.md.
  */
 
@@ -65,13 +65,13 @@ const CartModal: React.FC<CartModalProps> = ({
       ) : (
         <div className={`${styles.cartItemsList}`}>
           {cartItems.map((item, index) => {
-            const subtotal = (item.preco_venda ?? 0) * item.quantidade;
+            const subtotal = (item.salePrice ?? 0) * item.quantity;
             return (
               <div className={`${styles.cartItemRow}`} key={`${item.tipo}-${item.id}-${index}`}>
                 {/* Informações do Item */}
                 <div className={`${styles.cartItemMain}`}>
                   <div className={`${styles.cartItemHeader}`}>
-                    <span className={`${styles.cartItemName}`}>{item.nome}</span>
+                    <span className={`${styles.cartItemName}`}>{item.name}</span>
                     <span
                       className={`${styles.cartBadgeType} ${
                         item.tipo === 'PRODUTO' ? 'badge-produto' : 'badge-servico'
@@ -81,11 +81,11 @@ const CartModal: React.FC<CartModalProps> = ({
                     </span>
                   </div>
                   <div className={`${styles.cartItemDetails}`}>
-                    {item.codigo_interno && (
-                      <span className="cart-item-code">#{item.codigo_interno}</span>
+                    {item.internalCode && (
+                      <span className="cart-item-code">#{item.internalCode}</span>
                     )}
                     <span className="cart-item-unit-price">
-                      {formatCurrency(item.preco_venda ?? 0, 2)} / un
+                      {formatCurrency(item.salePrice ?? 0, 2)} / un
                     </span>
                   </div>
                 </div>
@@ -99,7 +99,7 @@ const CartModal: React.FC<CartModalProps> = ({
                       size="sm"
                       iconOnly
                       className={`${styles.qtyBtn}`}
-                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantidade - 1)}
+                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantity - 1)}
                       title="Diminuir quantidade"
                       aria-label="Diminuir quantidade"
                       leftIcon={<RemoveIcon fontSize="inherit" />}
@@ -108,14 +108,14 @@ const CartModal: React.FC<CartModalProps> = ({
                       type="number"
                       min="1"
                       className={`${styles.qtyInput}`}
-                      value={item.quantidade}
+                      value={item.quantity}
                       onChange={(e) => {
                         const val = parseInt(e.target.value, 10);
                         if (!isNaN(val) && val > 0) {
                           onUpdateQuantity(item.id, item.tipo, val);
                         }
                       }}
-                      aria-label={`Quantidade de ${item.nome}`}
+                      aria-label={`Quantidade de ${item.name}`}
                     />
                     <Button
                       type="button"
@@ -123,7 +123,7 @@ const CartModal: React.FC<CartModalProps> = ({
                       size="sm"
                       iconOnly
                       className={`${styles.qtyBtn}`}
-                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantidade + 1)}
+                      onClick={() => onUpdateQuantity(item.id, item.tipo, item.quantity + 1)}
                       title="Aumentar quantidade"
                       aria-label="Aumentar quantidade"
                       leftIcon={<AddIcon fontSize="inherit" />}
@@ -142,7 +142,7 @@ const CartModal: React.FC<CartModalProps> = ({
                     className={`${styles.cartRemoveBtn}`}
                     onClick={() => onRemoveItem(item.id, item.tipo)}
                     title="Remover item do carrinho"
-                    aria-label={`Remover ${item.nome}`}
+                    aria-label={`Remover ${item.name}`}
                     leftIcon={<DeleteIcon fontSize="small" />}
                   />
                 </div>

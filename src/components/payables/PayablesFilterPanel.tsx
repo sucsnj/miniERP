@@ -129,13 +129,13 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
           <tbody>
             {filteredAccounts.map((account) => (
               <tr key={account.id}>
-                <td>{account.distribuidora}</td>
-                <td>R$ {formatCurrency(account.valor, 2)}</td>
-                <td>{formatDateString(account.vencimento, 'DD/MM/YYYY')}</td>
-                <td>{account.documento}</td>
+                <td>{account.supplierName}</td>
+                <td>R$ {formatCurrency(account.amount, 2)}</td>
+                <td>{formatDateString(account.dueDate, 'DD/MM/YYYY')}</td>
+                <td>{account.document}</td>
                 <td>
                   <span className={`${styles.status} ${styles[account.status === 'Pago' ? 'pago' : 'pendente']} status`}
-                    data-observacoes={account.banco_observacoes || 'Sem observações'}>
+                    date-notes={account.bankNotes || 'Sem observações'}>
                     <span className="text-responsive">
                       {account.status}
                     </span>

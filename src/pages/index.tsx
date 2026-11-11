@@ -21,11 +21,11 @@ const today = now().format('YYYY-MM-DD');
 
 // Componente React da página inicial: Dashboard de Vendas.
 // Orquestra os subcomponentes da tela usando os hooks useToast e useSales,
-// mantendo apenas o estado de filtro (mês/ano) e da data selecionada.
+// mantendo apenas o estado de filtro (mês/year) e da date selecionada.
 const Home: React.FC = () => {
-  // Período de today (mês/ano no fuso do app), calculado uma única vez
+  // Período de today (mês/year no fuso do app), calculado uma única vez
   const [, currentMonth, currentYear] = getDateArray();
-  // Período selecionado (mês e ano), usado para carregar as vendas
+  // Período selecionado (mês e year), usado para carregar as vendas
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   // Ano exibido no campo; aceita digitação livre e só comita valores válidos
@@ -53,13 +53,13 @@ const Home: React.FC = () => {
     loadSales();
   }, [loadSales]);
 
-  // Últimas 4 vendas (por data e id, da mais recente para a mais antiga)
+  // Últimas 4 vendas (por date e id, da mais recente para a mais antiga)
   const recentSales = [...sales]
     .sort((a, b) => {
-      const dateA = toTimestamp(`${a.data}T00:00:00`);
-      const dateB = toTimestamp(`${b.data}T00:00:00`);
+      const dateA = toTimestamp(`${a.date}T00:00:00`);
+      const dateB = toTimestamp(`${b.date}T00:00:00`);
       if (dateA !== dateB) return dateB - dateA;
-      return String(b.criado_em).localeCompare(String(a.criado_em));
+      return String(b.createdAt).localeCompare(String(a.createdAt));
     })
     .slice(0, 4);
 
@@ -96,7 +96,7 @@ const Home: React.FC = () => {
             onToast={showToast}
           />
         )}
-        <SalesChart data={sales} />
+        <SalesChart date={sales} />
         {/* <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} /> */}
         <ExportButtons
           sales={sales}

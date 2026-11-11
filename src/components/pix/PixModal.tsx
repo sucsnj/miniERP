@@ -80,14 +80,14 @@ const ModalPixContent: React.FC<PixModalProps> = ({
   };
 
   const handlePrint = async () => {
-    const data: PrintSheetData = {
+    const date: PrintSheetData = {
       payload,
       name: merchantName,
       bank: merchantBank,
       amount,
       key: pixKey,
     };
-    await printPixSheet(data);
+    await printPixSheet(date);
   };
 
   if (!isOpen || typeof document === 'undefined') return null;

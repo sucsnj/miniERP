@@ -13,16 +13,16 @@ import parseNumber from '../../utils/number';
 function mapInvoice(inv: any) {
   return {
     id: inv.id,
-    distribuidora: inv.supplierName,
+    supplierName: inv.supplierName,
     chave: inv.accessKey,
-    data_emissao: inv.issueDate,
-    valor_nota: inv.amount,
+    issueDate: inv.issueDate,
+    amount: inv.amount,
   };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { ano: yearParam, mes: monthParam, id, valor: amountParam } = req.query;
+    const { year: yearParam, month: monthParam, id, amount: amountParam } = req.query;
     if (id) {
       const invoice = await getInvoiceById(String(id));
       if (!invoice) return res.status(404).json({ error: 'Nota não encontrada' });
@@ -49,10 +49,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'POST') {
     const body = req.body ?? {};
-    const distributor = body.distribuidora ?? body.supplierName;
+    const distributor = body.supplierName ?? body.supplierName;
     const key = body.chave ?? body.accessKey;
-    const issueDate = body.dataEmissao ?? body.issueDate;
-    const invoiceAmount = body.valorNota ?? body.amount;
+    const issueDate = body.issueDate ?? body.issueDate;
+    const invoiceAmount = body.amount ?? body.amount;
     if (!distributor || !key || !issueDate || !invoiceAmount) {
       return res.status(400).json({ error: 'Data de emissão e valor da nota são obrigatórios' });
     }

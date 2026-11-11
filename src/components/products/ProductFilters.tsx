@@ -32,14 +32,14 @@ export interface ProductFiltersActions {
 
 interface ProductFiltersProps {
     state: ProductFiltersState;
-    data: ProductFiltersData;
+    date: ProductFiltersData;
     setFilters: React.Dispatch<React.SetStateAction<ProductFiltersState>>;
     actions: ProductFiltersActions;
 }
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({
     state,
-    data,
+    date,
     setFilters,
     actions,
 }) => {
@@ -88,9 +88,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                             actions.changePage(1);
                         }}>
                         <option value="">Todas</option>
-                        {data.categories.map((c) => (
+                        {date.categories.map((c) => (
                             <option key={c.id} value={c.id}>
-                                {c.nome}
+                                {c.name}
                             </option>
                         ))}
                     </select>
@@ -107,9 +107,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                             actions.changePage(1);
                         }}>
                         <option value="">Todas</option>
-                        {data.brands.map((m) => (
+                        {date.brands.map((m) => (
                             <option key={m.id} value={m.id}>
-                                {m.nome}
+                                {m.name}
                             </option>
                         ))}
                     </select>
@@ -126,9 +126,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                             actions.changePage(1);
                         }}>
                         <option value="">Todos</option>
-                        {data.suppliers.map((f) => (
+                        {date.suppliers.map((f) => (
                             <option key={f.id} value={f.id}>
-                                {f.nome}
+                                {f.name}
                             </option>
                         ))}
                     </select>

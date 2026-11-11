@@ -22,9 +22,9 @@ interface EditSaleFormProps {
 }
 
 const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, onToast }) => {
-  const [editDate, setEditDate] = useState(sale.data);
-  const [editAmount, setEditAmount] = useState(sale.valor.toFixed(2));
-  const [editNotes, setEditNotes] = useState(sale.observacoes ?? "");
+  const [editDate, setEditDate] = useState(sale.date);
+  const [editAmount, setEditAmount] = useState(sale.amount.toFixed(2));
+  const [editNotes, setEditNotes] = useState(sale.notes ?? "");
   const [loadingItems, setLoadingItems] = useState(true);
   const editAmountInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -61,10 +61,10 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
         items.map((item) => ({
           id: item.item_id ?? item.id,
           tipo: item.tipo,
-          nome: item.nome,
-          preco_venda: item.preco_unitario,
-          quantidade: item.quantidade,
-          codigo_interno: item.codigo_interno ?? undefined,
+          name: item.name,
+          salePrice: item.unitPrice,
+          quantity: item.quantity,
+          internalCode: item.internalCode ?? undefined,
           referencia: item.referencia ?? undefined,
         }))
       );
@@ -73,19 +73,19 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
     load();
   }, [sale.id, setCartItems]);
 
-  // Recalcula o valor total quando os itens do carrinho mudam
+  // Recalcula o amount total quando os itens do carrinho mudam
   // (padrão React de ajustar estado durante a renderização, preservando
   // o campo quando o carrinho fica vazio)
   const [prevCartItems, setPrevCartItems] = useState(cartItems);
   if (cartItems !== prevCartItems) {
     setPrevCartItems(cartItems);
     if (cartItems.length > 0) {
-      const total = cartItems.reduce((acc, item) => acc + (item.preco_venda ?? 0) * item.quantidade, 0);
+      const total = cartItems.reduce((acc, item) => acc + (item.salePrice ?? 0) * item.quantity, 0);
       setEditAmount(total.toFixed(2));
     }
   }
 
-  // Foca no input de valor ao abrir
+  // Foca no input de amount ao abrir
   useEffect(() => {
     editAmountInputRef.current?.focus();
     editAmountInputRef.current?.select();
@@ -105,10 +105,10 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
         cartItems.map((item) => ({
           item_id: item.id,
           tipo: item.tipo,
-          nome: item.nome,
-          quantidade: item.quantidade,
-          preco_unitario: item.preco_venda,
-          codigo_interno: item.codigo_interno ?? null,
+          name: item.name,
+          quantity: item.quantity,
+          unitPrice: item.salePrice,
+          internalCode: item.internalCode ?? null,
           referencia: item.referencia ?? null,
         }))
       );
@@ -175,7 +175,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
           </div>
           {cartItems.length > 0 && (
             <span className={styles.cartHint}>
-              {cartItems.length} {cartItems.length === 1 ? "item" : "itens"} no carrinho — valor recalculado automaticamente
+              {cartItems.length} {cartItems.length === 1 ? "item" : "itens"} no carrinho — amount recalculado automaticamente
             </span>
           )}
           {loadingItems && (

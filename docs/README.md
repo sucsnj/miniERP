@@ -64,28 +64,28 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Financeiro
 
-- [src/pages/api/vendas.md](src/pages/api/vendas.md) - CRUD de vendas diárias.
-- [src/pages/api/venda-itens.md](src/pages/api/venda-itens.md) - itens de venda (carrinho).
-- [src/pages/api/notas.md](src/pages/api/notas.md) - consulta de notas fiscais.
-- [src/pages/api/mensais.md](src/pages/api/mensais.md) - relatórios de vendas mensais.
-- [src/pages/api/contas.md](src/pages/api/contas.md) - CRUD de contas a pagar (listar, criar, pagar, cancelar, atualizar, excluir).
+- [src/pages/api/sales.md](src/pages/api/sales.md) - CRUD de vendas diárias.
+- [src/pages/api/sale-items.md](src/pages/api/sale-items.md) - itens de venda (carrinho).
+- [src/pages/api/invoices.md](src/pages/api/invoices.md) - consulta de notas fiscais.
+- [src/pages/api/monthly-sales.md](src/pages/api/monthly-sales.md) - relatórios de vendas mensais.
+- [src/pages/api/payables.md](src/pages/api/payables.md) - CRUD de contas a pagar (listar, criar, pagar, cancelar, atualizar, excluir).
 
 ### Produtos e Estoque
 
-- [src/pages/api/produtos.md](src/pages/api/produtos.md) - CRUD de produtos (catálogo).
-- [src/pages/api/produtos/categorias.md](src/pages/api/produtos/categorias.md) - categorias.
-- [src/pages/api/produtos/marcas.md](src/pages/api/produtos/marcas.md) - marcas.
-- [src/pages/api/produtos/fornecedores.md](src/pages/api/produtos/fornecedores.md) - fornecedores.
-- [src/pages/api/produtos/unidades-medida.md](src/pages/api/produtos/unidades-medida.md) - unidades de medida.
-- [src/pages/api/produtos/itens.md](src/pages/api/produtos/itens.md) - itens de produto.
-- [src/pages/api/produtos/servicos.md](src/pages/api/produtos/servicos.md) - serviços.
-- [src/pages/api/produtos/movimentacoes.md](src/pages/api/produtos/movimentacoes.md) - movimentações de estoque.
+- [src/pages/api/products.md](src/pages/api/products.md) - CRUD de produtos (catálogo).
+- [src/pages/api/products/categories.md](src/pages/api/products/categories.md) - categorias.
+- [src/pages/api/products/brands.md](src/pages/api/products/brands.md) - marcas.
+- [src/pages/api/products/suppliers.md](src/pages/api/products/suppliers.md) - fornecedores.
+- [src/pages/api/products/units-of-measure.md](src/pages/api/products/units-of-measure.md) - unidades de medida.
+- [src/pages/api/products/items.md](src/pages/api/products/items.md) - itens de produto.
+- [src/pages/api/products/services.md](src/pages/api/products/services.md) - serviços.
+- [src/pages/api/products/stock-movements.md](src/pages/api/products/stock-movements.md) - movimentações de estoque.
 
 ### Importação e OCR
 
 - [src/pages/api/ocr.md](src/pages/api/ocr.md) - upload e processamento OCR.
-- [src/pages/api/tabela.md](src/pages/api/tabela.md) - upload, busca com cache e histórico da tabela de medicamentos.
-- [src/pages/api/contas/import.md](src/pages/api/contas/import.md) - importação de contas via XML.
+- [src/pages/api/medicine-table.md](src/pages/api/medicine-table.md) - upload, busca com cache e histórico da tabela de medicamentos.
+- [src/pages/api/payables/import.md](src/pages/api/payables/import.md) - importação de contas via XML.
 
 ## Serviços
 

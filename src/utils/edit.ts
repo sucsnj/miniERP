@@ -1,7 +1,7 @@
 import { parseDate, now } from '../utils/date';
 
-export const canEdit = (data: string) => {
-  const saleDate = parseDate(data).startOf('day');
+export const canEdit = (date: string) => {
+  const saleDate = parseDate(date).startOf('day');
   const todayMidnight = now().startOf('day');
 
   const diffDays = todayMidnight.diff(saleDate, 'day');

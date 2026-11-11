@@ -106,7 +106,7 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
         ) : (
           catalogItems.map((item) => {
             const inCart = cartItems.find((ci) => ci.id === item.id && ci.tipo === item.tipo);
-            const hasInCart = Boolean(inCart && inCart.quantidade > 0);
+            const hasInCart = Boolean(inCart && inCart.quantity > 0);
             return (
               <div key={`${item.tipo}-${item.id}`} className={`${styles.cartCatalogItemRow}`}>
                 <Button
@@ -127,7 +127,7 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
 
                 <div className={`${styles.cartCatalogItem}`} onClick={() => onAddToCart(item)}>
                   <div className={`${styles.cartItemInfo}`}>
-                    <span className={`${styles.cartItemName}`}>{item.nome}</span>
+                    <span className={`${styles.cartItemName}`}>{item.name}</span>
                     <div className={`${styles.cartItemMeta}`}>
                       <span className={`${styles.cartTypeBadge} ${item.tipo.toLowerCase()}`}>
                         {item.tipo === 'PRODUTO' ? 'Produto' : 'Serviço'}
@@ -135,17 +135,17 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
                       {item.tipo === 'PRODUTO' && item.estoque !== undefined && (
                         <span className={`${styles.cartItemStock}`}>Est: {item.estoque}</span>
                       )}
-                      {item.codigo_interno && (
-                        <span className={`${styles.cartItemCode}`}>#{item.codigo_interno}</span>
+                      {item.internalCode && (
+                        <span className={`${styles.cartItemCode}`}>#{item.internalCode}</span>
                       )}
                     </div>
                   </div>
                   <div className={`${styles.cartItemPriceSection}`}>
                     <span className={`${styles.cartItemPrice}`}>
-                      {formatCurrency(item.preco_venda ?? 0, 2)}
+                      {formatCurrency(item.salePrice ?? 0, 2)}
                     </span>
                     {hasInCart && (
-                      <span className={`${styles.cartItemQtyBadge}`}>+{inCart?.quantidade}</span>
+                      <span className={`${styles.cartItemQtyBadge}`}>+{inCart?.quantity}</span>
                     )}
                   </div>
                 </div>

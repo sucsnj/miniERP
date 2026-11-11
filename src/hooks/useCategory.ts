@@ -68,9 +68,9 @@ export const useCategory = ({
   };
 
   // Handler para abrir modal de edição de categoria
-  const handleOpenEditModal = (category: { id: string; nome: string; descricao?: string }) => {
+  const handleOpenEditModal = (category: { id: string; name: string; descricao?: string }) => {
     setForm(prev => ({ ...prev, categoryId: category.id }));
-    setCategoryForm({ name: category.nome, description: category.descricao || '' });
+    setCategoryForm({ name: category.name, description: category.descricao || '' });
     setCategoryEditModalOpen(true);
   };
 
@@ -90,7 +90,7 @@ export const useCategory = ({
       ({
         ...prev, categories: prev.categories.map(cat =>
           cat.id === form.categoryId ?
-            { ...cat, nome: categoryForm.name.trim(), descricao: categoryForm.description.trim() } : cat
+            { ...cat, name: categoryForm.name.trim(), descricao: categoryForm.description.trim() } : cat
         )
       }));
 

@@ -221,12 +221,12 @@ const Tabela: React.FC = () => {
                 <tbody>
                   {results.map((row, index) => (
                     <tr key={`${row.ean}-${index}`}>
-                      <td>{row.substancia.replace(/;/g, ";\n")}</td>
+                      <td>{row.substance.replace(/;/g, ";\n")}</td>
                       <td>{row.laboratorio}</td>
                       <td>{row.ean}</td>
                       <td>{row.produto}</td>
                       <td>{row.apresentacao}</td>
-                      <td>{row.classeTerapeutica}</td>
+                      <td>{row.therapeuticClass}</td>
                       <td>{row.pf205}</td>
                       <td>{row.pmc205}</td>
                     </tr>

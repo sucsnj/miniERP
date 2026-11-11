@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const body = req.body ?? {};
       const productId = body.productId ?? body.item_id;
       const movementType = body.type ?? body.tipo;
-      const quantity = body.quantity ?? body.quantidade;
+      const quantity = body.quantity ?? body.quantity;
       const description = body.description ?? body.descricao;
 
       if (!productId) {

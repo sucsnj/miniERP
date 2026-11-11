@@ -13,7 +13,7 @@
 
 ## Relações
 
-- **Usa:** [`/api/produtos`](../pages/api/produtos.md), [`/api/produtos/servicos`](../pages/api/produtos/servicos.md), [`/api/produtos/movimentacoes`](../pages/api/produtos/movimentacoes.md), [`/api/produtos/categorias`](../pages/api/produtos/categorias.md), [`/api/produtos/marcas`](../pages/api/produtos/marcas.md), [`/api/produtos/fornecedores`](../pages/api/produtos/fornecedores.md), [`/api/produtos/unidades-medida`](../pages/api/produtos/unidades-medida.md), [`/api/produtos/itens`](../pages/api/produtos/itens.md)
+- **Usa:** [`/api/produtos`](../pages/api/products.md), [`/api/produtos/servicos`](../pages/api/products/services.md), [`/api/produtos/movimentacoes`](../pages/api/products/stock-movements.md), [`/api/produtos/categorias`](../pages/api/products/categories.md), [`/api/produtos/marcas`](../pages/api/products/brands.md), [`/api/produtos/fornecedores`](../pages/api/products/suppliers.md), [`/api/produtos/unidades-medida`](../pages/api/products/units-of-measure.md), [`/api/produtos/itens`](../pages/api/products/items.md)
 - **Usado por:** páginas/componentes de Produtos/Catálogo e fluxos de importação de NF-e
 
 ## Notas

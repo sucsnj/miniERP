@@ -101,7 +101,7 @@ const RegistrationPage: React.FC = () => {
     // Flag para ignorar o guard durante redirecionamento pós-salvo
     const skipDirtyGuard = useRef(false);
 
-    // Deriva o estado "dirty": marca o formulário como editado quando o nome sai de vazio
+    // Deriva o estado "dirty": marca o formulário como editado quando o name sai de vazio
     const [wasNameEmpty, setWasNameEmpty] = useState(true);
     const isNameFilled = form.name.trim() !== '';
     if (isNameFilled !== wasNameEmpty) {
@@ -141,18 +141,18 @@ const RegistrationPage: React.FC = () => {
         setEditingId(item.id);
         setForm({
         type: item.tipo,
-        name: item.nome,
+        name: item.name,
         description: item.descricao || '',
-            categoryId: item.categoria_id,
-            brandId: item.marca_id,
-            supplierId: item.fornecedor_id,
-            purchasePrice: String(item.preco_compra),
-            profitMargin: String(item.margem_lucro),
-            salePrice: String(item.preco_venda),
+            categoryId: item.categoryId,
+            brandId: item.brandId,
+            supplierId: item.supplierId,
+            purchasePrice: String(item.purchasePrice),
+            profitMargin: String(item.profitMargin),
+            salePrice: String(item.salePrice),
         stock: String(item.estoque),
             unitMultiplier: String(item.multiplicador_unidade ?? 1),
             unitOfMeasureId: item.unidade_medida_id,
-            internalCode: item.codigo_interno || '',
+            internalCode: item.internalCode || '',
         reference: item.referencia || '',
             durationMinutes: String(item.duracao_minutos ?? ''),
         active: item.ativo ?? 1,
@@ -185,23 +185,23 @@ const RegistrationPage: React.FC = () => {
             const allServices: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
                 id: service.id,
         tipo: 'SERVICO',
-        nome: service.nome,
+        name: service.name,
         descricao: service.descricao,
-                categoria_id: service.categoria_id,
+                categoryId: service.categoryId,
                 unidade_medida_id: '21',
-                marca_id: '',
-                fornecedor_id: '',
-                preco_compra: 0,
-                margem_lucro: 0,
-                preco_venda: service.preco_venda,
+                brandId: '',
+                supplierId: '',
+                purchasePrice: 0,
+                profitMargin: 0,
+                salePrice: service.salePrice,
         estoque: 0,
                 multiplicador_unidade: 1,
-                estoque_total: 0,
-                codigo_interno: service.codigo_interno,
+                totalStock: 0,
+                internalCode: service.internalCode,
         referencia: service.referencia || '',
                 duracao_minutos: service.duracao_minutos,
-                data_criacao: service.data_criacao,
-                data_atualizacao: service.data_atualizacao,
+                createdAt: service.createdAt,
+                updatedAt: service.updatedAt,
                 categoria_nome: service.categoria_nome,
             }));
 
@@ -230,7 +230,7 @@ const RegistrationPage: React.FC = () => {
     // Lê a query: pré-carrega para edição (?id=X) ou preenche para cadastro rápido (?novoImport=1...)
     useEffect(() => {
         if (!router.isReady || isQueryProcessed.current) return;
-        const { id, novoImport: isNewImport, nome: nameParam, purchasePrice, estoque: stockParam, unidade: unitParam, ean, internalCode } = router.query;
+        const { id, novoImport: isNewImport, name: nameParam, purchasePrice, estoque: stockParam, unidade: unitParam, ean, internalCode } = router.query;
 
         if (id) {
             isQueryProcessed.current = true;
@@ -358,8 +358,8 @@ const RegistrationPage: React.FC = () => {
     const loadMovements = async (itemId: string) => {
         setMovementsLoading(true);
         try {
-            const data = await fetchStockMovements(itemId);
-            setStockMovements(data.slice(0, 10));
+            const date = await fetchStockMovements(itemId);
+            setStockMovements(date.slice(0, 10));
         } catch (error) {
             console.error(error);
             showToast('Erro ao carregar histórico de movimentações.', 'error');
@@ -475,18 +475,18 @@ const RegistrationPage: React.FC = () => {
 
         const payload = {
             tipo: form.type,
-            nome: form.name.trim(),
+            name: form.name.trim(),
             descricao: form.description.trim() || undefined,
-            categoria_id: form.categoryId,
-            marca_id: form.brandId || '',
-            fornecedor_id: form.supplierId || '',
-            preco_compra: purchasePriceAmount,
-            margem_lucro: profitMarginAmount,
-            preco_venda: salePriceAmount,
+            categoryId: form.categoryId,
+            brandId: form.brandId || '',
+            supplierId: form.supplierId || '',
+            purchasePrice: purchasePriceAmount,
+            profitMargin: profitMarginAmount,
+            salePrice: salePriceAmount,
             estoque: stockAmount,
             multiplicador_unidade: multiplierValue,
             unidade_medida_id: form.unitOfMeasureId || '',
-            codigo_interno: form.internalCode.trim() || undefined,
+            internalCode: form.internalCode.trim() || undefined,
             referencia: form.reference.trim(),
             duracao_minutos: Number(form.durationMinutes) || 0,
             ativo: form.active,
@@ -499,11 +499,11 @@ const RegistrationPage: React.FC = () => {
         };
 
         const servicePayload = {
-            nome: form.name.trim(),
+            name: form.name.trim(),
             descricao: form.description.trim() || undefined,
-            categoria_id: form.categoryId,
-            preco_venda: salePriceAmount,
-            codigo_interno: form.internalCode.trim() || undefined,
+            categoryId: form.categoryId,
+            salePrice: salePriceAmount,
+            internalCode: form.internalCode.trim() || undefined,
             referencia: form.reference.trim(),
             duracao_minutos: Number(form.durationMinutes) || 0,
         };
@@ -723,7 +723,7 @@ const RegistrationPage: React.FC = () => {
                                 {/* Códigos de Barras */}
                                 {form.type === 'PRODUTO' && (
                                     <BarcodeManager
-                                        data={{
+                                        date={{
                                             barcodes: formBarcodes,
                                             newBarcode: newBarcode,
                                         }}

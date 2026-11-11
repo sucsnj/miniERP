@@ -68,9 +68,9 @@ export const useSupplier = ({
     };
 
     // Handler para abrir modal de edição de fornecedor
-    const handleOpenEditSupplierModal = (supplier: { id: string; nome: string }) => {
+    const handleOpenEditSupplierModal = (supplier: { id: string; name: string }) => {
         setForm(prev => ({ ...prev, supplierId: supplier.id }));
-        setSupplierForm({ name: supplier.nome || '' });
+        setSupplierForm({ name: supplier.name || '' });
         setSupplierEditModalOpen(true);
     };
 
@@ -90,7 +90,7 @@ export const useSupplier = ({
             ({
                 ...prev, suppliers: prev.suppliers.map(forn =>
                     forn.id === form.supplierId ?
-                        { ...forn, nome: supplierForm.name.trim() } : forn
+                        { ...forn, name: supplierForm.name.trim() } : forn
                 )
             }));
 

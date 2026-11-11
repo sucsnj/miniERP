@@ -254,7 +254,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
                         )}
                       </td>
                       <td>{p.unidadeMedida}</td>
-                      <td>{p.quantidade}</td>
+                      <td>{p.quantity}</td>
                       <td>
                         {p.valorUnitario.toLocaleString('pt-BR', {
                           minimumFractionDigits: 2,

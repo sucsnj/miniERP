@@ -12,13 +12,13 @@ export interface CartSummary {
   totalValue: number;
 }
 
-/** Soma de quantidades e de valor (preço × quantidade) do carrinho. */
+/** Soma de quantidades e de amount (preço × quantity) do carrinho. */
 export function getCartSummary(cartItems: CartItem[]): CartSummary {
   let totalItems = 0;
   let totalValue = 0;
   for (const item of cartItems) {
-    totalItems += item.quantidade;
-    totalValue += (item.preco_venda ?? 0) * item.quantidade;
+    totalItems += item.quantity;
+    totalValue += (item.salePrice ?? 0) * item.quantity;
   }
   return { totalItems, totalValue };
 }

@@ -69,7 +69,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           >
             {options.categories.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.nome}
+                {c.name}
               </option>
             ))}
           </select>

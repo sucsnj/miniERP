@@ -66,7 +66,7 @@ const MAX_MERCHANT_CITY_LEN = 15;
 const MAX_AMOUNT_LENGTH = 13;
 
 /**
- * Monta um campo TLV: "ID" + len(2 dígitos) + valor.
+ * Monta um campo TLV: "ID" + len(2 dígitos) + amount.
  */
 export function emv(id: string, value: string | number | null | undefined): string {
   const length = String(value ?? '').length;
@@ -75,7 +75,7 @@ export function emv(id: string, value: string | number | null | undefined): stri
 
 /**
  * Calcula o CRC16 (CCITT-FALSE) sobre a string dada.
- * Polinômio 0x1021, valor inicial 0xFFFF, sem reflexão.
+ * Polinômio 0x1021, amount inicial 0xFFFF, sem reflexão.
  */
 export function crc16(payload: string): string {
   let crc = 0xffff;
@@ -92,7 +92,7 @@ export function crc16(payload: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Normalização de texto (nome / cidade)
+// Normalização de texto (name / cidade)
 // ---------------------------------------------------------------------------
 
 /**

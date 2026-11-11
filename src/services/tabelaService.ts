@@ -1,10 +1,10 @@
 export interface TableRow {
-  substancia: string;
+  substance: string;
   laboratorio: string;
   ean: string;
   produto: string;
   apresentacao: string;
-  classeTerapeutica: string;
+  therapeuticClass: string;
   pf205: string;
   pmc205: string;
 }
@@ -37,7 +37,7 @@ const handleJsonResponse = async (response: Response) => {
 
 // Função assíncrona exportada.
 export const uploadTable = async (formData: FormData) => {
-  const response = await fetch('/api/tabela', {
+  const response = await fetch('/api/medicine-table', {
     method: 'POST',
     body: formData,
   });
@@ -46,19 +46,19 @@ export const uploadTable = async (formData: FormData) => {
 
 // Função assíncrona exportada.
 export const searchTable = async (query: string): Promise<TabelaSearchResponse> => {
-  const response = await fetch(`/api/tabela?query=${encodeURIComponent(query.trim())}`);
+  const response = await fetch(`/api/medicine-table?query=${encodeURIComponent(query.trim())}`);
   return handleJsonResponse(response);
 };
 
 // Função assíncrona exportada.
 export const fetchTableHistory = async (): Promise<TableSearchHistoryItem[]> => {
-  const response = await fetch('/api/tabela?history=1');
+  const response = await fetch('/api/medicine-table?history=1');
   return handleJsonResponse(response);
 };
 
 // Função assíncrona exportada.
 export const clearTableHistory = async () => {
-  const response = await fetch('/api/tabela', {
+  const response = await fetch('/api/medicine-table', {
     method: 'DELETE',
   });
   return handleJsonResponse(response);
@@ -66,6 +66,6 @@ export const clearTableHistory = async () => {
 
 // Função assíncrona exportada.
 export const fetchTableStatus = async (): Promise<TabelaStatusResponse> => {
-  const response = await fetch('/api/tabela?status=1');
+  const response = await fetch('/api/medicine-table?status=1');
   return handleJsonResponse(response);
 };

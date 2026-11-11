@@ -10,7 +10,7 @@
 
 ## Relações
 
-- **Usa:** [`/api/notas`](../pages/api/notas.md)
+- **Usa:** [`/api/notas`](../pages/api/invoices.md)
 - **Usado por:** páginas/fluxos que manipulam notas fiscais
 
 ## Notas

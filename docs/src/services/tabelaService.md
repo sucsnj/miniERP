@@ -10,7 +10,7 @@
 
 ## Relações
 
-- **Usa:** [`/api/tabela`](../pages/api/tabela.md)
+- **Usa:** [`/api/tabela`](../pages/api/medicine-table.md)
 - **Usado por:** página [`/tabela`](../pages/tabela.md) e componentes relacionados
 
 ## Notas

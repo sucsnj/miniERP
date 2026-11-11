@@ -15,15 +15,15 @@ interface AgendaProps {
 }
 
 const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
-    // Mapeamento de contas por data de vencimento
+    // Mapeamento de contas por date de dueDate
     const agenda = useMemo(() => {
         const map = new Map<string, { date: string; pendingTotal: number }>();
         accountsYear.forEach((account) => {
-            const current = map.get(account.vencimento) ?? { date: account.vencimento, pendingTotal: 0 };
+            const current = map.get(account.dueDate) ?? { date: account.dueDate, pendingTotal: 0 };
             if (account.status === 'Pendente') {
-                current.pendingTotal += account.valor;
+                current.pendingTotal += account.amount;
             }
-            map.set(account.vencimento, current);
+            map.set(account.dueDate, current);
         });
         return Array.from(map.values())
             .filter((item) => item.pendingTotal > 0)
@@ -35,7 +35,7 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
     const upcomingAccounts = useMemo(() => {
         return accountsYear
             .filter((account) => account.status === 'Pendente')
-            .sort((a, b) => toTimestamp(a.vencimento) - toTimestamp(b.vencimento))
+            .sort((a, b) => toTimestamp(a.dueDate) - toTimestamp(b.dueDate))
             .slice(0, 12); // Quantidade de contas a serem exibidas (12)
     }, [accountsYear]);
 
@@ -47,10 +47,10 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
                     <span className={styles.statusChip}>Atualização automática</span>
                 </div>
                 <div className={styles.agendaCard}>
-                    <h3>Total pendente por vencimento</h3>
+                    <h3>Total pendente por dueDate</h3>
                     <div className={styles.agendaList}>
                         {agenda.length === 0 ? (
-                            <p>Nenhum vencimento registrado neste mês.</p>
+                            <p>Nenhum dueDate registrado neste mês.</p>
                         ) : (
                             agenda.map((item) => (
                                 <div key={item.date} className={styles.agendaRow}>
@@ -72,7 +72,7 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
                         ) : (
                             upcomingAccounts.map((account) => (
                                 <div key={account.id}>
-                                    <strong>{formatDateString(account.vencimento, 'DD-MM-YYYY')}</strong> - {account.distribuidora} - <span>R$ {formatCurrency(account.valor, 2)}</span>
+                                    <strong>{formatDateString(account.dueDate, 'DD-MM-YYYY')}</strong> - {account.supplierName} - <span>R$ {formatCurrency(account.amount, 2)}</span>
                                 </div>
                             ))
                         )}

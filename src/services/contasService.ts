@@ -1,12 +1,12 @@
 export interface AccountDetails {
   id: string;
-  distribuidora: string;
-  valor: number;
-  vencimento: string;
-  documento: string;
+  supplierName: string;
+  amount: number;
+  dueDate: string;
+  document: string;
   status: 'Pendente' | 'Pago';
-  banco_observacoes?: string;
-  criado_em?: string;
+  bankNotes?: string;
+  createdAt?: string;
 }
 
 // Função assíncrona exportada.
@@ -17,15 +17,15 @@ export const registerAccount = async (
   document: string,
   bankNotes?: string,
 ) => {
-  const response = await fetch('/api/contas', {
+  const response = await fetch('/api/payables', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      distribuidora: supplierName,
-      valor: amount,
-      vencimento: dueDate,
-      documento: document,
-      bancoObservacoes: bankNotes,
+      supplierName: supplierName,
+      amount: amount,
+      dueDate: dueDate,
+      document: document,
+      bankNotes: bankNotes,
     }),
   });
   return response.json();
@@ -33,7 +33,7 @@ export const registerAccount = async (
 
 // Função assíncrona exportada.
 export const importAccountsFromXml = async (xml: string) => {
-  const response = await fetch('/api/contas/import', {
+  const response = await fetch('/api/payables/import', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xml }),
@@ -43,18 +43,18 @@ export const importAccountsFromXml = async (xml: string) => {
 
 // Função assíncrona exportada.
 export const fetchAccounts = async (year: number, month?: number): Promise<AccountDetails[]> => {
-  const params = new URLSearchParams({ ano: String(year) });
+  const params = new URLSearchParams({ year: String(year) });
   if (month !== undefined) {
-    params.append('mes', String(month));
+    params.append('month', String(month));
   }
 
-  const response = await fetch(`/api/contas?${params.toString()}`);
+  const response = await fetch(`/api/payables?${params.toString()}`);
   return response.json();
 };
 
 // Função assíncrona exportada.
 export const payAccount = async (id: string | number) => {
-  const response = await fetch('/api/contas', {
+  const response = await fetch('/api/payables', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'pagar', id }),
@@ -64,7 +64,7 @@ export const payAccount = async (id: string | number) => {
 
 // Função assíncrona exportada.
 export const cancelAccountPayment = async (id: string | number) => {
-  const response = await fetch('/api/contas', {
+  const response = await fetch('/api/payables', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'cancelar', id }),
@@ -81,16 +81,16 @@ export const updateAccount = async (
   document: string,
   bankNotes?: string,
 ) => {
-  const response = await fetch('/api/contas', {
+  const response = await fetch('/api/payables', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       id,
-      distribuidora: supplierName,
-      valor: amount,
-      vencimento: dueDate,
-      documento: document,
-      bancoObservacoes: bankNotes,
+      supplierName: supplierName,
+      amount: amount,
+      dueDate: dueDate,
+      document: document,
+      bankNotes: bankNotes,
     }),
   });
   return response.json();
@@ -98,7 +98,7 @@ export const updateAccount = async (
 
 // Função assíncrona exportada.
 export const deleteAccount = async (id: string | number) => {
-  const response = await fetch('/api/contas', {
+  const response = await fetch('/api/payables', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id }),

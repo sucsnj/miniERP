@@ -63,9 +63,9 @@ export const useBrand = ({
     };
 
     // Handler para abrir modal de edição de marca
-    const handleOpenEditBrandModal = (brand: { id: string; nome: string }) => {
+    const handleOpenEditBrandModal = (brand: { id: string; name: string }) => {
         setForm(prev => ({ ...prev, brandId: brand.id }));
-        setBrandForm({ name: brand.nome });
+        setBrandForm({ name: brand.name });
         setBrandEditModalOpen(true);
     };
 
@@ -84,7 +84,7 @@ export const useBrand = ({
             setOptions(prev => ({
                 ...prev, brands: prev.brands.map(brand =>
                     brand.id === form.brandId ?
-                        { ...brand, nome: brandForm.name.trim() } : brand
+                        { ...brand, name: brandForm.name.trim() } : brand
                 )
             }));
 

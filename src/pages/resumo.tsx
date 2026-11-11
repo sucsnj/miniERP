@@ -77,7 +77,7 @@ const SummaryPage: React.FC = () => {
             <tbody>
               {mensais.map((m) => (
                 <tr key={m.id}>
-                  <td>{capitalize(dayjs().month(m.mes - 1).format('MMMM'))} - {m.ano}</td>
+                  <td>{capitalize(dayjs().month(m.month - 1).format('MMMM'))} - {m.year}</td>
                   <td>R$ {formatCurrency(m.ticketMedio, 2)}</td>
                   <td>{formatCurrency(m.mediaClientes)}</td>
                   <td>
@@ -111,7 +111,7 @@ const SummaryPage: React.FC = () => {
             <tbody>
               {mensais.map((m) => (
                 <tr key={m.id}>
-                  <td>{capitalize(dayjs().month(m.mes - 1).format('MMMM'))} - {m.ano}</td>
+                  <td>{capitalize(dayjs().month(m.month - 1).format('MMMM'))} - {m.year}</td>
                   <td>{formatCurrency(m.mediaClientesEsp)}</td>
                   <td>{m.qtdVendasEsp}</td>
                   <td>R$ {formatCurrency(m.totalEsp, 2)}</td>

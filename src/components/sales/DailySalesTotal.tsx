@@ -20,12 +20,12 @@ interface DailySalesTotalProps {
 
 const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, recentSales = [], onEditSale, onDeleteSale, children }) => {
   
-  const total = sales.reduce((sum, sale) => sum + sale.valor, 0);
+  const total = sales.reduce((sum, sale) => sum + sale.amount, 0);
   const salesCount = sales.length;
   const averageTicket = salesCount > 0 ? total / salesCount : 0;
 
-  const dailySales = selectedDay ? sales.filter((sale) => sale.data === selectedDay) : [];
-  const dailyTotal = dailySales.reduce((sum, sale) => sum + sale.valor, 0);
+  const dailySales = selectedDay ? sales.filter((sale) => sale.date === selectedDay) : [];
+  const dailyTotal = dailySales.reduce((sum, sale) => sum + sale.amount, 0);
   const dailyCount = dailySales.length;
   const dailyAverage = dailyCount > 0 ? dailyTotal / dailyCount : 0;
 
@@ -33,7 +33,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   useShortcuts(['Delete'], () => {
     if (recentSales.length > 0 && onDeleteSale) {
       const latestSale = [...recentSales]
-        .sort((a, b) => String(b.criado_em).localeCompare(String(a.criado_em)))[0];
+        .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
 
       if (latestSale) {
         onDeleteSale(latestSale.id);
@@ -95,23 +95,23 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
 
               <div className={`${styles.recentSalesGrid}`}>
                 {[...recentSales]
-                  .sort((a, b) => String(a.criado_em).localeCompare(String(b.criado_em)))
+                  .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
                   .map((sale) => (
                     <div key={sale.id} className={`${styles.historyItem}`}>
                       <div>
-                        <strong>{sale.criado_em.slice(10, 19)}</strong>
+                        <strong>{sale.createdAt.slice(10, 19)}</strong>
 
                         <div className="recent-sale-observacoes">
-                          {sale.observacoes || 'Sem observações'}
+                          {sale.notes || 'Sem observações'}
                         </div>
                       </div>
 
                       <div className={`${styles.historyValues}`}>
-                        <span>R$ {formatCurrency(sale.valor, 2)}</span>
+                        <span>R$ {formatCurrency(sale.amount, 2)}</span>
                       </div>
 
                       <div className={`${styles.recentSaleActions}`}>
-                        {canEdit(sale.data) ? (
+                        {canEdit(sale.date) ? (
                           <>
                             {onEditSale && (
                               <Button

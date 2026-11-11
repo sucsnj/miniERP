@@ -35,27 +35,27 @@ export const useCart = (onToast?: CartToast) => {
       const services: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
         id: service.id,
         tipo: 'SERVICO',
-        nome: service.nome,
+        name: service.name,
         descricao: service.descricao,
-        categoria_id: service.categoria_id,
+        categoryId: service.categoryId,
         unidade_medida_id: '21',
-        marca_id: '',
-        fornecedor_id: '',
-        preco_compra: 0,
-        margem_lucro: 0,
-        preco_venda: service.preco_venda,
+        brandId: '',
+        supplierId: '',
+        purchasePrice: 0,
+        profitMargin: 0,
+        salePrice: service.salePrice,
         estoque: 0,
         multiplicador_unidade: 1,
-        estoque_total: 0,
-        codigo_interno: service.codigo_interno,
+        totalStock: 0,
+        internalCode: service.internalCode,
         referencia: service.referencia || '',
         duracao_minutos: service.duracao_minutos,
-        data_criacao: service.data_criacao,
-        data_atualizacao: service.data_atualizacao,
+        createdAt: service.createdAt,
+        updatedAt: service.updatedAt,
         categoria_nome: service.categoria_nome,
       }));
 
-      const catalog = [...products, ...services].sort((a, b) => a.nome.localeCompare(b.nome));
+      const catalog = [...products, ...services].sort((a, b) => a.name.localeCompare(b.name));
       setCatalogItems(catalog);
     } catch (error) {
       console.error('Erro ao buscar catálogo para o carrinho:', error);
@@ -105,7 +105,7 @@ export const useCart = (onToast?: CartToast) => {
           const updated = [...prevItems];
           updated[existingIndex] = {
             ...updated[existingIndex],
-            quantidade: updated[existingIndex].quantidade + 1,
+            quantity: updated[existingIndex].quantity + 1,
           };
           return updated;
         } else {
@@ -114,17 +114,17 @@ export const useCart = (onToast?: CartToast) => {
             {
               id: item.id,
               tipo: item.tipo,
-              nome: item.nome,
-              preco_venda: item.preco_venda,
-              quantidade: 1,
-              codigo_interno: item.codigo_interno,
+              name: item.name,
+              salePrice: item.salePrice,
+              quantity: 1,
+              internalCode: item.internalCode,
               referencia: item.referencia,
               estoque: item.estoque,
             },
           ];
         }
       });
-      onToast?.(`+1 "${item.nome}" adicionado ao carrinho!`, 'success');
+      onToast?.(`+1 "${item.name}" adicionado ao carrinho!`, 'success');
     },
     [onToast]
   );
@@ -138,23 +138,23 @@ export const useCart = (onToast?: CartToast) => {
         );
         if (existingIndex === -1) return prevItems;
 
-        if (prevItems[existingIndex].quantidade <= 1) {
+        if (prevItems[existingIndex].quantity <= 1) {
           return prevItems.filter((_, idx) => idx !== existingIndex);
         } else {
           const updated = [...prevItems];
           updated[existingIndex] = {
             ...updated[existingIndex],
-            quantidade: updated[existingIndex].quantidade - 1,
+            quantity: updated[existingIndex].quantity - 1,
           };
           return updated;
         }
       });
-      onToast?.(`-1 "${item.nome}" removido do carrinho.`, 'info');
+      onToast?.(`-1 "${item.name}" removido do carrinho.`, 'info');
     },
     [onToast]
   );
 
-  // Atualiza quantidade no carrinho
+  // Atualiza quantity no carrinho
   const handleUpdateQuantity = useCallback(
     (id: string, type: 'PRODUTO' | 'SERVICO', newQty: number) => {
       setCartItems((prevItems) => {
@@ -163,7 +163,7 @@ export const useCart = (onToast?: CartToast) => {
         }
         return prevItems.map((ci) => {
           if (ci.id === id && ci.tipo === type) {
-            return { ...ci, quantidade: newQty };
+            return { ...ci, quantity: newQty };
           }
           return ci;
         });

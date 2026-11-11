@@ -48,9 +48,9 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
         <tbody>
           {latestAccounts.map((account) => (
             <tr key={account.id}>
-              <td>{formatDateString(account.vencimento, 'DD/MM/YYYY')}</td>
-              <td>{account.distribuidora}</td>
-              <td>R$ {formatCurrency(account.valor, 2)}</td>
+              <td>{formatDateString(account.dueDate, 'DD/MM/YYYY')}</td>
+              <td>{account.supplierName}</td>
+              <td>R$ {formatCurrency(account.amount, 2)}</td>
               <td className={styles.actionsCell}>
                 <Button type="button" variant="info" size="sm" onClick={() => handleView(account)} leftIcon={<VisibilityIcon />}>
                   Ver

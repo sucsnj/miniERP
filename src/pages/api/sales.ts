@@ -18,15 +18,11 @@ interface SaleItemApi {
   item_id?: number | string | null;
   id?: number | string | null;
   name?: string;
-  nome?: string;
   quantity?: number;
-  quantidade?: number;
   unitPrice?: number;
-  preco_unitario?: number;
-  preco_venda?: number;
+  salePrice?: number;
   subtotal?: number;
   internalCode?: string | null;
-  codigo_interno?: string | null;
   reference?: string | null;
   referencia?: string | null;
 }
@@ -44,19 +40,19 @@ function normalizeItem(item: SaleItemApi): {
 } {
   const kindSource = (item.kind ?? item.tipo ?? 'PRODUTO').toString().toUpperCase();
   const kind = kindSource === 'SERVICE' || kindSource === 'SERVICO' ? 'SERVICE' : 'PRODUCT';
-  const quantity = Number(item.quantity ?? item.quantidade ?? 0);
-  const unitPrice = Number(item.unitPrice ?? item.preco_unitario ?? item.preco_venda ?? 0);
+  const quantity = Number(item.quantity ?? item.quantity ?? 0);
+  const unitPrice = Number(item.unitPrice ?? item.unitPrice ?? item.salePrice ?? 0);
   const productId = item.productId ?? item.item_id ?? item.id ?? null;
   const serviceId = item.serviceId ?? null;
   return {
     kind,
     productId: kind === 'PRODUCT' && productId !== null ? String(productId) : null,
     serviceId: kind === 'SERVICE' && serviceId !== null ? String(serviceId) : null,
-    name: String(item.name ?? item.nome ?? ''),
+    name: String(item.name ?? item.name ?? ''),
     quantity,
     unitPrice,
     subtotal: item.subtotal ?? unitPrice * quantity,
-    internalCode: item.internalCode ?? item.codigo_interno ?? null,
+    internalCode: item.internalCode ?? item.internalCode ?? null,
     reference: item.reference ?? item.referencia ?? null,
   };
 }
@@ -64,21 +60,21 @@ function normalizeItem(item: SaleItemApi): {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const body = req.body ?? {};
-    const data = body.saleDate ?? body.data;
-    const amount = body.amount ?? body.valor;
-    const notes = body.notes ?? body.observacoes;
-    const createdAt = body.createdAt ?? body.criado_em;
+    const date = body.saleDate ?? body.date;
+    const amount = body.amount ?? body.amount;
+    const notes = body.notes ?? body.notes;
+    const createdAt = body.createdAt ?? body.createdAt;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
 
     try {
-      const validDate = toDate(data);
+      const validDate = toDate(date);
       const validValue = typeof amount === 'number' ? amount : parseCurrency(String(amount));
       if (!validDate || validValue == null) {
         return res.status(400).json({ error: 'Dados inválidos: data ou valor inválidos' });
       }
 
       const id = await createSale({
-        saleDate: data,
+        saleDate: date,
         amount: validValue,
         notes: notes ?? null,
         createdAt: createdAt ?? null,
@@ -87,18 +83,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ message: 'Venda registrada com sucesso', id });
     } catch (error) {
-      console.error('Erro na API POST /api/vendas:', error);
+      console.error('Erro na API POST /api/sales:', error);
       res.status(500).json({ error: 'Erro ao registrar venda', details: String(error) });
     }
   } else if (req.method === 'PUT') {
     const body = req.body ?? {};
     const id = body.id;
-    const data = body.saleDate ?? body.data;
-    const amount = body.amount ?? body.valor;
-    const notes = body.notes ?? body.observacoes;
+    const date = body.saleDate ?? body.date;
+    const amount = body.amount ?? body.amount;
+    const notes = body.notes ?? body.notes;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
 
-    const validDate = toDate(data);
+    const validDate = toDate(date);
     const validValue = typeof amount === 'number' ? amount : parseCurrency(String(amount));
     if (!id || !validDate || validValue == null) {
       return res.status(400).json({ error: 'Dados inválidos para atualização' });
@@ -115,7 +111,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await updateSale({
         id: String(id),
-        saleDate: data,
+        saleDate: date,
         amount: validValue,
         notes: notes ?? null,
         items: items.map(normalizeItem),
@@ -123,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ message: 'Venda atualizada com sucesso' });
     } catch (error) {
-      console.error('Erro na API PUT /api/vendas:', error);
+      console.error('Erro na API PUT /api/sales:', error);
       res.status(500).json({ error: 'Erro ao atualizar venda', details: String(error) });
     }
   } else if (req.method === 'DELETE') {
@@ -145,11 +141,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await deleteSale(String(id));
       res.status(200).json({ message: 'Venda excluída com sucesso' });
     } catch (error) {
-      console.error('Erro na API DELETE /api/vendas:', error);
+      console.error('Erro na API DELETE /api/sales:', error);
       res.status(500).json({ error: 'Erro ao excluir venda', details: String(error) });
     }
   } else if (req.method === 'GET') {
-    const { mes: monthParam, ano: yearParam, filtro: filter } = req.query;
+    const { month: monthParam, year: yearParam, filtro: filter } = req.query;
     try {
       const validFilter = ['positivas', 'negativas', 'todas'].includes(filter as string)
         ? (filter as 'positivas' | 'negativas' | 'todas')
@@ -162,7 +158,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
       res.status(200).json(sales);
     } catch (error) {
-      console.error('Erro na API GET /api/vendas:', error);
+      console.error('Erro na API GET /api/sales:', error);
       res.status(500).json({ error: 'Erro ao buscar vendas', details: String(error) });
     }
   } else {

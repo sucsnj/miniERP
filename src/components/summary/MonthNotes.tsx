@@ -26,7 +26,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
 
     // estado para o diálogo
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
 
     // Hook que busca notas automaticamente
     const { data: invoices = [], isLoading } = useQuery<InvoiceDetails[]>({
@@ -37,9 +37,9 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
     });
 
     // Somatório de notas
-    const invoiceTotal = invoices.reduce((sum, invoice) => sum + invoice.valor_nota, 0);
+    const invoiceTotal = invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id: string) => {
         try {
             await deleteInvoice(id);
             // invalida cache e força refetch
@@ -49,7 +49,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
         }
     };
 
-    const openConfirm = (id: number) => {
+    const openConfirm = (id: string) => {
         setSelectedId(id);
         setConfirmOpen(true);
     };
@@ -96,9 +96,9 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                     <tbody>
                         {invoices.map((n) => (
                             <tr key={n.id}>
-                                <td>{formatDateString(n.data_emissao, 'DD/MM/YYYY HH:mm')}</td>
-                                <td>{n.distribuidora}</td>
-                                <td>R$ {formatCurrency(Number(n.valor_nota), 2)}</td>
+                                <td>{formatDateString(n.issueDate, 'DD/MM/YYYY HH:mm')}</td>
+                                <td>{n.supplierName}</td>
+                                <td>R$ {formatCurrency(Number(n.amount), 2)}</td>
                                 <td>
                                     <Button variant="danger" size="sm" onClick={() => openConfirm(n.id)} leftIcon={<DeleteIcon />}>
                                         Excluir
