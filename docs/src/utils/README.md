@@ -12,6 +12,9 @@
 | [date.md](./date.md) | Datas/horas em `America/Recife` (`dayjs`). |
 | [download.md](./download.md) | Download de Data URL no navegador. |
 | [env.md](./env.md) | Validação das variáveis de ambiente do servidor Supabase. |
+| [loginRateLimit.md](./loginRateLimit.md) | Limite básico de tentativas de login em memória. |
+| [password.md](./password.md) | Hash/verificação/validação de senha e login. |
+| [serverAuth.md](./serverAuth.md) | Helpers server-only de autenticação e sessão. |
 | [edit.md](./edit.md) | Regra de janela de edição de vendas (2 dias). |
 | [focus.md](./focus.md) | Focus trap para modais. |
 | [formatter.md](./formatter.md) | Formatação/arredondamento monetário. |

@@ -48,6 +48,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ## Páginas do Frontend
 
+- [src/proxy.md](src/proxy.md) - proxy do Next.js 16: proteção otimista de rotas autenticadas.
 - [src/pages/index.md](src/pages/index.md) - dashboard de vendas: resumo mensal, formulário, edição e backup.
 - [src/pages/products.md](src/pages/products.md) - catálogo, estoque e preços de produtos.
 - [src/pages/registration.md](src/pages/registration.md) - cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida).
@@ -56,6 +57,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/summary.md](src/pages/summary.md) - resumo mensal de vendas e totais consolidados.
 - [src/pages/medicine-table.md](src/pages/medicine-table.md) - upload e consulta da tabela de medicamentos.
 - [src/pages/settings.md](src/pages/settings.md) - configurações do aplicativo.
+- [src/pages/login.md](src/pages/login.md) - login com `login` ou `email`.
+- [src/pages/setup.md](src/pages/setup.md) - bootstrap do primeiro admin via `PIN_MASTER`.
 - [src/pages/_app.md](src/pages/_app.md) - configuração global do app, ordem do CSS e integração com React Query.
 - [src/pages/_document.md](src/pages/_document.md) - documento HTML, idioma e aplicação do tema antes da hidratação.
 
@@ -66,6 +69,11 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Financeiro
 
+- [src/pages/api/auth/bootstrap.md](src/pages/api/auth/bootstrap.md) - bootstrap do primeiro admin/empresa via PIN_MASTER.
+- [src/pages/api/auth/login.md](src/pages/api/auth/login.md) - login por login/e-mail com sessão de 48h.
+- [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
+- [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.
+- [src/pages/api/auth/change-password.md](src/pages/api/auth/change-password.md) - troca de senha e revogação de sessões.
 - [src/pages/api/sales.md](src/pages/api/sales.md) - CRUD de vendas diárias.
 - [src/pages/api/sale-items.md](src/pages/api/sale-items.md) - itens de venda (carrinho).
 - [src/pages/api/invoices.md](src/pages/api/invoices.md) - consulta de notas fiscais.
@@ -158,6 +166,11 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ### PIX (`src/components/pix/`)
 
 - [src/components/pix/PixModal.md](src/components/pix/PixModal.md) - modal de pagamento via PIX.
+
+### Autenticação (`src/components/auth/`, `src/contexts/AuthContext.tsx`)
+
+- [src/contexts/AuthContext.md](src/contexts/AuthContext.md) - contexto global do usuário autenticado (`/api/auth/me`, login e logout).
+- [src/components/auth/AuthGate.md](src/components/auth/AuthGate.md) - gate client-side que protege as rotas autenticadas e redireciona para login.
 
 ### Gerais (`src/components/common/`)
 

@@ -9,6 +9,10 @@ export interface SupabaseServerEnv {
   serviceRoleKey: string;
 }
 
+export interface AuthServerEnv {
+  pinMaster: string;
+}
+
 function readRequired(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) {
@@ -28,6 +32,14 @@ function readUrl(name: string): string {
     throw new Error(`Variável de ambiente inválida: ${name}`);
   }
   return value;
+}
+
+let cachedPinMaster: string | null = null;
+
+export function getAuthServerEnv(): AuthServerEnv {
+  if (cachedPinMaster) return { pinMaster: cachedPinMaster };
+  cachedPinMaster = readRequired('PIN_MASTER');
+  return { pinMaster: cachedPinMaster };
 }
 
 let cachedEnv: SupabaseServerEnv | null = null;

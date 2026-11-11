@@ -4,15 +4,16 @@
 
 ## O que faz
 
+- Envolve a aplicação em `ThemeProvider` → `SettingsProvider` → `AuthProvider` → `QueryClientProvider`.
 - Injeta `QueryClientProvider` (`@tanstack/react-query`) para toda a aplicação.
 - Define metadados HTML globais (título "Vendas", descrição e favicon).
-- Renderiza a navegação global `<Nav />` e o host único de notificações `<Toaster />` (ADR 0003).
-- Estrutura padrão das telas: `Nav` + `<Component />` + `Toaster`.
+- Renderiza `AuthGate`; com sessão válida, navegação global `<Nav />`, conteúdo e host de notificações `<Toaster />` (ADR 0003).
+- Estrutura padrão das telas: `Nav` + `<Component />` + `Toaster`; `/login` e `/setup` ficam sem Nav.
 - Importa o CSS global na ordem `tokens → base → utilities → legacy`.
 
 ## Relações
 
-- **Usa:** `src/components/common/Nav`, `src/components/common/Toaster`, `src/styles/{tokens,base,utilities,legacy}.css`.
+- **Usa:** `src/components/auth/AuthGate`, `src/contexts/AuthContext`, `src/contexts/SettingsContext`, `src/contexts/ThemeContext`, `src/components/common/Nav`, `src/components/common/Toaster`, `src/styles/{tokens,base,utilities,legacy}.css`.
 - **Usado por:** todas as páginas do Pages Router.
 - **Complementa:** [_document](_document.md), que aplica o tema antes da hidratação.
 

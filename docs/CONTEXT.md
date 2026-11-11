@@ -4,7 +4,7 @@
 
 ## O que é este projeto
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). Não há autenticação externa.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). A autenticação própria e o isolamento multiempresa/multi-loja foram definidos no ADR 0013; auth core está implementado, enforcement tenant/permissões seguem em rollout.
 
 ## Pilha mainBarcode
 
