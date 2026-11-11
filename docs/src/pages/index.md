@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `DailySalesTotal`, `DailySaleForm`, `EditSaleForm`, `SalesChart`, `ExportButtons`; hooks `useSales`/`useToast`; utils `date`/`captalize`.
+- **Usa:** `DailySalesTotal`, `DailySaleForm`, `EditSaleForm`, `ExportButtons`; hooks `useSales`/`useToast`; utils `date`/`captalize`.
 - **Usado por:** rota raiz; consome `./api/vendas.md` e `./api/mensais.md`.
 
 ## Notas

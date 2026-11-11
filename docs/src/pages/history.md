@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `SalesTable`, `ExportButtons`, `EditSaleForm`; hooks `useToast`, `useSales`, `useFilter`; utils `date`, `captalize`.
+- **Usa:** `SalesTable`, `SalesChart`, `ExportButtons`, `EditSaleForm`; hooks `useToast`, `useSales`, `useFilter`; utils `date`, `captalize`.
 - **Usado por:** consome `./api/vendas.md` e `./api/venda-itens.md`.
 
 ## Notas

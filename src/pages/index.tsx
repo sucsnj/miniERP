@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import DailySaleForm from '../components/sales/DailySaleForm';
 import DailySalesTotal from '../components/sales/DailySalesTotal';
-import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
 import { useToast } from '../hooks/useToast';
@@ -99,7 +98,6 @@ const Home: React.FC = () => {
             onToast={showToast}
           />
         )}
-        <SalesChart date={sales} />
         {/* <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} /> */}
         <ExportButtons
           sales={sales}

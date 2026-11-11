@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import SalesTable from '../components/sales/SalesTable';
+import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
 import { capitalize } from '../utils/captalize';
@@ -92,6 +93,9 @@ const History: React.FC = () => {
             onToast={showToast}
           />
         )}
+
+        {/* Gráfico com a evolução diária das vendas do período */}
+        <SalesChart date={sales} />
 
         {/* Tabela com as vendas do período */}
         <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} />

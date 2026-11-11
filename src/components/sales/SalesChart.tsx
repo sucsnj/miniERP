@@ -59,18 +59,18 @@ const SalesChart: React.FC<SalesChartProps> = ({ date }) => {
         {chartType === 'line' ? (
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="data" />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip formatter={(value) => formatCurrency(Number(value), 2)} />
-            <Line type="monotone" dataKey="valor" stroke="#8884d8" />
+            <Line type="monotone" dataKey="amount" stroke="#8884d8" />
           </LineChart>
         ) : (
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="data" />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip formatter={(value) => formatCurrency(Number(value), 2)} />
-            <Bar dataKey="valor" fill="#8884d8" />
+            <Bar dataKey="amount" fill="#8884d8" />
           </BarChart>
         )}
       </ResponsiveContainer>

@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Ordena por `id` e exibe os últimos 3/7/30 registros; alterna entre `LineChart` e `BarChart`.
-- Tooltip formata valores com `formatCurrency`; eixo X usa `criado_em`.
+- Ordena por `createdAt` e exibe os últimos 3/7/30 registros; alterna entre `LineChart` e `BarChart`.
+- Tooltip formata valores com `formatCurrency`; eixo X usa `date` e a série usa `amount`.
 
 ```ts
 interface SalesChartProps { data: DailySale[]; }
