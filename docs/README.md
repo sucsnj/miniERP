@@ -54,6 +54,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/history.md](src/pages/history.md) - histórico de vendas, listagem e busca.
 - [src/pages/summary.md](src/pages/summary.md) - resumo mensal de vendas e totais consolidados.
 - [src/pages/medicine-table.md](src/pages/medicine-table.md) - upload e consulta da tabela de medicamentos.
+- [src/pages/settings.md](src/pages/settings.md) - configurações do aplicativo.
 - [src/pages/_app.md](src/pages/_app.md) - configuração global do app, ordem do CSS e integração com React Query.
 - [src/pages/_document.md](src/pages/_document.md) - documento HTML, idioma e aplicação do tema antes da hidratação.
 

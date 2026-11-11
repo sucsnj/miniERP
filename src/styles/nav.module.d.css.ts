@@ -4,6 +4,7 @@ declare const styles: {
   readonly "navItem": string;
   readonly "navLinks": string;
   readonly "rightSide": string;
+  readonly "settingsLink": string;
   readonly "themeButton": string;
   readonly "themeIcon": string;
   readonly "themeIconTransition": string;
