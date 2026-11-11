@@ -21,7 +21,7 @@ Página de histórico de vendas. Exibe tabela com vendas registradas, permite ed
 
 - `src/components/SalesTable`
 - `src/components/ExportButtons`
-- `src/services/vendasService`
+- `src/services/salesService`
 - `src/utils/date`
 - `src/utils/captalize`
 - `src/utils/edit`

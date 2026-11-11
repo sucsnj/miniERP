@@ -1,4 +1,4 @@
-# `src/services/vendasService.ts`
+# `src/services/salesService.ts`
 
 > Cliente HTTP via `fetch` para o domínio de vendas. Camada de serviço do cliente para comunicar interface com APIs internas (`/api/vendas`, `/api/venda-itens`, `/api/mensais`, `/api/backup`).
 

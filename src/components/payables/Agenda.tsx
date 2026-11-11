@@ -2,9 +2,9 @@ const OCR_ENABLED = false;
 
 import React, { useMemo } from 'react';
 import OcrUpload from '@/components/import/OcrUpload';
-import { AccountDetails, } from '../../services/contasService';
+import { AccountDetails, } from '../../services/payablesService';
 import { formatCurrency } from '../../utils/formatter';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import Panel from '@/components/common/Panel';
 import { formatDateString } from '../../utils/date';
 import { toTimestamp } from '../../utils/date';

@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `fetchUnitsOfMeasure`, `createUnitOfMeasure`, `deleteUnitOfMeasure`, `updateUnitOfMeasure` (`src/services/produtosService.ts`), `UnitOfMeasureFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
-- **Usado por:** [cadastro](../pages/cadastro.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
+- **Usa:** `fetchUnitsOfMeasure`, `createUnitOfMeasure`, `deleteUnitOfMeasure`, `updateUnitOfMeasure` (`src/services/productsService.ts`), `UnitOfMeasureFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
+- **Usado por:** [cadastro](../pages/registration.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
 
 ## Notas
 

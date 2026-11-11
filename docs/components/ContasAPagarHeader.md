@@ -30,7 +30,7 @@ interface ContasAPagarHeaderProps {
 ## Dependências
 
 - `src/utils/date` (`formatMonthName`, `now`), `src/utils/captalize` (`capitalize`).
-- `src/styles/contas.module.css`; `@mui/icons-material` (`Backup`).
+- `src/styles/payables.module.css`; `@mui/icons-material` (`Backup`).
 
 ## Observações
 

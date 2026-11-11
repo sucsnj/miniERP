@@ -17,7 +17,7 @@ interface EditSaleFormProps {
 
 ## Relações
 
-- **Usa:** `fetchSaleItems`/`updateSale` (`src/services/vendasService.ts`), `useCart` (`src/hooks/useCart.ts`), `parseNumber`, modais de carrinho, `sales.module.css`.
+- **Usa:** `fetchSaleItems`/`updateSale` (`src/services/salesService.ts`), `useCart` (`src/hooks/useCart.ts`), `parseNumber`, modais de carrinho, `sales.module.css`.
 - **Usado por:** `../../pages/index.md` quando `editingSale` está preenchido.
 
 ## Notas

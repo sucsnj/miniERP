@@ -37,7 +37,7 @@ interface ContasAPagarFormProps {
 
 ## Dependências
 
-- `src/services/contasService` (tipo `ContaDetalhe`), `src/styles/contas.module.css`, `@mui/icons-material` (`NoteAdd`, `ClearAll`, `ImportExport`).
+- `src/services/payablesService` (tipo `ContaDetalhe`), `src/styles/payables.module.css`, `@mui/icons-material` (`NoteAdd`, `ClearAll`, `ImportExport`).
 
 ## Observações
 

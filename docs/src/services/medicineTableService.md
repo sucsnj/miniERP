@@ -1,6 +1,6 @@
-# `src/services/tabelaService.ts`
+# `src/services/medicineTableService.ts`
 
-> Cliente HTTP via `fetch` para o domínio da Tabela de Medicamentos (endpoint interno `/api/tabela`).
+> Cliente HTTP via `fetch` para o domínio da Tabela de Medicamentos (endpoint interno `/api/medicine-table`).
 
 ## O que faz
 
@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** [`/api/tabela`](../pages/api/medicine-table.md)
-- **Usado por:** página [`/tabela`](../pages/tabela.md) e componentes relacionados
+- **Usa:** [`/api/medicine-table`](../pages/api/medicine-table.md)
+- **Usado por:** página [`/medicine-table`](../pages/medicine-table.md) e componentes relacionados
 
 ## Notas
 

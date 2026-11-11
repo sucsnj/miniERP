@@ -14,4 +14,4 @@
 
 ## Notas
 
-- Baseado no cabeçalho de `/contas-a-pagar`.
+- Baseado no cabeçalho de `/payables`.

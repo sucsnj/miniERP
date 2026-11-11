@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { DailySale } from '../../services/vendasService';
+import { DailySale } from '../../services/salesService';
 import { formatDateString } from '../../utils/date';
 import { formatCurrency } from '../../utils/formatter';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import { canEdit } from '../../utils/edit';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';

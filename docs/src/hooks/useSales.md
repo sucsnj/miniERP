@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `fetchDailySales`, `consolidateMonthly`, `backupDatabase`, `deleteSale`, `autoConsolidate`, `DailySale` (`src/services/vendasService.ts`), `canEdit` (`src/utils/edit.ts`).
+- **Usa:** `fetchDailySales`, `consolidateMonthly`, `backupDatabase`, `deleteSale`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit` (`src/utils/edit.ts`).
 - **Usado por:** páginas/componentes relacionados a vendas diárias.
 
 ## Notas

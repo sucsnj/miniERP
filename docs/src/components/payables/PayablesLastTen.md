@@ -18,8 +18,8 @@ interface PayablesLastTenProps {
 
 ## Relações
 
-- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `AccountDetails`, `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString` (`src/utils/date.ts`), `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `AccountDetails`, `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString` (`src/utils/date.ts`), `payables.module.css`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 

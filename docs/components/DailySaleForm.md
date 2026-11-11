@@ -83,7 +83,7 @@ const DailySaleForm: React.FC<DailySaleFormProps>;
 
 ## Observações
 
-- Envia dados para `/api/vendas` via `src/services/vendasService`.
+- Envia dados para `/api/vendas` via `src/services/salesService`.
 - Usa `expr-eval` para calcular expressões no campo de valor.
 - Possui lógica de limpeza com `Escape` para limpar o campo.
 - O campo de valor filtra teclas: só números, operadores `+ - * / ( ) . ,` e teclas de navegação; bloqueia símbolos duplicados e operadores consecutivos.

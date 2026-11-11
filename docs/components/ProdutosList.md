@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Componente de **listagem do catálogo** (produtos + serviços) usado na página `/produtos`. Exibe tabela paginada com ações de edição, exclusão e alternância de status, além de estados de carregamento e vazio.
+Componente de **listagem do catálogo** (produtos + serviços) usado na página `/products`. Exibe tabela paginada com ações de edição, exclusão e alternância de status, além de estados de carregamento e vazio.
 
 ## Contexto
 
@@ -14,7 +14,7 @@ Renderizado pela página `produtos.tsx`, que já aplicou filtros e paginação l
 interface ListagemProps {
     items: ItemData[];                    // itens já filtrados/paginados
     loading: boolean;                     // exibe "Carregando..." no lugar da tabela
-    onEdit(item: ItemData): void;         // abrir edição (props.tudo leva a /cadastro?id=X)
+    onEdit(item: ItemData): void;         // abrir edição (props.tudo leva a /registration?id=X)
     onDelete(item: ItemData): void;       // abrir confirmação de exclusão
     onToggleStatus(item: ItemData): void; // ativar/desativar produto
     total: number;                        // total de registros (após filtros)
@@ -38,9 +38,9 @@ interface ListagemProps {
 
 ## Dependências
 
-- `src/services/produtosService.ts` (tipo `ItemData`).
+- `src/services/productsService.ts` (tipo `ItemData`).
 - `src/utils/formatter.ts` (`formatCurrency`).
-- `src/styles/produtos.module.css` (estilos da tabela/badges).
+- `src/styles/products.module.css` (estilos da tabela/badges).
 - `@mui/icons-material` (`Edit`, `Delete`, `Check`, `Block`).
 
 ## Observações

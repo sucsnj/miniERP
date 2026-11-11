@@ -11,7 +11,7 @@
 ## Relações
 
 - **Usa:** `src/database/notasDb.ts`, `parseNumber` de `src/utils/number.ts`.
-- **Usado por:** importação em `./contas/import.md` e `notasService` (via `summary/MonthNotes.tsx`).
+- **Usado por:** importação em `./contas/import.md` e `invoicesService` (via `summary/MonthNotes.tsx`).
 
 ## Notas
 

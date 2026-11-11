@@ -12,7 +12,7 @@
 
 ## Relacoes
 
-- **Usa:** `registerSale` (`src/services/vendasService.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`.
+- **Usa:** `registerSale` (`src/services/salesService.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`.
 - **Usado por:** `src/components/sales/DailySaleForm.tsx` (apresentacional).
 
 ## Notas

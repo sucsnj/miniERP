@@ -12,7 +12,7 @@
 ## Relações
 
 - **Usa:** `src/database/supabase.ts`, `src/utils/env.ts`
-- **Usado por:** `src/pages/api/contas.ts`, `src/pages/api/contas/import.ts`, `src/pages/api/notas.ts`, `src/pages/api/tabela.ts`
+- **Usado por:** `src/pages/api/contas.ts`, `src/pages/api/contas/import.ts`, `src/pages/api/notas.ts`, `src/pages/api/medicine-table.ts`
 
 ## Notas
 

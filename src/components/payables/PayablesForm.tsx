@@ -1,10 +1,10 @@
 import React from 'react';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import Form from '@/components/common/Form';
 import FormRow from '@/components/common/FormRow';
 import FormActions from '@/components/common/FormActions';
 import Button from '@/components/common/Button';
-import { AccountDetails } from '../../services/contasService';
+import { AccountDetails } from '../../services/payablesService';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ImportExportIcon from '@mui/icons-material/ImportExport';

@@ -16,8 +16,8 @@ interface ProductDeleteModalProps {
 
 ## Relações
 
-- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `ItemData` (`src/services/produtosService.ts`).
-- **Usado por:** [cadastro](../../pages/cadastro.md) e [produtos](../../pages/produtos.md).
+- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `ItemData` (`src/services/productsService.ts`).
+- **Usado por:** [cadastro](../../pages/registration.md) e [produtos](../../pages/products.md).
 
 ## Notas
 

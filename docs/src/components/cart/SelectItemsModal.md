@@ -19,7 +19,7 @@ interface SelectItemsModalProps {
 
 ## Relações
 
-- **Usa:** [CartModalShell](./CartModalShell.md), `getCartSummary` (`src/utils/cart.ts`), `ItemData` (`src/services/produtosService.ts`), `CartItem` (`src/types/sale.ts`).
+- **Usa:** [CartModalShell](./CartModalShell.md), `getCartSummary` (`src/utils/cart.ts`), `ItemData` (`src/services/productsService.ts`), `CartItem` (`src/types/sale.ts`).
 - **Usado por:** `useCart` via [DailySaleForm](../sales/DailySaleForm.md) e [EditSaleForm](../sales/EditSaleForm.md).
 
 ## Notas

@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/fornecedores.ts`
+# `src/pages/api/products/fornecedores.ts`
 
-> CRUD de fornecedores (`fornecedores` em `db/produtos.db`).
+> CRUD de fornecedores (`fornecedores` em `db/products.db`).
 
 ## O que faz
 
@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts`.
-- **Usado por:** `produtosService`; `../../cadastro.md` (modal de fornecedor).
+- **Usa:** `src/database/productsDb.ts`.
+- **Usado por:** `productsService`; `../../registration.md` (modal de fornecedor).
 
 ## Notas
 

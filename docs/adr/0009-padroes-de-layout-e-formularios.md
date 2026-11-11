@@ -1,4 +1,4 @@
-# ADR 0009 — Padrão de layout e formulários baseado em `/contas-a-pagar`
+# ADR 0009 — Padrão de layout e formulários baseado em `/payables`
 
 - **Status:** aceito (25/10/2026).
 - **Decisores:** dono do projeto + agente de IA.
@@ -6,12 +6,12 @@
 
 ## Contexto
 
-As páginas tinham estruturas visuais diferentes (padding, grids, painéis, cabeçalhos, chips e formulários). A página `/contas-a-pagar` já concentrava o padrão mais completo e consistente do sistema, com `contasPage`, `contasGrid`, `contasPanel`, `panelHeader`, `statusChip`, `formRow` e `formActions`.
+As páginas tinham estruturas visuais diferentes (padding, grids, painéis, cabeçalhos, chips e formulários). A página `/payables` já concentrava o padrão mais completo e consistente do sistema, com `contasPage`, `contasGrid`, `contasPanel`, `panelHeader`, `statusChip`, `formRow` e `formActions`.
 
 ## Decisão
 
 1. **Criar primitivas de layout reutilizáveis** em `src/components/common/`: `PageShell`, `PageHeader`, `PageGrid`, `Panel`, `PanelHeader`, `StatusChip`, `Form`, `FormRow`, `FormActions` e `FormField`.
-2. **Centralizar os estilos em `src/styles/layout.module.css`**, derivados do layout de `/contas-a-pagar`, com responsividade equivalente.
+2. **Centralizar os estilos em `src/styles/layout.module.css`**, derivados do layout de `/payables`, com responsividade equivalente.
 3. **Não alterar páginas existentes nesta rodada**; o padrão fica disponível para adoção gradual.
 4. **Documentar o padrão** em `docs/adr/0009-padroes-de-layout-e-formularios.md` e nos docs dos componentes.
 
@@ -41,5 +41,5 @@ As páginas tinham estruturas visuais diferentes (padding, grids, painéis, cabe
 - `src/components/common/FormRow.tsx`
 - `src/components/common/FormActions.tsx`
 - `src/components/common/FormField.tsx`
-- `src/pages/contas-a-pagar.tsx`
-- `src/styles/contas.module.css`
+- `src/pages/payables.tsx`
+- `src/styles/payables.module.css`

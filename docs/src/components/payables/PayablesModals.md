@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `useShortcuts` (`src/utils/shortcuts.tsx`), `useFocusTrap` (`src/utils/focus.tsx`), `formatCurrency` (`src/utils/formatter.tsx`), `AccountDetails`, `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** `useShortcuts` (`src/utils/shortcuts.tsx`), `useFocusTrap` (`src/utils/focus.tsx`), `formatCurrency` (`src/utils/formatter.tsx`), `AccountDetails`, `payables.module.css`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 

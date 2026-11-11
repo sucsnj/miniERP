@@ -22,8 +22,8 @@ interface ItemFormProps {
 
 ## Relações
 
-- **Usa:** [ProductForm](./ProductForm.md), [ServiceForm](./ServiceForm.md), `produtos.module.css`, `modalImport.module.css`.
-- **Usado por:** `../../pages/produtos.md`.
+- **Usa:** [ProductForm](./ProductForm.md), [ServiceForm](./ServiceForm.md), `products.module.css`, `modalImport.module.css`.
+- **Usado por:** `../../pages/products.md`.
 
 ## Notas
 

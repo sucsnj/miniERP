@@ -32,7 +32,7 @@
 ### 1.5 Como o sistema é usado na prática
 
 - **Registrar vendas é a rotina principal** e de longe a mais usada.
-- As demais áreas (contas, estoque/cadastro, tabela, relatórios) são usadas com frequência, mas **muito menos** que o registro diário de vendas.
+- As demais áreas (contas, estoque/registration, tabela, relatórios) são usadas com frequência, mas **muito menos** que o registro diário de vendas.
 
 ## 2. Fluxos de negócio principais
 

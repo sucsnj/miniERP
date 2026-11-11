@@ -22,8 +22,8 @@ interface ProductFiltersProps {
 
 ## Relações
 
-- **Usa:** `CategoryData`/`BrandData`/`SupplierData` (`src/services/produtosService.ts`), `produtos.module.css`.
-- **Usado por:** `../../pages/produtos.md`.
+- **Usa:** `CategoryData`/`BrandData`/`SupplierData` (`src/services/productsService.ts`), `products.module.css`.
+- **Usado por:** `../../pages/products.md`.
 
 ## Notas
 

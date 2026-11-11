@@ -30,7 +30,7 @@ Os cadastros auxiliares tinham oito componentes quase idênticos: criação e ed
 
 - `CatalogEntityModal` cobre apenas campos de texto simples; formulários mais ricos continuam específicos.
 - A confirmação aninhada usa portal com z-index acima do modal (`--z-modal + 1`).
-- O modal genérico usa `produtos.module.css` até a extração de um módulo de modal compartilhado.
+- O modal genérico usa `products.module.css` até a extração de um módulo de modal compartilhado.
 
 ## Alternativas consideradas
 
@@ -44,5 +44,5 @@ Os cadastros auxiliares tinham oito componentes quase idênticos: criação e ed
 - `src/components/common/ConfirmDialog.tsx`
 - `src/components/products/ProductDeleteModal.tsx`
 - `src/types/catalog.ts`
-- `src/pages/cadastro.tsx`
+- `src/pages/registration.tsx`
 - `docs/src/components/catalog/CatalogEntityModal.md`

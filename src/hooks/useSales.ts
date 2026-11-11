@@ -5,7 +5,7 @@ import {
   deleteSale,
   DailySale,
   autoConsolidate
-} from '../services/vendasService';
+} from '../services/salesService';
 import { canEdit } from '../utils/edit';
 
 // Função que exibe mensagens (injetada pelo hook useToast)

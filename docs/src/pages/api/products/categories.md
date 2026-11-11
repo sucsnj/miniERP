@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/categorias.ts`
+# `src/pages/api/products/categorias.ts`
 
-> CRUD de categorias de produtos (`categorias` em `db/produtos.db`).
+> CRUD de categorias de produtos (`categorias` em `db/products.db`).
 
 ## O que faz
 
@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts`.
-- **Usado por:** `produtosService`; `../../cadastro.md` (modal de categoria).
+- **Usa:** `src/database/productsDb.ts`.
+- **Usado por:** `productsService`; `../../registration.md` (modal de categoria).
 
 ## Notas
 

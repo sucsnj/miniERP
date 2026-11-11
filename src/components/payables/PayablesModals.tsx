@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRef } from 'react';
-import styles from '../../styles/contas.module.css';
-import { AccountDetails } from '../../services/contasService';
+import styles from '../../styles/payables.module.css';
+import { AccountDetails } from '../../services/payablesService';
 import { formatCurrency } from '../../utils/formatter';
 import { useShortcuts } from '../../utils/shortcuts';
 import { useFocusTrap } from '../../utils/focus';

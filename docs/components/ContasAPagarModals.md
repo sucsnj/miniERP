@@ -44,7 +44,7 @@ interface ContasAPagarModalsProps {
 ## Dependências
 
 - `src/utils/shortcuts` (`useShortcuts`), `src/utils/focus` (`useFocusTrap`).
-- `src/utils/formatter` (`formatCurrency`), `src/services/contasService` (`ContaDetalhe`), `src/styles/contas.module.css`.
+- `src/utils/formatter` (`formatCurrency`), `src/services/payablesService` (`ContaDetalhe`), `src/styles/payables.module.css`.
 
 ## Observações
 

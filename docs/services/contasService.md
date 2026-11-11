@@ -1,4 +1,4 @@
-# `src/services/contasService.ts`
+# `src/services/payablesService.ts`
 
 ## Descrição
 

@@ -28,9 +28,9 @@ const Agenda: React.FC<AgendaProps> = ({ contasAno }) => ...
 ## Dependências
 
 - `@/components/OcrUpload`
-- `src/services/contasService` (tipo `ContaDetalhe`)
+- `src/services/payablesService` (tipo `ContaDetalhe`)
 - `src/utils/formatter` (`formatCurrency`) e `src/utils/date` (`formatDateString`, `toTimestamp`)
-- `src/styles/contas.module.css` (classes `contasPanel`, `agendaPanel`, `panelHeader`, `statusChip`, `proximasPanel`)
+- `src/styles/payables.module.css` (classes `contasPanel`, `agendaPanel`, `panelHeader`, `statusChip`, `proximasPanel`)
 
 ## Exemplo de uso
 
@@ -42,8 +42,8 @@ const Agenda: React.FC<AgendaProps> = ({ contasAno }) => ...
 
 - Embora o header diga "Atualização automática" (`statusChip`), não há polling/subscrição — o conteúdo reflete as props recebidas da página.
 - `contasMes` aparece no tipo e no uso da página mas é ignorado internamente (candidato a remoção).
-- Usado apenas em `src/pages/contas-a-pagar.tsx`.
+- Usado apenas em `src/pages/payables.tsx`.
 
 ## Uso
 
-- `src/pages/contas-a-pagar.tsx` (rolagem lateral à direita com as contas do mês).
+- `src/pages/payables.tsx` (rolagem lateral à direita com as contas do mês).

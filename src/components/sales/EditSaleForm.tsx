@@ -1,5 +1,5 @@
 import { FormEvent, useState, useEffect, useRef } from "react";
-import { fetchSaleItems, updateSale, DailySale, SaleItemData } from "../../services/vendasService";
+import { fetchSaleItems, updateSale, DailySale, SaleItemData } from "../../services/salesService";
 import CartModal from "@/components/cart/CartModal";
 import SelectItemsModal from "@/components/cart/SelectItemsModal";
 import { useCart } from "../../hooks/useCart";

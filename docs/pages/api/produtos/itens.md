@@ -1,14 +1,14 @@
-# `src/pages/api/produtos/itens.ts`
+# `src/pages/api/products/itens.ts`
 
 ## Descrição
 
-Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-e. Opera em dois modos definidos pelo body. Usa `db/produtos.db`.
+Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-e. Opera em dois modos definidos pelo body. Usa `db/products.db`.
 
 > Nota: apesar do nome, não faz CRUD — apenas pré-visualiza e importa produtos de NF-e.
 
 ## Métodos
 
-### `POST /api/produtos/itens` — Modo 1: Preview
+### `POST /api/products/itens` — Modo 1: Preview
 
 **Body:** `{ "preview": true, "xml": "<conteudo do XML>", ... }`.
 
@@ -26,7 +26,7 @@ Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-
   "tipoMovimentacao": "ENTRADA", "existe": false, "itemIdExistente": null }] }
 ```
 
-### `POST /api/produtos/itens` — Modo 2: Importar produto
+### `POST /api/products/itens` — Modo 2: Importar produto
 
 **Body:** `{ "importar": true, "produto": { ...campos do preview, ... } }`.
 

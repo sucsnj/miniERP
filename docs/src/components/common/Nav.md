@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Links para `/`, `/resumo`, `/historico`, `/contas-a-pagar`, `/tabela`, `/produtos`.
+- Links para `/`, `/resumo`, `/historico`, `/payables`, `/medicine-table`, `/products`.
 - Alterna tema em ciclo `system → light → dark`, aplicando `data-theme` em `document.documentElement` e persistindo em `localStorage['themeMode']`.
 
 ## Relações

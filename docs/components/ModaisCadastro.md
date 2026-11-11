@@ -4,7 +4,7 @@ Documenta os modais auxiliares do catálogo: CRUD de categorias/marcas/fornecedo
 
 ## Contexto
 
-São abertos pela página `/cadastro` (formulário de produto) e usam `src/styles/produtos.module.css` (`modalOverlay`/`modalContent`) + `useFocusTrap`. A maioria é **controlada**: só é montada quando a condição correspondente é verdadeira (Estado em `useCategoria`/`useMarca`/`useFornecedor`/`useUnidadeMedida`).
+São abertos pela página `/registration` (formulário de produto) e usam `src/styles/products.module.css` (`modalOverlay`/`modalContent`) + `useFocusTrap`. A maioria é **controlada**: só é montada quando a condição correspondente é verdadeira (Estado em `useCategoria`/`useMarca`/`useFornecedor`/`useUnidadeMedida`).
 
 ---
 
@@ -38,7 +38,7 @@ Cada entidade tem um par de modais: criação (campos obrigatórios marcados com
 
 ## `src/components/ModalImportItens.tsx`
 
-Importação de **produtos via XML de NF-e** (endpoint `POST /api/produtos/itens`).
+Importação de **produtos via XML de NF-e** (endpoint `POST /api/products/itens`).
 
 ### Props
 
@@ -53,9 +53,9 @@ interface ModalImportItensProps {
 ### Comportamento
 
 - Upload via **drag & drop** ou clique (aceita `.xml`). Ao soltar, dispara `processarArquivo` (para `initialFile`, roda via `useEffect` ao montar).
-- Preview: `POST /api/produtos/itens` com `{ xml, preview: true }` → lista de `ProdutoImportado` com status `idle`.
+- Preview: `POST /api/products/itens` com `{ xml, preview: true }` → lista de `ProdutoImportado` com status `idle`.
 - Cada linha tem `ItemNomeDropdown` (autocomplete com **debounce de 250ms**, busca `buscarProdutos` + `buscarServicos`, 8 resultados cada) para **vincular** o item da NF-e a um item existente.
-- Ações por linha: "Cadastro rápido" (abre `/cadastro?novoImport=1&nome=&precoCompra=&estoque=&unidade=&ean=&codigoInterno=` em nova aba) ou, se vincular a item existente, "Editar item" (`/cadastro?id=X`).
+- Ações por linha: "Cadastro rápido" (abre `/registration?novoImport=1&nome=&precoCompra=&estoque=&unidade=&ean=&codigoInterno=` em nova aba) ou, se vincular a item existente, "Editar item" (`/registration?id=X`).
 - Importação: itera os itens fazendo `POST` com `{ importar: true, produto }`; status final por item: `ok` | `duplicado` | `estoque_atualizado` | `erro`. Ao final, `onImportSuccess()` e banner com resumo.
 
 ### Tipos

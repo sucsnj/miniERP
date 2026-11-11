@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { DailySale } from '../../services/vendasService';
+import { DailySale } from '../../services/salesService';
 import { formatCurrency } from '../../utils/formatter';
 import { formatDateString } from '../../utils/date';
 import { canEdit } from '../../utils/edit';

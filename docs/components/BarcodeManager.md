@@ -28,8 +28,8 @@ Ultilizado durante o cadastro e edição de produtos.
 
 ## Dependências
 
-- `styles/produtos.module.css` (estilos).
-- `src/services/produtosService.ts` (tipos e dados).
+- `styles/products.module.css` (estilos).
+- `src/services/productsService.ts` (tipos e dados).
 - `@mui/icons-material` (ícones).
 
 ## Exemplo de uso

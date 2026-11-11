@@ -10,7 +10,7 @@
 
 ## Relações
 
-- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `MonthlySale` (`src/services/vendasService.ts`).
+- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `MonthlySale` (`src/services/salesService.ts`).
 - **Usado por:** páginas/componentes de consolidações mensais.
 
 ## Notas

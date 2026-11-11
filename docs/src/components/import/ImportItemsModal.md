@@ -5,7 +5,7 @@
 ## O que faz
 
 - Dropzone (drag&drop/clique, `.xml`), preview dos itens e tabela com status por linha.
-- Vincula cada item via [ItemNameDropdown](./ItemNameDropdown.md); "Cadastro rápido"/"Editar item" abrem `/cadastro` em nova aba.
+- Vincula cada item via [ItemNameDropdown](./ItemNameDropdown.md); "Cadastro rápido"/"Editar item" abrem `/registration` em nova aba.
 - "Importar N produto(s)" executa o lote, mostra o resumo final e chama `onImportSuccess()`.
 
 ```ts
@@ -18,10 +18,10 @@ interface ImportItemsModalProps {
 
 ## Relações
 
-- **Usa:** `useImportItems` (`src/hooks/useImportItems.ts`), [ItemNameDropdown](./ItemNameDropdown.md), `produtosService`, `modalImport.module.css`.
-- **Usado por:** `../../pages/cadastro.md`.
+- **Usa:** `useImportItems` (`src/hooks/useImportItems.ts`), [ItemNameDropdown](./ItemNameDropdown.md), `productsService`, `modalImport.module.css`.
+- **Usado por:** `../../pages/registration.md`.
 
 ## Notas
 
-- Refatorado de um módulo misto (~587 linhas): hook, dropdown e serviços foram extraídos; `ImportedProduct` foi para `produtosService.ts`.
+- Refatorado de um módulo misto (~587 linhas): hook, dropdown e serviços foram extraídos; `ImportedProduct` foi para `productsService.ts`.
 - Identificadores internos migrados para inglês (ADR 0004).

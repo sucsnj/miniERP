@@ -1,5 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from 'react';
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import MoreVert from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@/components/common/Button';

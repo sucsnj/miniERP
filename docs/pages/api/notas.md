@@ -38,4 +38,4 @@ Body: `{ id }`.
 
 - `id`/`valor` na query são convertidos com `parseInt`/`parseNumber` sem validação de erro — valores inválidos caem em 404 naturalmente.
 - Não há `PUT` para editar nota; a exclusão manual é o único caminho de correção (a reimportação no XML recria).
-- O cliente `src/services/notasService.ts` é usado apenas por `NotasDoMes.tsx`.
+- O cliente `src/services/invoicesService.ts` é usado apenas por `NotasDoMes.tsx`.

@@ -1,4 +1,4 @@
-# `src/services/notasService.ts`
+# `src/services/invoicesService.ts`
 
 ## Descrição
 
@@ -34,7 +34,7 @@ excluirNota(id: number): Promise<any>                                      // DE
 ## Observações
 
 - As funções **não verificam `response.ok`** (exceto o caso `404` isolado em `buscarNotaPorValor`); em erro 4xx/5xx lançam implicitamente apenas ao parsear JSON, sem mensagem amigável.
-- Não há função para inserir nota por aqui — a criação acontece indiretamente via `importarContasXML` em `contasService.ts` (que usa o endpoint `contas/import`).
+- Não há função para inserir nota por aqui — a criação acontece indiretamente via `importarContasXML` em `payablesService.ts` (que usa o endpoint `contas/import`).
 
 ## Uso
 

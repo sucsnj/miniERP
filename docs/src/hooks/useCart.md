@@ -12,7 +12,7 @@
 
 ## Relações
 
-- **Usa:** `fetchProducts`, `fetchServices` (`src/services/produtosService.ts`), `getCartSummary` (`src/utils/cart.ts`), `CartItem` (`src/types/sale.ts`).
+- **Usa:** `fetchProducts`, `fetchServices` (`src/services/productsService.ts`), `getCartSummary` (`src/utils/cart.ts`), `CartItem` (`src/types/sale.ts`).
 - **Usado por:** formulários de venda diária e de edição de venda.
 
 ## Notas

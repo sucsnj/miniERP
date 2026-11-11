@@ -1,12 +1,12 @@
-# `src/pages/api/produtos/movimentacoes.ts`
+# `src/pages/api/products/movimentacoes.ts`
 
 ## Descrição
 
-Endpoint de **movimentações de estoque** (`movimentacoes_estoque` em `db/produtos.db`).
+Endpoint de **movimentações de estoque** (`movimentacoes_estoque` em `db/products.db`).
 
 ## Métodos
 
-### `GET /api/produtos/movimentacoes?item_id=`
+### `GET /api/products/movimentacoes?item_id=`
 
 **Query obrigatória:** `item_id` (numérico).
 
@@ -24,7 +24,7 @@ Endpoint de **movimentações de estoque** (`movimentacoes_estoque` em `db/produ
 
 **400** se `item_id` ausente/NaN.
 
-### `POST /api/produtos/movimentacoes`
+### `POST /api/products/movimentacoes`
 
 **Body:**
 

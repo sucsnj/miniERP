@@ -1,8 +1,8 @@
-# `src/services/tabelaService.ts`
+# `src/services/medicineTableService.ts`
 
 ## Descrição
 
-Cliente HTTP da **tabela de medicamentos** — upload de planilha, busca, histórico e status via `/api/tabela`.
+Cliente HTTP da **tabela de medicamentos** — upload de planilha, busca, histórico e status via `/api/medicine-table`.
 
 ## Tipos
 
@@ -40,11 +40,11 @@ interface TabelaStatusResponse {
 ## Funções
 
 ```ts
-uploadTabela(formData: FormData): Promise<any>                  // POST /api/tabela (multipart, campo 'file')
-searchTabela(query: string): Promise<TabelaSearchResponse>     // GET /api/tabela?query=...
-fetchTabelaHistory(): Promise<TabelaSearchHistoryItem[]>       // GET /api/tabela?history=1
-clearTabelaHistory(): Promise<any>                             // DELETE /api/tabela
-fetchTabelaStatus(): Promise<TabelaStatusResponse>             // GET /api/tabela?status=1
+uploadTabela(formData: FormData): Promise<any>                  // POST /api/medicine-table (multipart, campo 'file')
+searchTabela(query: string): Promise<TabelaSearchResponse>     // GET /api/medicine-table?query=...
+fetchTabelaHistory(): Promise<TabelaSearchHistoryItem[]>       // GET /api/medicine-table?history=1
+clearTabelaHistory(): Promise<any>                             // DELETE /api/medicine-table
+fetchTabelaStatus(): Promise<TabelaStatusResponse>             // GET /api/medicine-table?status=1
 ```
 
 ## Comportamentos
@@ -63,4 +63,4 @@ fetchTabelaStatus(): Promise<TabelaStatusResponse>             // GET /api/tabel
 
 ## Uso
 
-- `src/pages/tabela.tsx` (upload, busca, histórico, limpeza e status).
+- `src/pages/medicine-table.tsx` (upload, busca, histórico, limpeza e status).

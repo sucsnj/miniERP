@@ -3,7 +3,7 @@ import {
   fetchAllMonthly,
   deleteMonthly,
   MonthlySale,
-} from '../services/vendasService';
+} from '../services/salesService';
 
 // Função que exibe mensagens (injetada pelo hook useToast)
 type ToastFn = (message: string, type: 'success' | 'error' | 'info', duration?: number | null) => void;

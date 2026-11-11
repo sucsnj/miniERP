@@ -73,7 +73,7 @@ A validação é centralizada em `src/utils/env.ts` e falha na primeira leitura 
 ## Vercel
 
 - O Supabase elimina a restrição do SQLite; as API routes com `service role` funcionam em serverless.
-- OCR/PDF será removido (ADR 0012). O upload XLSX de `/tabela` usa `multer` em `uploads/` e precisará gravar em `/tmp` ou Supabase Storage.
+- OCR/PDF será removido (ADR 0012). O upload XLSX de `/medicine-table` usa `multer` em `uploads/` e precisará gravar em `/tmp` ou Supabase Storage.
 - Autenticação/proteção do app fica para uma fase posterior.
 
 ## Estado da migração

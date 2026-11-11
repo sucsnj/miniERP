@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { AccountDetails } from '../../services/contasService';
+import { AccountDetails } from '../../services/payablesService';
 import { formatDateString } from '../../utils/date';
 import { formatCurrency } from '../../utils/formatter';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';

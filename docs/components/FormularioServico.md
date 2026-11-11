@@ -6,7 +6,7 @@ Formulário de cadastro/edição de um serviço do catálogo. Exibe os campos de
 
 ## Contexto
 
-Renderizado por `FormularioItem` quando `form.tipo === 'SERVICO'` na página `/produtos`. É o análogo de `FormularioProduto` para serviços.
+Renderizado por `FormularioItem` quando `form.tipo === 'SERVICO'` na página `/products`. É o análogo de `FormularioProduto` para serviços.
 
 ## Responsabilidades
 
@@ -41,7 +41,7 @@ const FormularioServico: React.FC<FormularioServicoProps>;
 
 ## Dependências
 
-- `styles/produtos.module.css`.
+- `styles/products.module.css`.
 - `parseNumber` (`src/utils/number`) e `formatCurrencyNumber` (`src/utils/formatter`).
 - Ícones MUI (`MoreVert`, `Add`).
 

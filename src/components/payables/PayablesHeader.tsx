@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import { formatMonthName } from '../../utils/date';
 import { capitalize } from '../../utils/captalize';
 import { now } from '../../utils/date';

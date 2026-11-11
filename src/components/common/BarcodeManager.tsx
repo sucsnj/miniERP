@@ -1,11 +1,11 @@
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import Button from '@/components/common/Button';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   BarcodeData,
-} from '../../services/produtosService';
+} from '../../services/productsService';
 
 export interface BarcodeManagerData {
   barcodes: BarcodeData[];

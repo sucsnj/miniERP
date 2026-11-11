@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import styles from '../styles/produtos.module.css';
+import styles from '../styles/products.module.css';
 import Button from '@/components/common/Button';
 import { useToast } from '../hooks/useToast';
 import {
@@ -22,7 +22,7 @@ import {
     ServiceData,
     BarcodeData,
     StockMovementData,
-} from '../services/produtosService';
+} from '../services/productsService';
 import { parseNumber } from '../utils/number';
 import { validateNumber, validateRequired } from '../utils/validation';
 import BarcodeManager from '@/components/common/BarcodeManager';
@@ -352,7 +352,7 @@ const RegistrationPage: React.FC = () => {
         setStockMovements([]);
         setStockAdjustModalOpen(false);
         // Remove o ?id da URL sem recarregar a página
-        router.replace('/cadastro', undefined, { shallow: true });
+        router.replace('/registration', undefined, { shallow: true });
     };
 
     const loadMovements = async (itemId: string) => {
@@ -529,7 +529,7 @@ const RegistrationPage: React.FC = () => {
             // Limpa dirty antes de navegar para não disparar o guard
             setIsDirty(false);
             skipDirtyGuard.current = true;
-            setTimeout(() => router.push('/produtos'), 2000);
+            setTimeout(() => router.push('/products'), 2000);
         } catch (error) {
             showToast(error instanceof Error ? error.message : 'Erro ao salvar o item.', 'error');
         }

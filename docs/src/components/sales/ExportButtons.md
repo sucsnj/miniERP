@@ -18,7 +18,7 @@ interface ExportButtonsProps {
 
 ## Relações
 
-- **Usa:** `vendasService` (`src/services/vendasService.ts`), `parseNumber` (`src/utils/number.ts`), `parseDate` (`src/utils/date.ts`).
+- **Usa:** `salesService` (`src/services/salesService.ts`), `parseNumber` (`src/utils/number.ts`), `parseDate` (`src/utils/date.ts`).
 - **Usado por:** `../../pages/index.md`.
 
 ## Notas

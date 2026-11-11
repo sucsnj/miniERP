@@ -17,4 +17,4 @@ Gera o backup.
 ## Observações
 
 - Único método aceito é `POST`; outros retornam **405**.
-- Consumido por `fazerBackup` em `src/services/vendasService.ts`.
+- Consumido por `fazerBackup` em `src/services/salesService.ts`.

@@ -8,7 +8,7 @@
 
 import { useMemo, useRef } from 'react';
 import { useFocusTrap } from '../../utils/focus';
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import importStyles from '../../styles/modalImport.module.css';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CloseIcon from '@mui/icons-material/Close';

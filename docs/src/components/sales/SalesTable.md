@@ -18,8 +18,8 @@ interface SalesTableProps {
 
 ## Relações
 
-- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency`/`formatDateString`/`toTimestamp` (`src/utils/`), `canEdit` (`src/utils/edit.ts`), `contas.module.css`.
-- **Usado por:** `../../pages/historico.md`; no dashboard o uso está comentado.
+- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency`/`formatDateString`/`toTimestamp` (`src/utils/`), `canEdit` (`src/utils/edit.ts`), `payables.module.css`.
+- **Usado por:** `../../pages/history.md`; no dashboard o uso está comentado.
 
 ## Notas
 

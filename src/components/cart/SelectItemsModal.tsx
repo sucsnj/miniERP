@@ -12,7 +12,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { formatCurrency } from '../../utils/formatter';
 import { getCartSummary } from '../../utils/cart';
 import { CartModalShell } from './CartModalShell';
-import { ItemData } from '../../services/produtosService';
+import { ItemData } from '../../services/productsService';
 import type { CartItem } from '../../types/sale';
 import styles from '../../styles/selectItemsModal.module.css';
 import Button from '@/components/common/Button';

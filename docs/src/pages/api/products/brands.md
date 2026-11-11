@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/marcas.ts`
+# `src/pages/api/products/marcas.ts`
 
-> CRUD de marcas (`marcas` em `db/produtos.db`).
+> CRUD de marcas (`marcas` em `db/products.db`).
 
 ## O que faz
 
@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts`.
-- **Usado por:** `produtosService`; `../../cadastro.md` (modal de marca).
+- **Usa:** `src/database/productsDb.ts`.
+- **Usado por:** `productsService`; `../../registration.md` (modal de marca).
 
 ## Notas
 

@@ -19,7 +19,7 @@ interface ServiceFormProps {
 
 ## Relações
 
-- **Usa:** tipos de [ProductForm](./ProductForm.md), `number.ts`, `formatter.tsx`, `produtos.module.css`.
+- **Usa:** tipos de [ProductForm](./ProductForm.md), `number.ts`, `formatter.tsx`, `products.module.css`.
 - **Usado por:** [ItemForm](./ItemForm.md) quando `form.type === 'SERVICO'`.
 
 ## Notas

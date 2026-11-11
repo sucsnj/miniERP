@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/servicos.ts`
+# `src/pages/api/products/servicos.ts`
 
-> REST de serviços do catálogo (`servicos` em `db/produtos.db`).
+> REST de serviços do catálogo (`servicos` em `db/products.db`).
 
 ## O que faz
 
@@ -15,8 +15,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts` (`getServices`, `insertService`, `updateService`, `deleteService`).
-- **Usado por:** `produtosService`; `../../produtos.md` e `../../cadastro.md`.
+- **Usa:** `src/database/productsDb.ts` (`getServices`, `insertService`, `updateService`, `deleteService`).
+- **Usado por:** `productsService`; `../../products.md` e `../../registration.md`.
 
 ## Notas
 

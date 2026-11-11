@@ -20,8 +20,8 @@ interface ProductListProps {
 
 ## Relações
 
-- **Usa:** `ItemData` (`src/services/produtosService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `produtos.module.css`, ícones MUI.
-- **Usado por:** `../../pages/produtos.md`.
+- **Usa:** `ItemData` (`src/services/productsService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `products.module.css`, ícones MUI.
+- **Usado por:** `../../pages/products.md`.
 
 ## Notas
 

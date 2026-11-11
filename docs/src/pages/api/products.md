@@ -1,6 +1,6 @@
-# `src/pages/api/produtos.ts`
+# `src/pages/api/products.ts`
 
-> REST do catálogo de produtos (`db/produtos.db`): CRUD, filtros e toggle de status. Apenas tipo `PRODUTO`.
+> REST do catálogo de produtos (`db/products.db`): CRUD, filtros e toggle de status. Apenas tipo `PRODUTO`.
 
 ## O que faz
 
@@ -11,10 +11,10 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts`, `parseNumber` de `src/utils/number.ts`.
-- **Usado por:** `produtosService`; `../produtos.md` e `../cadastro.md`.
+- **Usa:** `src/database/productsDb.ts`, `parseNumber` de `src/utils/number.ts`.
+- **Usado por:** `productsService`; `../products.md` e `../registration.md`.
 
 ## Notas
 
-- Serviços usam `./produtos/servicos.md`.
+- Serviços usam `./products/servicos.md`.
 - `codigos_barras`/`unidades_medida` são opcionais; é garantido exatamente um principal.

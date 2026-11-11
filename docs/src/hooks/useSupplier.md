@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `fetchSuppliers`, `createSupplier`, `deleteSupplier`, `updateSupplier` (`src/services/produtosService.ts`), `SupplierFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
-- **Usado por:** [cadastro](../pages/cadastro.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
+- **Usa:** `fetchSuppliers`, `createSupplier`, `deleteSupplier`, `updateSupplier` (`src/services/productsService.ts`), `SupplierFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
+- **Usado por:** [cadastro](../pages/registration.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
 
 ## Notas
 

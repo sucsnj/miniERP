@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import importStyles from '../../styles/modalImport.module.css';
 import ProductForm from './ProductForm';
 import ServiceForm from './ServiceForm';

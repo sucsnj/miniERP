@@ -17,5 +17,5 @@ Busca os itens associados a uma venda.
 ## Observações
 
 - Única operação exposta é `GET`; outros métodos retornam **405**.
-- Usado pelo serviço `buscarVendaItens` em `src/services/vendasService.ts`.
+- Usado pelo serviço `buscarVendaItens` em `src/services/salesService.ts`.
 - Persistência em `getVendaItens` de `src/database/db.ts`.

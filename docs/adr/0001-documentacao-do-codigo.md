@@ -11,7 +11,7 @@ _Status: em andamento (bloco 1 — Vendas/Dashboard — em execução; validaç�
 ## Decisão
 
 - Documentar o código em **blocos por domínio de negócio**:
-  1. **Vendas/Dashboard** — página `index`, APIs (`vendas`, `venda-itens`, `mensais`, `backup`), `vendasService`, `db` (vendas), componentes de venda, hooks e **PIX** + formulários de item/serviço.
+  1. **Vendas/Dashboard** — página `index`, APIs (`vendas`, `venda-itens`, `mensais`, `backup`), `salesService`, `db` (vendas), componentes de venda, hooks e **PIX** + formulários de item/serviço.
   2. Produtos/Estoque.
   3. Contas a pagar.
   4. OCR/Tabela/Notas e demais áreas.

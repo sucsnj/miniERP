@@ -18,7 +18,7 @@ interface DailySalesTotalProps {
 
 ## Relações
 
-- **Usa:** `DailySale` (`src/services/vendasService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString` (`src/utils/date.ts`), `canEdit` (`src/utils/edit.ts`), `useShortcuts`.
+- **Usa:** `DailySale` (`src/services/salesService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString` (`src/utils/date.ts`), `canEdit` (`src/utils/edit.ts`), `useShortcuts`.
 - **Usado por:** `../../pages/index.md`.
 
 ## Notas

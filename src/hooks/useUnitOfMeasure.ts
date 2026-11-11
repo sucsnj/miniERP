@@ -4,7 +4,7 @@ import {
   createUnitOfMeasure,
   deleteUnitOfMeasure,
   updateUnitOfMeasure,
-} from '../services/produtosService';
+} from '../services/productsService';
 import { ProductFormData } from '@/components/products/ProductForm';
 import { ProductOptions } from '@/components/products/ProductForm';
 import { UnitOfMeasureFormData } from '@/types/catalog';

@@ -1,12 +1,12 @@
-# `src/database/tabelaDb.ts`
+# `src/database/medicine-tableDb.ts`
 
 ## Descrição
 
-Módulo de persistência do **histórico/cache de buscas** da tabela de medicamentos — banco SQLite `db/tabela.db` via `better-sqlite3`. Singleton criado no import do módulo.
+Módulo de persistência do **histórico/cache de buscas** da tabela de medicamentos — banco SQLite `db/medicine-table.db` via `better-sqlite3`. Singleton criado no import do módulo.
 
 ## Conexão e tabela
 
-- `dbPath = db/tabela.db`; `PRAGMA journal_mode = WAL` e `PRAGMA synchronous = FULL`.
+- `dbPath = db/medicine-table.db`; `PRAGMA journal_mode = WAL` e `PRAGMA synchronous = FULL`.
 - Tabela `tabela_search_history`:
 
 ```
@@ -38,4 +38,4 @@ pruneTabelaSearchHistory(): better-sqlite3.RunResult                  // não ex
 
 - O limite real mantido no banco é **25** consultas; a página `tabela.tsx` exibe o texto "Últimas 100 buscas gravadas no cache" — **discrepância entre UI e persistência** (a UI nunca chega a 100, pois o prune corta em 25).
 - `result_json` guarda o array cru de resultados em texto — eficiente para cache, porém sem schema/tipagem ao ler de volta (`JSON.parse` na API).
-- Consumido exclusivamente por `src/pages/api/tabela.ts`.
+- Consumido exclusivamente por `src/pages/api/medicine-table.ts`.

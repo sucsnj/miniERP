@@ -6,7 +6,7 @@ Componente wrapper do formulário de cadastro/edição de itens do catálogo. Al
 
 ## Contexto
 
-Usado na página `/produtos` (bloco Produtos/Estoque) no topo do formulário de cadastro/edição. Os fields `options` e `actions` são compartilhados entre produto e serviço.
+Usado na página `/products` (bloco Produtos/Estoque) no topo do formulário de cadastro/edição. Os fields `options` e `actions` são compartilhados entre produto e serviço.
 
 ## Responsabilidades
 
@@ -43,7 +43,7 @@ const FormularioItem: React.FC<FormularioItemProps>;
 ## Dependências
 
 - `FormularioProduto`, `FormularioServico`.
-- `styles/produtos.module.css`, `styles/modalImport.module.css`.
+- `styles/products.module.css`, `styles/modalImport.module.css`.
 - Ícone MUI (`ImportExportIcon`).
 
 ## Observações

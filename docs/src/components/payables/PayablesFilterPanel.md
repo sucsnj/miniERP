@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `AccountDetails`, `formatCurrency` (`src/utils/formatter.tsx`), `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md` (recebe `filteredAccounts` já filtradas).
+- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `AccountDetails`, `formatCurrency` (`src/utils/formatter.tsx`), `payables.module.css`.
+- **Usado por:** `../../pages/payables.md` (recebe `filteredAccounts` já filtradas).
 
 ## Notas
 

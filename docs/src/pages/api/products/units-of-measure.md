@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/unidades-medida.ts`
+# `src/pages/api/products/unidades-medida.ts`
 
-> CRUD de unidades de medida (`unidades_medida` em `db/produtos.db`).
+> CRUD de unidades de medida (`unidades_medida` em `db/products.db`).
 
 ## O que faz
 
@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts`.
-- **Usado por:** `produtosService`; `../../cadastro.md` (modal de unidade de medida).
+- **Usa:** `src/database/productsDb.ts`.
+- **Usado por:** `productsService`; `../../registration.md` (modal de unidade de medida).
 
 ## Notas
 

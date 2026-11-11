@@ -51,24 +51,24 @@ const Nav: React.FC = () => {
           <span className="text-responsive"><Link href="/">Dashboard</Link></span>
         </div>
         <div className={styles.navItem}>
-          <span className="icon"><Link href="/resumo"><BarChartIcon /></Link></span>
-          <span className="text-responsive"><Link href="/resumo">Resumo Mensal</Link></span>
+          <span className="icon"><Link href="/summary"><BarChartIcon /></Link></span>
+          <span className="text-responsive"><Link href="/summary">Resumo Mensal</Link></span>
         </div>
         <div className={styles.navItem}>
-          <span className="icon"><Link href="/historico"><HistoryIcon /></Link></span>
-          <span className="text-responsive"><Link href="/historico">Histórico</Link></span>
+          <span className="icon"><Link href="/history"><HistoryIcon /></Link></span>
+          <span className="text-responsive"><Link href="/history">Histórico</Link></span>
         </div>
         <div className={styles.navItem}>
-          <span className="icon"><Link href="/contas-a-pagar"><AccountBalanceIcon /></Link></span>
-          <span className="text-responsive"><Link href="/contas-a-pagar">Contas</Link></span>
+          <span className="icon"><Link href="/payables"><AccountBalanceIcon /></Link></span>
+          <span className="text-responsive"><Link href="/payables">Contas</Link></span>
         </div>
         <div className={styles.navItem}>
-          <span className="icon"><Link href="/tabela"><TableChartIcon /></Link></span>
-          <span className="text-responsive"><Link href="/tabela">Tabela</Link></span>
+          <span className="icon"><Link href="/medicine-table"><TableChartIcon /></Link></span>
+          <span className="text-responsive"><Link href="/medicine-table">Tabela</Link></span>
         </div>
         <div className={styles.navItem}>
-          <span className="icon"><Link href="/produtos"><InventoryIcon /></Link></span>
-          <span className="text-responsive"><Link href="/produtos">Produtos e Serviços</Link></span>
+          <span className="icon"><Link href="/products"><InventoryIcon /></Link></span>
+          <span className="text-responsive"><Link href="/products">Produtos e Serviços</Link></span>
         </div>
       </div>
 

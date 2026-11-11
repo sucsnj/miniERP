@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import importStyles from '../../styles/modalImport.module.css';
-import { fetchProducts, fetchServices } from '../../services/produtosService';
+import { fetchProducts, fetchServices } from '../../services/productsService';
 import type { ItemWithStatus } from '../../hooks/useImportItems';
 
 export interface SuggestionItem {

@@ -20,7 +20,7 @@ interface BarcodeManagerProps {
 
 ## Relações
 
-- **Usa:** `BarcodeData` (`src/services/produtosService.ts`), `produtos.module.css`, ícones MUI (`Star`, `StarBorder`, `Close`).
+- **Usa:** `BarcodeData` (`src/services/productsService.ts`), `products.module.css`, ícones MUI (`Star`, `StarBorder`, `Close`).
 - **Usado por:** formulário de cadastro/edição de produtos.
 
 ## Notas

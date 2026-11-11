@@ -43,7 +43,7 @@ interface ContasAPagarFilterPanelProps {
 ## Dependências
 
 - `src/utils/date` (`formatDateString`), `src/utils/formatter` (`formatCurrency`).
-- `ConfirmDialog`, `src/styles/contas.module.css`, `@mui/icons-material` (`Visibility`, `Delete`, `MonetizationOn`, `CheckCircle`, `Cancel`, `HighlightOff`, `ClearAll`).
+- `ConfirmDialog`, `src/styles/payables.module.css`, `@mui/icons-material` (`Visibility`, `Delete`, `MonetizationOn`, `CheckCircle`, `Cancel`, `HighlightOff`, `ClearAll`).
 
 ## Observações
 

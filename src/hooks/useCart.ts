@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchProducts, fetchServices, ItemData, ServiceData } from '../services/produtosService';
+import { fetchProducts, fetchServices, ItemData, ServiceData } from '../services/productsService';
 import { getCartSummary } from '../utils/cart';
 import type { CartItem } from '../types/sale';
 

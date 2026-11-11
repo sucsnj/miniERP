@@ -10,7 +10,7 @@
 ## Relações
 
 - **Usa:** `getSaleItems` de `src/database/db.ts`.
-- **Usado por:** `fetchSaleItems` em `vendasService`; `./vendas.md` e `../historico.md`.
+- **Usado por:** `fetchSaleItems` em `salesService`; `./vendas.md` e `../historico.md`.
 
 ## Notas
 

@@ -40,10 +40,10 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 - `/` — dashboard de vendas do mês: formulário, gráfico, totais, edição e backup.
 - `/historico` — histórico e busca de vendas passadas.
 - `/resumo` — consolidação mensal e totais.
-- `/contas-a-pagar` — gestão e importação de contas a pagar.
-- `/tabela` — upload e consulta da tabela de medicamentos.
-- `/produtos` — catálogo, estoque, preços e movimentações.
-- `/cadastro` — cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida, etc.).
+- `/payables` — gestão e importação de contas a pagar.
+- `/medicine-table` — upload e consulta da tabela de medicamentos.
+- `/products` — catálogo, estoque, preços e movimentações.
+- `/registration` — cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida, etc.).
 
 ## Tema → Documentos para ler
 
@@ -51,16 +51,16 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | --- | --- |
 | Alinhamento / domínio / refatoração | `docs/ALIGNMENT.md` (domínio, usuários, fluxos, pontos de atenção) |
 | Arquitetura geral / fluxo de dados | `docs/DOCS.md` |
-| Dashboard / vendas do dia | `docs/src/pages/index.md`, `docs/src/pages/api/sales.md`, `docs/src/pages/api/sale-items.md`, `docs/src/services/vendasService.md` |
-| Histórico / relatórios | `docs/src/pages/historico.md`, `docs/src/pages/resumo.md`, `docs/src/pages/api/monthly-sales.md` |
-| Contas a pagar | `docs/src/pages/contas-a-pagar.md`, `docs/src/database/contasDb.md`, `docs/src/services/contasService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
-| Produtos / estoque | `docs/src/pages/produtos.md`, `docs/src/database/produtosDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/produtos/*.md`, `docs/src/services/produtosService.md` |
-| Cadastros auxiliares | `docs/src/pages/cadastro.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
+| Dashboard / vendas do dia | `docs/src/pages/index.md`, `docs/src/pages/api/sales.md`, `docs/src/pages/api/sale-items.md`, `docs/src/services/salesService.md` |
+| Histórico / relatórios | `docs/src/pages/history.md`, `docs/src/pages/summary.md`, `docs/src/pages/api/monthly-sales.md` |
+| Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
+| Produtos / estoque | `docs/src/pages/products.md`, `docs/src/database/productsDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/products/*.md`, `docs/src/services/productsService.md` |
+| Cadastros auxiliares | `docs/src/pages/registration.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |
 | Formulários de venda (dia/item) | `docs/src/components/sales/DailySaleForm.md`, `docs/src/components/products/ItemForm.md`, `docs/src/components/sales/EditSaleForm.md` |
 | OCR / importação | `docs/src/pages/api/ocr.md`, `docs/src/services/ocrService.md`, `docs/src/services/pdfService.md`, `docs/src/components/import/OcrUpload.md` |
-| Tabela de medicamentos | `docs/src/pages/tabela.md`, `docs/src/database/tabelaDb.md` |
+| Tabela de medicamentos | `docs/src/pages/medicine-table.md`, `docs/src/database/medicine-tableDb.md` |
 | Notas fiscais | `docs/src/pages/api/invoices.md`, `docs/src/database/notasDb.md` |
 | Backup | `docs/src/pages/api/backup.md`, `docs/src/pages/api/contas/backup.md` |
 | Componente/hook/util específico | navegar em `docs/src/` pelo mesmo caminho do arquivo em `src/` |

@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Constantes de **dados iniciais (seeders)** usadas pelo módulo de catálogo `src/database/produtosDb.ts` para popular, na primeira inicialização, tabelas de cadastro auxiliar do banco `db/produtos.db`.
+Constantes de **dados iniciais (seeders)** usadas pelo módulo de catálogo `src/database/productsDb.ts` para popular, na primeira inicialização, tabelas de cadastro auxiliar do banco `db/products.db`.
 
 ## Constantes exportadas
 

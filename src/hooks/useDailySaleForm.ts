@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { registerSale } from '../services/vendasService';
+import { registerSale } from '../services/salesService';
 import { useShortcuts } from '../utils/shortcuts';
 import {
   validateRequired,

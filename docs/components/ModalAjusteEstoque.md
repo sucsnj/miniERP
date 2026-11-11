@@ -33,7 +33,7 @@ Usado para realizar ajustes no estoque de produtos/serviços.
 
 ## Dependências
 
-- `services/produtosService.ts`: Para obter o histórico de movimentações.
+- `services/productsService.ts`: Para obter o histórico de movimentações.
 - `utils/focus.ts`: Para focar no campo de quantidade.
 
 ## Exemplo de uso

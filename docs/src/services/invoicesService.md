@@ -1,4 +1,4 @@
-# `src/services/notasService.ts`
+# `src/services/invoicesService.ts`
 
 > Cliente HTTP via `fetch` para o domínio de notas fiscais (endpoint interno `/api/notas`).
 

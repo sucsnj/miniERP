@@ -33,4 +33,4 @@ copiarConteudo(texto)                                   // navigator.clipboard.w
 
 ## Uso
 
-- `src/pages/contas-a-pagar.tsx` (via `Agenda` → bloco "Leitura de Contas").
+- `src/pages/payables.tsx` (via `Agenda` → bloco "Leitura de Contas").

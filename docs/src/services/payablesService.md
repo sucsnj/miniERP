@@ -1,4 +1,4 @@
-# `src/services/contasService.ts`
+# `src/services/payablesService.ts`
 
 > Cliente HTTP via `fetch` para o domínio de contas a pagar (endpoints internos `/api/contas*`).
 
@@ -11,7 +11,7 @@
 ## Relações
 
 - **Usa:** [`/api/contas`](../pages/api/payables.md), [`/api/contas/import`](../pages/api/payables/import.md)
-- **Usado por:** componentes/páginas de Contas a Pagar ([`docs/src/pages/contas-a-pagar.md`](../pages/contas-a-pagar.md))
+- **Usado por:** componentes/páginas de Contas a Pagar ([`docs/src/pages/payables.md`](../pages/payables.md))
 
 ## Notas
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useFocusTrap } from '../../utils/focus';
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import styles from '../styles/produtos.module.css';
+import styles from '../styles/products.module.css';
 import { useToast } from '../hooks/useToast';
 import {
   fetchProducts,
@@ -16,7 +16,7 @@ import {
   deleteService,
   ItemData,
   ServiceData,
-} from '../services/produtosService';
+} from '../services/productsService';
 import { ProductOptions } from '@/components/products/ProductForm';
 import ProdutosList from '@/components/products/ProductList';
 import ProductFilters from '@/components/products/ProductFilters';
@@ -174,10 +174,10 @@ const ProductsPage: React.FC = () => {
     setPage(1);
   };
 
-  // Navega para /cadastro?id=X para editar o item
+  // Navega para /registration?id=X para editar o item
   const handleEditClick = (item: ItemData) => {
     router.push({
-      pathname: '/cadastro',
+      pathname: '/registration',
       query: { id: item.id },
     });
   };
@@ -285,7 +285,7 @@ const ProductsPage: React.FC = () => {
         )}
 
         {/* Botão flutuante: Novo Cadastro */}
-        <Link href="/cadastro" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
+        <Link href="/registration" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
           <span className={styles.fabIcon}>+</span>
         </Link>
       </PageShell>

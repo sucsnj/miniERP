@@ -12,7 +12,7 @@
 ## Relações
 
 - **Usa:** `contasDb`, `notasDb`, `xml2js`, `number`/`date` (`parseCurrency`, `toDate`).
-- **Usado por:** `../../contas-a-pagar.md` (`fetch('/api/contas/import')`).
+- **Usado por:** `../../payables.md` (`fetch('/api/contas/import')`).
 
 ## Notas
 

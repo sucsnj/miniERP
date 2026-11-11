@@ -33,7 +33,7 @@ Utilizado para facilitar a busca de produtos/serviços cadastrados.
 
 ## Dependências
 
-- `src/services/produtosService.ts` (tipos e dados).
+- `src/services/productsService.ts` (tipos e dados).
 
 ## Exemplo de uso
 

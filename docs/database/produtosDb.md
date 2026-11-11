@@ -1,12 +1,12 @@
-# `src/database/produtosDb.ts`
+# `src/database/productsDb.ts`
 
 ## Descrição
 
-Módulo de persistência do catálogo em `db/produtos.db` (SQLite via `better-sqlite3`). Gerencia produtos, serviços, categorias, marcas, fornecedores, unidades de medida, códigos de barras, unidades alternativas e movimentações de estoque.
+Módulo de persistência do catálogo em `db/products.db` (SQLite via `better-sqlite3`). Gerencia produtos, serviços, categorias, marcas, fornecedores, unidades de medida, códigos de barras, unidades alternativas e movimentações de estoque.
 
 ## Contexto
 
-Usado pelos endpoints em `src/pages/api/produtos*` e pela importação de XML NF-e (`itens.ts`). É o banco mais "padrão relacional" do projeto (joins e FKs ativas).
+Usado pelos endpoints em `src/pages/api/products*` e pela importação de XML NF-e (`itens.ts`). É o banco mais "padrão relacional" do projeto (joins e FKs ativas).
 
 ## Configuração da conexão
 
@@ -139,4 +139,4 @@ interface ItemUnidadeData {
 - Migração histórica: `itens` já aceitou `tipo='SERVICO'`; o código reconstrói a tabela (`itens_legacy` → nova `itens`) removendo serviços e mantendo apenas `PRODUTO`.
 - Existe `CREATE TABLE servicos` duplicado no mesmo `db.exec` (redeclaração intencional? aparecem duas definições idênticas nos fontes) — inofensiva pois é `IF NOT EXISTS`, mas merece revisão.
 - O `checkbox ativo` foi removido da tabela `servicos` (DROP COLUMN aplicado de forma compatível).
-- `DTO`s de `produtosDb` usam `any` em muitos retornos (categorias, marcas, itens) apesar de existirem interfaces `ServicoData`/`MovimentacaoEstoqueData`. Navios tipos são redefinidos também em `produtosService.ts`.
+- `DTO`s de `produtosDb` usam `any` em muitos retornos (categorias, marcas, itens) apesar de existirem interfaces `ServicoData`/`MovimentacaoEstoqueData`. Navios tipos são redefinidos também em `productsService.ts`.

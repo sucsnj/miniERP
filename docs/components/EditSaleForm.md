@@ -67,7 +67,7 @@ Ao salvar, o carrinho é enviado como:
 
 ## Dependências
 
-- `vendasService` (`buscarVendaItens`, `atualizarVenda`).
+- `salesService` (`buscarVendaItens`, `atualizarVenda`).
 - `ModalCarrinho`, `ModalSelecionarItens`.
 - `useCart` (estado e ações do carrinho compartilhadas com `DailySaleForm`).
 - `parseNumber` (`src/utils/number`).

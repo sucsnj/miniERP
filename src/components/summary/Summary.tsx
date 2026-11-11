@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import styles from '../../styles/contas.module.css';
+import styles from '../../styles/payables.module.css';
 import Panel from '@/components/common/Panel';
-import { AccountDetails } from '../../services/contasService';
+import { AccountDetails } from '../../services/payablesService';
 import MonthlyConsolidation from './MonthlyConsolidation';
 import TotalsByDistributor from './TotalsByDistributor';
 import MonthNotes from './MonthNotes';

@@ -28,7 +28,7 @@ interface ContasAPagarLastTenProps {
 ## Dependências
 
 - `src/utils/date` (`formatDateString`), `src/utils/formatter` (`formatCurrency`).
-- `ConfirmDialog`, `src/styles/contas.module.css`, `@mui/icons-material` (`Visibility`, `Delete`, `Edit`).
+- `ConfirmDialog`, `src/styles/payables.module.css`, `@mui/icons-material` (`Visibility`, `Delete`, `Edit`).
 
 ## Observações
 

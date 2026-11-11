@@ -5,7 +5,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { formatCurrency } from '../../utils/formatter';
 import { useDailySaleForm } from '../../hooks/useDailySaleForm';
 import Button from '@/components/common/Button';
-import type { DailySale } from '../../services/vendasService';
+import type { DailySale } from '../../services/salesService';
 import CartModal from '@/components/cart/CartModal';
 import PixModal from '@/components/pix/PixModal';
 import SelectItemsModal from '@/components/cart/SelectItemsModal';

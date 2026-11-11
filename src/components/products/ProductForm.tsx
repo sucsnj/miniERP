@@ -1,4 +1,4 @@
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVert from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
@@ -17,7 +17,7 @@ import {
     BrandData,
     UnitOfMeasureData,
     SupplierData
-} from '../../services/produtosService';
+} from '../../services/productsService';
 
 export interface ProductFormData {
     type: 'PRODUTO' | 'SERVICO';

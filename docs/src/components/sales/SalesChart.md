@@ -13,7 +13,7 @@ interface SalesChartProps { data: DailySale[]; }
 
 ## Relações
 
-- **Usa:** `recharts`, `DailySale` (`src/services/vendasService.ts`), `formatCurrency`/`formatCurrencyNumber` (`src/utils/formatter.tsx`).
+- **Usa:** `recharts`, `DailySale` (`src/services/salesService.ts`), `formatCurrency`/`formatCurrencyNumber` (`src/utils/formatter.tsx`).
 - **Usado por:** `../../pages/index.md`.
 
 ## Notas

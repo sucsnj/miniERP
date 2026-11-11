@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { DailySale } from '../../services/vendasService';
+import { DailySale } from '../../services/salesService';
 import Button from '@/components/common/Button';
 import { formatCurrency, formatCurrencyNumber } from '../../utils/formatter';
 

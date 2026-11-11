@@ -1,4 +1,4 @@
-# `src/services/vendasService.ts`
+# `src/services/salesService.ts`
 
 ## Descrição
 

@@ -10,8 +10,8 @@
 
 ## Relações
 
-- **Usa:** `fetchBrands`, `createBrand`, `deleteBrand`, `updateBrand` (`src/services/produtosService.ts`), `BrandFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
-- **Usado por:** [cadastro](../pages/cadastro.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
+- **Usa:** `fetchBrands`, `createBrand`, `deleteBrand`, `updateBrand` (`src/services/productsService.ts`), `BrandFormData` (`src/types/catalog.ts`), `validateRequired` (`src/utils/validation.ts`).
+- **Usado por:** [cadastro](../pages/registration.md), que renderiza [CatalogEntityModal](../components/catalog/CatalogEntityModal.md).
 
 ## Notas
 

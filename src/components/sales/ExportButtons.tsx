@@ -1,7 +1,7 @@
 import { useRef, type ChangeEvent, type FC } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { registerSaleWithCreatedAt, DailySale } from '../../services/vendasService';
+import { registerSaleWithCreatedAt, DailySale } from '../../services/salesService';
 import parseNumber from '../../utils/number';
 import { parseDate } from '../../utils/date';
 import Button from '@/components/common/Button';

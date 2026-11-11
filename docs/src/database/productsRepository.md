@@ -13,7 +13,7 @@
 ## Relações
 
 - **Usa:** `src/database/supabase.ts`, `src/utils/env.ts`
-- **Usado por:** `src/pages/api/produtos*.ts`
+- **Usado por:** `src/pages/api/products*.ts`
 
 ## Notas
 

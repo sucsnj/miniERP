@@ -1,6 +1,6 @@
-# `src/pages/tabela.tsx`
+# `src/pages/medicine-table.tsx`
 
-> Tabela de Medicamentos (`/tabela`): upload de planilha, busca com cache de histórico e status da tabela.
+> Tabela de Medicamentos (`/medicine-table`): upload de planilha, busca com cache de histórico e status da tabela.
 
 ## O que faz
 
@@ -11,8 +11,8 @@
 
 ## Relações
 
-- **Usa:** `tabelaService`; utils `shortcuts`, `date`; `src/styles/contas.module.css`.
-- **Usado por:** consome `./api/tabela.md`.
+- **Usa:** `medicineTableService`; utils `shortcuts`, `date`; `src/styles/payables.module.css`.
+- **Usado por:** consome `./api/medicine-table.md`.
 
 ## Notas
 

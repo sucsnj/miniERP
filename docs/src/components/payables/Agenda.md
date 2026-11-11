@@ -17,11 +17,11 @@ interface AgendaProps {
 
 ## Relações
 
-- **Usa:** [OcrUpload](../import/OcrUpload.md), `AccountDetails` (`src/services/contasService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`toTimestamp` (`src/utils/date.ts`), `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** [OcrUpload](../import/OcrUpload.md), `AccountDetails` (`src/services/payablesService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`toTimestamp` (`src/utils/date.ts`), `payables.module.css`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 
 - `accountsMonth` é prop morta (não desestruturada) — candidata a remoção.
 - "Atualização automática" é rótulo; não há polling, o painel apenas reflete as props.
-- Estilos locais migrados de `styled-jsx` para `contas.module.css` (`agendaPanel`, `agendaCard`, `agendaList`, `agendaRow`); a classe órfã `ocr-upload-wrapper` foi removida do wrapper.
+- Estilos locais migrados de `styled-jsx` para `payables.module.css` (`agendaPanel`, `agendaCard`, `agendaList`, `agendaRow`); a classe órfã `ocr-upload-wrapper` foi removida do wrapper.

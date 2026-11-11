@@ -65,8 +65,8 @@ O projeto é uma aplicação Next.js 16 com front-end React e back-end API route
 - `npm run dev` para rodar em `localhost:3100`.
 - Acesse `/` para dashboard de vendas.
 - Acesse `/historico` para histórico de vendas.
-- Acesse `/contas-a-pagar` para gestão de contas.
-- Acesse `/tabela` para upload e busca em tabela de medicamentos.
+- Acesse `/payables` para gestão de contas.
+- Acesse `/medicine-table` para upload e busca em tabela de medicamentos.
 
 ## Estrutura de Pastas do Docs
 

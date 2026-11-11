@@ -21,8 +21,8 @@ interface CatalogEntityModalProps {
 
 ## Relações
 
-- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `useFocusTrap` (`src/utils/focus.tsx`), `produtos.module.css`.
-- **Usado por:** [cadastro](../../pages/cadastro.md), que fornece estado e handlers dos hooks `useCategory`, `useBrand`, `useSupplier` e `useUnitOfMeasure`.
+- **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `useFocusTrap` (`src/utils/focus.tsx`), `products.module.css`.
+- **Usado por:** [cadastro](../../pages/registration.md), que fornece estado e handlers dos hooks `useCategory`, `useBrand`, `useSupplier` e `useUnitOfMeasure`.
 
 ## Notas
 

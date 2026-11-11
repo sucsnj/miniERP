@@ -1,14 +1,14 @@
-# `src/pages/api/produtos.ts`
+# `src/pages/api/products.ts`
 
 ## Descrição
 
-Endpoint REST do catálogo de **produtos** (domínio Produtos/Estoque). Gerencia itens do tipo `PRODUTO`, validação de duplicidade, unidades de medida/barcodes e alternância de status. Usa `db/produtos.db`.
+Endpoint REST do catálogo de **produtos** (domínio Produtos/Estoque). Gerencia itens do tipo `PRODUTO`, validação de duplicidade, unidades de medida/barcodes e alternância de status. Usa `db/products.db`.
 
-> Serviços NÃO passam por esta rota — usam `/api/produtos/servicos`.
+> Serviços NÃO passam por esta rota — usam `/api/products/servicos`.
 
 ## Métodos
 
-### `GET /api/produtos`
+### `GET /api/products`
 
 Busca paginada, com busca e filtros.
 
@@ -43,7 +43,7 @@ Busca paginada, com busca e filtros.
 }
 ```
 
-### `POST /api/produtos`
+### `POST /api/products`
 
 Cria produto. Duas ações:
 
@@ -68,7 +68,7 @@ Cria produto. Duas ações:
 
 **Respostas:** `201 {"id": <id>, "message": "Item cadastrado com sucesso."}`; `400`/`500` com `{"error": "..."}`.
 
-### `PUT /api/produtos`
+### `PUT /api/products`
 
 Atualiza produto. Body igual ao POST mais `id`.
 
@@ -76,7 +76,7 @@ Atualiza produto. Body igual ao POST mais `id`.
 
 **Resposta:** `200 {"message": "Item atualizado com sucesso."}`.
 
-### `DELETE /api/produtos`
+### `DELETE /api/products`
 
 Exclui produto.
 

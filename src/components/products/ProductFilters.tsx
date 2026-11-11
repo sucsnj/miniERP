@@ -2,8 +2,8 @@ import {
     CategoryData,
     BrandData,
     SupplierData
-} from '../../services/produtosService';
-import styles from '../../styles/produtos.module.css';
+} from '../../services/productsService';
+import styles from '../../styles/products.module.css';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Form from '@/components/common/Form';

@@ -10,4 +10,4 @@ Resumo rápido:
 - Importação/outros: `ModalImportItens`, `ModalServicos`, `ModalSelecionarItens`.
 - Confirmação de exclusão: `ModalProdExclusao` + `ModalCatExclusao`, `ModalMarcaExclusao`, `ModalFornecedorExclusao`, `ModalUomExclusao`.
 
-Ver também `docs/hooks/Hooks.md` (padrão comum dos hooks de catálogo) e `docs/pages/cadastro.md`.
+Ver também `docs/hooks/Hooks.md` (padrão comum dos hooks de catálogo) e `docs/pages/registration.md`.

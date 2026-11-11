@@ -1,12 +1,12 @@
-# `src/pages/contas-a-pagar.tsx`
+# `src/pages/payables.tsx`
 
 ## Descrição
 
-Página de **gestão de contas a pagar** (`/contas-a-pagar`): cadastro/edição, pagamento, cancelamento de pagamento, exclusão, filtros, importação de XML de NF-e, backup, agenda mensal e resumo anual.
+Página de **gestão de contas a pagar** (`/payables`): cadastro/edição, pagamento, cancelamento de pagamento, exclusão, filtros, importação de XML de NF-e, backup, agenda mensal e resumo anual.
 
 ## Contexto
 
-Rota `/contas-a-pagar` (componente `ContasAPagar`). Orquestra o estado e renderiza os submódulos `ContasAPagarHeader`, `ContasAPagarFilterPanel`, `ContasAPagarForm`, `ContasAPagarLastTen`, `Agenda`, `Resumo` e `ContasAPagarModals`.
+Rota `/payables` (componente `ContasAPagar`). Orquestra o estado e renderiza os submódulos `ContasAPagarHeader`, `ContasAPagarFilterPanel`, `ContasAPagarForm`, `ContasAPagarLastTen`, `Agenda`, `Resumo` e `ContasAPagarModals`.
 
 ## Estado principal
 
@@ -34,7 +34,7 @@ Rota `/contas-a-pagar` (componente `ContasAPagar`). Orquestra o estado e renderi
 
 ## Dependências
 
-- `src/services/contasService`, `src/components/*` (ContasAPagar*, Agenda, Resumo, Toast).
+- `src/services/payablesService`, `src/components/*` (ContasAPagar*, Agenda, Resumo, Toast).
 - `src/utils`: `number` (`parseNumber`), `forms` (`highlightField`), `shortcuts` (`useShortcuts`), `date` (`getDateArray`, `toTimestamp`, `now`).
 - `@tanstack/react-query` (`useQueryClient`), `dayjs`.
 

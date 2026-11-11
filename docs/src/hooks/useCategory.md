@@ -10,7 +10,7 @@
 
 ## Relações
 
-- **Usa:** `fetchCategories`, `createCategory`, `deleteCategory`, `updateCategory` (`src/services/produtosService.ts`), `CategoryFormData` (`src/types/categoria.ts`), `validateRequired` (`src/utils/validation.ts`).
+- **Usa:** `fetchCategories`, `createCategory`, `deleteCategory`, `updateCategory` (`src/services/productsService.ts`), `CategoryFormData` (`src/types/categoria.ts`), `validateRequired` (`src/utils/validation.ts`).
 - **Usado por:** componentes de cadastro de produtos.
 
 ## Notas

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import styles from '../../styles/produtos.module.css';
-import type { StockMovementData } from '../../services/produtosService';
+import styles from '../../styles/products.module.css';
+import type { StockMovementData } from '../../services/productsService';
 import { useFocusTrap } from '../../utils/focus';
 import Button from '@/components/common/Button';
 

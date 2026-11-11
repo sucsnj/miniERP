@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '../hooks/useToast';
-import contasStyles from '../styles/contas.module.css';
+import contasStyles from '../styles/payables.module.css';
 import {
   uploadTable,
   searchTable,
@@ -9,10 +9,10 @@ import {
   fetchTableStatus,
   TableRow,
   TableSearchHistoryItem,
-} from '../services/tabelaService';
+} from '../services/medicineTableService';
 import { useShortcuts } from '../utils/shortcuts';
 import { parseDate } from '../utils/date';
-import styles from '../styles/tabela.module.css';
+import styles from '../styles/medicine-table.module.css';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';

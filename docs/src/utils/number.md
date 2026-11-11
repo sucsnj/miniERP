@@ -10,4 +10,4 @@
 
 ## Relações
 
-- **Usado por:** `validation`, `useDailySaleForm` e endpoints (`api/vendas`, `api/produtos`, `api/notas`, `api/contas/import`, página `cadastro`).
+- **Usado por:** `validation`, `useDailySaleForm` e endpoints (`api/vendas`, `api/products`, `api/notas`, `api/contas/import`, página `cadastro`).

@@ -14,4 +14,4 @@
 
 ## Notas
 
-- Baseado no padrão de campos de `/contas-a-pagar`.
+- Baseado no padrão de campos de `/payables`.

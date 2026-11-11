@@ -1,18 +1,18 @@
-# `src/pages/produtos.tsx`
+# `src/pages/products.tsx`
 
-> Listagem de produtos e serviços (`/produtos`) com filtros, busca, paginação e controle de status.
+> Listagem de produtos e serviços (`/products`) com filtros, busca, paginação e controle de status.
 
 ## O que faz
 
 - Busca `fetchProducts` e `fetchServices` (`pageSize: 10000`), mescla, ordena por nome e pagina localmente (10/página).
 - Filtros: texto, tipo (`PRODUTO`/`SERVICO`/`TODOS`), categoria, marca, fornecedor e status (`ATIVO`/`INATIVO`/`TODOS`).
 - Alterna status de produtos (`toggleProductStatus`) e exclui com confirmação (`deleteProduct`/`deleteService`).
-- Navega para `/cadastro?id=X` ao editar; FAB "+" leva a `/cadastro`.
+- Navega para `/registration?id=X` ao editar; FAB "+" leva a `/registration`.
 
 ## Relações
 
-- **Usa:** `produtosService`; componentes `ProductList`, `ProductFilters`, `ProductDeleteModal`.
-- **Usado por:** consome `./api/produtos.md` e `./api/produtos/servicos.md`.
+- **Usa:** `productsService`; componentes `ProductList`, `ProductFilters`, `ProductDeleteModal`.
+- **Usado por:** consome `./api/products.md` e `./api/products/servicos.md`.
 
 ## Notas
 

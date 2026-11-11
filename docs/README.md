@@ -40,7 +40,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0006-docs-espelhando-src.md](adr/0006-docs-espelhando-src.md) - ADR: documentação espelhando `src/` em `docs/src/` + template único validado por script.
 - [adr/0007-css-modules-e-design-tokens.md](adr/0007-css-modules-e-design-tokens.md) - ADR: CSS Modules, design tokens e tema por `data-theme`.
 - [adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md](adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md) - ADR: modal genérico de catálogo e confirmação compartilhada.
-- [adr/0009-padroes-de-layout-e-formularios.md](adr/0009-padroes-de-layout-e-formularios.md) - ADR: padrão de layout e formulários baseado em `/contas-a-pagar`.
+- [adr/0009-padroes-de-layout-e-formularios.md](adr/0009-padroes-de-layout-e-formularios.md) - ADR: padrão de layout e formulários baseado em `/payables`.
 - [adr/0010-sistema-de-botoes-com-variantes.md](adr/0010-sistema-de-botoes-com-variantes.md) - ADR:
 - [adr/0011-integracao-carrinho-estoque.md](adr/0011-integracao-carrinho-estoque.md) - ADR: integração do carrinho com estoque (devolução explícita, quantidade inteira, estoque negativo configurável, backend-first). botões com variantes funcionais, tamanhos, carregamento e `iconOnly`.
 - [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
@@ -48,12 +48,12 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ## Páginas do Frontend
 
 - [src/pages/index.md](src/pages/index.md) - dashboard de vendas: resumo mensal, formulário, edição e backup.
-- [src/pages/produtos.md](src/pages/produtos.md) - catálogo, estoque e preços de produtos.
-- [src/pages/cadastro.md](src/pages/cadastro.md) - cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida).
-- [src/pages/contas-a-pagar.md](src/pages/contas-a-pagar.md) - contas a pagar: filtros, importação de XML e pagamentos.
-- [src/pages/historico.md](src/pages/historico.md) - histórico de vendas, listagem e busca.
-- [src/pages/resumo.md](src/pages/resumo.md) - resumo mensal de vendas e totais consolidados.
-- [src/pages/tabela.md](src/pages/tabela.md) - upload e consulta da tabela de medicamentos.
+- [src/pages/products.md](src/pages/products.md) - catálogo, estoque e preços de produtos.
+- [src/pages/registration.md](src/pages/registration.md) - cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida).
+- [src/pages/payables.md](src/pages/payables.md) - contas a pagar: filtros, importação de XML e pagamentos.
+- [src/pages/history.md](src/pages/history.md) - histórico de vendas, listagem e busca.
+- [src/pages/summary.md](src/pages/summary.md) - resumo mensal de vendas e totais consolidados.
+- [src/pages/medicine-table.md](src/pages/medicine-table.md) - upload e consulta da tabela de medicamentos.
 - [src/pages/_app.md](src/pages/_app.md) - configuração global do app, ordem do CSS e integração com React Query.
 - [src/pages/_document.md](src/pages/_document.md) - documento HTML, idioma e aplicação do tema antes da hidratação.
 
@@ -89,13 +89,13 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ## Serviços
 
-- [src/services/contasService.md](src/services/contasService.md) - API cliente de contas a pagar.
-- [src/services/notasService.md](src/services/notasService.md) - API cliente de notas fiscais.
+- [src/services/payablesService.md](src/services/payablesService.md) - API cliente de contas a pagar.
+- [src/services/invoicesService.md](src/services/invoicesService.md) - API cliente de notas fiscais.
 - [src/services/ocrService.md](src/services/ocrService.md) - OCR e upload de arquivos.
 - [src/services/pdfService.md](src/services/pdfService.md) - conversão de PDF em imagem e pré-processamento para OCR.
-- [src/services/produtosService.md](src/services/produtosService.md) - API cliente de produtos/catálogo.
-- [src/services/tabelaService.md](src/services/tabelaService.md) - API cliente da tabela de medicamentos (upload, busca, histórico, status).
-- [src/services/vendasService.md](src/services/vendasService.md) - API cliente de vendas diárias.
+- [src/services/productsService.md](src/services/productsService.md) - API cliente de produtos/catálogo.
+- [src/services/medicineTableService.md](src/services/medicineTableService.md) - API cliente da tabela de medicamentos (upload, busca, histórico, status).
+- [src/services/salesService.md](src/services/salesService.md) - API cliente de vendas diárias.
 
 ## Banco de Dados
 

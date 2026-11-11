@@ -9,7 +9,7 @@ import PayablesForm from '@/components/payables/PayablesForm';
 import parseNumber from '../utils/number';
 import PayablesLastTen from '@/components/payables/PayablesLastTen';
 import PayablesModals from '@/components/payables/PayablesModals';
-import styles from '@/styles/contas.module.css';
+import styles from '@/styles/payables.module.css';
 import PageShell from '@/components/common/PageShell';
 import {
   fetchAccounts,
@@ -19,7 +19,7 @@ import {
   payAccount,
   registerAccount,
   AccountDetails,
-} from '../services/contasService';
+} from '../services/payablesService';
 import { highlightField } from '../utils/forms';
 import { useShortcuts } from '../utils/shortcuts';
 import { getDateArray, toTimestamp, now } from '../utils/date';

@@ -1,6 +1,6 @@
-# `src/pages/api/produtos/movimentacoes.ts`
+# `src/pages/api/products/movimentacoes.ts`
 
-> Movimentações de estoque (`movimentacoes_estoque` em `db/produtos.db`).
+> Movimentações de estoque (`movimentacoes_estoque` em `db/products.db`).
 
 ## O que faz
 
@@ -15,8 +15,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts` (`getStockMovements`, `insertStockMovement`, `getItemById`).
-- **Usado por:** `produtosService`; `../../cadastro.md` (ajuste de estoque).
+- **Usa:** `src/database/productsDb.ts` (`getStockMovements`, `insertStockMovement`, `getItemById`).
+- **Usado por:** `productsService`; `../../registration.md` (ajuste de estoque).
 
 ## Notas
 

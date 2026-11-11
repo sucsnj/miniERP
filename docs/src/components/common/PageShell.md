@@ -1,6 +1,6 @@
 # `src/components/common/PageShell.tsx`
 
-> Casca padrão de página baseada no layout de `/contas-a-pagar`.
+> Casca padrão de página baseada no layout de `/payables`.
 
 ## O que faz
 

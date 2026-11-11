@@ -1,4 +1,4 @@
-# `src/services/produtosService.ts`
+# `src/services/productsService.ts`
 
 ## Descrição
 
@@ -79,14 +79,14 @@ interface BarcodeData { codigo_barras: string; principal: number; }
 
 ## Endpoints consumidos
 
-- `GET/POST/PUT/DELETE /api/produtos` (produtos; `toggle-status` via POST `{ action: 'toggle-status' }`).
-- `GET/POST `/api/produtos/servicos`, `PUT/DELETE /api/produtos/servicos?id=`.
-- `GET /api/produtos/movimentacoes?item_id=`, `POST /api/produtos/movimentacoes`.
-- `GET/POST/PUT/DELETE /api/produtos/categorias`, `.../marcas`, `.../fornecedores`, `.../unidades-medida`.
+- `GET/POST/PUT/DELETE /api/products` (produtos; `toggle-status` via POST `{ action: 'toggle-status' }`).
+- `GET/POST `/api/products/servicos`, `PUT/DELETE /api/products/servicos?id=`.
+- `GET /api/products/movimentacoes?item_id=`, `POST /api/products/movimentacoes`.
+- `GET/POST/PUT/DELETE /api/products/categorias`, `.../marcas`, `.../fornecedores`, `.../unidades-medida`.
 
 ## Observações
 
 - Tratamento de erro: lança `Error(errorData.error || 'mensagem padrão')` quando `!response.ok`.
 - `buscarServicoPorId` retorna o JSON direto (não normaliza para `{ items }` como `buscarServicos`).
 - `registrarProduto`/`atualizarProduto` tipam `dados` como `Omit<ItemData,...>`, mas as rotas esperam `ItemInput` (só `PRODUTO`) — ver `produtosDb.ts`.
-- A interface `ItemData.tipo` admite `'SERVICO'`, porém a rota `/api/produtos` aceita apenas `PRODUTO`; serviços têm rotas próprias.
+- A interface `ItemData.tipo` admite `'SERVICO'`, porém a rota `/api/products` aceita apenas `PRODUTO`; serviços têm rotas próprias.

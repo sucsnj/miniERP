@@ -1,6 +1,6 @@
-# `src/pages/contas-a-pagar.tsx`
+# `src/pages/payables.tsx`
 
-> Gestão de contas a pagar (`/contas-a-pagar`): cadastro, pagamento, filtros, importação XML, backup, agenda e resumo.
+> Gestão de contas a pagar (`/payables`): cadastro, pagamento, filtros, importação XML, backup, agenda e resumo.
 
 ## O que faz
 
@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `contasService`; componentes `payables/*` e `summary/Summary`; utils `validation`, `number`, `forms`, `shortcuts`, `date`.
+- **Usa:** `payablesService`; componentes `payables/*` e `summary/Summary`; utils `validation`, `number`, `forms`, `shortcuts`, `date`.
 - **Usado por:** consome `./api/contas.md`, `./api/contas/import.md` e `./api/contas/backup.md`.
 
 ## Notas

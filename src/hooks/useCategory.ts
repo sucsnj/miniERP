@@ -4,7 +4,7 @@ import {
   createCategory,
   deleteCategory,
   updateCategory,
-} from '../services/produtosService';
+} from '../services/productsService';
 import { CategoryFormData } from '@/types/categoria';
 import { ProductFormData } from '@/components/products/ProductForm';
 import { ProductOptions } from '@/components/products/ProductForm';

@@ -17,7 +17,7 @@ interface MonthNotesProps {
 
 ## Relações
 
-- **Usa:** React Query, `fetchInvoicesByPeriod`/`deleteInvoice`/`InvoiceDetails` (`src/services/notasService.ts`), [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`getCurrentYear` (`src/utils/date.ts`).
+- **Usa:** React Query, `fetchInvoicesByPeriod`/`deleteInvoice`/`InvoiceDetails` (`src/services/invoicesService.ts`), [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`getCurrentYear` (`src/utils/date.ts`).
 - **Usado por:** [Summary](./Summary.md).
 
 ## Notas

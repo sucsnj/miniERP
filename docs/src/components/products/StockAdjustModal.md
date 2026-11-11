@@ -20,7 +20,7 @@ interface StockAdjustModalProps {
 
 ## Relações
 
-- **Usa:** `StockMovementData` (`src/services/produtosService.ts`), `useFocusTrap`, `produtos.module.css`.
+- **Usa:** `StockMovementData` (`src/services/productsService.ts`), `useFocusTrap`, `products.module.css`.
 - **Usado por:** [ProductForm](./ProductForm.md) (botão "Ajustar" em edição).
 
 ## Notas

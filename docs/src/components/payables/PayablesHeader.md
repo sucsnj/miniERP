@@ -17,8 +17,8 @@ interface PayablesHeaderProps {
 
 ## Relações
 
-- **Usa:** `formatMonthName`/`now` (`src/utils/date.ts`), `capitalize` (`src/utils/captalize.tsx`), `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** `formatMonthName`/`now` (`src/utils/date.ts`), `capitalize` (`src/utils/captalize.tsx`), `payables.module.css`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 

@@ -45,7 +45,7 @@ Centraliza o **carrinho de compras** e o catálogo de seleção (produtos + serv
 - Parâmetro: `onToast?`.
 - Estado: `cartItems` (`CartItem[]`, tipo de `DailySaleForm`), `selecionarOpen`, `cartModalOpen`, `cartSearch`, `catalogItems` (`ItemData[]`), `loadingCatalog`, `totalCartCount`, `totalCartValue`.
 - Ações: `handleCartClick()` (abre seleção), `closeSelecao()`, `openCarrinho()`, `closeCarrinho()`, `handleManageCart()` (fecha seleção e abre carrinho), `handleAddToCart(item)` (+1, agrupa por id+tipo), `handleRemoveFromCart(item)` (−1; remove quando chega a 0), `handleUpdateQuantity(id, tipo, qty)` (remove se `qty <= 0`), `handleRemoveItem(id, tipo)`, `handleClearCart()`.
-- Interno: `buscarItensCatalogo(query)` com **debounce de 250ms** enquanto o modal de seleção estiver aberto; busca produtos ativos e serviços via `produtosService` (máximo 50 cada) e mescla ordenado por nome.
+- Interno: `buscarItensCatalogo(query)` com **debounce de 250ms** enquanto o modal de seleção estiver aberto; busca produtos ativos e serviços via `productsService` (máximo 50 cada) e mescla ordenado por nome.
 - Observação: serviços são convertidos para `ItemData` com valores de catálogo padrão (unidade 21, marca 1, fornecedor 1, estoque 0).
 
 ### `useFiltro` — `useFiltro.ts`
@@ -59,7 +59,7 @@ Filtro do histórico de vendas (página `/historico`), persistido no localStorag
 
 ### `useCategoria` — `useCategoria.ts`
 
-CRUD de **categorias** usado na página `/cadastro` (cadastro rápido + edição + exclusão com confirmação).
+CRUD de **categorias** usado na página `/registration` (cadastro rápido + edição + exclusão com confirmação).
 
 - Parâmetros: `{ form, setForm, setOptions, showToast, carregarItens, items, page, setPage, setDeleteConfirmOpen, setItemParaExcluir }`.
 - Estado: `modalCategoriaOpen`/`catForm` (cadastro rápido `{ nome, descricao }`), `modalCategoriaEditOpen` (edição).

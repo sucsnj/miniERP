@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react';
-import { fetchInvoicesByPeriod, deleteInvoice, InvoiceDetails } from '../../services/notasService';
+import { fetchInvoicesByPeriod, deleteInvoice, InvoiceDetails } from '../../services/invoicesService';
 import { formatCurrency } from '../../utils/formatter';
 import { formatDateString, getCurrentYear } from '../../utils/date';
 import ConfirmDialog from '@/components/common/ConfirmDialog';

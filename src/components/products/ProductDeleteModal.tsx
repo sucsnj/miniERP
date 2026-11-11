@@ -1,5 +1,5 @@
 import ConfirmDialog from '@/components/common/ConfirmDialog';
-import { ItemData } from '../../services/produtosService';
+import { ItemData } from '../../services/productsService';
 
 interface ProductDeleteModalProps {
     open: boolean;

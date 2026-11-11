@@ -12,7 +12,7 @@
 ## Relações
 
 - **Usa:** `src/database/db.ts`, `parseCurrency`, `toDate` e `canEdit` (`src/utils/edit.ts`).
-- **Usado por:** `vendasService`; `../index.md` e `../historico.md`.
+- **Usado por:** `salesService`; `../index.md` e `../historico.md`.
 
 ## Notas
 

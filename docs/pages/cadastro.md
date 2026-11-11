@@ -1,4 +1,4 @@
-# `src/pages/cadastro.tsx`
+# `src/pages/registration.tsx`
 
 ## Descrição
 
@@ -6,9 +6,9 @@ Página de **cadastro e edição** de produtos e serviços, com formulário comp
 
 ## Contexto
 
-Rota `/cadastro`. Dois fluxos de entrada:
+Rota `/registration`. Dois fluxos de entrada:
 - **Novo:** acessada diretamente ou com query de cadastro rápido (`?novoImport=1&nome=&precoCompra=&estoque=&unidade=&ean=&codigoInterno=`).
-- **Edição:** `/cadastro?id=X` (vem da listagem `/produtos`).
+- **Edição:** `/registration?id=X` (vem da listagem `/products`).
 
 ## Responsabilidades
 
@@ -26,16 +26,16 @@ Rota `/cadastro`. Dois fluxos de entrada:
 - `carregarAuxiliares()` — categorias, marcas, fornecedores, unidades de medida.
 - `carregarItemParaEdicao(id)` — busca produto+serviço, encontra por id e chama `preencherFormComItem`.
 - `preencherFormComItem(item)` — popula `form` (inclui `unidadesMedida` para produtos) e `formCodigosBarras`.
-- `resetForm()` — volta ao estado de novo cadastro e faz `router.replace('/cadastro')` (shallow).
+- `resetForm()` — volta ao estado de novo cadastro e faz `router.replace('/registration')` (shallow).
 - `handleAddBarcode` / `handleRemoveBarcode` / `handleSetPrincipalBarcode` — gestão de códigos de barras.
-- `handleSubmitForm(e)` — valida, monta `payload` (produto) ou `servicePayload` (serviço) e salva; redireciona p/ `/produtos` em 2s.
+- `handleSubmitForm(e)` — valida, monta `payload` (produto) ou `servicePayload` (serviço) e salva; redireciona p/ `/products` em 2s.
 - `handleConfirmExcluir()` — exclui item e reseta formulário.
 - `carregarMovimentacoes(itemId)` — últimos 10 registros de estoque do item.
 - Guard: `handleRouteChangeStart` (intercepta navegação se `isDirty`), dialog `ConfirmDialog` "Descartar alterações?".
 
 ## Serviços/Componentes/Hooks
 
-- `produtosService`: buscar/registrar/atualizar/excluir produto e serviço; `buscarCategorias`/`Marcas`/`Fornecedores`/`UnidadesMedida`; `buscarMovimentacoesEstoque`.
+- `productsService`: buscar/registrar/atualizar/excluir produto e serviço; `buscarCategorias`/`Marcas`/`Fornecedores`/`UnidadesMedida`; `buscarMovimentacoesEstoque`.
 - Componentes: `FormularioItem`, `BarcodeManager`, `ModalCategoria(Edit)`, `ModalMarca(Edit)`, `ModalFornecedor(Edit)`, `ModalUnidadeMedida(Edit)`, `ModalAjusteEstoque`, `ModalImportItens`, `ModalProdExclusao`, `Toast`, `ConfirmDialog`.
 - Hooks: `useCategoria`, `useMarca`, `useFornecedor`, `useUnidadeMedida`.
 

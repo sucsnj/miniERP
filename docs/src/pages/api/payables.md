@@ -19,7 +19,7 @@
 ## Relações
 
 - **Usa:** `src/database/contasDb.ts`.
-- **Usado por:** `contasService` e `../contas-a-pagar.md`.
+- **Usado por:** `payablesService` e `../payables.md`.
 
 ## Notas
 

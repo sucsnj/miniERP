@@ -1,8 +1,8 @@
-# `src/pages/tabela.tsx`
+# `src/pages/medicine-table.tsx`
 
 ## Descrição
 
-Página da **Tabela de Medicamentos** (`/tabela`): upload de planilha XLS/XLSX, busca com cache de histórico, status da planilha carregada e limpeza de histórico.
+Página da **Tabela de Medicamentos** (`/medicine-table`): upload de planilha XLS/XLSX, busca com cache de histórico, status da planilha carregada e limpeza de histórico.
 
 ## Estado
 
@@ -33,12 +33,12 @@ showToast(message, type)
 
 ## Dependências
 
-- `src/services/tabelaService` (upload, busca, histórico, status, tipos)
+- `src/services/medicineTableService` (upload, busca, histórico, status, tipos)
 - `src/components/Toast`
 - `src/utils/shortcuts` (`useShortcuts`) e `src/utils/date` (`parseDate`)
-- `src/styles/contas.module.css` (cabeçalho dos painéis)
+- `src/styles/payables.module.css` (cabeçalho dos painéis)
 
 ## Observações
 
-- O texto do painel de histórico diz "Últimas 100 buscas gravadas no cache", mas o banco mantém no máximo **25** (ver `docs/database/tabelaDb.md`).
+- O texto do painel de histórico diz "Últimas 100 buscas gravadas no cache", mas o banco mantém no máximo **25** (ver `docs/database/medicine-tableDb.md`).
 - Aceita apenas `.xlsx` e `.xls` (atributo `accept` no input e checagem no servidor).

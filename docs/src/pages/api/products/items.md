@@ -1,4 +1,4 @@
-# `src/pages/api/produtos/itens.ts`
+# `src/pages/api/products/itens.ts`
 
 > Importação de itens a partir de XML de NF-e (somente `POST`), em dois modos.
 
@@ -16,8 +16,8 @@
 
 ## Relações
 
-- **Usa:** `src/database/produtosDb.ts` (`insertItem`, `insertStockMovement`, ...).
-- **Usado por:** `ImportItemsModal` (via `../../cadastro.md`).
+- **Usa:** `src/database/productsDb.ts` (`insertItem`, `insertStockMovement`, ...).
+- **Usado por:** `ImportItemsModal` (via `../../registration.md`).
 
 ## Notas
 

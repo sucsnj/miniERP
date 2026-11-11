@@ -4,7 +4,7 @@ import {
     createSupplier,
     deleteSupplier,
     updateSupplier,
-} from '../services/produtosService';
+} from '../services/productsService';
 import { SupplierFormData } from '@/types/catalog';
 import { ProductFormData } from '@/components/products/ProductForm';
 import { ProductOptions } from '@/components/products/ProductForm';

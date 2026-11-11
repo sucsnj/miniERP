@@ -8,8 +8,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
-import { importInvoiceItem, previewInvoiceItems } from '../services/produtosService';
-import type { ImportedProduct } from '../services/produtosService';
+import { importInvoiceItem, previewInvoiceItems } from '../services/productsService';
+import type { ImportedProduct } from '../services/productsService';
 import type { SuggestionItem } from '../components/import/ItemNameDropdown';
 
 export type ItemStatus = 'idle' | 'ok' | 'duplicado' | 'estoque_atualizado' | 'erro';
@@ -161,7 +161,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
 
   const handleEditItem = (item: ImportedProduct) => {
     if (!item.itemIdExistente) return;
-    window.open(`/cadastro?id=${item.itemIdExistente}`, '_blank');
+    window.open(`/registration?id=${item.itemIdExistente}`, '_blank');
   };
 
   const handleQuickRegister = (item: ImportedProduct) => {
@@ -174,7 +174,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
     if (item.ean) params.append('ean', item.ean);
     if (item.cProd) params.append('internalCode', item.cProd);
 
-    window.open(`/cadastro?${params.toString()}`, '_blank');
+    window.open(`/registration?${params.toString()}`, '_blank');
   };
 
   const resetFile = useCallback(() => {

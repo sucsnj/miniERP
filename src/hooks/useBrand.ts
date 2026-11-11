@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchBrands, createBrand, deleteBrand, updateBrand } from "../services/produtosService";
+import { fetchBrands, createBrand, deleteBrand, updateBrand } from "../services/productsService";
 import { BrandFormData } from "@/types/catalog";
 import { ProductFormData } from "@/components/products/ProductForm";
 import { ProductOptions } from "@/components/products/ProductForm";

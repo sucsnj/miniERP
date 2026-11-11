@@ -17,8 +17,8 @@ interface SummaryProps {
 
 ## Relações
 
-- **Usa:** `AccountDetails` (`src/services/contasService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `parseDate` (`src/utils/date.ts`), `contas.module.css`.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** `AccountDetails` (`src/services/payablesService.ts`), `formatCurrency` (`src/utils/formatter.tsx`), `parseDate` (`src/utils/date.ts`), `payables.module.css`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 

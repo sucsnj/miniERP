@@ -20,8 +20,8 @@ interface PayablesFormProps {
 
 ## Relações
 
-- **Usa:** `AccountDetails` (`src/services/contasService.ts`), `contas.module.css`, ícones MUI.
-- **Usado por:** `../../pages/contas-a-pagar.md`.
+- **Usa:** `AccountDetails` (`src/services/payablesService.ts`), `payables.module.css`, ícones MUI.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 

@@ -74,9 +74,9 @@ interface FormularioProdutoProps {
 
 ## Dependências
 
-- `src/services/produtosService.ts` (tipos `CategoriaData`, `MarcaData`, `UnidadeMedidaData`, `FornecedorData`).
+- `src/services/productsService.ts` (tipos `CategoriaData`, `MarcaData`, `UnidadeMedidaData`, `FornecedorData`).
 - `src/utils/number.ts` (`parseNumber`) e `src/utils/formatter.ts` (`formatCurrencyNumber`).
-- `src/styles/produtos.module.css`; `@mui/icons-material` (`Add`, `MoreVert`, `Close`).
+- `src/styles/products.module.css`; `@mui/icons-material` (`Add`, `MoreVert`, `Close`).
 
 ## Observações
 

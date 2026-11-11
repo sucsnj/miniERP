@@ -1,4 +1,4 @@
-import styles from '../../styles/produtos.module.css';
+import styles from '../../styles/products.module.css';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
 import PanelHeader from '@/components/common/PanelHeader';
@@ -9,7 +9,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import { formatCurrency } from '../../utils/formatter';
 import {
     ItemData,
-} from '../../services/produtosService';
+} from '../../services/productsService';
 
 interface ProductListProps {
     items: ItemData[];

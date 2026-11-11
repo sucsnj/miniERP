@@ -21,7 +21,7 @@ interface ItemNameDropdownProps {
 
 ## Relações
 
-- **Usa:** `fetchProducts`/`fetchServices` (`src/services/produtosService.ts`), `ItemWithStatus` (`src/hooks/useImportItems.ts`), `modalImport.module.css`.
+- **Usa:** `fetchProducts`/`fetchServices` (`src/services/productsService.ts`), `ItemWithStatus` (`src/hooks/useImportItems.ts`), `modalImport.module.css`.
 - **Usado por:** [ImportItemsModal](./ImportItemsModal.md) (coluna "Item no Sistema").
 
 ## Notas
