@@ -202,9 +202,9 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
                       <td className={importStyles.colNfProduto}>
                         <div
                           className={importStyles.nomeNfTexto}
-                          title={p.descricaoOriginal || p.description}
+                          title={p.originalDescription || p.description}
                         >
-                          {p.descricaoOriginal || p.description}
+                          {p.originalDescription || p.description}
                         </div>
                         {(p.ean || p.cProd) && (
                           <div className={importStyles.subCode}>
@@ -223,7 +223,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
                         />
                         {!completed && (
                           <div className={importStyles.cadastroRapidoContainer}>
-                            {p.existe && p.itemIdExistente ? (
+                            {p.exists && p.idExistingItem ? (
                               <Button
                                 type="button"
                                 variant="info"
@@ -263,7 +263,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
                       </td>
                       <td>
                         {p.status === 'idle' &&
-                          (p.existe ? (
+                          (p.exists ? (
                             <span
                               className={importStyles.badgeExistente}
                               title="Produto já cadastrado no sistema"

@@ -94,13 +94,13 @@
   border: 1px solid var(--secondary-accent-strong);
 }
 
-.badgeAtivo {
+.activeBadge {
   background-color: var(--success-soft);
   color: var(--success);
   border: 1px solid var(--success-strong);
 }
 
-.badgeInativo {
+.inactiveBadge {
   background-color: var(--danger-soft);
   color: var(--danger);
   border: 1px solid var(--danger-strong);

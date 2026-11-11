@@ -1,12 +1,12 @@
 # `src/hooks/useUnitOfMeasure.ts`
 
-> Hook para gerenciar criação, edição e exclusão de unidade de medida no cadastro rápido. Exporta `useUnitOfMeasure`.
+> Hook para gerenciar criação, edição e exclusão de unit de medida no cadastro rápido. Exporta `useUnitOfMeasure`.
 
 ## O que faz
 
 - Controla os modais de cadastro (`unitOfMeasureModalOpen`) e edição (`unitOfMeasureEditModalOpen`) com `uomForm`.
-- Cria unidade via `createUnitOfMeasure` (valida `abbreviation` obrigatória), atualiza `setOptions.unitsOfMeasure` e seleciona a criada.
-- Atualiza/exclui unidade, sincroniza opções, ajusta paginação/listagem e fecha modais.
+- Cria unit via `createUnitOfMeasure` (valida `abbreviation` obrigatória), atualiza `setOptions.unitsOfMeasure` e seleciona a criada.
+- Atualiza/exclui unit, sincroniza opções, ajusta paginação/listagem e fecha modais.
 
 ## Relações
 

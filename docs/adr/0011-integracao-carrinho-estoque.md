@@ -6,7 +6,7 @@
 
 ## Contexto
 
-O carrinho de vendas (`useCart`) registra itens em `venda_itens`, mas a venda não altera o estoque de produtos. Vendas podem ter valor negativo (ajustes financeiros), o estoque é inteiro enquanto a quantidade de venda é decimal, e não há regra explícita para estoque insuficiente. Também não existe reconciliação de estoque em edição/exclusão de venda nem rastreabilidade entre venda e movimentação.
+O carrinho de vendas (`useCart`) registra itens em `venda_itens`, mas a venda não altera o estoque de produtos. Vendas podem ter valor negativo (ajustes financeiros), o estoque é inteiro enquanto a quantidade de venda é decimal, e não há regra explícita para estoque insuficiente. Também não exists reconciliação de estoque em edição/exclusão de venda nem rastreabilidade entre venda e movimentação.
 
 ## Decisão
 

@@ -32,7 +32,7 @@ interface ContasAPagarFormProps {
 ## Comportamento/Responsabilidades
 
 - Campos: **Distribuidora** (texto), **Valor** (com `step="0.01"`), **Vencimento** (`type="date"`), **Documento** (texto) — numa linha — e **Banco / Observações** (textarea 4 linhas).
-- Ações: botão principal **"Cadastrar Conta"** → **"Salvar Alteração"** quando `editingConta`; **"Limpar Campos"** (`onReset`); **"Importar XML"** (`onImportXML`); botão **"Cancelar"** extra quando em edição (`onCancelarEdicao`).
+- Ações: botão mainBarcode **"Cadastrar Conta"** → **"Salvar Alteração"** quando `editingConta`; **"Limpar Campos"** (`onReset`); **"Importar XML"** (`onImportXML`); botão **"Cancelar"** extra quando em edição (`onCancelarEdicao`).
 - Refs ligadas aos inputs para `highlightField`/foco do pai.
 
 ## Dependências

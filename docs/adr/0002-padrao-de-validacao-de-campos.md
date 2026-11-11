@@ -24,14 +24,14 @@ Pergunta: **qual contrato e arquitetura padronizam a validação de campos em to
 7. **Campos cobertos** (escopo inicial da adoção):
    - **Vendas**: data, valor, observações, itens (nome, quantidade, preço).
    - **Contas a pagar**: distribuidora, valor, vencimento, documento, observações e **status da conta**.
-   - **Produtos**: nome, descrição, ids (categoria/marca/fornecedor/unidade de medida), preços (compra/venda), margem, estoque, multiplicador, código interno, referência, barcodes.
-   - **Cadastros auxiliares**: nome e descrição (categoria/marca), sigla e descrição (unidade de medida).
+   - **Produtos**: nome, descrição, ids (categoria/marca/fornecedor/unit de medida), preços (compra/venda), margem, estoque, multiplicador, código interno, referência, barcodes.
+   - **Cadastros auxiliares**: nome e descrição (categoria/marca), abbreviation e descrição (unit de medida).
    - **Transversais**: obrigatório, ids numéricos, números não monetários (`validateNumber`), tamanho máximo de strings, e-mail.
 
 ## Alternativas consideradas
 
 - **A. `boolean` puro** — simples, mas sem mensagem do motivo do erro; ruim para formulários e toasts. Rejeitada.
-- **C. Normalizador + validação juntas** (`{ ok, message, value? }`) — menos chamadas, porém acopla parsing e validação; parsing já existe em `number.ts`/`formatter.tsx`. Rejeitada em favor de separar.
+- **C. Normalizador + validação juntas** (`{ ok, message, value? }`) — menos chamadas, porém acopla parsing e validação; parsing já exists em `number.ts`/`formatter.tsx`. Rejeitada em favor de separar.
 - **Mensagens parametrizadas por chamada** — flexível, porém abre espaço para mensagens divergentes; rejeitada (mensagens hardcoded garantem padronização).
 - **Função agregadora (`validateFieldSet`)** — remove duplicação do laço de erros, mas o escopo escolhido foi o consumo por campo; ficou como melhoria futura opcional.
 
@@ -40,7 +40,7 @@ Pergunta: **qual contrato e arquitetura padronizam a validação de campos em to
 - Validação e mensagens uniformes em todas as páginas e endpoints (`ValidationResult` com pt-BR hardcoded).
 - `validation.ts` fica puro (sem parsing nem regra de negócio); parsing em `number.ts`/`date.ts`.
 - Call sites migrados para `parseCurrency`/`toDate`/`canEdit`: `vendas.ts`, `contas/import.ts`, `DailySaleForm`.
-- Adoção incremental do contrato nos formulários: `contas-a-pagar.tsx` (distribuidora, valor, vencimento, documento), `cadastro.tsx` (nome, categoria, marca, fornecedor, unidade de medida, código de barras, ajuste de estoque) e hooks de cadastro (`useCategoria`, `useFornecedor`, `useMarca`, `useUnidadeMedida`) passam a usar `validateRequired`/`validateCurrency`/`validateNumber`/`validateDate`.
+- Adoção incremental do contrato nos formulários: `contas-a-pagar.tsx` (distribuidora, valor, vencimento, documento), `cadastro.tsx` (nome, categoria, marca, fornecedor, unit de medida, código de barras, ajuste de estoque) e hooks de cadastro (`useCategoria`, `useFornecedor`, `useMarca`, `useUnidadeMedida`) passam a usar `validateRequired`/`validateCurrency`/`validateNumber`/`validateDate`.
 - **Fora do contrato (decisão registrada)**: regras de negócio nos call sites (ex.: "Valor deve ser um número maior que zero" em `contas-a-pagar.tsx`), validação de IDs/parâmetros dos endpoints internos (`!id || isNaN(Number(id))` em `api/products*`, `api/medicine-table`, `api/venda-itens`) e toasts de carga/erro de API (`produtos.tsx`, `tabela.tsx`, `useVendas`, `useMensais`) permanecem nos call sites/endpoints.
 - `isEditableDate` consolidada em `canEdit` (`utils/edit.ts`); elimina a duplicidade da regra de 2 dias.
 - `validateEmail` passou para o contrato `{ ok, message }`; e-mail é usado em chaves PIX (`pix.ts` valida com `{ valid, error }` — estrutura análoga) e como validador central do módulo.

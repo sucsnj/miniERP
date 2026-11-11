@@ -5,7 +5,7 @@
 ## O que faz
 
 - **Preview** `{ preview: true, xml }`: parseia `det/prod`, marca `existe`/`itemIdExistente` (busca por EAN, código interno e nome) e agrupa duplicados no lote.
-- **Importar** `{ importar: true, produto }`: se o item já existe → movimentação `ENTRADA`; senão cria produto (defaults, margem 50%) ou rejeita EAN duplicado.
+- **Importar** `{ importar: true, produto }`: se o item já exists → movimentação `ENTRADA`; senão cria produto (defaults, margem 50%) ou rejeita EAN duplicado.
 - Responde preview com `{ produtos }` e importação com `{ sucesso, id, estoqueAtualizado? }`; demais métodos → `405`.
 
 ```ts

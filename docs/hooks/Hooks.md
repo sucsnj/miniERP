@@ -46,7 +46,7 @@ Centraliza o **carrinho de compras** e o catálogo de seleção (produtos + serv
 - Estado: `cartItems` (`CartItem[]`, tipo de `DailySaleForm`), `selecionarOpen`, `cartModalOpen`, `cartSearch`, `catalogItems` (`ItemData[]`), `loadingCatalog`, `totalCartCount`, `totalCartValue`.
 - Ações: `handleCartClick()` (abre seleção), `closeSelecao()`, `openCarrinho()`, `closeCarrinho()`, `handleManageCart()` (fecha seleção e abre carrinho), `handleAddToCart(item)` (+1, agrupa por id+tipo), `handleRemoveFromCart(item)` (−1; remove quando chega a 0), `handleUpdateQuantity(id, tipo, qty)` (remove se `qty <= 0`), `handleRemoveItem(id, tipo)`, `handleClearCart()`.
 - Interno: `buscarItensCatalogo(query)` com **debounce de 250ms** enquanto o modal de seleção estiver aberto; busca produtos ativos e serviços via `productsService` (máximo 50 cada) e mescla ordenado por nome.
-- Observação: serviços são convertidos para `ItemData` com valores de catálogo padrão (unidade 21, marca 1, fornecedor 1, estoque 0).
+- Observação: serviços são convertidos para `ItemData` com valores de catálogo padrão (unit 21, marca 1, fornecedor 1, estoque 0).
 
 ### `useFiltro` — `useFiltro.ts`
 
@@ -92,7 +92,7 @@ CRUD de **unidades de medida** (mesmo padrão), com tipos próprios.
 - Exporta `UnidadeMedidaFormData` (`{ sigla, descricao }`) e `UnidadeMedidaOptions` (`{ abrirModalUnidadeMedida, salvarUnidadeMedida }`).
 - Estado: `modalUnidadeMedidaOpen`/`uomForm`, `modalUnidadeMedidaEditOpen`.
 - Ações: `handleSalvarUnidadeMedida(e)` (valida `sigla`), `handleOpenEditUnidadeMedidaModal({ id, sigla, descricao? })`, `handleAtualizarUnidadeMedida(e)`, `handleDeletarUnidadeMedida()`.
-- Ao deletar: `form.unidadeMedidaId` volta para `1` (unidade "UN").
+- Ao deletar: `form.unidadeMedidaId` volta para `1` (unit "UN").
 
 ### Padrão comum dos hooks de catálogo
 

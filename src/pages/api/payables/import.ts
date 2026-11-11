@@ -38,7 +38,7 @@ const normalizeDocument = (document: string) => {
   });
 };
 
-// Função principal do endpoint
+// Função mainBarcode do endpoint
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
@@ -110,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // houve duplicatas novas
         return res.status(200).json({ sucesso: true, registros: records });
       } else {
-        // nenhuma duplicata nova e nota já existe
+        // nenhuma duplicata nova e nota já exists
         return res.status(400).json({ error: 'Nota e duplicata(s) já existentes' });
       }
     } else {

@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Componente de formulário usado na página principal para registrar vendas diárias. Também mostra histórico recente e permite operações de edição/exclusão.
+Componente de formulário usado na página mainBarcode para registrar vendas diárias. Também mostra histórico recente e permite operações de edição/exclusão.
 
 ## Contexto
 

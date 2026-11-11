@@ -24,14 +24,14 @@
 - Acesso essencialmente **via VPN (Tailscale)**; os dados ficam em bancos SQLite locais no servidor.
 - Aplicativo usado por mais de uma pessoa? → single-user, mas vale registrar: os *outros fluxos* (não-venda) exigem algum nível de familiaridade com TI, o que é aceito como inevitável.
 
-### 1.4 Requisitos de UX do fluxo principal (vendas)
+### 1.4 Requisitos de UX do fluxo mainBarcode (vendas)
 
 - **Letras/interface grandes** (problemas de vista são comuns no público).
 - **Simplicidade máxima**: para registrar uma venda basta **digitar o valor e apertar ENTER** — nada mais.
 
 ### 1.5 Como o sistema é usado na prática
 
-- **Registrar vendas é a rotina principal** e de longe a mais usada.
+- **Registrar vendas é a rotina mainBarcode** e de longe a mais usada.
 - As demais áreas (contas, estoque/registration, tabela, relatórios) são usadas com frequência, mas **muito menos** que o registro diário de vendas.
 
 ## 2. Fluxos de negócio principais

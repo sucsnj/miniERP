@@ -24,5 +24,5 @@ interface SelectItemsModalProps {
 
 ## Notas
 
-- Adiciona 1 unidade por clique; quantidades maiores pelo [CartModal](./CartModal.md).
+- Adiciona 1 unit por clique; quantidades maiores pelo [CartModal](./CartModal.md).
 - Chrome herdado do shell; `<style jsx>` local só para busca/catálogo.

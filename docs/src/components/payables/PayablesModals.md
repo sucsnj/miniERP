@@ -15,5 +15,5 @@
 
 ## Notas
 
-- ESC fecha a edição primeiro, depois o modal principal; ambos compartilham `modalRef`.
+- ESC fecha a edição primeiro, depois o modal mainBarcode; ambos compartilham `modalRef`.
 - `onSave` é tipado como `FormEvent<HTMLButtonElement>` mas recebe um `MouseEvent` do `onClick`.

@@ -166,7 +166,7 @@ ModalUomExclusao:      { open; unidadeMedida: { sigla, descricao? }; onConfirm; 
 
 ## Observações
 
-- Os modais de criação de **categoria e unidade de medida** recebem `options.salvar*` (handler vindo do hook) como `onSubmit`; os de **marca e fornecedor** recebem o handler direto como prop.
+- Os modais de criação de **categoria e unit de medida** recebem `options.salvar*` (handler vindo do hook) como `onSubmit`; os de **marca e fornecedor** recebem o handler direto como prop.
 - O botão "Fechar" dos modais de criação de categoria/uom chama `abrirModalCategoria()`/`abrirModalUnidadeMedida()` — no fluxo real isso **inverte** a abertura; pairar o estado do modal no pai evita comportamento divergente.
 - `ModalCategoria`/`ModalCategoriaEdit` usam tipos de `src/types/categoria.ts` (`CategoriaFormData`, `CategoriaOptions`).
 - Todos usam `useFocusTrap` com o ref do diálogo.

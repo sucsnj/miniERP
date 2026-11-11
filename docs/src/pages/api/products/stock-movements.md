@@ -6,7 +6,7 @@
 
 - `GET ?item_id=`: retorna as movimentações do item (`item_id` obrigatório).
 - `POST { item_id, tipo, quantidade, descricao? }`: registra movimentação; `tipo` em `ENTRADA`|`SAIDA`|`AJUSTE`.
-- `404` se o item não existe; demais métodos → `405` (`Allow: GET, POST`).
+- `404` se o item não exists; demais métodos → `405` (`Allow: GET, POST`).
 
 ```ts
 // resposta GET

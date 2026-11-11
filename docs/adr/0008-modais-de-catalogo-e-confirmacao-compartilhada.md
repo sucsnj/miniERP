@@ -6,7 +6,7 @@
 
 ## Contexto
 
-Os cadastros auxiliares tinham oito componentes quase idênticos: criação e edição de categoria, marca, fornecedor e unidade de medida. Cada edição carregava sua própria confirmação de exclusão, e quatro telas de exclusão adicionais viviam em `ProductDeleteModal`. Hooks importavam tipos de componentes de UI, e o estado de criação de marca/fornecedor era separado do estado de edição. Isso duplicava markup, validação visual, IDs e estilos de modal.
+Os cadastros auxiliares tinham oito componentes quase idênticos: criação e edição de categoria, marca, fornecedor e unit de medida. Cada edição carregava sua própria confirmação de exclusão, e quatro telas de exclusão adicionais viviam em `ProductDeleteModal`. Hooks importavam tipos de componentes de UI, e o estado de criação de marca/fornecedor era separado do estado de edição. Isso duplicava markup, validação visual, IDs e estilos de modal.
 
 ## Decisão
 

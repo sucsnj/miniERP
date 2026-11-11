@@ -38,18 +38,18 @@ export const useCart = (onToast?: CartToast) => {
         name: service.name,
         description: service.description,
         categoryId: service.categoryId,
-        unidade_medida_id: '21',
+        unit_measure_id: '21',
         brandId: '',
         supplierId: '',
         purchasePrice: 0,
         profitMargin: 0,
         salePrice: service.salePrice,
         stock: 0,
-        multiplicador_unidade: 1,
+        unit_multiplier: 1,
         totalStock: 0,
         internalCode: service.internalCode,
         reference: service.reference || '',
-        duracao_minutos: service.duracao_minutos,
+        duration_minutes: service.duration_minutes,
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
         categoryName: service.categoryName,
@@ -129,7 +129,7 @@ export const useCart = (onToast?: CartToast) => {
     [onToast]
   );
 
-  // Subtrai 1 unidade do item no carrinho
+  // Subtrai 1 unit do item no carrinho
   const handleRemoveFromCart = useCallback(
     (item: ItemData) => {
       setCartItems((prevItems) => {

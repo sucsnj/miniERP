@@ -28,13 +28,13 @@ interface ProductPreview {
   cProd: string;
   ean: string;
   description: string;
-  descricaoOriginal: string;
+  originalDescription: string;
   unidadeMedida: string;
   quantity: number;
   valorUnitario: number;
   tipoMovimentacao: string;
-  existe: boolean;
-  itemIdExistente?: string;
+  exists: boolean;
+  idExistingItem?: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -110,13 +110,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             cProd,
             ean,
             description: existingItem ? existingItem.name : description,
-            descricaoOriginal: description,
+            originalDescription: description,
             unidadeMedida: unitOfMeasure,
             quantity: quantity,
             valorUnitario: unitValue,
             tipoMovimentacao: movementType,
-            existe: exists,
-            itemIdExistente: existingItem?.id,
+            exists: exists,
+            idExistingItem: existingItem?.id,
           });
         } else {
           existingInBatch.quantity += quantity;
@@ -133,7 +133,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         quantity: quantity,
         valorUnitario: unitValue,
         tipoMovimentacao: movementType,
-        itemIdExistente: existingItemId,
+        idExistingItem: existingItemId,
       } = productPayload;
 
       if (existingItemId) {

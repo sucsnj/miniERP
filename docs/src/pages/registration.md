@@ -6,7 +6,7 @@
 
 - Dois fluxos: novo (direto ou `?novoImport=1&nome=&purchasePrice=&estoque=&unidade=&ean=&internalCode=`) e edição (`?id=X`).
 - Salva produto (`registerProduct`/`updateProduct`) ou serviço (`registerService`/`updateService`) conforme `form.type`; redireciona para `/products` após 2s.
-- Gerencia múltiplos códigos de barras (`BarcodeManager`) e CRUD auxiliar (categoria, marca, fornecedor, unidade) via hooks.
+- Gerencia múltiplos códigos de barras (`BarcodeManager`) e CRUD auxiliar (categoria, marca, fornecedor, unit) via hooks.
 - Guarda alterações não salvas (`beforeunload` + guard do router + `ConfirmDialog`).
 
 ## Relações

@@ -60,7 +60,7 @@ A validação é centralizada em `src/utils/env.ts` e falha na primeira leitura 
 | `delete_category` / `update_category` | Protege seeds e repõe produtos/serviços na categoria default. |
 | `delete_brand` / `update_brand` | Protege seed e repõe produtos na marca default. |
 | `delete_supplier` / `update_supplier` | Protege seed e repõe produtos no fornecedor default. |
-| `delete_unit_of_measure` / `update_unit_of_measure` | Protege seeds e repõe produtos/unidades na unidade default. |
+| `delete_unit_of_measure` / `update_unit_of_measure` | Protege seeds e repõe produtos/unidades na unit default. |
 | `save_medicine_search` | Upsert do histórico + poda para os 25 mais recentes. |
 | `list_products` / `list_services` | Listagens com busca, filtros, joins e paginação em `jsonb`. |
 

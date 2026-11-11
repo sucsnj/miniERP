@@ -72,7 +72,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
       return;
     }
 
-    // Se o modal principal estiver aberto, fecha
+    // Se o modal mainBarcode estiver aberto, fecha
     if (selectedAccount) {
       onCloseSelectedAccount();
       return;

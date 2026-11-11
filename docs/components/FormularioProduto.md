@@ -68,7 +68,7 @@ interface FormularioProdutoProps {
   - Digitar **Margem (%)** → recalcula Venda.
   - Digitar **Venda** → recalcula Margem a partir de compra/venda.
   - **Estoque:** em edição (`editarProdutoId`) vira um botão **"Ajustar"** que abre `ModalAjusteEstoque`; em cadastro novo é input numérico.
-- **Unidades de Medida:** lista de linhas com radio de principal, select de unidade, multiplicador ("Fator") e botão remover (X). Ao remover a principal, a primeira restante vira principal e sincroniza `unidadeMedidaId`/`multiplicadorUnidade`. Botões "+ Nova Unidade" (default `{ unidadeMedidaId: 1, multiplicadorUnidade: '1', principal: !vazio }`) e "Cadastro de Unidades" (abre modal).
+- **Unidades de Medida:** lista de linhas com radio de mainBarcode, select de unit, multiplicador ("Fator") e botão remover (X). Ao remover a mainBarcode, a primeira restante vira mainBarcode e sincroniza `unidadeMedidaId`/`multiplicadorUnidade`. Botões "+ Nova Unidade" (default `{ unidadeMedidaId: 1, multiplicadorUnidade: '1', principal: !vazio }`) e "Cadastro de Unidades" (abre modal).
 - **Código Interno:** desabilitado em edição (não pode ser alterado); placeholder avisa e menciona preenchimento automático quando em branco.
 - **Referência.**
 
@@ -82,4 +82,4 @@ interface FormularioProdutoProps {
 
 - Componente de **apresentação controlada**: não busca dados nem salva; apenas renderiza o formulário e chama `setForm`.
 - `ProdutoOptions`/`ProdutoFormData`/`ProdutoActions` servem de contrato para os modais e hooks de catálogo.
-- Alterar a unidade principal, o fator da principal ou remover a principal sincroniza `form.unidadeMedidaId`/`form.multiplicadorUnidade` (campos "resumo" usados no payload).
+- Alterar a unit mainBarcode, o fator da mainBarcode ou remover a mainBarcode sincroniza `form.unidadeMedidaId`/`form.multiplicadorUnidade` (campos "resumo" usados no payload).

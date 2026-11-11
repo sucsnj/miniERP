@@ -1,12 +1,12 @@
 # Contexto Rápido para Agentes
 
-> Este documento existe para que o agente entenda o projeto sem reler o código. Complementa `docs/README.md` (índice completo) e `docs/DOCS.md` (arquitetura). O estado atual do projeto (pendentes e futuras) fica em `PROJECT_STATUS.md` (raiz).
+> Este documento exists para que o agente entenda o projeto sem reler o código. Complementa `docs/README.md` (índice completo) e `docs/DOCS.md` (arquitetura). O estado atual do projeto (pendentes e futuras) fica em `PROJECT_STATUS.md` (raiz).
 
 ## O que é este projeto
 
 Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). Não há autenticação externa.
 
-## Pilha principal
+## Pilha mainBarcode
 
 - **Next.js 16** — páginas em `src/pages/` e API interna em `src/pages/api/`.
 - **React 19** + **MUI** (`@mui/material`, `@emotion`) para UI.

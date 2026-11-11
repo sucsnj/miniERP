@@ -33,12 +33,12 @@ Endpoint **exclusivamente POST** de importação de itens a partir de XML de NF-
 Fluxo:
 
 1. Se `itemIdExistente` → `insertMovimentacaoEstoque` (`ENTRADA`, "Importação de XML de NF-e") → `200 { sucesso, id, estoqueAtualizado: true }`.
-2. Senão, se `ean` já existe como barcode → mesma movimentação de estoque (200). Se o EAN já está em outro produto → `400 { error, duplicado: true }`.
+2. Senão, se `ean` já exists como barcode → mesma movimentação de estoque (200). Se o EAN já está em outro produto → `400 { error, duplicado: true }`.
 3. Senão, cria produto novo com defaults:
    - `categoria_id=1` (Geral), `unidade_medida_id=1` (UN), `marca_id=1` (Outros), `fornecedor_id=1` (Sem fornecedor).
    - `preco_compra = valorUnitario`, `margem_lucro = 50`, `preco_venda = valorUnitario * 1.5` (margem padrão 50%).
    - `nome` limitado a 100 chars; `descricao = "Importado via XML da NF-e"`.
-   - `estoque = quantidade`, barcode `ean` como principal.
+   - `estoque = quantidade`, barcode `ean` como mainBarcode.
    - → `201 { sucesso: true, id: <itemId> }`.
 
 **400** se `preview`/`importar` sem payload válido; **500** com `{"error": ...}` em falha geral.

@@ -36,7 +36,7 @@ export interface ProductFormData {
     reference: string;
     durationMinutes: string;
     active: number;
-    unitsOfMeasure: { unitOfMeasureId: string; unitMultiplier: string; isPrincipal: boolean }[];
+    unitsOfMeasure: { unitOfMeasureId: string; unitMultiplier: string; isMain: boolean }[];
 }
 
 export interface ProductOptions {
@@ -408,7 +408,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                             <input
                                 type="radio"
                                 name="unidadePrincipal"
-                                checked={un.isPrincipal}
+                                checked={un.isMain}
                                 onChange={() => {
                                     const { units, unitOfMeasureId, unitMultiplier } = setUnitAsPrincipal(
                                         form.unitsOfMeasure,
@@ -439,7 +439,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                             >
                                 {options.unitsOfMeasure.map((u) => (
                                     <option key={u.id} value={u.id}>
-                                        {u.sigla} - {u.description}
+                                        {u.abbreviation} - {u.description}
                                     </option>
                                 ))}
                             </select>

@@ -43,7 +43,7 @@ Rota `/products`. É a porta de entrada do domínio Produtos/Estoque: exibe o ca
 
 ## Observações
 
-- Serviços não têm marca/fornecedor/unidade: ao mesclar, a página usa defaults (`marca_id: 1`, `fornecedor_id: 1`, `unidade_medida_id: 21`, `estoque: 0`).
+- Serviços não têm marca/fornecedor/unit: ao mesclar, a página usa defaults (`marca_id: 1`, `fornecedor_id: 1`, `unidade_medida_id: 21`, `estoque: 0`).
 - A paginação real acontece no cliente — a API devolve até 10.000 itens (desempenho pode degradar com catálogo grande).
 - `toggleStatus` só é aplicado para produtos (serviços não têm coluna `ativo`).
 - Após excluir o único item da última página, volta uma página.

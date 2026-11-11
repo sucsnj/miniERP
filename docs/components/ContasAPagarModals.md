@@ -38,7 +38,7 @@ interface ContasAPagarModalsProps {
 - Ações inferiores: `status === 'Pendente'` → "Pagar conta" (`onStartPayment`); senão → "Cancelar pagamento" (`onCancelPayment` + `onCancelEdit`). Botão "Fechar" (`onCloseSelectedConta` + `onCancelEdit`).
 - **Modal de pagamento:** textarea de observações (`autoFocus`) + "Confirmar pagamento" (`onConfirmPayment`) / "Cancelar".
 - `useFocusTrap(modalRef, Boolean(selectedConta || payModalOpen))` — ambos modais compartilham a ref.
-- `useShortcuts(['Escape'], ...)`: fecha edição primeiro, depois o modal principal.
+- `useShortcuts(['Escape'], ...)`: fecha edição primeiro, depois o modal mainBarcode.
 - Overlay fecha ao clicar fora (`onClick` no overlay + `stopPropagation` no conteúdo).
 
 ## Dependências
@@ -49,4 +49,4 @@ interface ContasAPagarModalsProps {
 ## Observações
 
 - **Quirk:** o botão "Salvar" chama `onSave(event)` passando um `MouseEvent` de `onClick` (não um `FormEvent`). A assinatura foi tipada de acordo (`React.FormEvent<HTMLButtonElement>`). Funciona porque `handleSubmit` da página só usa `preventDefault()` e lê valores do **estado**, não do `event.target`.
-- Não há modal de criação separado — a criação usa o formulário principal; os modais cobrem detalhe/edição e pagamento.
+- Não há modal de criação separado — a criação usa o formulário mainBarcode; os modais cobrem detalhe/edição e pagamento.

@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const name = body.name ?? body.name;
       const categoryId = body.categoryId ?? body.categoryId;
       const salePrice = body.salePrice ?? body.salePrice ?? 0;
-      const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? 0;
+      const durationMinutes = body.durationMinutes ?? body.duration_minutes ?? 0;
       const internalCode = body.internalCode ?? body.internalCode;
       const reference = body.reference ?? body.reference;
       const description = body.description ?? body.description;
@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const name = body.name ?? body.name ?? existing.name;
       const categoryId = body.categoryId ?? body.categoryId ?? existing.categoryId;
       const salePrice = body.salePrice ?? body.salePrice ?? existing.salePrice;
-      const durationMinutes = body.durationMinutes ?? body.duracao_minutos ?? existing.durationMinutes;
+      const durationMinutes = body.durationMinutes ?? body.duration_minutes ?? existing.durationMinutes;
       const internalCode = body.internalCode ?? body.internalCode ?? existing.internalCode;
       const reference = body.reference ?? body.reference ?? existing.reference;
       const description = body.description ?? body.description ?? existing.description;

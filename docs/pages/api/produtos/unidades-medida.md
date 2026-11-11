@@ -8,13 +8,13 @@ CRUD de unidades de medida. Usa `db/products.db` (tabela `unidades_medida`).
 
 ### `GET /api/products/unidades-medida`
 
-**Resposta 200:** `[{ "id": 1, "sigla": "UN", "descricao": null }, ...]` ordenadas por sigla.
+**Resposta 200:** `[{ "id": 1, "sigla": "UN", "descricao": null }, ...]` ordenadas por abbreviation.
 
 ### `POST /api/products/unidades-medida`
 
 **Body:** `{ "sigla": "...", "descricao": "..." }`.
 
-**Validações (400):** sigla obrigatória; duplicada (case-insensitive).
+**Validações (400):** abbreviation obrigatória; duplicada (case-insensitive).
 
 **Resposta:** `201 {"id": <id>, "message": "Unidade de medida cadastrada com sucesso."}`.
 
@@ -30,7 +30,7 @@ CRUD de unidades de medida. Usa `db/products.db` (tabela `unidades_medida`).
 
 ## Regras e Observações
 
-- `id=1` (unidade "UN") não pode ser apagada.
+- `id=1` (unit "UN") não pode ser apagada.
 - Siglas presentes em `seedUoms` não podem ser atualizadas (lança erro na camada de banco).
-- Ao apagar unidade com itens associados, os itens são migrados para `UN` (id 1).
+- Ao apagar unit com itens associados, os itens são migrados para `UN` (id 1).
 - Erros → `500`; métodos não suportados → `405` (`Allow: GET, POST, DELETE, PUT, PATCH`).

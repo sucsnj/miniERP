@@ -87,8 +87,8 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
         stock: p.stock,
         internalCode: p.internalCode,
         ean:
-          p.barcodes?.find((b) => b.principal === 1)?.codigo_barras ||
-          p.barcodes?.[0]?.codigo_barras ||
+          p.barcodes?.find((b) => b.mainBarcode === 1)?.barcodesData ||
+          p.barcodes?.[0]?.barcodesData ||
           '',
         categoryName: p.categoryName,
       }));

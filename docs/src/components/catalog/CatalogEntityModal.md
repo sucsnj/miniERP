@@ -1,6 +1,6 @@
 # `src/components/catalog/CatalogEntityModal.tsx`
 
-> Modal genérico de criação/edição dos cadastros auxiliares (categoria, marca, fornecedor e unidade de medida).
+> Modal genérico de criação/edição dos cadastros auxiliares (categoria, marca, fornecedor e unit de medida).
 
 ## O que faz
 

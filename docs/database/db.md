@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Módulo principal de persistência de vendas. Abre a conexão SQLite com `better-sqlite3` no arquivo `db/vendas.db` e expõe operações de vendas diárias, itens de venda e consolidação mensal.
+Módulo mainBarcode de persistência de vendas. Abre a conexão SQLite com `better-sqlite3` no arquivo `db/vendas.db` e expõe operações de vendas diárias, itens de venda e consolidação mensal.
 
 ## Conexão e configuração
 

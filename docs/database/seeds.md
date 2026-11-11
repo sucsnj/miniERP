@@ -18,7 +18,7 @@ seedFornecedores: { nome: string }[]                       // [{ nome: 'Sem forn
 ## Comportamentos
 
 - O `seed` roda em `produtosDb.ts` dentro de um loop que coexiste com a criação das tabelas, e não cria registros duplicados a cada execução (itens inseridos apenas quando ausentes / contagem zerada).
-- `seedUoms` também é usado como **lista protegida**: siglas presentes em `seedUoms` não podem ser atualizadas nem excluídas pela API de unidades de medida (checagem por igualdade da sigla).
+- `seedUoms` também é usado como **lista protegida**: siglas presentes em `seedUoms` não podem ser atualizadas nem excluídas pela API de unidades de medida (checagem por igualdade da abbreviation).
 
 ## Observações
 

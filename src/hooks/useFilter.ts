@@ -15,7 +15,7 @@ const isValidFilter = (value: string | null): value is SalesFilter =>
 // dentro de useEffect) para evitar renders extras.
 export const useFilter = () => {
   const [filter, setFilter] = useState<SalesFilter>(() => {
-    // localStorage só existe no navegador; no servidor (SSR) usa o padrão
+    // localStorage só exists no navegador; no servidor (SSR) usa o padrão
     if (typeof window === 'undefined') return 'todas';
     const saved = window.localStorage.getItem(STORAGE_KEY);
     return isValidFilter(saved) ? saved : 'todas';

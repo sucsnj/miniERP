@@ -54,7 +54,7 @@ export const useUnitOfMeasure = ({
       const response = await createUnitOfMeasure(uomForm.abbreviation.trim(), uomForm.description.trim());
       showToast(response.message || 'Unidade de medida criada com sucesso.', 'success');
 
-      // Re-carrega lista de unidade de medida e seleciona a criada
+      // Re-carrega lista de unit de medida e seleciona a criada
       const uoms = await fetchUnitsOfMeasure();
       setOptions(prev => ({ ...prev, unitsOfMeasure: uoms }));
       setForm(prev => ({ ...prev, unitOfMeasureId: response.id }));
@@ -67,14 +67,14 @@ export const useUnitOfMeasure = ({
     }
   };
 
-  // Handler para abrir modal de edição de unidade de medida
-  const handleOpenEditUnitOfMeasureModal = (unit: { id: string; sigla: string; description?: string }) => {
+  // Handler para abrir modal de edição de unit de medida
+  const handleOpenEditUnitOfMeasureModal = (unit: { id: string; abbreviation: string; description?: string }) => {
     setForm(prev => ({ ...prev, unitOfMeasureId: unit.id }));
-    setUomForm({ abbreviation: unit.sigla, description: unit.description || '' });
+    setUomForm({ abbreviation: unit.abbreviation, description: unit.description || '' });
     setUnitOfMeasureEditModalOpen(true);
   };
 
-  // Ediçao de unidade de medida
+  // Ediçao de unit de medida
   const handleUpdateUnitOfMeasure = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uomForm.abbreviation.trim()) {
@@ -89,7 +89,7 @@ export const useUnitOfMeasure = ({
       ({
         ...prev, unitsOfMeasure: prev.unitsOfMeasure.map(uom =>
           uom.id === form.unitOfMeasureId ?
-            { ...uom, sigla: uomForm.abbreviation.trim(), description: uomForm.description.trim() } : uom
+            { ...uom, abbreviation: uomForm.abbreviation.trim(), description: uomForm.description.trim() } : uom
         )
       }));
 
@@ -102,7 +102,7 @@ export const useUnitOfMeasure = ({
     }
   };
 
-  // Handle para deletar unidade de medida
+  // Handle para deletar unit de medida
   const handleDeleteUnitOfMeasure = async () => {
     try {
       await deleteUnitOfMeasure(form.unitOfMeasureId);

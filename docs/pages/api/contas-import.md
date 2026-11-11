@@ -20,7 +20,7 @@ Body: `{ xml: string }`. Sem `xml` → 400 `{ error: 'Arquivo XML não fornecido
    - `normalizarDocumento(nNF)` — converte letras em números (A=1, B=2, ...); documento final = base + índice da duplicata (`${base}${i+1}`).
    - `validateCurrency` (valor) e `validateDate` (vencimento, normalizado para `YYYY-MM-DD`).
 4. Por duplicata: se já existir conta com mesma `distribuidora`+`documento`, **pula**; senão `insertConta`.
-5. Nota: se a chave já existe em `notas.db`, retorna 400 `'Nota e duplicata(s) já existentes'` quando nenhum registro novo; senão registra `insertNota(distribuidora, chave, dataEmissao, vNF)`.
+5. Nota: se a chave já exists em `notas.db`, retorna 400 `'Nota e duplicata(s) já existentes'` quando nenhum registro novo; senão registra `insertNota(distribuidora, chave, dataEmissao, vNF)`.
 
 ### Respostas
 

@@ -64,7 +64,7 @@ Cria produto. Duas ações:
 }
 ```
 
-**Validações (400):** tipo só `PRODUTO`; nome obrigatório; categoria, marca e fornecedor válidos; unidade de medida válida (via `unidades_medida` ou `unidade_medida_id`); código interno duplicado; barcodes duplicados (# no payload e/ou no banco); garante exatamente 1 unidade/barcode principal.
+**Validações (400):** tipo só `PRODUTO`; nome obrigatório; categoria, marca e fornecedor válidos; unit de medida válida (via `unidades_medida` ou `unidade_medida_id`); código interno duplicado; barcodes duplicados (# no payload e/ou no banco); garante exatamente 1 unit/barcode mainBarcode.
 
 **Respostas:** `201 {"id": <id>, "message": "Item cadastrado com sucesso."}`; `400`/`500` com `{"error": "..."}`.
 
@@ -89,4 +89,4 @@ Exclui produto.
 - `DELETE` ignora o `tipo` enviado (valida apenas o `id`).
 - O estoque inicial positivo do produto gera uma movimentação `ENTRADA` "Estoque inicial via cadastro" (ver `produtosDb.ts`).
 - Métodos não suportados → `405` com `Allow: GET, POST, PUT, DELETE`.
-- `unidades_medida`/`codigos_barras` são opcionais; defaults aplicados na camada de banco (`multiplicador_unidade` 1, sem barcodes, unidade principal = primeira).
+- `unidades_medida`/`codigos_barras` são opcionais; defaults aplicados na camada de banco (`multiplicador_unidade` 1, sem barcodes, unit mainBarcode = primeira).

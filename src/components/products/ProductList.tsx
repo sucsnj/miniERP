@@ -84,15 +84,15 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                             </td>
                                             <td>R$ {formatCurrency(item.salePrice || 0, 2)}</td>
                                             <td>
-                                                {item.kind === 'SERVICE' ? '—' : `${item.totalStock ?? (item.stock * (item.multiplicador_unidade ?? 1))} ${item.unitAbbreviation || ''}`.trim()}
+                                                {item.kind === 'SERVICE' ? '—' : `${item.totalStock ?? (item.stock * (item.unit_multiplier ?? 1))} ${item.unitAbbreviation || ''}`.trim()}
                                             </td>
 
                                             <td>
                                                 {item.kind === 'PRODUCT' && (
                                                     <span
                                                         className={`${styles.badge} ${item.active === 1
-                                                            ? styles.badgeAtivo
-                                                            : styles.badgeInativo
+                                                            ? styles.activeBadge
+                                                            : styles.inactiveBadge
                                                             }`}
                                                     >
                                                         {item.active === 1 ? 'Ativo' : 'Inativo'}

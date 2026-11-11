@@ -39,7 +39,7 @@ Endpoint de **movimentações de estoque** (`movimentacoes_estoque` em `db/produ
 
 `tipo`: `ENTRADA` | `SAIDA` | `AJUSTE`.
 
-**Validações (400):** `item_id` numérico; tipo em um dos três valores; `quantidade` numérica (regras de sinal aplicadas na camada de banco). **404** se item não existe.
+**Validações (400):** `item_id` numérico; tipo em um dos três valores; `quantidade` numérica (regras de sinal aplicadas na camada de banco). **404** se item não exists.
 
 **Resposta:** `201 {"id": <movement.id>, "message": "Movimentação de estoque registrada com sucesso."}`.
 

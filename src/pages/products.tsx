@@ -112,18 +112,18 @@ const ProductsPage: React.FC = () => {
         name: service.name,
         description: service.description,
         categoryId: service.categoryId,
-        unidade_medida_id: '21',
+        unit_measure_id: '21',
         brandId: '',
         supplierId: '',
         purchasePrice: 0,
         profitMargin: 0,
         salePrice: service.salePrice,
         stock: 0,
-        multiplicador_unidade: 1,
+        unit_multiplier: 1,
         totalStock: 0,
         internalCode: service.internalCode,
         reference: service.reference || '',
-        duracao_minutos: service.duracao_minutos,
+        duration_minutes: service.duration_minutes,
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
         categoryName: service.categoryName,
@@ -184,13 +184,13 @@ const ProductsPage: React.FC = () => {
 
   // Alterna o status Ativo/Inativo
   const handleToggleStatus = async (item: ItemData) => {
-    const novoStatus = item.active === 1 ? 0 : 1;
+    const newStatus = item.active === 1 ? 0 : 1;
     try {
       if (item.kind === 'PRODUCT') {
-        await toggleProductStatus(item.id, novoStatus);
+        await toggleProductStatus(item.id, newStatus);
       }
       showToast(
-        `Item ${novoStatus === 1 ? 'ativado' : 'desativado'} com sucesso.`,
+        `Item ${newStatus === 1 ? 'ativado' : 'desativado'} com sucesso.`,
         'success'
       );
       loadItems();

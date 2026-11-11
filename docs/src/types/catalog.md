@@ -6,7 +6,7 @@
 
 - `BrandFormData`: formulário de marca (`name`).
 - `SupplierFormData`: formulário de fornecedor (`name`).
-- `UnitOfMeasureFormData`: formulário de unidade de medida (`abbreviation`, `description`).
+- `UnitOfMeasureFormData`: formulário de unit de medida (`abbreviation`, `description`).
 
 ## Relações
 

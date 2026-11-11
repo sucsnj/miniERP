@@ -15,7 +15,7 @@ O projeto possuía dezenas de botões nativos com classes globais e módulos dif
 3. **Tamanhos:** `sm`, `md` (padrão) e `lg`.
 4. **API:** `leftIcon`, `rightIcon`, `isLoading` e `iconOnly`; `icon` fica como alias legado temporário de `leftIcon`.
 5. **Acessibilidade:** `isLoading` aplica `disabled` e `aria-busy`; `iconOnly` mantém `children` como rótulo visualmente oculto, além de aceitar `aria-label`.
-6. **Migração gradual:** substituir os botões legados por fases, começando por primitivas compartilhadas e pelo endpoint principal, sem alterar todos os módulos de uma vez.
+6. **Migração gradual:** substituir os botões legados por fases, começando por primitivas compartilhadas e pelo endpoint mainBarcode, sem alterar todos os módulos de uma vez.
 7. **Limpeza posterior:** remover classes globais e de módulos somente depois que não houver mais referências.
 
 ## Consequências

@@ -35,7 +35,7 @@ Os estilos estavam concentrados em `globals.css` (~1.300 linhas), cinco CSS Modu
 ## Alternativas consideradas
 
 - **Continuar com `globals.css`:** rejeitado — acoplamento global e dificuldade de rastrear uso.
-- **CSS-in-JS (Emotion/styled):** rejeitado — MUI/Emotion já existe apenas para ícones/Tooltip; adotar CSS-in-JS ampliaria dependências e runtime.
+- **CSS-in-JS (Emotion/styled):** rejeitado — MUI/Emotion já exists apenas para ícones/Tooltip; adotar CSS-in-JS ampliaria dependências e runtime.
 - **Tailwind:** rejeitado — exigiria reescrever toda a UI e não resolve a organização atual de módulos.
 - **Manter tema por classes:** rejeitado — dois caminhos de tema e CSS duplicado para claro/escuro.
 

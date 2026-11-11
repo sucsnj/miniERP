@@ -12,19 +12,19 @@ import {
 import { parseNumber } from '../../utils/number';
 
 interface UnitPayload {
-  unidade_medida_id?: number | string;
+  unit_measure_id?: number | string;
   unitId?: string;
   unit_id?: string;
-  multiplicador_unidade?: number | string;
+  unit_multiplier?: number | string;
   unitMultiplier?: number | string;
-  principal?: number | boolean;
+  mainBarcode?: number | boolean;
   isPrimary?: boolean;
 }
 
 interface BarcodePayload {
-  codigo_barras?: string;
+  barcodesData?: string;
   barcode?: string;
-  principal?: number | boolean;
+  mainBarcode?: number | boolean;
   isPrimary?: boolean;
 }
 
@@ -90,9 +90,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : [];
       let unitList = unitsInput
         .map((u) => ({
-          unitId: String(u.unitId ?? u.unit_id ?? u.unidade_medida_id ?? ''),
-          unitMultiplier: parseNumber(u.unitMultiplier ?? u.multiplicador_unidade),
-          isPrimary: u.isPrimary === true || u.principal === 1 || u.principal === true,
+          unitId: String(u.unitId ?? u.unit_id ?? u.unit_measure_id ?? ''),
+          unitMultiplier: parseNumber(u.unitMultiplier ?? u.unit_multiplier),
+          isPrimary: u.isPrimary === true || u.mainBarcode === 1 || u.mainBarcode === true,
         }))
         .filter((u) => u.unitId !== '');
 
@@ -101,9 +101,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       if (unitList.length === 0) {
-        const unitId = body.unidade_medida_id ?? body.baseUnitId ?? body.base_unit_id;
+        const unitId = body.unit_measure_id ?? body.baseUnitId ?? body.base_unit_id;
         if (!unitId) return res.status(400).json({ error: 'Selecione uma unidade de medida válida.' });
-        unitList = [{ unitId: String(unitId), unitMultiplier: parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier ?? 1), isPrimary: true }];
+        unitList = [{ unitId: String(unitId), unitMultiplier: parseNumber(body.unit_multiplier ?? body.unitMultiplier ?? body.unit_multiplier ?? 1), isPrimary: true }];
       }
 
       const unitIds = unitList.map((u) => u.unitId);
@@ -130,8 +130,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : [];
       const listBarcodes = barcodesInput
         .map((cb) => ({
-          barcode: String(cb.barcode ?? cb.codigo_barras ?? '').trim(),
-          isPrimary: cb.isPrimary === true || cb.principal === 1 || cb.principal === true,
+          barcode: String(cb.barcode ?? cb.barcodesData ?? '').trim(),
+          isPrimary: cb.isPrimary === true || cb.mainBarcode === 1 || cb.mainBarcode === true,
         }))
         .filter((cb) => cb.barcode.length > 0);
 
@@ -169,9 +169,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin);
       const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price);
       const stock = parseNumber(body.stock ?? body.stock);
-      const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier);
+      const multiplier = parseNumber(body.unit_multiplier ?? body.unitMultiplier ?? body.unit_multiplier);
 
-      const finalUnitId = mainUnit ? mainUnit.unitId : String(body.unidade_medida_id ?? body.baseUnitId ?? body.base_unit_id);
+      const finalUnitId = mainUnit ? mainUnit.unitId : String(body.unit_measure_id ?? body.baseUnitId ?? body.base_unit_id);
       const finalMultiplier = mainUnit ? mainUnit.unitMultiplier : (Number.isFinite(multiplier) && multiplier > 0 ? multiplier : 1);
 
       const id = await createProduct({
@@ -230,9 +230,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : [];
       let unitList = unitsInput
         .map((u) => ({
-          unitId: String(u.unitId ?? u.unit_id ?? u.unidade_medida_id ?? ''),
-          unitMultiplier: parseNumber(u.unitMultiplier ?? u.multiplicador_unidade),
-          isPrimary: u.isPrimary === true || u.principal === 1 || u.principal === true,
+          unitId: String(u.unitId ?? u.unit_id ?? u.unit_measure_id ?? ''),
+          unitMultiplier: parseNumber(u.unitMultiplier ?? u.unit_multiplier),
+          isPrimary: u.isPrimary === true || u.mainBarcode === 1 || u.mainBarcode === true,
         }))
         .filter((u) => u.unitId !== '');
 
@@ -241,8 +241,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       if (unitList.length === 0) {
-        const unitId = body.unidade_medida_id ?? body.baseUnitId ?? body.base_unit_id ?? existing.baseUnitId;
-        unitList = [{ unitId: String(unitId), unitMultiplier: parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier), isPrimary: true }];
+        const unitId = body.unit_measure_id ?? body.baseUnitId ?? body.base_unit_id ?? existing.baseUnitId;
+        unitList = [{ unitId: String(unitId), unitMultiplier: parseNumber(body.unit_multiplier ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier), isPrimary: true }];
       }
 
       const unitIds = unitList.map((u) => u.unitId);
@@ -269,8 +269,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : [];
       const listBarcodes = barcodesInput
         .map((cb) => ({
-          barcode: String(cb.barcode ?? cb.codigo_barras ?? '').trim(),
-          isPrimary: cb.isPrimary === true || cb.principal === 1 || cb.principal === true,
+          barcode: String(cb.barcode ?? cb.barcodesData ?? '').trim(),
+          isPrimary: cb.isPrimary === true || cb.mainBarcode === 1 || cb.mainBarcode === true,
         }))
         .filter((cb) => cb.barcode.length > 0);
 
@@ -308,7 +308,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const profitMargin = parseNumber(body.profitMargin ?? body.profitMargin ?? body.profit_margin ?? existing.profitMargin);
       const salePrice = parseNumber(body.salePrice ?? body.salePrice ?? body.sale_price ?? existing.salePrice);
       const stock = parseNumber(body.stock ?? body.stock ?? existing.stock);
-      const multiplier = parseNumber(body.multiplicador_unidade ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier);
+      const multiplier = parseNumber(body.unit_multiplier ?? body.unitMultiplier ?? body.unit_multiplier ?? existing.unitMultiplier);
 
       const finalUnitId = (unitList.find((u) => u.isPrimary)?.unitId) ?? existing.baseUnitId;
       const finalMultiplier = (unitList.find((u) => u.isPrimary)?.unitMultiplier) ?? (Number.isFinite(multiplier) && multiplier > 0 ? multiplier : existing.unitMultiplier);

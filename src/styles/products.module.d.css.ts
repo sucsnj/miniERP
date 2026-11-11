@@ -1,10 +1,9 @@
 declare const styles: {
   readonly "actionButtons": string;
   readonly "actionsCell": string;
+  readonly "activeBadge": string;
   readonly "addButton": string;
   readonly "badge": string;
-  readonly "badgeAtivo": string;
-  readonly "badgeInativo": string;
   readonly "badgeProduto": string;
   readonly "badgeServico": string;
   readonly "barcodeInputRow": string;
@@ -40,6 +39,7 @@ declare const styles: {
   readonly "historyTable": string;
   readonly "historyTableWrapper": string;
   readonly "iconButton": string;
+  readonly "inactiveBadge": string;
   readonly "inputField": string;
   readonly "listagemGrid": string;
   readonly "manageButton": string;

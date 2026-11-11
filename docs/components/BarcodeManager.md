@@ -21,7 +21,7 @@ Ultilizado durante o cadastro e edição de produtos.
     - `novoCodigoBarras` - novo código de barras.
 - `actions` - ações do componente.
     - `adicionar` - adicionar código de barras.
-    - `definirPrincipal` - definir código de barras como principal.
+    - `definirPrincipal` - definir código de barras como mainBarcode.
     - `alterar` - alterar código de barras.
     - `remover` - remover código de barras.
 - `inputRef` - `React.RefObject<HTMLInputElement | null>`; ref do input, aplicada via `ref={inputRef}`. Prop separada de `data` (refs não devem trafegar dentro do objeto de dados).

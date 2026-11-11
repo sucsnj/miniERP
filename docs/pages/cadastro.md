@@ -13,9 +13,9 @@ Rota `/registration`. Dois fluxos de entrada:
 ## Responsabilidades
 
 - Exibir formulário de cadastro/edição (Produto ou Serviço conforme `form.tipo`).
-- Suporte a múltiplos códigos de barras (adicionar, remover, definir principal) via `BarcodeManager`.
+- Suporte a múltiplos códigos de barras (adicionar, remover, definir mainBarcode) via `BarcodeManager`.
 - Salvar/atualizar produto (`registrarProduto`/`atualizarProduto`) ou serviço (`registrarServico`/`atualizarServico`).
-- Modais de CRUD auxiliar: categoria, marca, fornecedor, unidade de medida (criar/editar; via hooks `useCategoria`, `useMarca`, `useFornecedor`, `useUnidadeMedida`).
+- Modais de CRUD auxiliar: categoria, marca, fornecedor, unit de medida (criar/editar; via hooks `useCategoria`, `useMarca`, `useFornecedor`, `useUnidadeMedida`).
 - Ajuste de estoque com histórico (`ModalAjusteEstoque` + `buscarMovimentacoesEstoque`).
 - Importação de XML NF-e (`ModalImportItens` + `onImportXML` de `FormularioItem`).
 - Exclusão do item com confirmação (`ModalProdExclusao`).

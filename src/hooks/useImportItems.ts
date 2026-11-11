@@ -58,7 +58,7 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
 
       const itemsWithStatus: ItemWithStatus[] = result.produtos.map((p) => ({
         ...p,
-        descricaoOriginal: p.descricaoOriginal || p.description,
+        originalDescription: p.originalDescription || p.description,
         status: 'idle',
       }));
       setProducts(itemsWithStatus);
@@ -137,8 +137,8 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
       copy[index] = {
         ...item,
         description: newName,
-        existe: false,
-        itemIdExistente: undefined,
+        exists: false,
+        idExistingItem: undefined,
       };
       return copy;
     });
@@ -151,8 +151,8 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
       copy[index] = {
         ...item,
         description: suggestion.name,
-        existe: true,
-        itemIdExistente: suggestion.id,
+        exists: true,
+        idExistingItem: suggestion.id,
         ean: item.ean || suggestion.ean || '',
       };
       return copy;
@@ -160,8 +160,8 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
   };
 
   const handleEditItem = (item: ImportedProduct) => {
-    if (!item.itemIdExistente) return;
-    window.open(`/registration?id=${item.itemIdExistente}`, '_blank');
+    if (!item.idExistingItem) return;
+    window.open(`/registration?id=${item.idExistingItem}`, '_blank');
   };
 
   const handleQuickRegister = (item: ImportedProduct) => {

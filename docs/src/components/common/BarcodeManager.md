@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Lista os códigos; adiciona (botão ou Enter), define principal (estrela) e remove.
+- Lista os códigos; adiciona (botão ou Enter), define mainBarcode (estrela) e remove.
 - Sem estado: recebe `data`/`actions`; a validação de duplicidade fica no pai.
 
 ```ts

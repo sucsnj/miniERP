@@ -215,7 +215,7 @@ function mapUnit(row: unknown): UnitOfMeasure {
   const r = asRecord(row);
   return {
     id: String(r.id),
-    abbreviation: String(r.abbreviation ?? r.sigla ?? ''),
+    abbreviation: String(r.abbreviation ?? r.abbreviation ?? ''),
     description: toStringOrNull(r.description ?? r.description),
     isDefault: toBoolean(r.is_default ?? r.isDefault),
     isSystem: toBoolean(r.is_system ?? r.isSystem),
@@ -356,7 +356,7 @@ function mapProduct(row: unknown): Product {
     profitMargin: toNumber(r.profitMargin ?? r.profit_margin),
     salePrice: toNumber(r.salePrice ?? r.sale_price),
     stock: toNumber(r.stock ?? r.stock),
-    unitMultiplier: toNumber(r.unitMultiplier ?? r.unit_multiplier ?? r.multiplicador_unidade),
+    unitMultiplier: toNumber(r.unitMultiplier ?? r.unit_multiplier ?? r.unit_multiplier),
     totalStock: toNumber(r.totalStock ?? r.total_stock ?? r.totalStock),
     internalCode: toStringOrNull(r.internalCode ?? r.internal_code ?? r.internalCode),
     reference: toStringOrNull(r.reference ?? r.reference),
@@ -632,9 +632,9 @@ export async function listStockMovements(productId: string): Promise<StockMoveme
       productName: String(r.product_name ?? r.item ?? ''),
       type: String(r.type ?? 'ADJUST').toUpperCase() as StockMovement['type'],
       quantity: toNumber(r.quantity),
-      finalStock: toNumber(r.final_stock ?? r.estoque_final),
+      finalStock: toNumber(r.final_stock ?? r.final_stock),
       description: toStringOrNull(r.description),
-      movedAt: String(r.moved_at ?? r.data_movimentacao ?? ''),
+      movedAt: String(r.moved_at ?? r.movement_date ?? ''),
     };
   });
 }

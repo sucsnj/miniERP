@@ -1,6 +1,6 @@
 # `src/components/common/PageGrid.tsx`
 
-> Grid padrão de página (coluna principal + lateral).
+> Grid padrão de página (coluna mainBarcode + lateral).
 
 ## O que faz
 

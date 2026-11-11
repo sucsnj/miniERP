@@ -73,7 +73,7 @@ const RegistrationPage: React.FC = () => {
         reference: '',
         durationMinutes: '',
         active: 1,
-        unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isPrincipal: true }],
+        unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isMain: true }],
     });
     const [stockAdjustModalOpen, setStockAdjustModalOpen] = useState(false);
     const [adjustQuantity, setAdjustQuantity] = useState('');
@@ -150,17 +150,17 @@ const RegistrationPage: React.FC = () => {
             profitMargin: String(item.profitMargin),
             salePrice: String(item.salePrice),
         stock: String(item.stock),
-            unitMultiplier: String(item.multiplicador_unidade ?? 1),
-            unitOfMeasureId: item.unidade_medida_id,
+            unitMultiplier: String(item.unit_multiplier ?? 1),
+            unitOfMeasureId: item.unit_measure_id,
             internalCode: item.internalCode || '',
         reference: item.reference || '',
-            durationMinutes: String(item.duracao_minutos ?? ''),
+            durationMinutes: String(item.duration_minutes ?? ''),
         active: item.active ?? 1,
             unitsOfMeasure: item.units ? item.units.map(u => ({
-                unitOfMeasureId: u.unidade_medida_id,
-                unitMultiplier: String(u.multiplicador_unidade),
-        isPrincipal: u.principal === 1,
-            })) : [{ unitOfMeasureId: item.unidade_medida_id, unitMultiplier: String(item.multiplicador_unidade ?? 1), isPrincipal: true }],
+                unitOfMeasureId: u.unit_measure_id,
+                unitMultiplier: String(u.unit_multiplier),
+        isMain: u.mainBarcode === 1,
+            })) : [{ unitOfMeasureId: item.unit_measure_id, unitMultiplier: String(item.unit_multiplier ?? 1), isMain: true }],
         });
         setFormBarcodes(item.barcodes || []);
         setNewBarcode('');
@@ -188,18 +188,18 @@ const RegistrationPage: React.FC = () => {
         name: service.name,
         description: service.description,
                 categoryId: service.categoryId,
-                unidade_medida_id: '21',
+                unit_measure_id: '21',
                 brandId: '',
                 supplierId: '',
                 purchasePrice: 0,
                 profitMargin: 0,
                 salePrice: service.salePrice,
         stock: 0,
-                multiplicador_unidade: 1,
+                unit_multiplier: 1,
                 totalStock: 0,
                 internalCode: service.internalCode,
         reference: service.reference || '',
-                duracao_minutos: service.duracao_minutos,
+                duration_minutes: service.duration_minutes,
                 createdAt: service.createdAt,
                 updatedAt: service.updatedAt,
                 categoryName: service.categoryName,
@@ -227,10 +227,10 @@ const RegistrationPage: React.FC = () => {
 
     const isQueryProcessed = useRef(false);
 
-    // Lê a query: pré-carrega para edição (?id=X) ou preenche para cadastro rápido (?novoImport=1...)
+    // Lê a query: pré-carrega para edição (?id=X) ou preenche para cadastro rápido (?newImport=1...)
     useEffect(() => {
         if (!router.isReady || isQueryProcessed.current) return;
-        const { id, novoImport: isNewImport, name: nameParam, purchasePrice, stock: stockParam, unidade: unitParam, ean, internalCode } = router.query;
+        const { id, newImport: isNewImport, name: nameParam, purchasePrice, stock: stockParam, unit: unitParam, ean, internalCode } = router.query;
 
         if (id) {
             isQueryProcessed.current = true;
@@ -251,7 +251,7 @@ const RegistrationPage: React.FC = () => {
                 let uomId = '';
                 if (unitValue && options.unitsOfMeasure.length > 0) {
                     const foundUnit = options.unitsOfMeasure.find(
-                        u => u.sigla.toUpperCase() === unitValue || u.sigla.toUpperCase().includes(unitValue)
+                        u => u.abbreviation.toUpperCase() === unitValue || u.abbreviation.toUpperCase().includes(unitValue)
                     );
                     if (foundUnit) uomId = foundUnit.id;
                 }
@@ -278,11 +278,11 @@ const RegistrationPage: React.FC = () => {
         reference: '',
         durationMinutes: '',
         active: 1,
-                    unitsOfMeasure: [{ unitOfMeasureId: uomId, unitMultiplier: '1', isPrincipal: true }],
+                    unitsOfMeasure: [{ unitOfMeasureId: uomId, unitMultiplier: '1', isMain: true }],
                 });
 
                 if (eanStr) {
-                    setFormBarcodes([{ codigo_barras: eanStr, principal: 1 }]);
+                    setFormBarcodes([{ barcodesData: eanStr, mainBarcode: 1 }]);
                 } else {
                     setFormBarcodes([]);
                 }
@@ -343,7 +343,7 @@ const RegistrationPage: React.FC = () => {
             reference: '',
             durationMinutes: '',
             active: 1,
-            unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isPrincipal: true }],
+            unitsOfMeasure: [{ unitOfMeasureId: '', unitMultiplier: '1', isMain: true }],
         });
         setFormBarcodes([]);
         setNewBarcode('');
@@ -379,15 +379,15 @@ const RegistrationPage: React.FC = () => {
             return;
         }
 
-        if (formBarcodes.some((c) => c.codigo_barras === code)) {
+        if (formBarcodes.some((c) => c.barcodesData === code)) {
             showToast('Este código de barras já foi adicionado a este item.', 'error');
             barcodeInputRef.current?.focus();
             return;
         }
 
-        // Se for o primeiro, ele será o principal
-        const isPrincipal = formBarcodes.length === 0 ? 1 : 0;
-        setFormBarcodes([...formBarcodes, { codigo_barras: code, principal: isPrincipal }]);
+        // Se for o primeiro, ele será o mainBarcode
+        const isMain = formBarcodes.length === 0 ? 1 : 0;
+        setFormBarcodes([...formBarcodes, { barcodesData: code, mainBarcode: isMain }]);
 
         setNewBarcode('');
         barcodeInputRef.current?.focus();
@@ -395,12 +395,12 @@ const RegistrationPage: React.FC = () => {
 
     // Remove Código de Barras do formulário
     const handleRemoveBarcode = (code: string) => {
-        const itemToRemove = formBarcodes.find((c) => c.codigo_barras === code);
-        const updated = formBarcodes.filter((c) => c.codigo_barras !== code);
+        const itemToRemove = formBarcodes.find((c) => c.barcodesData === code);
+        const updated = formBarcodes.filter((c) => c.barcodesData !== code);
 
-        // Se o removido era o principal e sobrou algum código, define o primeiro como principal
-        if (itemToRemove?.principal === 1 && updated.length > 0) {
-            updated[0].principal = 1;
+        // Se o removido era o mainBarcode e sobrou algum código, define o primeiro como mainBarcode
+        if (itemToRemove?.mainBarcode === 1 && updated.length > 0) {
+            updated[0].mainBarcode = 1;
         }
 
         setFormBarcodes(updated);
@@ -410,7 +410,7 @@ const RegistrationPage: React.FC = () => {
     const handleSetPrincipalBarcode = (code: string) => {
         const updated = formBarcodes.map((c) => ({
             ...c,
-            principal: c.codigo_barras === code ? 1 : 0,
+            mainBarcode: c.barcodesData === code ? 1 : 0,
         }));
         setFormBarcodes(updated);
     };
@@ -460,14 +460,14 @@ const RegistrationPage: React.FC = () => {
         const stockAmount = Number.isFinite(stockRaw) ? stockRaw : 0;
         const multiplierValue = Number.isFinite(multiplierRaw) && multiplierRaw > 0 ? multiplierRaw : 1;
 
-        // Validação de código principal nos códigos de barras
+        // Validação de código mainBarcode nos códigos de barras
         let finalBarcodes = formBarcodes;
         if (finalBarcodes.length > 0) {
-            const hasPrincipal = finalBarcodes.some((c) => c.principal === 1);
+            const hasPrincipal = finalBarcodes.some((c) => c.mainBarcode === 1);
             if (!hasPrincipal) {
-                // Força o primeiro como principal se nenhum foi marcado
+                // Força o primeiro como mainBarcode se nenhum foi marcado
                 finalBarcodes = finalBarcodes.map((c, index) =>
-                    index === 0 ? { ...c, principal: 1 } : c
+                    index === 0 ? { ...c, mainBarcode: 1 } : c
                 );
                 setFormBarcodes(finalBarcodes);
             }
@@ -484,17 +484,17 @@ const RegistrationPage: React.FC = () => {
             profitMargin: profitMarginAmount,
             salePrice: salePriceAmount,
             stock: stockAmount,
-            multiplicador_unidade: multiplierValue,
-            unidade_medida_id: form.unitOfMeasureId || '',
+            unit_multiplier: multiplierValue,
+            unit_measure_id: form.unitOfMeasureId || '',
             internalCode: form.internalCode.trim() || undefined,
             reference: form.reference.trim(),
-            duracao_minutos: Number(form.durationMinutes) || 0,
+            duration_minutes: Number(form.durationMinutes) || 0,
             active: form.active,
             barcodes: finalBarcodes,
             units: form.unitsOfMeasure.map(u => ({
-                unidade_medida_id: u.unitOfMeasureId,
-                multiplicador_unidade: parseNumber(u.unitMultiplier) || 1,
-                principal: u.isPrincipal ? 1 : 0
+                unit_measure_id: u.unitOfMeasureId,
+                unit_multiplier: parseNumber(u.unitMultiplier) || 1,
+                mainBarcode: u.isMain ? 1 : 0
             })),
         };
 
@@ -505,7 +505,7 @@ const RegistrationPage: React.FC = () => {
             salePrice: salePriceAmount,
             internalCode: form.internalCode.trim() || undefined,
             reference: form.reference.trim(),
-            duracao_minutos: Number(form.durationMinutes) || 0,
+            duration_minutes: Number(form.durationMinutes) || 0,
         };
 
         try {
@@ -1023,7 +1023,7 @@ const RegistrationPage: React.FC = () => {
                         }}
                         deleteAction={{
                             title: 'Confirmar Exclusão',
-                            message: <>Tem certeza que deseja excluir a unidade de medida <strong>{uomForm.abbreviation}</strong>?</>,
+                            message: <>Tem certeza que deseja excluir a unit de medida <strong>{uomForm.abbreviation}</strong>?</>,
                             confirmButtonId: 'confirm-delete-uom-btn',
                             cancelButtonId: 'cancel-delete-uom-btn',
                             onConfirm: handleDeleteUnitOfMeasure,

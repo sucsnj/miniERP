@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Página principal — **Dashboard de Vendas**. Exibe o resumo do período, formulário de registro de venda diária, edição, gráfico, exportação e ações de consolidação/backup.
+Página mainBarcode — **Dashboard de Vendas**. Exibe o resumo do período, formulário de registro de venda diária, edição, gráfico, exportação e ações de consolidação/backup.
 
 ## Responsabilidades
 

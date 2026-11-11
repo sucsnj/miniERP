@@ -16,6 +16,6 @@
 
 ## Notas
 
-- É a referência principal de cálculo do formulário de venda diária.
+- É a referência mainBarcode de cálculo do formulário de venda diária.
 - Sinal final não invalida a expressão: o cálculo parcial possível é exibido.
 - O sinal de menos unário é suportado em qualquer posição válida.

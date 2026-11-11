@@ -8,7 +8,7 @@ Página de **gestão de contas a pagar** (`/payables`): cadastro/edição, pagam
 
 Rota `/payables` (componente `ContasAPagar`). Orquestra o estado e renderiza os submódulos `ContasAPagarHeader`, `ContasAPagarFilterPanel`, `ContasAPagarForm`, `ContasAPagarLastTen`, `Agenda`, `Resumo` e `ContasAPagarModals`.
 
-## Estado principal
+## Estado mainBarcode
 
 - **Período:** `ano`, `mes` (defaults de `getDateArray()`, hoje).
 - **Listas:** `contasMes` (`buscarContas(ano, mes)`), `contasAno` (`buscarContas(ano)`).

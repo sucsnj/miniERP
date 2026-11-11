@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Busca `fetchProducts` + `fetchServices` (8 cada) com debounce de 250ms; EAN = código de barras principal.
+- Busca `fetchProducts` + `fetchServices` (8 cada) com debounce de 250ms; EAN = código de barras mainBarcode.
 - Seleciona uma sugestão (`onSelectSuggestion`) ou propaga o texto digitado (`onTextChange`).
 - Fecha ao clicar fora.
 

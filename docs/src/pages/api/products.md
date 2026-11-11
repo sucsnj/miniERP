@@ -17,4 +17,4 @@
 ## Notas
 
 - Serviços usam `./products/servicos.md`.
-- `codigos_barras`/`unidades_medida` são opcionais; é garantido exatamente um principal.
+- `codigos_barras`/`unidades_medida` são opcionais; é garantido exatamente um mainBarcode.

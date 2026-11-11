@@ -13,7 +13,7 @@ Query: `ano` (obrigatório para consulta por período), `mes` (opcional), `id` o
 - `id` → 200 com a nota via `getNotasById`; **404** `{ error: 'Nota não encontrada' }` se não existir.
 - `valor` → 200 com a nota via `getNotasByValor(parseNumber(valor))`; **404** `{ error: 'Nenhuma nota encontrada com esse valor' }`.
 - Período: **400** `{ error: 'Ano é obrigatório' }` se faltar `ano`; senão `getNotasByPeriod(ano, mes?)`.
-  - **Quirk:** antes de responder, a rota chama `getAllNotas()`; se **não existe nenhuma nota** no banco, retorna `200 []` mesmo quando o período teria resultados. Com notas existentes, retorna o resultado do período (pode ser `[]` legítimo).
+  - **Quirk:** antes de responder, a rota chama `getAllNotas()`; se **não exists nenhuma nota** no banco, retorna `200 []` mesmo quando o período teria resultados. Com notas existentes, retorna o resultado do período (pode ser `[]` legítimo).
 - Resposta 200: `NotaDetalhe[]` (ou objeto isolado nos casos `id`/`valor`).
 
 ### `POST /api/notas`

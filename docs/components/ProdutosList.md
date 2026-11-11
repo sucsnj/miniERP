@@ -29,10 +29,10 @@ interface ListagemProps {
 ## Comportamento/Responsabilidades
 
 - Colunas: **Tipo** (badge "Produto"/"Serviço"), **Cód. Interno**, **Nome** (+ descrição truncada em 50 caracteres), **Preço Venda** (`formatCurrency`), **Estoque** e **Status**.
-- **Estoque:** para `SERVICO` mostra "—"; para `PRODUTO` usa `estoque_total` quando presente, senão `estoque × (multiplicador_unidade ?? 1)`, seguido da sigla da unidade.
+- **Estoque:** para `SERVICO` mostra "—"; para `PRODUTO` usa `estoque_total` quando presente, senão `estoque × (multiplicador_unidade ?? 1)`, seguido da abbreviation da unit.
 - **Status:** só para `PRODUTO` (badge Ativo/Inativo); serviços não têm a coluna.
 - **Ações:** botão de ativar/desativar (só produtos, ícone `Block`/`Check`), editar (`Edit`) e excluir (`Delete`). Cada botão tem `id` com sufixo do item (ex.: `toggle-status-7`) e `title` explicativo.
-- O código de barras principal do item (coluna não exibida, usada para `title`/chave de estoque) é derivado de `codigos_barras.find(c => c.principal === 1)`.
+- O código de barras mainBarcode do item (coluna não exibida, usada para `title`/chave de estoque) é derivado de `codigos_barras.find(c => c.principal === 1)`.
 - Paginação visível apenas quando `totalPages > 1`, com "Página X de Y" e botões Anterior/Próxima (desabilitados nas extremidades).
 - Estados: `loading` → "Carregando..."; lista vazia → "Nenhum registro encontrado."
 

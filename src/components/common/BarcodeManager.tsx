@@ -74,21 +74,21 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
       ) : (
         <div className={styles.barcodeList}>
           {date.barcodes.map((cb) => (
-            <div key={cb.codigo_barras} className={styles.barcodeItem}>
+            <div key={cb.barcodesData} className={styles.barcodeItem}>
               <div className={styles.barcodeLeft}>
-                <span style={{ fontWeight: 'bold' }}>{cb.codigo_barras}</span>
+                <span style={{ fontWeight: 'bold' }}>{cb.barcodesData}</span>
                 <span
-                  onClick={() => actions.setAsPrincipal(cb.codigo_barras)}
+                  onClick={() => actions.setAsPrincipal(cb.barcodesData)}
                   className={styles.barcodeRadioLabel}
-                  title={cb.principal === 1 ? 'Código Principal' : 'Marcar como Principal'}
-                  id={`principal-star-${cb.codigo_barras}`}
+                  title={cb.mainBarcode === 1 ? 'Código Principal' : 'Marcar como Principal'}
+                  id={`principal-star-${cb.barcodesData}`}
                 >
-                  {cb.principal === 1 ? (
+                  {cb.mainBarcode === 1 ? (
                     <StarIcon style={{ color: '#eab308' }} fontSize="small" />
                   ) : (
                     <StarBorderIcon style={{ color: 'var(--muted)' }} fontSize="small" />
                   )}
-                  {cb.principal === 1 ? 'Principal' : 'Tornar Principal'}
+                  {cb.mainBarcode === 1 ? 'Principal' : 'Tornar Principal'}
                 </span>
               </div>
               <Button
@@ -96,10 +96,10 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
                 variant="danger"
                 size="sm"
                 iconOnly
-                onClick={() => actions.remove(cb.codigo_barras)}
+                onClick={() => actions.remove(cb.barcodesData)}
                 title="Remover"
                 aria-label="Remover"
-                id={`remove-barcode-${cb.codigo_barras}`}
+                id={`remove-barcode-${cb.barcodesData}`}
                 leftIcon={<CloseIcon fontSize="small" />}
               />
             </div>
