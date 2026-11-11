@@ -48,7 +48,7 @@ export const useDailySaleForm = ({
   onSaleAdded,
 }: UseDailySaleFormProps) => {
   const { showToast } = useToast();
-  const { autoFocusSaleInput } = useSettings();
+  const { autoFocusSaleInput, autoFocusSaleInputDelay } = useSettings();
 
   const [value, setValue] = useState('');
   const [observations, setObservations] = useState('');
@@ -323,7 +323,7 @@ export const useDailySaleForm = ({
   };
 
   // Mantém o foco e a visibilidade do campo de venda conforme configuração
-  useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput });
+  useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput, focusIntervalMs: autoFocusSaleInputDelay * 1000 });
 
   // Adiciona um operador matemático ao campo de amount
   const addOperator = (operator: string) => {

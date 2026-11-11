@@ -28,7 +28,7 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const SettingsPage = () => {
   const { themeMode, setThemeMode } = useThemeMode();
-  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput } = useSettings();
+  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput, autoFocusSaleInputDelay, setAutoFocusSaleInputDelay } = useSettings();
 
   return (
     <>
@@ -80,6 +80,21 @@ const SettingsPage = () => {
                   Desativado
                 </Button>
               </div>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '10px', fontSize: '0.8rem', opacity: autoFocusSaleInput ? 1 : 0.5 }}>
+                Delay do foco (segundos)
+                <input
+                  type="number"
+                  min={5}
+                  step={5}
+                  value={autoFocusSaleInputDelay}
+                  disabled={!autoFocusSaleInput}
+                  onChange={(e) => {
+                    const parsed = parseInt(e.target.value, 10);
+                    if (!Number.isNaN(parsed)) setAutoFocusSaleInputDelay(parsed);
+                  }}
+                  style={{ padding: '6px', width: '100%', cursor: autoFocusSaleInput ? 'text' : 'not-allowed' }}
+                />
+              </label>
             </div>
           </Panel>
 

@@ -11,6 +11,8 @@ interface SettingsContextValue {
   setTimezone: (value: string) => void;
   autoFocusSaleInput: boolean;
   setAutoFocusSaleInput: (value: boolean) => void;
+  autoFocusSaleInputDelay: number;
+  setAutoFocusSaleInputDelay: (value: number) => void;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -21,6 +23,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [recentSalesCount, setRecentSalesCountState] = useState<RecentSalesCount>(4);
   const [timezone, setTimezoneState] = useState<string>('America/Recife');
   const [autoFocusSaleInput, setAutoFocusSaleInputState] = useState(true);
+  const [autoFocusSaleInputDelay, setAutoFocusSaleInputDelayState] = useState(60);
 
   useEffect(() => {
     const saved = readStoredNumber('recentSalesCount', 4);
@@ -42,6 +45,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(id);
   }, []);
 
+  useEffect(() => {
+    const saved = readStoredNumber('autoFocusSaleInputDelay', 60);
+    const delay = Number.isFinite(saved) && saved >= 5 ? saved : 60;
+    const id = window.setTimeout(() => setAutoFocusSaleInputDelayState(delay), 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
   const setRecentSalesCount = (value: RecentSalesCount) => {
     setRecentSalesCountState(value);
     writeStoredValue('recentSalesCount', value);
@@ -60,6 +70,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     writeStoredValue('autoFocusSaleInput', value);
   };
 
+  const setAutoFocusSaleInputDelay = (value: number) => {
+    const delay = Number.isFinite(value) && value >= 5 ? Math.floor(value) : 60;
+    setAutoFocusSaleInputDelayState(delay);
+    writeStoredValue('autoFocusSaleInputDelay', delay);
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -69,6 +85,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setTimezone,
         autoFocusSaleInput,
         setAutoFocusSaleInput,
+        autoFocusSaleInputDelay,
+        setAutoFocusSaleInputDelay,
       }}
     >
       {children}

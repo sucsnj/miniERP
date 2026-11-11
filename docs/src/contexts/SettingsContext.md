@@ -7,6 +7,7 @@
 - Mantém a quantidade de vendas recentes exibidas no histórico (`0`, `2`, `4`, `6` ou `8`).
 - Mantém o fuso horário do aplicativo (padrão `America/Recife`).
 - Mantém a opção de foco automático no campo de venda (`autoFocusSaleInput`, padrão `true`).
+- Mantém o delay do foco automático, em segundos (`autoFocusSaleInputDelay`, padrão `60`, mínimo `5`).
 - Persiste as escolhas em `localStorage` e cookie `timezone`.
 - Fornece valor padrão `4`.
 
