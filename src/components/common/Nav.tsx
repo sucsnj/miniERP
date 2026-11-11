@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Button from '@/components/common/Button';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CheckIcon from '@mui/icons-material/Check';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 import styles from '@/styles/nav.module.css';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import TuneIcon from '@mui/icons-material/Tune';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HistoryIcon from '@mui/icons-material/History';
@@ -14,6 +15,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 
 const Nav: React.FC = () => {
   const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
+  const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('themeMode');
@@ -38,11 +40,6 @@ const Nav: React.FC = () => {
   }, [themeMode]);
 
   // Alterna o tema.
-  const toggleThemeMode = () => {
-    setThemeMode((current) =>
-      current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system',
-    );
-  };
 
   return (
     <nav className={styles.nav}>
@@ -80,25 +77,38 @@ const Nav: React.FC = () => {
             <img src="/favicon.png" alt="logo" width={40} height={36} />
           </Link>
         </div> */}
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          iconOnly
-          onClick={toggleThemeMode}
-          aria-label="Alternar tema"
-          leftIcon={
-            <span key={themeMode} className={styles.themeIcon}>
-              {themeMode === 'system' ? (
-                <TuneIcon />
-              ) : themeMode === 'light' ? (
-                <Brightness7Icon />
-              ) : (
-                <Brightness4Icon />
-              )}
-            </span>
-          }
-        />
+        <IconButton
+          size="small"
+          onClick={(event) => setSettingsAnchor(event.currentTarget)}
+          aria-label="Abrir configurações"
+          aria-haspopup="menu"
+          aria-expanded={Boolean(settingsAnchor)}
+        >
+          <SettingsIcon />
+        </IconButton>
+        <Menu
+          anchorEl={settingsAnchor}
+          open={Boolean(settingsAnchor)}
+          onClose={() => setSettingsAnchor(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <MenuItem disabled>Configurações</MenuItem>
+          <MenuItem disabled>Tema do app</MenuItem>
+          {(['system', 'light', 'dark'] as const).map((mode) => (
+            <MenuItem
+              key={mode}
+              selected={themeMode === mode}
+              onClick={() => {
+                setThemeMode(mode);
+                setSettingsAnchor(null);
+              }}
+            >
+              {mode === 'system' ? 'Sistema' : mode === 'light' ? 'Claro' : 'Escuro'}
+              {themeMode === mode ? <CheckIcon fontSize="small" sx={{ ml: 1 }} /> : null}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
     </nav>
 
