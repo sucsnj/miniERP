@@ -2,7 +2,7 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **10/11/2026**
+Atualizado em: **11/11/2026**
 
 ## Resumo executivo
 
@@ -30,7 +30,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 - **Migração Supabase (ADR 0012) — Fases 0 a 4:** concluídas.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em /tmp ou Storage) e validação do deploy; autenticação/proteção ficam para depois.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em `/tmp` ou Storage) e validação do deploy; autenticação/proteção ficam para depois.
-- **Refatoração de grandes componentes:** `CartModal`, `ImportItemsModal`, `ProductForm` e `SelectItemsModal` — extrair hooks/serviços/subcomponentes no padrão do `DailySaleForm`.
+- **Refatoração de grandes componentes:** CartModal, ImportItemsModal, SelectItemsModal já estão apresentacionais; ProductForm foi dividido em ProductPriceSection e ProductUnitsSection.
 
 ## Futuras / Melhorias sugeridas
 

@@ -138,6 +138,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 - [src/components/products/ProductList.md](src/components/products/ProductList.md) - listagem de produtos.
 - [src/components/products/ProductForm.md](src/components/products/ProductForm.md) - formulário de produto.
+- [src/components/products/ProductPriceSection.md](src/components/products/ProductPriceSection.md) - seção de preços do formulário de produto.
+- [src/components/products/ProductUnitsSection.md](src/components/products/ProductUnitsSection.md) - seção de unidades de medida do formulário de produto.
 - [src/components/products/ProductFilters.md](src/components/products/ProductFilters.md) - filtros de listagens.
 - [src/components/products/ItemForm.md](src/components/products/ItemForm.md) - formulário de item de venda.
 - [src/components/products/ServiceForm.md](src/components/products/ServiceForm.md) - formulário de serviço.

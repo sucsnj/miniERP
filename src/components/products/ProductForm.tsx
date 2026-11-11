@@ -1,17 +1,9 @@
 import styles from '../../styles/products.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVert from '@mui/icons-material/MoreVert';
-import CloseIcon from '@mui/icons-material/Close';
 import Button from '@/components/common/Button';
-import { parseNumber } from '../../utils/number';
-import { calculateMargin, calculateSalePrice } from '../../utils/productPrice';
-import {
-    addUnit,
-    removeUnit,
-    setUnitAsPrincipal,
-    updateUnitId,
-    updateUnitMultiplier,
-} from '../../utils/productUnits';
+import ProductPriceSection from './ProductPriceSection';
+import ProductUnitsSection from './ProductUnitsSection';
 import {
     CategoryData,
     BrandData,
@@ -280,240 +272,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
             </div>
 
-            <label className={styles.formLabel}>Preço, margem e estoque</label>
-            <div className={styles.valoresGroup}>
-                <div className={styles.formGroup}>
-                    <label className={styles.formLabel} htmlFor="form-preco-compra">
-                        Compra:
-                    </label>
-                    <input
-                        id="form-preco-compra"
-                        type="text"
-                        inputMode="decimal"
-                        className={styles.inputField}
-                        placeholder="0,00"
-                        value={form.purchasePrice}
-                        onChange={(e) => {
-                            const purchasePrice = e.target.value;
-                            const purchaseValue = parseNumber(purchasePrice);
-                            const saleValue = parseNumber(form.salePrice);
-                            const marginValue = parseNumber(form.profitMargin);
+            <ProductPriceSection
+                editingProductId={editingProductId}
+                form={form}
+                setForm={setForm}
+                actions={actions}
+            />
 
-                            if (!Number.isNaN(purchaseValue) && purchaseValue >= 0 && !Number.isNaN(marginValue)) {
-                                const newSalePrice = calculateSalePrice(purchaseValue, marginValue);
-                                setForm(prev => ({ ...prev, purchasePrice, salePrice: String(newSalePrice) }));
-                                return;
-                            }
+            <ProductUnitsSection
+                form={form}
+                setForm={setForm}
+                options={options}
+                onOpenUnitOfMeasureModal={actions.openUnitOfMeasureModal}
+            />
 
-                            if (!Number.isNaN(purchaseValue) && purchaseValue > 0 && !Number.isNaN(saleValue)) {
-                                const newMargin = calculateMargin(purchaseValue, saleValue);
-                                setForm(prev => ({ ...prev, purchasePrice, profitMargin: String(newMargin) }));
-                                return;
-                            }
-
-                            setForm(prev => ({ ...prev, purchasePrice }));
-                        }}
-                    />
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label className={styles.formLabel} htmlFor="form-margem-lucro">
-                        Margem (%):
-                    </label>
-                    <input
-                        id="form-margem-lucro"
-                        type="text"
-                        inputMode="decimal"
-                        className={styles.inputField}
-                        placeholder="0"
-                        value={form.profitMargin}
-                        onChange={(e) => {
-                            const profitMargin = e.target.value;
-                            const purchaseValue = parseNumber(form.purchasePrice);
-                            const marginValue = parseNumber(profitMargin);
-
-                            if (!Number.isNaN(purchaseValue) && purchaseValue >= 0 && !Number.isNaN(marginValue)) {
-                                const newSalePrice = calculateSalePrice(purchaseValue, marginValue);
-                                setForm(prev => ({ ...prev, profitMargin, salePrice: String(newSalePrice) }));
-                                return;
-                            }
-
-                            setForm(prev => ({ ...prev, profitMargin }));
-                        }}
-                    />
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label className={styles.formLabel} htmlFor="form-preco-venda">
-                        Venda:
-                    </label>
-                    <input
-                        id="form-preco-venda"
-                        type="text"
-                        inputMode="decimal"
-                        className={styles.inputField}
-                        placeholder="0,00"
-                        value={form.salePrice}
-                        onChange={(e) => {
-                            const salePrice = e.target.value;
-                            const purchaseValue = parseNumber(form.purchasePrice);
-                            const saleValue = parseNumber(salePrice);
-
-                            if (!Number.isNaN(purchaseValue) && purchaseValue > 0 && !Number.isNaN(saleValue)) {
-                                const newMargin = calculateMargin(purchaseValue, saleValue);
-                                setForm(prev => ({ ...prev, salePrice, profitMargin: String(newMargin) }));
-                                return;
-                            }
-
-                            setForm(prev => ({ ...prev, salePrice }));
-                        }}
-                    />
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label className={styles.formLabel} htmlFor="form-estoque">
-                        Estoque:
-                    </label>
-                    {editingProductId ? (
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={actions.openStockAdjustModal}
-                            id="open-ajuste-estoque-btn"
-                        >
-                            Ajustar
-                        </Button>
-                    ) : (
-                        <input
-                            id="form-estoque"
-                            type="text"
-                            inputMode="numeric"
-                            className={styles.inputField}
-                            placeholder="0"
-                            value={form.stock}
-                            onChange={(e) => setForm(prev => ({ ...prev, stock: e.target.value }))}
-                        />
-                    )}
-                </div>
-
-            </div>
-
-            <div className={styles.formGroup} style={{ width: '100%', marginBottom: '1.5rem' }}>
-                <label className={styles.formLabel}>
-                    Unidades de Medida:
-                </label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    {form.unitsOfMeasure?.map((un, index) => (
-                        <div key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: 'rgba(255, 255, 255, 0.05)', padding: '0.5rem', borderRadius: '4px' }}>
-                            <input
-                                type="radio"
-                                name="unidadePrincipal"
-                                checked={un.isMain}
-                                onChange={() => {
-                                    const { units, unitOfMeasureId, unitMultiplier } = setUnitAsPrincipal(
-                                        form.unitsOfMeasure,
-                                        index
-                                    );
-                                    setForm(prev => ({ ...prev, unitsOfMeasure: units, unitOfMeasureId, unitMultiplier }));
-                                }}
-                                title="Definir como Principal"
-                                style={{ margin: '0 0.5rem' }}
-                            />
-
-                            <select
-                                className={styles.selectField}
-                                style={{ flex: 1 }}
-                                value={un.unitOfMeasureId}
-                                onChange={(e) => {
-                                    const { units, unitOfMeasureId } = updateUnitId(
-                                        form.unitsOfMeasure,
-                                        index,
-                                        e.target.value
-                                    );
-                                    setForm(prev => ({
-                                        ...prev,
-                                        unitsOfMeasure: units,
-                                        ...(unitOfMeasureId !== undefined ? { unitOfMeasureId } : {}),
-                                    }));
-                                }}
-                            >
-                                {options.unitsOfMeasure.map((u) => (
-                                    <option key={u.id} value={u.id}>
-                                        {u.abbreviation} - {u.description}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <input
-                                type="text"
-                                inputMode="decimal"
-                                className={styles.inputField}
-                                style={{ width: '100px' }}
-                                placeholder="Fator"
-                                value={un.unitMultiplier}
-                                onChange={(e) => {
-                                    const { units, unitMultiplier } = updateUnitMultiplier(
-                                        form.unitsOfMeasure,
-                                        index,
-                                        e.target.value
-                                    );
-                                    setForm(prev => ({
-                                        ...prev,
-                                        unitsOfMeasure: units,
-                                        ...(unitMultiplier !== undefined ? { unitMultiplier } : {}),
-                                    }));
-                                }}
-                            />
-
-                            <Button
-                                type="button"
-                                variant="danger"
-                                size="sm"
-                                iconOnly
-                                onClick={() => {
-                                    const { units, unitOfMeasureId, unitMultiplier } = removeUnit(
-                                        form.unitsOfMeasure,
-                                        index
-                                    );
-                                    setForm(prev => ({
-                                        ...prev,
-                                        unitsOfMeasure: units,
-                                        ...(unitOfMeasureId !== undefined ? { unitOfMeasureId } : {}),
-                                        ...(unitMultiplier !== undefined ? { unitMultiplier } : {}),
-                                    }));
-                                }}
-                                title="Remover"
-                                aria-label="Remover"
-                                leftIcon={<CloseIcon fontSize="small" />}
-                            />
-                        </div>
-                    ))}
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            setForm(p => ({
-                                ...p,
-                                unitsOfMeasure: addUnit(p.unitsOfMeasure || []),
-                            }));
-                        }}
-                    >
-                        + Nova Unidade
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={actions.openUnitOfMeasureModal}
-                        title="Cadastrar Unidade no Sistema"
-                    >
-                        Cadastro de Unidades
-                    </Button>
-                </div>
-            </div>
 
             <div className={styles.formGroup}>
                 <label className={styles.formLabel} htmlFor="form-cod-interno">
