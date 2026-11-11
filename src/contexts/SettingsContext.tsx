@@ -1,12 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { readStoredNumber, writeStoredValue } from '../utils/storage';
+import { readStoredNumber, readStoredString, writeStoredValue } from '../utils/storage';
 
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 
 interface SettingsContextValue {
   recentSalesCount: RecentSalesCount;
   setRecentSalesCount: (value: RecentSalesCount) => void;
+  timezone: string;
+  setTimezone: (value: string) => void;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -15,6 +17,7 @@ const VALID_COUNTS: RecentSalesCount[] = [0, 2, 4, 6, 8];
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [recentSalesCount, setRecentSalesCountState] = useState<RecentSalesCount>(4);
+  const [timezone, setTimezoneState] = useState<string>('America/Recife');
 
   useEffect(() => {
     const saved = readStoredNumber('recentSalesCount', 4);
@@ -24,14 +27,30 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    const saved = readStoredString('timezone', 'America/Recife');
+    const id = window.setTimeout(() => setTimezoneState(saved), 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
   const setRecentSalesCount = (value: RecentSalesCount) => {
     setRecentSalesCountState(value);
-    if (typeof window !== 'undefined') {
     writeStoredValue('recentSalesCount', value);
+  };
+
+  const setTimezone = (value: string) => {
+    setTimezoneState(value);
+    writeStoredValue('timezone', value);
+    if (typeof document !== 'undefined') {
+      document.cookie = `timezone=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
     }
   };
 
-  return <SettingsContext.Provider value={{ recentSalesCount, setRecentSalesCount }}>{children}</SettingsContext.Provider>;
+  return (
+    <SettingsContext.Provider value={{ recentSalesCount, setRecentSalesCount, timezone, setTimezone }}>
+      {children}
+    </SettingsContext.Provider>
+  );
 }
 
 export function useSettings(): SettingsContextValue {

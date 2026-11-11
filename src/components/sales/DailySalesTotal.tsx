@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { DailySale } from '../../services/salesService';
 import { formatCurrency } from '../../utils/formatter';
-import { formatDateString } from '../../utils/date';
+import { formatDateString, parseDate } from '../../utils/date';
 import { canEdit } from '../../utils/edit';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -100,7 +100,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                   .map((sale) => (
                     <div key={sale.id} className={`${styles.historyItem}`}>
                       <div>
-                        <strong>{sale.createdAt.slice(10, 19)}</strong>
+                        <strong>{parseDate(sale.createdAt).format('HH:mm:ss')}</strong>
 
                         <div className="recent-sale-observacoes">
                           {sale.notes || 'Sem observações'}

@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // valida e normaliza valores e datas
       const validatedAmount = parseCurrency(String(duplicates[i].vDup[0])) ?? amount;
-      const validatedDueDate = toDate(dueDate);
+      const validatedDueDate = toDate(dueDate, req.cookies?.timezone || 'America/Recife');
 
       amount = adjustAmountByDistributor(distributor, validatedAmount);
       dueDate = validatedDueDate ? validatedDueDate.toISOString().split('T')[0] : dueDate;

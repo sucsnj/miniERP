@@ -64,8 +64,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const createdAt = body.createdAt ?? body.createdAt;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
 
-    try {
-      const validDate = toDate(date);
+     try {
+      const timezone = req.cookies?.timezone || 'America/Recife';
+      const validDate = toDate(date, timezone);
       const validValue = typeof amount === 'number' ? amount : parseCurrency(String(amount));
       if (!validDate || validValue == null) {
         return res.status(400).json({ error: 'Dados inválidos: data ou valor inválidos' });
@@ -92,7 +93,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const notes = body.notes ?? body.notes;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
 
-    const validDate = toDate(date);
+    const timezone = req.cookies?.timezone || 'America/Recife';
+    const validDate = toDate(date, timezone);
     const validValue = typeof amount === 'number' ? amount : parseCurrency(String(amount));
     if (!id || !validDate || validValue == null) {
       return res.status(400).json({ error: 'Dados inválidos para atualização' });
