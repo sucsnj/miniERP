@@ -195,28 +195,22 @@ export const useDailySaleForm = ({
   };
 
   const handlePixClick = () => {
-    const valueCheck = validateRequired(value, 'Valor');
-    if (!valueCheck.ok) {
-      showToast(valueCheck.message ?? 'Informe o valor da venda.', 'error');
-      valueInputRef.current?.focus();
-      return;
-    }
+    const trimmedValue = value.trim();
+    const valueFromInput = trimmedValue ? parseCurrency(value) : null;
 
-    const valueFromInput = parseCurrency(value);
-    if (valueFromInput == null) {
+    if (trimmedValue && valueFromInput == null) {
       showToast(validateCurrency(value).message ?? 'Valor inválido.', 'error');
       valueInputRef.current?.focus();
       return;
     }
 
-    if (valueFromInput < 0) {
+    if (valueFromInput != null && valueFromInput < 0) {
       showToast('Não pode haver pix negativo.', 'info');
       highlightField(observationsTextareaRef);
-      setLoading(false);
       return;
     }
 
-    const amount = valueFromInput > 0 ? valueFromInput.toFixed(2) : null;
+    const amount = valueFromInput != null && valueFromInput > 0 ? valueFromInput.toFixed(2) : null;
 
     const normalizedPixKey = pixKey.trim();
     const merchantName = pixName.trim();
