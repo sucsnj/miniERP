@@ -19,7 +19,7 @@ interface DailySaleFormProps {
 
 ## Relações
 
-- **Usa:** `useDailySaleForm` (`src/hooks/useDailySaleForm.ts`), [SelectItemsModal](../cart/SelectItemsModal.md), [CartModal](../cart/CartModal.md), [PixModal](../pix/PixModal.md), `formatCurrency`.
+- **Usa:** `useDailySaleForm` (`src/hooks/useDailySaleForm.ts`), [SelectItemsModal](../cart/SelectItemsModal.md), [CartModal](../cart/CartModal.md), [PixModal](../pix/PixModal.md), `formatCurrency`, `useSettings`.
 - **Usado por:** `../../pages/index.md`.
 
 ## Notas

@@ -8,6 +8,8 @@
 - Mantém o fuso horário do aplicativo (padrão `America/Recife`).
 - Mantém a opção de foco automático no campo de venda (`autoFocusSaleInput`, padrão `true`).
 - Mantém o delay do foco automático, em segundos (`autoFocusSaleInputDelay`, padrão `60`, mínimo `5`).
+- Mantém os dados PIX (`pixKey`, `pixName`, `pixBank`, `pixCity`), persistidos em `localStorage`.
+- Expõe `clearPixData` para limpar os campos PIX e remover os valores do `localStorage`.
 - Persiste as escolhas em `localStorage` e cookie `timezone`.
 - Fornece valor padrão `4`.
 

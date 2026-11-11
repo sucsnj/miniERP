@@ -28,7 +28,7 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const SettingsPage = () => {
   const { themeMode, setThemeMode } = useThemeMode();
-  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput, autoFocusSaleInputDelay, setAutoFocusSaleInputDelay } = useSettings();
+  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput, autoFocusSaleInputDelay, setAutoFocusSaleInputDelay, pixKey, setPixKey, pixName, setPixName, pixBank, setPixBank, pixCity, setPixCity, clearPixData } = useSettings();
 
   return (
     <>
@@ -133,6 +133,38 @@ const SettingsPage = () => {
                   </option>
                 ))}
               </select>
+            </div>
+          </Panel>
+
+          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <PanelHeader title="PIX" />
+              <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Dados usados no QR Code PIX. Todos os campos são obrigatórios.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {[
+                  { label: 'Chave PIX', value: pixKey, onChange: setPixKey, placeholder: 'CPF/CNPJ, e-mail, telefone...' },
+                  { label: 'Nome', value: pixName, onChange: setPixName, placeholder: 'Nome do recebedor' },
+                  { label: 'Banco', value: pixBank, onChange: setPixBank, placeholder: 'Nome ou código do banco' },
+                  { label: 'Local', value: pixCity, onChange: setPixCity, placeholder: 'Cidade' },
+                ].map((field) => (
+                  <label key={field.label} style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    {field.label} *
+                    <input
+                      type="text"
+                      required
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder={field.placeholder}
+                      style={{ padding: '6px', width: '100%' }}
+                    />
+                  </label>
+                ))}
+              </div>
+              <div style={{ marginTop: '10px' }}>
+                <Button type="button" size="sm" variant="outline" onClick={clearPixData}>
+                  Limpar dados PIX
+                </Button>
+              </div>
             </div>
           </Panel>
         </div>

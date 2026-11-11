@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { readStoredBoolean, readStoredNumber, readStoredString, writeStoredValue } from '../utils/storage';
+import { readStoredBoolean, readStoredNumber, readStoredString, removeStoredValue, writeStoredValue } from '../utils/storage';
 
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 
@@ -13,6 +13,15 @@ interface SettingsContextValue {
   setAutoFocusSaleInput: (value: boolean) => void;
   autoFocusSaleInputDelay: number;
   setAutoFocusSaleInputDelay: (value: number) => void;
+  pixKey: string;
+  setPixKey: (value: string) => void;
+  pixName: string;
+  setPixName: (value: string) => void;
+  pixBank: string;
+  setPixBank: (value: string) => void;
+  pixCity: string;
+  setPixCity: (value: string) => void;
+  clearPixData: () => void;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -24,6 +33,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [timezone, setTimezoneState] = useState<string>('America/Recife');
   const [autoFocusSaleInput, setAutoFocusSaleInputState] = useState(true);
   const [autoFocusSaleInputDelay, setAutoFocusSaleInputDelayState] = useState(60);
+  const [pixKey, setPixKeyState] = useState('');
+  const [pixName, setPixNameState] = useState('');
+  const [pixBank, setPixBankState] = useState('');
+  const [pixCity, setPixCityState] = useState('');
 
   useEffect(() => {
     const saved = readStoredNumber('recentSalesCount', 4);
@@ -52,6 +65,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(id);
   }, []);
 
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      setPixKeyState(readStoredString('pixKey'));
+      setPixNameState(readStoredString('pixName'));
+      setPixBankState(readStoredString('pixBank'));
+      setPixCityState(readStoredString('pixCity'));
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
   const setRecentSalesCount = (value: RecentSalesCount) => {
     setRecentSalesCountState(value);
     writeStoredValue('recentSalesCount', value);
@@ -76,6 +99,37 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     writeStoredValue('autoFocusSaleInputDelay', delay);
   };
 
+  const setPixKey = (value: string) => {
+    setPixKeyState(value);
+    writeStoredValue('pixKey', value);
+  };
+
+  const setPixName = (value: string) => {
+    setPixNameState(value);
+    writeStoredValue('pixName', value);
+  };
+
+  const setPixBank = (value: string) => {
+    setPixBankState(value);
+    writeStoredValue('pixBank', value);
+  };
+
+  const setPixCity = (value: string) => {
+    setPixCityState(value);
+    writeStoredValue('pixCity', value);
+  };
+
+  const clearPixData = () => {
+    setPixKeyState('');
+    setPixNameState('');
+    setPixBankState('');
+    setPixCityState('');
+    removeStoredValue('pixKey');
+    removeStoredValue('pixName');
+    removeStoredValue('pixBank');
+    removeStoredValue('pixCity');
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -87,6 +141,15 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setAutoFocusSaleInput,
         autoFocusSaleInputDelay,
         setAutoFocusSaleInputDelay,
+        pixKey,
+        setPixKey,
+        pixName,
+        setPixName,
+        pixBank,
+        setPixBank,
+        pixCity,
+        setPixCity,
+        clearPixData,
       }}
     >
       {children}

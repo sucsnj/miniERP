@@ -48,7 +48,7 @@ export const useDailySaleForm = ({
   onSaleAdded,
 }: UseDailySaleFormProps) => {
   const { showToast } = useToast();
-  const { autoFocusSaleInput, autoFocusSaleInputDelay } = useSettings();
+  const { autoFocusSaleInput, autoFocusSaleInputDelay, pixKey, pixName, pixBank, pixCity } = useSettings();
 
   const [value, setValue] = useState('');
   const [observations, setObservations] = useState('');
@@ -218,17 +218,18 @@ export const useDailySaleForm = ({
 
     const amount = valueFromInput > 0 ? valueFromInput.toFixed(2) : null;
 
-    const pixKey = process.env.NEXT_PUBLIC_PIX_KEY ?? '';
-    const merchantName = process.env.NEXT_PUBLIC_PIX_NAME ?? '';
-    const merchantCity = process.env.NEXT_PUBLIC_PIX_CITY ?? '';
+    const normalizedPixKey = pixKey.trim();
+    const merchantName = pixName.trim();
+    const merchantBank = pixBank.trim();
+    const merchantCity = pixCity.trim();
 
-    if (!pixKey || !merchantName || !merchantCity) {
-      showToast('Configuração PIX incompleta no .env', 'error');
+    if (!normalizedPixKey || !merchantName || !merchantBank || !merchantCity) {
+      showToast('Preencha os dados do PIX nas configurações.', 'error');
       return;
     }
 
     const { payload } = buildPixPayload({
-      pixKey,
+      pixKey: normalizedPixKey,
       merchantName,
       merchantCity,
       amount,

@@ -9,6 +9,7 @@ import type { DailySale } from '../../services/salesService';
 import CartModal from '@/components/cart/CartModal';
 import PixModal from '@/components/pix/PixModal';
 import SelectItemsModal from '@/components/cart/SelectItemsModal';
+import { useSettings } from '../../contexts/SettingsContext';
 import styles from '../../styles/dailySaleForm.module.css';
 
 interface DailySaleFormProps {
@@ -68,6 +69,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     handleClearCart,
     totalCartCount,
   } = useDailySaleForm({ selectedDate, onSaleAdded });
+  const { pixKey, pixName, pixBank } = useSettings();
 
   return (
     <>
@@ -223,10 +225,10 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
         isOpen={pixModalOpen}
         onClose={() => setPixModalOpen(false)}
         payload={pixPayload}
-        merchantName={process.env.NEXT_PUBLIC_PIX_NAME ?? ''}
-        merchantBank={process.env.NEXT_PUBLIC_PIX_BANK ?? ''}
+        merchantName={pixName}
+        merchantBank={pixBank}
         amount={pixAmount}
-        pixKey={process.env.NEXT_PUBLIC_PIX_KEY ?? ''}
+        pixKey={pixKey}
       />
 </>
   );
