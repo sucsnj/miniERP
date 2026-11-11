@@ -44,6 +44,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0010-sistema-de-botoes-com-variantes.md](adr/0010-sistema-de-botoes-com-variantes.md) - ADR:
 - [adr/0011-integracao-carrinho-estoque.md](adr/0011-integracao-carrinho-estoque.md) - ADR: integração do carrinho com estoque (devolução explícita, quantidade inteira, estoque negativo configurável, backend-first). botões com variantes funcionais, tamanhos, carregamento e `iconOnly`.
 - [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
+- [adr/0013-autenticacao-multiempresa-multiloja.md](adr/0013-autenticacao-multiempresa-multiloja.md) - ADR: autenticação própria, sessão de 48h, papéis admin/merchant e isolamento multiempresa/multi-loja.
 
 ## Páginas do Frontend
 
