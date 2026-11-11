@@ -4,14 +4,13 @@
 
 ## O que faz
 
-- Mantém o período (`mes`, `ano`, `anoInput`) e a data selecionada (`selectedDate`) do formulário.
-- Carrega as vendas via `useSales(mes, ano, showToast)` sempre que o período muda.
+- Usa o período atual (`month`, `year`) e mantém a data selecionada (`selectedDate`) do formulário.
+- Carrega as vendas via `useSales(month, year, showToast)`.
 - Calcula `recentSales` (últimas 4 vendas por data e id desc) e orquestra os componentes da tela.
-- Permite consolidar o mês (`handleConsolidate`) e fazer backup (`handleBackup`).
 
 ## Relações
 
-- **Usa:** `DailySalesTotal`, `DailySaleForm`, `EditSaleForm`, `ExportButtons`; hooks `useSales`/`useToast`; utils `date`/`captalize`.
+- **Usa:** `DailySalesTotal`, `DailySaleForm`, `EditSaleForm`; hooks `useSales`/`useToast`; utils `date`.
 - **Usado por:** rota raiz; consome `./api/vendas.md` e `./api/mensais.md`.
 
 ## Notas

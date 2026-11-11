@@ -1,19 +1,13 @@
 import { useEffect, useState } from 'react';
 import DailySaleForm from '../components/sales/DailySaleForm';
 import DailySalesTotal from '../components/sales/DailySalesTotal';
-import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../contexts/SettingsContext';
 import { useSales } from '../hooks/useSales';
-import { capitalize } from '../utils/captalize';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import { getDateArray, now, toTimestamp, formatMonthName } from '../utils/date';
+import { getDateArray, now, toTimestamp } from '../utils/date';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
-import Panel from '@/components/common/Panel';
-import PanelHeader from '@/components/common/PanelHeader';
-import Button from '@/components/common/Button';
 
 
 // Data de today (fuso do app) usada como seleção inicial do formulário
@@ -25,11 +19,9 @@ const today = now().format('YYYY-MM-DD');
 const Home: React.FC = () => {
   // Período de today (mês/year no fuso do app), calculado uma única vez
   const [, currentMonth, currentYear] = getDateArray();
-  // Período selecionado (mês e year), usado para carregar as vendas
-  const [month, setMonth] = useState(currentMonth);
-  const [year, setYear] = useState(currentYear);
-  // Ano exibido no campo; aceita digitação livre e só comita valores válidos
-  const [yearInput, setYearInput] = useState(String(currentYear));
+  // Período atual (mês e ano) usado para carregar as vendas
+  const month = currentMonth;
+  const year = currentYear;
   // Data selecionada no formulário de venda diária
   const [selectedDate, setSelectedDate] = useState(today);
 
@@ -42,7 +34,6 @@ const Home: React.FC = () => {
     loading,
     editingSale,
     loadSales,
-    handleConsolidate,
     handleEditSale,
     handleCancelEdit,
     handleSaved,
@@ -99,51 +90,6 @@ const Home: React.FC = () => {
           />
         )}
         {/* <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} /> */}
-        <ExportButtons
-          sales={sales}
-          month={month}
-          year={year}
-          selectedDate={selectedDate}
-          onMessage={showToast}
-          onImportCompleted={loadSales}
-        />
-        {/* Rodapé com filtro de período e ações de consolidação/backup */}
-        <Panel>
-          <PanelHeader title="Período e ações" />
-          <div className="page-actions">
-            <label>
-              Mês:
-              <select className="headerSelect" value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {capitalize(formatMonthName(i + 1))}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Ano:
-              <input
-                className="headerInput"
-                type="number"
-                value={yearInput}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setYearInput(v);
-                  const parsed = parseInt(v, 10);
-                  if (!Number.isNaN(parsed)) setYear(parsed);
-                }}
-                onBlur={() => {
-                  const parsed = parseInt(yearInput, 10);
-                  if (Number.isNaN(parsed)) setYearInput(String(year));
-                }}
-              />
-            </label>
-            <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
-              Consolidar Mês
-            </Button>
-          </div>
-        </Panel>
       </PageShell>
     </>
   );

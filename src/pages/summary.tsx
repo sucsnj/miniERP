@@ -3,14 +3,18 @@ import { formatCurrency } from '../utils/formatter';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import { capitalize } from '../utils/captalize';
+import { formatMonthName, getDateArray } from '../utils/date';
+import { consolidateMonthly } from '../services/salesService';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { useToast } from '../hooks/useToast';
 import { useMonthlyData } from '../hooks/useMonthlyData';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
+import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
 dayjs.locale('pt-br');
 
@@ -27,6 +31,19 @@ const SummaryPage: React.FC = () => {
 
   // Alterna entre a tabela "comum" e a "especial" de forma reativa
   const [view, setView] = useState<'comum' | 'especial'>('comum');
+  // Período usado para consolidar o mês
+  const [month, setMonth] = useState(getDateArray()[1]);
+  const [year, setYear] = useState(getDateArray()[2]);
+
+  const handleConsolidate = async () => {
+    try {
+      await consolidateMonthly(month, year);
+      showToast('O mês foi consolidado com sucesso.', 'success');
+      await loadMensais();
+    } catch {
+      showToast('Não foi possível consolidar o mês.', 'error');
+    }
+  };
 
   // Carrega as consolidações ao montar o componente
   useEffect(() => {
@@ -37,6 +54,37 @@ const SummaryPage: React.FC = () => {
     <>
       <PageShell>
         <PageHeader title="Resumo Mensal" />
+        {/* Período e ações de consolidação */}
+        <Panel>
+          <PanelHeader title="Período e ações" />
+          <div className="page-actions">
+            <label>
+              Mês:
+              <select className="headerSelect" value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {capitalize(formatMonthName(i + 1))}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Ano:
+              <input
+                className="headerInput"
+                type="number"
+                value={year}
+                onChange={(e) => {
+                  const parsed = parseInt(e.target.value, 10);
+                  if (!Number.isNaN(parsed)) setYear(parsed);
+                }}
+              />
+            </label>
+            <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
+              Consolidar Mês
+            </Button>
+          </div>
+        </Panel>
         <Panel>
 
       {/* Botões de alternância entre as tabelas */}
