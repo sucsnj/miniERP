@@ -1209,36 +1209,6 @@ h2 {
   background: var(--foreground);
 }
 
-/* Base dropdown (select) theming */
-select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-strong);
-  color: var(--foreground);
-  font-size: 0.85rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--focus-ring);
-}
-
-select:disabled {
-  background: var(--surface-soft);
-  color: var(--muted);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-select option {
-  background: var(--surface-strong);
-  color: var(--foreground);
-}
-
 .qr-canvas.loaded {
   animation: pulse 0.5s ease-out;
 }
