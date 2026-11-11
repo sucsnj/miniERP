@@ -8,6 +8,7 @@
 | --- | --- |
 | [useBrand.md](./useBrand.md) | Gerencia marca (criação/edição/exclusão) no cadastro rápido. Exporta `useBrand`. |
 | [useCart.md](./useCart.md) | Centraliza carrinho e catálogo de seleção (produtos/serviços), com debounce e totais. |
+| [useAutoFocus.md](./useAutoFocus.md) | Foca periodicamente um elemento e o mantém visível; ativável por opção. |
 | [useCategory.md](./useCategory.md) | Gerencia categoria no cadastro rápido. Exporta `useCategory`. |
 | [useConfirmDialog.md](./useConfirmDialog.md) | Gerencia diálogo de confirmação de exclusão. |
 | [useDailySaleForm.md](./useDailySaleForm.md) | Centraliza estado/validação/ações/efeitos do formulário de venda diária. |

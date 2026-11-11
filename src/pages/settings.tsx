@@ -28,7 +28,7 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const SettingsPage = () => {
   const { themeMode, setThemeMode } = useThemeMode();
-  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone } = useSettings();
+  const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput } = useSettings();
 
   return (
     <>
@@ -54,6 +54,31 @@ const SettingsPage = () => {
                     {option.label}
                   </Button>
                 ))}
+              </div>
+            </div>
+          </Panel>
+
+          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <PanelHeader title="Foco automático" />
+              <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Foca o campo de venda periodicamente.</p>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={autoFocusSaleInput ? 'primary' : 'outline'}
+                  onClick={() => setAutoFocusSaleInput(true)}
+                >
+                  Ativado
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={!autoFocusSaleInput ? 'primary' : 'outline'}
+                  onClick={() => setAutoFocusSaleInput(false)}
+                >
+                  Desativado
+                </Button>
               </div>
             </div>
           </Panel>

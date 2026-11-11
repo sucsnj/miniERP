@@ -1,6 +1,6 @@
 .dailySalesTotal {
-          margin: 28px auto 240px;
-          transform: scale(0.9); /* altera o tamanho do elemento para que ele se adapte ao tamanho da tela */
+          margin: 28px auto 24px;
+          transform: scale(1); /* altera o tamanho do elemento para que ele se adapte ao tamanho da tela */
           transform-origin: top;
           padding: 18px;
           width: calc(105% - 16px);

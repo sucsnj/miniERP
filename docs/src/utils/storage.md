@@ -5,7 +5,7 @@
 ## O que faz
 
 - Centraliza leitura/escrita/remoção de valores no `localStorage`.
-- Fornece leitura tipada para string e number com fallback.
+- Fornece leitura tipada para string, number e boolean com fallback.
 - É seguro para SSR (retorna fallback quando `window` não existe).
 
 ## Relações

@@ -23,6 +23,8 @@ import { buildPixPayload } from '../utils/pix';
 import { calculateResult, sanitizeExpression, insertKey } from '@/lib/calc/calculator';
 import { useCart } from './useCart';
 import { useToast } from './useToast';
+import { useAutoFocus } from './useAutoFocus';
+import { useSettings } from '../contexts/SettingsContext';
 
 // Teclas de navegação/edição sempre permitidas no campo de amount
 const ALLOWED_SALE_KEYS = [
@@ -46,6 +48,7 @@ export const useDailySaleForm = ({
   onSaleAdded,
 }: UseDailySaleFormProps) => {
   const { showToast } = useToast();
+  const { autoFocusSaleInput } = useSettings();
 
   const [value, setValue] = useState('');
   const [observations, setObservations] = useState('');
@@ -319,36 +322,8 @@ export const useDailySaleForm = ({
     setLoading(false);
   };
 
-  // Mantém o input de amount visível a cada 3 minutos
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const input = valueInputRef.current;
-      if (input) {
-        const rect = input.getBoundingClientRect();
-        const isVisible =
-          rect.top >= 70 && // distância do topo
-          rect.bottom <= window.innerHeight;
-
-        if (!isVisible) {
-          input?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-          valueInputRef.current?.focus({ preventScroll: true });
-        }
-      }
-    }, 180000); // 3 minutos
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Traz o foco para o input de venda a cada 1 minuto
-  useEffect(() => {
-    const interval = setInterval(() => {
-      valueInputRef.current?.focus();
-    }, 60000); // 1 minuto
-    return () => clearInterval(interval);
-  }, []);
+  // Mantém o foco e a visibilidade do campo de venda conforme configuração
+  useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput });
 
   // Adiciona um operador matemático ao campo de amount
   const addOperator = (operator: string) => {

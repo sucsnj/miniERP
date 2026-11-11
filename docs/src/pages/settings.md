@@ -6,6 +6,7 @@
 
 - Exibe as preferências do aplicativo.
 - Permite alterar o tema (`system`, `light`, `dark`) via `useThemeMode`.
+- Permite ativar/desativar o foco automático no campo de venda.
 
 ## Relações
 
