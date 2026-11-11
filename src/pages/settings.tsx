@@ -20,10 +20,10 @@ const timezoneOptions = [
   { value: 'America/New_York', label: 'Nova York (UTC-05/-04)' },
 ];
 
-const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
-  { value: 'system', label: 'Sistema', description: 'Segue o tema do sistema operacional.' },
-  { value: 'light', label: 'Claro', description: 'Tema claro para o aplicativo.' },
-  { value: 'dark', label: 'Escuro', description: 'Tema escuro para o aplicativo.' },
+const themeOptions: { value: ThemeMode; label: string }[] = [
+  { value: 'system', label: 'Sistema' },
+  { value: 'light', label: 'Claro' },
+  { value: 'dark', label: 'Escuro' },
 ];
 
 const SettingsPage = () => {
@@ -37,52 +37,58 @@ const SettingsPage = () => {
       </Head>
       <PageShell>
         <PageHeader title="Configurações" description="Preferências do aplicativo." />
-        <Panel>
-          <PanelHeader title="Tema do aplicativo" />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {themeOptions.map((option) => (
-              <Button
-                key={option.value}
-                type="button"
-                variant={themeMode === option.value ? 'primary' : 'outline'}
-                onClick={() => setThemeMode(option.value)}
-              >
-                {option.label} — {option.description}
-              </Button>
-            ))}
-          </div>
-        </Panel>
-        <Panel>
-          <PanelHeader title="Histórico de vendas recentes" />
-          <p>Quantidade de vendas exibidas no histórico (0 a 8, em pares).</p>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {([0, 2, 4, 6, 8] as RecentSalesCount[]).map((value) => (
-              <Button
-                key={value}
-                type="button"
-                variant={recentSalesCount === value ? 'primary' : 'outline'}
-                onClick={() => setRecentSalesCount(value)}
-              >
-                {value}
-              </Button>
-            ))}
-          </div>
-        </Panel>
-        <Panel>
-          <PanelHeader title="Fuso horário" />
-          <p>Usado para registrar e exibir datas e horários.</p>
-          <select
-            value={timezone}
-            onChange={(e) => setTimezone(e.target.value)}
-            style={{ padding: '8px', minWidth: '260px' }}
-          >
-            {timezoneOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </Panel>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+          <Panel style={{ padding: '10px' }}>
+            <PanelHeader title="Tema" />
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {themeOptions.map((option) => (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="sm"
+                  variant={themeMode === option.value ? 'primary' : 'outline'}
+                  onClick={() => setThemeMode(option.value)}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel style={{ padding: '10px' }}>
+            <PanelHeader title="Histórico recente" />
+            <p style={{ margin: '0 0 8px', fontSize: '0.85rem' }}>Quantidade de vendas (0 a 8, em pares).</p>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {([0, 2, 4, 6, 8] as RecentSalesCount[]).map((value) => (
+                <Button
+                  key={value}
+                  type="button"
+                  size="sm"
+                  variant={recentSalesCount === value ? 'primary' : 'outline'}
+                  onClick={() => setRecentSalesCount(value)}
+                >
+                  {value}
+                </Button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel style={{ padding: '10px' }}>
+            <PanelHeader title="Fuso horário" />
+            <p style={{ margin: '0 0 8px', fontSize: '0.85rem' }}>Usado para registrar e exibir datas.</p>
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              style={{ padding: '6px', width: '100%' }}
+            >
+              {timezoneOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </Panel>
+        </div>
       </PageShell>
     </>
   );
