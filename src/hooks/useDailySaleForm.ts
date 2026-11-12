@@ -197,13 +197,7 @@ export const useDailySaleForm = ({
 
   const handlePixClick = () => {
     const trimmedValue = value.trim();
-    const valueFromInput = trimmedValue ? parseCurrency(value) : null;
-
-    if (trimmedValue && valueFromInput == null) {
-      showToast(validateCurrency(value).message ?? 'Valor inválido.', 'error');
-      valueInputRef.current?.focus();
-      return;
-    }
+    const valueFromInput = trimmedValue ? calculatedValue ?? parseCurrency(value) : null;
 
     if (valueFromInput != null && valueFromInput < 0) {
       showToast('Não pode haver pix negativo.', 'info');
