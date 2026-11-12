@@ -85,6 +85,15 @@ export const SkeletonTable: FC<{ rows?: number; columns?: number }> = ({ rows = 
   </div>
 );
 
+const KPI_PLACEHOLDERS = [
+  { label: '42%', title: '65%', meta: '55%' },
+  { label: '50%', title: '55%', meta: '48%' },
+  { label: '36%', title: '72%', meta: '64%' },
+  { label: '46%', title: '58%', meta: '70%' },
+  { label: '54%', title: '46%', meta: '52%' },
+  { label: '40%', title: '68%', meta: '60%' },
+];
+
 export const SkeletonCards: FC<{ cards?: number; minHeight?: CSSProperties['height'] }> = ({
   cards = 3,
   minHeight = '116px',
@@ -97,27 +106,94 @@ export const SkeletonCards: FC<{ cards?: number; minHeight?: CSSProperties['heig
       gap: '12px',
     }}
   >
-    {Array.from({ length: cards }, (_, index) => (
-      <div key={index} className={styles.kpiCard} style={{ minHeight }}>
-        <Skeleton variant="line" width="42%" height="12px" />
-        <Skeleton variant="title" width="65%" height="26px" />
-        <Skeleton variant="line" width="55%" height="11px" />
-      </div>
-    ))}
+    {Array.from({ length: cards }, (_, index) => {
+      const placeholder = KPI_PLACEHOLDERS[index % KPI_PLACEHOLDERS.length];
+
+      return (
+        <div key={index} className={styles.kpiCard} style={{ minHeight }}>
+          <Skeleton variant="line" width={placeholder.label} height="12px" />
+          <Skeleton variant="title" width={placeholder.title} height="26px" />
+          <Skeleton variant="line" width={placeholder.meta} height="11px" />
+        </div>
+      );
+    })}
   </div>
 );
 
-export const PageSkeleton: FC<{ title?: string; cards?: number }> = ({
+export type PageSkeletonLayout = 'standard' | 'dashboard' | 'table' | 'settings' | 'form';
+
+export const PageSkeleton: FC<{ layout?: PageSkeletonLayout; title?: string; cards?: number }> = ({
+  layout = 'standard',
   title = 'Carregando...',
   cards = 3,
-}) => (
-  <PageShell>
-    <PageHeader title={title} />
-    <SkeletonCards cards={cards} minHeight="110px" />
-    <Panel>
-      <SkeletonText lines={5} />
-    </Panel>
-  </PageShell>
-);
+}) => {
+  let content;
+
+  switch (layout) {
+    case 'dashboard':
+      content = (
+        <>
+          <SkeletonCards cards={4} minHeight="112px" />
+          <Panel>
+            <SkeletonTable rows={6} columns={4} />
+          </Panel>
+        </>
+      );
+      break;
+    case 'table':
+      content = (
+        <Panel>
+          <SkeletonTable rows={8} columns={6} />
+        </Panel>
+      );
+      break;
+    case 'settings':
+      content = (
+        <div
+          aria-busy="true"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '12px',
+          }}
+        >
+          {Array.from({ length: 3 }, (_, index) => (
+            <Panel key={index}>
+              <SkeletonText lines={4} lastLineWidth="50%" />
+            </Panel>
+          ))}
+        </div>
+      );
+      break;
+    case 'form':
+      content = (
+        <Panel>
+          <SkeletonText lines={6} lastLineWidth="60%" />
+          <Skeleton variant="block" height="128px" style={{ marginTop: '16px' }} />
+          <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <Skeleton variant="button" />
+            <Skeleton variant="button" />
+          </div>
+        </Panel>
+      );
+      break;
+    default:
+      content = (
+        <>
+          <SkeletonCards cards={cards} minHeight="110px" />
+          <Panel>
+            <SkeletonText lines={5} />
+          </Panel>
+        </>
+      );
+  }
+
+  return (
+    <PageShell>
+      <PageHeader title={title} />
+      {content}
+    </PageShell>
+  );
+};
 
 export default Skeleton;

@@ -8,7 +8,7 @@
 - `SkeletonText`: linhas de texto.
 - `SkeletonTable`: linhas/colunas para tabelas.
 - `SkeletonCards`: grade de cards.
-- `PageSkeleton`: página inteira com `PageShell`, header e blocos/skeletons.
+- `PageSkeleton`: página inteira com `PageShell`, header e composição por `layout` (`standard`, `dashboard`, `table`, `settings`, `form`).
 
 ## Relações
 
@@ -17,5 +17,6 @@
 
 ## Notas
 
+- `SkeletonCards` usa placeholders KPI com largura determinística variável por card.
 - Respeita `prefers-reduced-motion: reduce`.
 - O helper evita replicar markup/estilos de placeholder por toda a UI.

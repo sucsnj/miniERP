@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useRouter } from 'next/router';
-import { PageSkeleton } from '../components/common/Skeleton';
+import { PageSkeleton, type PageSkeletonLayout } from '../components/common/Skeleton';
 
 interface RouteLoadingContextValue {
   pendingCount: number;
@@ -17,6 +17,14 @@ interface RouteLoadingContextValue {
 }
 
 const RouteLoadingContext = createContext<RouteLoadingContextValue | undefined>(undefined);
+
+function layoutFromPath(pathname: string): PageSkeletonLayout {
+  if (pathname === '/') return 'dashboard';
+  if (pathname === '/products' || pathname === '/history' || pathname === '/summary') return 'table';
+  if (pathname === '/settings') return 'settings';
+  if (pathname === '/registration' || pathname === '/admin') return 'form';
+  return 'standard';
+}
 
 export function RouteLoadingProvider({ children }: { children: ReactNode }) {
   const [keys, setKeys] = useState<Record<string, number>>({});
@@ -56,7 +64,7 @@ export function RouteContent({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {isLoading && <PageSkeleton cards={4} />}
+      {isLoading && <PageSkeleton layout={layoutFromPath(router.pathname)} cards={4} />}
       <div aria-hidden={isLoading} style={{ display: isLoading ? 'none' : undefined }}>
         {children}
       </div>
