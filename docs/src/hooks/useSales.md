@@ -4,18 +4,18 @@
 
 ## O que faz
 
-- Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `initialLoading` (somente primeira carga) e `refreshing` (refetch subsequente).
+- Consulta `sales` com `useQuery` (staleTime: 5 min; refetch on window focus/reconnect para vendas), com `queryKey` tenant-scoped pelo período/filtro.
+- Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `initialLoading` (primeiro fetch para o gate) e `refreshing` (isFetching posterior).
 - Parâmetros: `(month, year, showToast, options?)` com `UseSalesOptions` (`filter?: 'todas'|'positivas'|'negativas'`, `autoConsolidate?: boolean`).
-- `loadSales()`: busca via `fetchDailySales(month, year, filter)` e, após revelar a rota, dispara `autoConsolidate()` somente se ativo, o usuário for `admin` e existir `user.storeId`; a chamada não bloqueia o estado inicial.
-- Ações: `handleConsolidate()` (consolida mês), `handleBackup()` (executa backup e exibe mensagem), `handleEditSale(sale)`, `handleCancelEdit()`, `handleSaved()` (fecha edição e recarrega), `handleDeleteSale(id)` (verifica existência e regra `canEdit(sale.data)`; exibe toasts apropriados).
+- `loadSales()` dispara `refetch()`; `autoConsolidate()` roda em background fora do bloqueio da rota (somente admin com `storeId` e `autoConsolidate` ativo).
+- Ações: `handleConsolidate()`, `handleEditSale(sale)`, `handleCancelEdit()`, `handleSaved()` e `handleDeleteSale(id)`.
 
 ## Relações
 
-- **Usa:** `fetchDailySales`, `consolidateMonthly`, `backupDatabase`, `deleteSale`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit` (`src/utils/edit.ts`), `useAuth` (`src/contexts/AuthContext.tsx`).
+- **Usa:** `useQuery` (`@tanstack/react-query`), `tenantKeys`/`identityFromUser` (`src/utils/queryKeys.ts`), `usePendingTask` (`src/contexts/RouteLoadingContext.tsx`), `fetchDailySales`, `consolidateMonthly`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit`, `useAuth`, `useDeleteSale` (`src/hooks/useSalesMutations.ts`).
 - **Usado por:** páginas/componentes relacionados a vendas diárias.
 
 ## Notas
 
 - Arquivo `useSales.ts`; identificador exportado é `useSales`.
-- `autoConsolidate` é chamado após carregar quando `autoConsolidateEnabled` for true, apenas para admin.
-- Após a primeira carga, `refreshing` é usado para ações/reloads; o conteúdo existente permanece visível.
+- Após a primeira carga, ações/refetch usam `refreshing` e não reabrem o skeleton da rota.

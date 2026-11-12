@@ -10,7 +10,6 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { registerSale } from '../services/salesService';
 import { useShortcuts } from '../utils/shortcuts';
 import {
   validateRequired,
@@ -25,6 +24,7 @@ import { useCart } from './useCart';
 import { useToast } from './useToast';
 import { useAutoFocus } from './useAutoFocus';
 import { useSettings } from '../contexts/SettingsContext';
+import { useCreateSale } from './useSalesMutations';
 
 // Teclas de navegação/edição sempre permitidas no campo de amount
 const ALLOWED_SALE_KEYS = [
@@ -52,7 +52,8 @@ export const useDailySaleForm = ({
 
   const [value, setValue] = useState('');
   const [observations, setObservations] = useState('');
-  const [loading, setLoading] = useState(false);
+  const createSaleMutation = useCreateSale();
+  const loading = createSaleMutation.isPending;
   const [clearing, setClearing] = useState(false);
   const [isValueInvalid, setIsValueInvalid] = useState(false);
   const [calculatedValue, setCalculatedValue] = useState<number | null>(0);
@@ -238,14 +239,12 @@ export const useDailySaleForm = ({
   // Envia os dados para o serviço de vendas
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setLoading(true);
 
     try {
       // Validar date e amount antes de enviar (contrato ADR 0002)
       const dateCheck = validateDate(selectedDate);
       if (!dateCheck.ok) {
         showToast(dateCheck.message ?? 'Data inválida.', 'error');
-        setLoading(false);
         return;
       }
 
@@ -255,7 +254,6 @@ export const useDailySaleForm = ({
       if (value.trim() !== '' && calculatedValue === null) {
         highlightField(valueInputRef);
         showToast('Expressão inválida.', 'error');
-        setLoading(false);
         valueInputRef.current?.focus();
         return;
       }
@@ -264,7 +262,6 @@ export const useDailySaleForm = ({
       if (!valueCheck.ok) {
         showToast(valueCheck.message ?? 'Informe o valor da venda.', 'error');
         highlightField(valueInputRef);
-        setLoading(false);
         valueInputRef.current?.focus();
         return;
       }
@@ -272,7 +269,6 @@ export const useDailySaleForm = ({
       if (valueFromInput == null) {
         highlightField(valueInputRef);
         showToast(validateCurrency(value).message ?? 'Valor inválido.', 'error');
-        setLoading(false);
         return;
       }
 
@@ -280,12 +276,16 @@ export const useDailySaleForm = ({
       if (observations.trim() === '' && valueFromInput <= 0) {
         showToast('Informe o motivo da venda.', 'info');
         highlightField(observationsTextareaRef);
-        setLoading(false);
         return;
       }
 
       // Registra a venda
-      await registerSale(selectedDate, valueFromInput, observations, cartItems);
+      await createSaleMutation.mutateAsync({
+        date: selectedDate,
+        amount: valueFromInput,
+        notes: observations,
+        items: cartItems,
+      });
 
       if (formRef.current) {
         const top =
@@ -314,7 +314,6 @@ export const useDailySaleForm = ({
     } catch {
       showToast('Erro ao registrar venda.', 'error');
     }
-    setLoading(false);
   };
 
   // Mantém o foco e a visibilidade do campo de venda conforme configuração

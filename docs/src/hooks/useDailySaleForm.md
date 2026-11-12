@@ -6,13 +6,13 @@
 
 - Gerencia campos (`value`, `observations`), calculo da expressao (`src/lib/calc/calculator.ts`), loading e estado do PIX (`pixModalOpen`, `pixPayload`, `pixAmount`).
 - Integra carrinho via `useCart(showToast)`, sincroniza total do carrinho com campo (adiciona/remove `"+valor_carrinho"`).
-- Handlers: `handleKeyDown` (filtro de teclas), `handleValueChange` (sanitiza e preserva cursor), `handlePixClick` (valida e gera payload EMVCo; exige `pixKey`, `pixName`, `pixBank` e `pixCity` em `useSettings`; cria PIX com valor livre quando o campo de venda está vazio), `handleSubmit` (valida, registra via `registerSale`, limpa/foca), `handleClear`, `addOperator(op)`.
+- Handlers: `handleKeyDown` (filtro de teclas), `handleValueChange` (sanitiza e preserva cursor), `handlePixClick` (valida e gera payload EMVCo; exige `pixKey`, `pixName`, `pixBank` e `pixCity` em `useSettings`; cria PIX com valor livre quando o campo de venda está vazio), `handleSubmit` (valida, registra via `useCreateSale`, limpa/foca), `handleClear`, `addOperator(op)`.
 - Expoe `isValueInvalid` para indicar expressao invalida.
 - Efeitos: ESC limpa formulario, auto-foco/visibilidade do input via `useAutoFocus` e atualizacoes por carrinho.
 
 ## Relacoes
 
-- **Usa:** `registerSale` (`src/services/salesService.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`, `useAutoFocus`, `useSettings`.
+- **Usa:** `useCreateSale` (`src/hooks/useSalesMutations.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`, `useAutoFocus`, `useSettings`.
 - **Usado por:** `src/components/sales/DailySaleForm.tsx` (apresentacional).
 
 ## Notas

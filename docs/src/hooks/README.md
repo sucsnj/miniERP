@@ -17,6 +17,7 @@
 | [useImportItems.md](./useImportItems.md) | Estado/lógica de importação de itens via XML de NF-e. |
 | [useMonthlyData.md](./useMonthlyData.md) | Consolidações mensais (carregar/excluir). Exporta `useMonthlyData`. |
 | [useSales.md](./useSales.md) | Estado/ações de vendas diárias por período. Exporta `useSales`. |
+| [useSalesMutations.md](./useSalesMutations.md) | Mutations de vendas com optimistic update/rollback no cache do TanStack Query. |
 | [useSupplier.md](./useSupplier.md) | Gerencia fornecedor no cadastro rápido. Exporta `useSupplier`. |
 | [useToast.md](./useToast.md) | Estado/controles de toast via store singleton. |
 | [useUnitOfMeasure.md](./useUnitOfMeasure.md) | Gerencia unit de medida no cadastro rápido. Exporta `useUnitOfMeasure`. |

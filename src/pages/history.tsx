@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SalesTable from '../components/sales/SalesTable';
 import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
@@ -32,17 +32,11 @@ const History: React.FC = () => {
   const {
     sales,
     editingSale,
-    loadSales,
     handleEditSale,
     handleCancelEdit,
     handleSaved,
     handleDeleteSale,
   } = useSales(month, year, showToast, { filter, autoConsolidate: false });
-
-  // Recarrega as vendas sempre que o período ou o filtro mudar
-  useEffect(() => {
-    loadSales();
-  }, [loadSales]);
 
   return (
     <>

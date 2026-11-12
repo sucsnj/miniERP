@@ -1,14 +1,16 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import {
   fetchDailySales,
   consolidateMonthly,
-  deleteSale,
-  DailySale,
-  autoConsolidate
+  autoConsolidate,
+  type DailySale,
 } from '../services/salesService';
 import { canEdit } from '../utils/edit';
 import { useAuth } from '../contexts/AuthContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
+import { identityFromUser, tenantKeys } from '../utils/queryKeys';
+import { useDeleteSale } from './useSalesMutations';
 
 // Função que exibe mensagens (injetada pelo hook useToast)
 type ToastFn = (message: string, type: 'success' | 'error' | 'info') => void;
@@ -21,47 +23,44 @@ export interface UseSalesOptions {
   autoConsolidate?: boolean;
 }
 
-// Hook que concentra o estado de vendas e todas as ações de vendas:
-// carregar, consolidar, fazer backup, editar, salvar e excluir.
 export const useSales = (month: number, year: number, showToast: ToastFn, options: UseSalesOptions = {}) => {
   const { user } = useAuth();
-  // Lista de vendas diárias do período selecionado
-  const [sales, setSales] = useState<DailySale[]>([]);
-  // Venda atualmente em edição (null = nenhuma)
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
-  // Carrega dados: initialLoading mantém a página inteira no skeleton da rota até a primeira carga.
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const initialLoadedRef = useRef(false);
-  usePendingTask('sales-initial', initialLoading);
 
   // Aplica os padrões quando a opção não é informada
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
+  const identity = user ? identityFromUser(user) : null;
 
-  // Busca as vendas do mês/year conforme o filtro e, opcionalmente, dispara a consolidação automática.
-  // useCallback mantém a referência estável enquanto month/year/filter não mudarem.
-  const loadSales = useCallback(async () => {
-    const isInitial = !initialLoadedRef.current;
-    if (isInitial) {
-      setInitialLoading(true);
-    } else {
-      setRefreshing(true);
-    }
-    try {
-      const date = await fetchDailySales(month, year, filter);
-      setSales(date);
-    } finally {
-      setInitialLoading(false);
-      setRefreshing(false);
-      initialLoadedRef.current = true;
-    }
+  const queryKey = identity
+    ? tenantKeys.salesDaily(identity, month, year, filter)
+    : (['sales', 'disabled', month, year, filter] as const);
 
-    if (autoConsolidateEnabled && user?.role === 'admin' && user.storeId) {
-      void autoConsolidate(user.storeId).catch((error) => {
-        console.error('Erro ao consolidar mês em segundo plano:', error);
-      });
-    }
-  }, [month, year, filter, autoConsolidateEnabled, user?.role, user?.storeId]);
+  const query = useQuery({
+    queryKey,
+    enabled: Boolean(identity),
+    queryFn: () => fetchDailySales(month, year, filter),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    placeholderData: keepPreviousData,
+  });
+
+  const initialLoading = Boolean(identity && query.isLoading);
+  const refreshing = query.isFetching;
+
+  usePendingTask('sales-initial', initialLoading);
+
+  const loadSales = useCallback(() => query.refetch(), [query]);
+
+  // Auto-consolidação não bloqueia o carregamento da página/tab.
+  useEffect(() => {
+    if (!query.isSuccess) return;
+    if (!autoConsolidateEnabled || user?.role !== 'admin' || !user.storeId) return;
+
+    void autoConsolidate(user.storeId).catch((error) => {
+      console.error('Erro ao consolidar mês em segundo plano:', error);
+    });
+  }, [autoConsolidateEnabled, query.isSuccess, user?.role, user?.storeId]);
 
   // Consolida o mês selecionado e informa o resultado
   const handleConsolidate = async () => {
@@ -83,38 +82,34 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
     setEditingSale(null);
   };
 
-  // Após salvar, fecha o formulário e recarrega a lista de vendas
+  // Após salvar, fecha o formulário; invalidação é feita pela mutation de atualização
   const handleSaved = () => {
     setEditingSale(null);
-    loadSales();
   };
 
   // Exclui uma venda, respeitando a regra de edição/exclusão
-  const handleDeleteSale = async (id: string) => {
-    const sale = sales.find((sale) => sale.id === id);
+  const deleteSaleMutation = useDeleteSale();
+  const handleDeleteSale = (id: string) => {
+    const sale = query.data?.find((item) => item.id === id);
     // Venda inexistente: avisa e interrompe sem chamar canEdit com date vazia
     if (!sale) {
       showToast('Venda não encontrada.', 'error');
       return;
     }
     // Verifica se a venda ainda pode ser editada/excluída (janela de 2 dias)
-    const edit = canEdit(sale.date);
-    try {
-      // mostra outro toast quando a venda tiver mais de 2 dias
-      if (edit) {
-        await deleteSale(id);
-        showToast('Venda excluída com sucesso.', 'success');
-        loadSales();
-      } else {
-        showToast('Não é possível editar ou excluir.', 'info');
-      }
-    } catch {
-      showToast('Erro ao excluir venda.', 'error');
+    if (!canEdit(sale.date)) {
+      showToast('Não é possível editar ou excluir.', 'info');
+      return;
     }
+
+    deleteSaleMutation.mutate({ id }, {
+      onSuccess: () => showToast('Venda excluída com sucesso.', 'success'),
+      onError: () => showToast('Erro ao excluir venda.', 'error'),
+    });
   };
 
   return {
-    sales,
+    sales: query.data ?? [],
     editingSale,
     initialLoading,
     refreshing,

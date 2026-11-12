@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DailySaleForm from '../components/sales/DailySaleForm';
 import DailySalesTotal from '../components/sales/DailySalesTotal';
 import EditSaleForm from '../components/sales/EditSaleForm';
@@ -32,17 +32,11 @@ const Home: React.FC = () => {
   const {
     sales,
     editingSale,
-    loadSales,
     handleEditSale,
     handleCancelEdit,
     handleSaved,
     handleDeleteSale,
   } = useSales(month, year, showToast);
-
-  // Recarrega as vendas sempre que o período (month/year) mudar
-  useEffect(() => {
-    loadSales();
-  }, [loadSales]);
 
   // Últimas vendas recentes conforme configuração (0 a 8, em pares)
   const recentSales = [...sales]
@@ -72,7 +66,6 @@ const Home: React.FC = () => {
             sales={sales}
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
-            onSaleAdded={loadSales}
             onEditSale={handleEditSale}
             onDeleteSale={handleDeleteSale}
             showHistory={false}

@@ -134,6 +134,10 @@ export const registerSale = async (
       items: (items ?? []).map(toSaleItemPayload),
     }),
   });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível registrar a venda: ${response.status} ${body}`);
+  }
   return response.json();
 };
 
@@ -173,6 +177,10 @@ export const updateSale = async (id: string | number, date: string, amount: numb
       items: (items ?? []).map(toSaleItemPayload),
     }),
   });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível atualizar a venda: ${response.status} ${body}`);
+  }
   return response.json();
 };
 
@@ -189,6 +197,10 @@ export const deleteSale = async (id: string | number) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: String(id) }),
   });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível excluir a venda: ${response.status} ${body}`);
+  }
   return response.json();
 };
 

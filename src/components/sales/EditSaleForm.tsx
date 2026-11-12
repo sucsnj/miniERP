@@ -1,5 +1,6 @@
 import { FormEvent, useState, useEffect, useRef } from "react";
-import { fetchSaleItems, updateSale, DailySale, SaleItemData } from "../../services/salesService";
+import { fetchSaleItems, DailySale, SaleItemData } from "../../services/salesService";
+import { useUpdateSale } from "../../hooks/useSalesMutations";
 import CartModal from "@/components/cart/CartModal";
 import SelectItemsModal from "@/components/cart/SelectItemsModal";
 import { useCart } from "../../hooks/useCart";
@@ -22,6 +23,7 @@ interface EditSaleFormProps {
 }
 
 const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, onToast }) => {
+  const updateSaleMutation = useUpdateSale();
   const [editDate, setEditDate] = useState(sale.date);
   const [editAmount, setEditAmount] = useState(sale.amount.toFixed(2));
   const [editNotes, setEditNotes] = useState(sale.notes ?? "");
@@ -97,12 +99,12 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
     const amount = parseNumber(editAmount);
 
     try {
-      await updateSale(
-        sale.id,
-        editDate,
+      await updateSaleMutation.mutateAsync({
+        id: sale.id,
+        date: editDate,
         amount,
-        editNotes,
-        cartItems.map((item) => ({
+        notes: editNotes,
+        items: cartItems.map((item) => ({
           item_id: item.id,
           kind: item.kind,
           name: item.name,
@@ -110,8 +112,8 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
           unitPrice: item.salePrice,
           internalCode: item.internalCode ?? null,
           reference: item.reference ?? null,
-        }))
-      );
+        })),
+      });
       onToast("Venda atualizada com sucesso.", "success");
       onSaved();
     } catch {

@@ -20,6 +20,7 @@
 
 ## Notas
 
+- Registradores/edição/exclusão de vendas falham com `Error` se `!response.ok` (propagado pelas mutations).
 - `registerSaleWithCreatedAt` aceita `criado_em` opcional para preservar timestamps na importação de planilhas.
 - `isConsolidated` lê corpo como texto: retorna `false` se não ok, sem texto ou sem campo `total !== undefined`.
 - `autoConsolidate` é disparado após a primeira carga de vendas pelo `useSales` sem bloquear a rota; usa `storeId` atual via `useAuth`; respeita cache e não faz nada antes do dia 3 nem com `getDateArray()` inválido.
