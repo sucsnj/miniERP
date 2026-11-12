@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Componente de botões para exportar vendas em XLSX/PDF e importar vendas de planilhas.
+Componente de botões para exportar vendas em XLSX e importar vendas de planilhas.
 
 ## Contexto de Uso
 
@@ -11,7 +11,6 @@ Este componente é utilizado em conjunto com os botões de exportação e import
 ## Responsabilidades
 
 - Exportar vendas do dia ou do mês para XLSX (`exportXLSX('day' | 'month')`).
-- Exportar tabela HTML para PDF (`.table-container`) via `html2canvas` + `jsPDF`.
 - Importar arquivos XLSX (`.xlsx`, `.xls`) por dia ou por mês e registrar vendas.
 - Exibir mensagens via callback `onMessage`.
 
@@ -65,4 +64,3 @@ Validações: erro na primeira linha inválida; no modo dia a data deve bater co
 
 - Usa `xlsx` dinamicamente para evitar importação no bundle inicial.
 - Faz validação de data para importações por dia/mês.
-- O PDF é gerado a partir de `html2canvas` e `jspdf`.

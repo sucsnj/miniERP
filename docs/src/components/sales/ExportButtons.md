@@ -1,11 +1,10 @@
 # `src/components/sales/ExportButtons.tsx`
 
-> Botões de exportar/importar vendas (XLSX/PDF).
+> Botões de exportar/importar vendas (XLSX).
 
 ## O que faz
 
-- Exporta XLSX/PDF com slug da loja atual no nome do arquivo.
-- Exporta XLSX por mês/dia (`xlsx` importado dinamicamente) e PDF da `.table-container` (`html2canvas` + `jsPDF`).
+- Exporta XLSX por mês/dia (`xlsx` importado dinamicamente), com slug da loja atual no nome do arquivo.
 - Importa `.xlsx`/`.xls` normalizando headers (`data`/`valor`/`observacoes`/`criado_em`), validando a data por modo e registrando via `registerSaleWithCreatedAt`.
 - Notifica por `onMessage`; chama `onImportCompleted` ao concluir.
 
@@ -25,4 +24,4 @@ interface ExportButtonsProps {
 ## Notas
 
 - No modo dia a data precisa bater com `selectedDate`; no mês, pertencer a `mes/ano`.
-- Erros de importação reportam apenas a primeira linha inválida.
+- Exportação/importação permanece em XLSX.

@@ -1,13 +1,10 @@
 import { useRef, type ChangeEvent, type FC } from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { registerSaleWithCreatedAt, DailySale } from '../../services/salesService';
 import parseNumber from '../../utils/number';
 import { parseDate } from '../../utils/date';
 import Button from '@/components/common/Button';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Panel from '@/components/common/Panel';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -233,20 +230,6 @@ const ExportButtons: FC<ExportButtonsProps> = ({
     );
   };
 
-  // Exporta vendas para PDF.
-  const exportPDF = async () => {
-    const element = document.querySelector('.table-container') as HTMLElement;
-    if (element) {
-      const canvas = await html2canvas(element);
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-      pdf.save(`vendas-${storeSlug}-${month}-${year}.pdf`);
-    }
-  };
-
   return (
     <Panel style={{
         display: 'flex',
@@ -264,9 +247,6 @@ const ExportButtons: FC<ExportButtonsProps> = ({
       </Button>
       <Button type="button" variant="secondary" onClick={() => triggerImport('day')} disabled={!selectedDate} leftIcon={<FileUploadIcon />}>
         Importar XLSX (Dia)
-      </Button>
-      <Button type="button" variant="info" onClick={exportPDF} leftIcon={<PictureAsPdfIcon />}>
-        Exportar PDF
       </Button>
       <input
         ref={fileInputRef}

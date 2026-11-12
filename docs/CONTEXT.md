@@ -13,7 +13,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação s
 - **@tanstack/react-query** — cache/estado de servidor no cliente.
 - **@supabase/supabase-js** — persistência remota no Supabase (acesso server-only via API routes).
 - **dayjs** — datas (timezone padrão `America/Recife`).
-- **recharts** — gráficos; **jspdf/html2canvas** — PDF; **xlsx** — planilhas.
+- **recharts** — gráficos; **xlsx** — planilhas.
 - **multer + pdf2pic + sharp + tesseract.js** — upload e OCR de notas.
 
 ## Camadas (onde mora cada coisa)
