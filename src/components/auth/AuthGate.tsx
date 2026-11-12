@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { Fragment, useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -18,5 +18,5 @@ export default function AuthGate({ children }: { children: ReactNode }) {
   if (isPublic) return <>{children}</>;
   if (loading) return <p style={{ padding: '24px' }}>Carregando sessão...</p>;
   if (!user) return null;
-  return <>{children}</>;
+  return <Fragment key={user.storeId}>{children}</Fragment>;
 }

@@ -7,7 +7,7 @@
 - Permite `/login` e `/setup` sem sessão.
 - Enquanto `loading`, mostra placeholder de carregamento.
 - Sem usuário autenticado, redireciona para `/login`.
-- Com usuário, renderiza os filhos.
+- Com usuário, renderiza os filhos dentro de um `Fragment key={user.storeId}`, para remontar as páginas ao trocar de loja.
 
 ## Relações
 

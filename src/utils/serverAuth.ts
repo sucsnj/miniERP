@@ -281,10 +281,7 @@ export async function requireAdminApi(req: NextApiRequest, res: NextApiResponse)
   return ctx;
 }
 
-export async function listAuthorizedStores(req: NextApiRequest): Promise<StoreRecord[]> {
-  const ctx = await getAuthContext(req);
-  if (!ctx) return [];
-
+export async function listAuthorizedStores(ctx: AuthContext): Promise<StoreRecord[]> {
   return getAuthorizedStores({
     id: ctx.userId,
     company_id: ctx.companyId,
@@ -299,33 +296,13 @@ export async function listAuthorizedStores(req: NextApiRequest): Promise<StoreRe
 }
 
 export async function setCurrentStore(
-  req: NextApiRequest,
+  ctx: AuthContext,
   storeId: string
 ): Promise<StoreRecord | null> {
-  const ctx = await getAuthContext(req);
-  if (!ctx) return null;
-
   const client = getSupabaseServerClient();
-  const { data: store, error: storeError } = await client
-    .from('stores')
-    .select('id, name')
-    .eq('id', storeId)
-    .eq('company_id', ctx.companyId)
-    .eq('active', true)
-    .maybeSingle();
-
-  if (storeError || !store) return null;
-
-  if (ctx.role === 'merchant') {
-    const { data: assignment, error: assignmentError } = await client
-      .from('user_stores')
-      .select('store_id')
-      .eq('user_id', ctx.userId)
-      .eq('store_id', storeId)
-      .maybeSingle();
-
-    if (assignmentError || !assignment) return null;
-  }
+  const authorizedStores = await listAuthorizedStores(ctx);
+  const store = authorizedStores.find((item) => item.id === storeId) ?? null;
+  if (!store) return null;
 
   const { error: sessionError } = await client
     .from('sessions')

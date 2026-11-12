@@ -5,7 +5,7 @@
 ## O que faz
 
 - Carrega `/api/auth/me` no mount.
-- Expõe `user`, `loading`, `login(identifier, password)`, `logout()` e `refresh()`.
+- Expõe `user`, `loading`, `login(identifier, password)`, `logout()`, `refresh()` e `setUser`.
 - Login aceita `login` ou `email` e redireciona para `/`.
 - Logout chama `/api/auth/logout` e redireciona para `/login`.
 

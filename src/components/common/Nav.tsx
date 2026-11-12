@@ -10,6 +10,7 @@ import TableChartIcon from '@mui/icons-material/TableChart';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface StoreOption {
@@ -18,7 +19,8 @@ interface StoreOption {
 }
 
 const Nav: React.FC = () => {
-  const { user, logout, refresh } = useAuth();
+  const { user, logout, setUser } = useAuth();
+  const queryClient = useQueryClient();
   const [stores, setStores] = useState<StoreOption[]>([]);
   const [switchingStore, setSwitchingStore] = useState(false);
 
@@ -47,7 +49,11 @@ const Nav: React.FC = () => {
         credentials: 'same-origin',
         body: JSON.stringify({ storeId }),
       });
-      if (response.ok) await refresh();
+      if (response.ok) {
+        const body = await response.json();
+        if (body?.user) setUser(body.user);
+        await queryClient.invalidateQueries();
+      }
     } finally {
       setSwitchingStore(false);
     }

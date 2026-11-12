@@ -20,5 +20,5 @@
 - `sessions.token_hash` é SHA-256 do cookie; o token bruto nunca é armazenado.
 - Admin acessa todas as lojas ativas da empresa; merchant apenas lojas em `user_stores`.
 - `requireApiAuth` exige sessão; `requireAdminApi`/`isAdmin` aplicam permissão `admin`; vendas são a única escrita permitida a merchant.
-- `listAuthorizedStores` lista lojas ativas do tenant visíveis ao usuário; `setCurrentStore` valida acesso e troca a sessão/loja atual.
+- `listAuthorizedStores` lista lojas visíveis ao usuário a partir do `AuthContext`; `setCurrentStore` valida acesso, atualiza a sessão/loja atual e retorna a loja selecionada.
 - `company_id` e `store_id` vêm da sessão, nunca do cliente.

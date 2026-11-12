@@ -5,7 +5,7 @@
 ## O que faz
 
 - `GET`: lista lojas ativas do tenant visíveis ao usuário (admin: todas; merchant: `user_stores`) e informa `currentStoreId`.
-- `POST`: valida acesso à loja, atualiza `sessions.store_id` e `users.last_store_id`, retornando o contexto atualizado.
+- `POST`: valida acesso à loja, atualiza `sessions.store_id` e `users.last_store_id`, e retorna `{ store, user }` com `storeId`/`storeName` já atualizados.
 
 ## Relações
 

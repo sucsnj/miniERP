@@ -16,5 +16,6 @@
 
 ## Notas
 
-- Troca de loja chama `POST /api/stores` e depois `refresh()` do contexto.
-- Settings é ocultado para merchant.
+- Troca de loja chama `POST /api/stores`, aplica o usuário atualizado em `AuthContext` e invalida as queries do React Query.
+- `AuthGate` remonta as páginas quando `storeId` muda, forçando telas com estado local a carregar a loja selecionada.
+- Settings é visível para admin e merchant.
