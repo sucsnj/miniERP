@@ -14,7 +14,17 @@ import { SettingsProvider } from '../contexts/SettingsContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import Head from 'next/head';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 5,
+      retry: 2,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
 const PUBLIC_PATHS = ['/login', '/setup'];
 
 // Handler de API ou componente exportado.

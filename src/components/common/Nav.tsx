@@ -83,7 +83,7 @@ const Nav: React.FC = () => {
       if (response.ok) {
         const body = await response.json();
         if (body?.user) setUser(body.user);
-        await queryClient.invalidateQueries();
+        await queryClient.removeQueries({ queryKey: ['tenant'] });
       }
     } finally {
       setSwitchingStore(false);

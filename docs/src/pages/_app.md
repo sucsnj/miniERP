@@ -6,6 +6,7 @@
 
 - Envolve a aplicação em `RouteLoadingProvider` e `ThemeProvider` → `SettingsProvider` → `AuthProvider` → `QueryClientProvider`.
 - Injeta `QueryClientProvider` (`@tanstack/react-query`) para toda a aplicação.
+- Configura o `QueryClient` com defaults: `staleTime=5min`, `gcTime=5min`, `retry=2`, `refetchOnWindowFocus=false`, `refetchOnReconnect=false` (ações/financeiros habilitam refetch seletivo por query).
 - Define metadados HTML globais (título "Vendas", descrição e favicon).
 - Renderiza `Nav` fora de `AuthGate` e fora de `RouteContent` nas rotas autenticadas: permanece montada, não recarrega e não some durante loading.
 - `RouteContent` oculta somente a área da página; `AuthGate` protege a página; `Toaster` continua na raiz.

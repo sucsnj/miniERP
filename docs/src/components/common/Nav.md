@@ -18,6 +18,6 @@
 
 ## Notas
 
-- Troca de loja chama `POST /api/stores`, aplica o usuário atualizado em `AuthContext` e invalida as queries do React Query.
+- Troca de loja chama `POST /api/stores`, aplica o usuário atualizado em `AuthContext` e remove do cache todas as queries com prefixo `['tenant']`.
 - `AuthGate` remonta as páginas quando `storeId` muda, forçando telas com estado local a carregar a loja selecionada.
 - Navbar compacta, fundo `surface-strong`, borda/hairline de destaque, alto contraste e ações agrupadas na ponta direita.
