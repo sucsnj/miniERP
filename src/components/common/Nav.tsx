@@ -8,6 +8,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -81,6 +82,12 @@ const Nav: React.FC = () => {
           <span className="icon"><Link href="/products"><InventoryIcon /></Link></span>
           <span className="text-responsive"><Link href="/products">Produtos e Serviços</Link></span>
         </div>
+        {isAdmin && (
+          <div className={styles.navItem}>
+            <span className="icon"><Link href="/admin"><SupervisorAccountIcon /></Link></span>
+            <span className="text-responsive"><Link href="/admin">Administração</Link></span>
+          </div>
+        )}
       </div>
 
       <div className={styles.rightSide} style={{ gap: '8px' }}>

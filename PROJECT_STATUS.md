@@ -29,7 +29,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 
 - **Migração Supabase (ADR 0012) — Fases 0 a 4:** concluídas.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em `/tmp` ou Storage) e validação do deploy; autenticação/proteção será feita no plano ADR 0013.
-- **Autenticação e multiempresa/multi-loja (ADR 0013):** Fases 0 (ADR), 1 (schema/migration), 2 (auth core), 3 (tenant enforcement em repositories/API routes), 4 (permissões admin × merchant na API) e 5 (UI/guards, empresa/loja, seletor de loja, ocultação de ações admin) concluídas; admin de usuários/lojas, settings por empresa/PIX e rollout final pendentes; demais fases pausadas.
+- **Autenticação e multiempresa/multi-loja (ADR 0013):** Fases 0–6 concluídas (ADR, schema, auth core, enforcement tenant, permissões API, UI/guards/store switcher, admin empresa/lojas/vendedores); settings por empresa/PIX e rollout final pendentes; demais fases pausadas.
 - **Refatoração de grandes componentes:** CartModal, ImportItemsModal, SelectItemsModal já estão apresentacionais; ProductForm foi dividido em ProductPriceSection e ProductUnitsSection.
 
 ## Futuras / Melhorias sugeridas

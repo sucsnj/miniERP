@@ -49,6 +49,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ## Páginas do Frontend
 
 - [src/proxy.md](src/proxy.md) - proxy do Next.js 16: proteção otimista de rotas autenticadas.
+- [src/pages/admin.md](src/pages/admin.md) - administração da empresa (nome, lojas e vendedores).
 - [src/pages/index.md](src/pages/index.md) - dashboard de vendas: resumo mensal, formulário, edição e backup.
 - [src/pages/products.md](src/pages/products.md) - catálogo, estoque e preços de produtos.
 - [src/pages/registration.md](src/pages/registration.md) - cadastros auxiliares (categorias, marcas, fornecedores, unidades de medida).
@@ -76,6 +77,9 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
 - [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.
 - [src/pages/api/auth/change-password.md](src/pages/api/auth/change-password.md) - troca de senha e revogação de sessões.
+- [src/pages/api/admin/company.md](src/pages/api/admin/company.md) - empresa atual (admin).
+- [src/pages/api/admin/stores.md](src/pages/api/admin/stores.md) - lojas da empresa (admin).
+- [src/pages/api/admin/merchants.md](src/pages/api/admin/merchants.md) - vendedores e lojas autorizadas (admin).
 - [src/pages/api/stores.md](src/pages/api/stores.md) - lojas autorizadas e troca de loja atual.
 - [src/pages/api/sales.md](src/pages/api/sales.md) - CRUD de vendas diárias.
 - [src/pages/api/sale-items.md](src/pages/api/sale-items.md) - itens de venda (carrinho).

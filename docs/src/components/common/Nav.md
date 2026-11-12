@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Links para `/`, `/summary`, `/history`, `/payables`, `/medicine-table`, `/products`.
+- Links para `/`, `/summary`, `/history`, `/payables`, `/medicine-table`, `/products` e, para admin, `/admin`.
 - Seletor de loja: admin vê todas as lojas ativas da empresa; merchant, apenas lojas autorizadas.
 - Mostra nome do usuário e acesso a Settings apenas para `admin`.
 - Botão de logout revoga a sessão atual.
