@@ -9,7 +9,7 @@ import {
   payPayable,
   cancelPayablePayment,
 } from '../../database/payablesRepository';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapPayable(p: any) {
@@ -28,6 +28,9 @@ function mapPayable(p: any) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireApiAuth(req, res);
   if (!ctx) return;
+  if (req.method !== 'GET' && !isAdmin(ctx)) {
+    return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+  }
 
   if (req.method === 'GET') {
     const { year: yearParam, month: monthParam } = req.query;

@@ -8,7 +8,7 @@ import {
   deleteInvoice,
 } from '../../database/payablesRepository';
 import parseNumber from '../../utils/number';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapInvoice(inv: any) {
@@ -24,6 +24,9 @@ function mapInvoice(inv: any) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireApiAuth(req, res);
   if (!ctx) return;
+  if (req.method !== 'GET' && !isAdmin(ctx)) {
+    return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+  }
 
   if (req.method === 'GET') {
     const { year: yearParam, month: monthParam, id, amount: amountParam } = req.query;

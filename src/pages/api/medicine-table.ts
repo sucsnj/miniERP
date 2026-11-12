@@ -9,7 +9,7 @@ import {
   listMedicineSearchHistory,
   clearMedicineSearchHistory,
 } from '../../database/payablesRepository';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 export const config = {
   api: {
@@ -195,6 +195,9 @@ loadTableData();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireApiAuth(req, res);
   if (!ctx) return;
+  if (req.method !== 'GET' && !isAdmin(ctx)) {
+    return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+  }
 
   if (req.method === 'POST') {
     await runMiddleware(req, res, upload.single('file') as unknown as MulterMiddleware);

@@ -5,7 +5,7 @@ import path from "path";
 
 import { readDigitableLine } from "@/services/ocrService";
 import { readPdfWithOcr, info } from "@/services/pdfService";
-import { requireApiAuth } from "../../utils/serverAuth";
+import { requireAdminApi } from "../../utils/serverAuth";
 
 export const config = {
     api: {
@@ -42,7 +42,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const ctx = await requireApiAuth(req, res);
+    const ctx = await requireAdminApi(req, res);
     if (!ctx) return;
     void ctx;
 

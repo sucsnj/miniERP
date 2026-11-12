@@ -4,7 +4,7 @@ import { listAllInvoices, createInvoice } from '../../../database/payablesReposi
 import parseNumber, { parseCurrency } from '../../../utils/number';
 import { toDate } from '../../../utils/date';
 import { parseStringPromise } from 'xml2js';
-import { requireApiAuth } from '../../../utils/serverAuth';
+import { requireAdminApi } from '../../../utils/serverAuth';
 
 // Nomes de distribuidoras válidos
 const validNames = [
@@ -41,7 +41,7 @@ const normalizeDocument = (document: string) => {
 
 // Função mainBarcode do endpoint
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const ctx = await requireApiAuth(req, res);
+  const ctx = await requireAdminApi(req, res);
   if (!ctx) return;
 
   if (req.method !== 'POST') {

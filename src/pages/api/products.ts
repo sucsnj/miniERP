@@ -10,7 +10,7 @@ import {
   checkDuplicateBarcode,
 } from '../../database/productsRepository';
 import { parseNumber } from '../../utils/number';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 interface UnitPayload {
   unit_measure_id?: number | string;
@@ -32,6 +32,9 @@ interface BarcodePayload {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireApiAuth(req, res);
   if (!ctx) return;
+  if (req.method !== 'GET' && !isAdmin(ctx)) {
+    return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+  }
 
   if (req.method === 'GET') {
     try {

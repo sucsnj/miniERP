@@ -9,7 +9,7 @@ import {
 import { parseCurrency } from '../../utils/number';
 import { toDate } from '../../utils/date';
 import { canEdit } from '../../utils/edit';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 interface SaleItemApi {
   kind?: 'PRODUCT' | 'SERVICE';
@@ -127,6 +127,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'Erro ao atualizar venda', details: String(error) });
     }
   } else if (req.method === 'DELETE') {
+    if (!isAdmin(ctx)) {
+      return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+    }
+
     const body = req.body ?? {};
     const id = body.id;
     if (!id) {

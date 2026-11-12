@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getMonthlyTotal, listMonthlySales, consolidateMonthly, deleteMonthlySale } from '../../database/salesRepository';
-import { requireApiAuth } from '../../utils/serverAuth';
+import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireApiAuth(req, res);
@@ -24,6 +24,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
   } else if (req.method === 'POST') {
+    if (!isAdmin(ctx)) {
+      return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+    }
+
     const body = req.body ?? {};
     const month = body.month ?? body.month;
     const year = body.year ?? body.year;
@@ -34,6 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'Erro na consolidação' });
     }
   } else if (req.method === 'DELETE') {
+    if (!isAdmin(ctx)) {
+      return res.status(403).json({ error: 'Ação permitida apenas para administradores.' });
+    }
+
     const body = req.body ?? {};
     const id = body.id;
     if (!id) {
