@@ -89,6 +89,9 @@ create table if not exists public.company_settings (
   auto_focus_sale_input boolean not null default true,
   auto_focus_sale_input_delay integer not null default 60
     check (auto_focus_sale_input_delay >= 5),
+  auto_consolidation_enabled boolean not null default true,
+  auto_consolidation_day integer not null default 1
+    check (auto_consolidation_day between 1 and 28),
   pix_key text not null default '',
   pix_name text not null default '',
   pix_bank text not null default '',

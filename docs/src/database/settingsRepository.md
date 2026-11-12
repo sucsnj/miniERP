@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- `getCompanySettings(ctx)`: busca/cria configuração da empresa (inclui presets PIX).
+- `getCompanySettings(ctx)`: busca/cria configuração da empresa (inclui presets PIX e auto consolidação).
 - `updateCompanySettings(patch, ctx)`: atualiza apenas campos informados e retorna o estado atual.
 - `normalizePixPresets`: valida/serializa presets (`id`, `label` opcional, `pixKey`, `pixName`, `pixBank`, `pixCity`), no máximo 20.
 

@@ -269,9 +269,10 @@ export const isConsolidated = async (month: number, year: number): Promise<boole
   return !!date && date.total !== undefined;
 };
 
-export const autoConsolidate = async (storeId?: string) => {
+export const autoConsolidate = async (storeId?: string, consolidationDay = 1) => {
   const [day, month, initialYear] = getDateArray();
-  if (!day || !month || !initialYear || day <= 2 || !storeId) return;
+  const threshold = Math.min(28, Math.max(1, Math.floor(consolidationDay) || 1));
+  if (!day || !month || !initialYear || day < threshold || !storeId) return;
   let year = initialYear;
 
   let previousMonth = month - 1;

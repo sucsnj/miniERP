@@ -40,6 +40,15 @@ function parsePatch(body: unknown): CompanySettingsPatch | null {
     if (!Number.isFinite(delay) || delay < 5 || delay > 3600) return null;
     patch.autoFocusSaleInputDelay = Math.floor(delay);
   }
+  if (source.autoConsolidationEnabled !== undefined) {
+    if (typeof source.autoConsolidationEnabled !== 'boolean') return null;
+    patch.autoConsolidationEnabled = source.autoConsolidationEnabled;
+  }
+  if (source.autoConsolidationDay !== undefined) {
+    const day = Number(source.autoConsolidationDay);
+    if (!Number.isFinite(day) || day < 1 || day > 28) return null;
+    patch.autoConsolidationDay = Math.floor(day);
+  }
   if (source.pixKey !== undefined) patch.pixKey = String(source.pixKey);
   if (source.pixName !== undefined) patch.pixName = String(source.pixName);
   if (source.pixBank !== undefined) patch.pixBank = String(source.pixBank);

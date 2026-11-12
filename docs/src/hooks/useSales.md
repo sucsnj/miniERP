@@ -7,12 +7,12 @@
 - Consulta `sales` com `useQuery` (staleTime: 5 min; refetch on window focus/reconnect para vendas), com `queryKey` tenant-scoped pelo período/filtro.
 - Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `initialLoading` (primeiro fetch para o gate) e `refreshing` (isFetching posterior).
 - Parâmetros: `(month, year, showToast, options?)` com `UseSalesOptions` (`filter?: 'todas'|'positivas'|'negativas'`, `autoConsolidate?: boolean`).
-- `loadSales()` dispara `refetch()`; `autoConsolidate()` roda em background fora do bloqueio da rota (somente admin com `storeId` e `autoConsolidate` ativo).
+- `loadSales()` dispara `refetch()`; `autoConsolidate()` roda em background fora do bloqueio da rota (somente admin com `storeId`, `autoConsolidate` ativo e auto consolidação habilitada nas configurações, no dia configurado).
 - Ações: `handleConsolidate()`, `handleEditSale(sale)`, `handleCancelEdit()`, `handleSaved()` e `handleDeleteSale(id)`.
 
 ## Relações
 
-- **Usa:** `useQuery` (`@tanstack/react-query`), `tenantKeys`/`identityFromUser` (`src/utils/queryKeys.ts`), `usePendingTask` (`src/contexts/RouteLoadingContext.tsx`), `fetchDailySales`, `consolidateMonthly`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit`, `useAuth`, `useDeleteSale` (`src/hooks/useSalesMutations.ts`).
+- **Usa:** `useQuery` (`@tanstack/react-query`), `tenantKeys`/`identityFromUser` (`src/utils/queryKeys.ts`), `usePendingTask` (`src/contexts/RouteLoadingContext.tsx`), `fetchDailySales`, `consolidateMonthly`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit`, `useAuth`, `useSettings`, `useDeleteSale` (`src/hooks/useSalesMutations.ts`).
 - **Usado por:** páginas/componentes relacionados a vendas diárias.
 
 ## Notas

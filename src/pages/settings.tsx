@@ -195,6 +195,8 @@ const SettingsPage = () => {
   const companyTimezone = companySettings?.timezone ?? 'America/Recife';
   const companyAutoFocusSaleInput = companySettings?.autoFocusSaleInput ?? true;
   const companyAutoFocusSaleInputDelay = companySettings?.autoFocusSaleInputDelay ?? 60;
+  const companyAutoConsolidationEnabled = companySettings?.autoConsolidationEnabled ?? true;
+  const companyAutoConsolidationDay = companySettings?.autoConsolidationDay ?? 1;
 
   const adminOnlyControls = (label: string, description: string, children: React.ReactNode) => (
     <div>
@@ -303,6 +305,34 @@ const SettingsPage = () => {
                   </div>
                 </label>
               </div>
+            </div>
+          </Panel>
+
+          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <PanelHeader title="Auto consolidação" />
+              <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Consolida automaticamente o mês anterior no dia escolhido do mês seguinte.</p>
+              {adminOnlyControls('Padrão da empresa', `Atual: ${companyAutoConsolidationEnabled ? `ativada, dia ${companyAutoConsolidationDay}` : 'desativada'}`, (
+                <>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                    <Button type="button" size="sm" disabled={savingCompany} variant={companyAutoConsolidationEnabled ? 'primary' : 'outline'} onClick={() => void patchCompany({ autoConsolidationEnabled: true })}>Ativada</Button>
+                    <Button type="button" size="sm" disabled={savingCompany} variant={!companyAutoConsolidationEnabled ? 'primary' : 'outline'} onClick={() => void patchCompany({ autoConsolidationEnabled: false })}>Desativada</Button>
+                  </div>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Dia do mês seguinte
+                    <select
+                      value={companyAutoConsolidationDay}
+                      disabled={savingCompany || !companyAutoConsolidationEnabled}
+                      onChange={(event) => void patchCompany({ autoConsolidationDay: Number(event.target.value) })}
+                      style={{ padding: '6px', width: '100%' }}
+                    >
+                      {Array.from({ length: 28 }, (_, index) => index + 1).map((day) => (
+                        <option key={day} value={day}>{day}</option>
+                      ))}
+                    </select>
+                  </label>
+                </>
+              ))}
             </div>
           </Panel>
 

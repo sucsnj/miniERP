@@ -33,6 +33,8 @@ interface SettingsContextValue {
   autoFocusSaleInputOverride: boolean | null;
   autoFocusSaleInputDelay: number;
   autoFocusSaleInputDelayOverride: number | null;
+  autoConsolidationEnabled: boolean;
+  autoConsolidationDay: number;
   pixKey: string;
   pixName: string;
   pixBank: string;
@@ -62,6 +64,8 @@ const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   recentSalesCount: 4,
   autoFocusSaleInput: true,
   autoFocusSaleInputDelay: 60,
+  autoConsolidationEnabled: true,
+  autoConsolidationDay: 1,
   pixKey: '',
   pixName: '',
   pixBank: '',
@@ -238,6 +242,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         autoFocusSaleInputOverride,
         autoFocusSaleInputDelay,
         autoFocusSaleInputDelayOverride,
+        autoConsolidationEnabled: company.autoConsolidationEnabled,
+        autoConsolidationDay: company.autoConsolidationDay,
         pixKey: company.pixKey,
         pixName: company.pixName,
         pixBank: company.pixBank,

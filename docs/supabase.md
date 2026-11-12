@@ -12,6 +12,7 @@
 5.1. Se aparecer `PGRST202` para `bootstrap_company_admin`, aplique `supabase/migrations/0014-fix-bootstrap-company-admin.sql` no SQL Editor e confirme a função em Database → Functions.
 5.2. Para foto na navbar, aplique `supabase/migrations/0016-add-user-avatar-url.sql`; a coluna `users.avatar_url` é opcional e o frontend usa inicial do nome quando não há foto.
 5.3. Para salvar presets de PIX na empresa, aplique `supabase/migrations/0017-add-pix-presets-to-company-settings.sql`; a coluna `company_settings.pix_presets` guarda um JSON compartilhado por empresa.
+5.4. Para auto consolidação mensal configurável, aplique `supabase/migrations/0018-add-auto-consolidation-settings.sql`; `auto_consolidation_enabled` ativa/desativa e `auto_consolidation_day` define o dia (1–28) do mês seguinte.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

@@ -8,6 +8,7 @@ import {
 } from '../services/salesService';
 import { canEdit } from '../utils/edit';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
 import { identityFromUser, tenantKeys } from '../utils/queryKeys';
 import { useDeleteSale } from './useSalesMutations';
@@ -28,6 +29,7 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
 
   // Aplica os padrões quando a opção não é informada
+  const { autoConsolidationEnabled, autoConsolidationDay } = useSettings();
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
   const identity = user ? identityFromUser(user) : null;
 
@@ -55,12 +57,12 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   // Auto-consolidação não bloqueia o carregamento da página/tab.
   useEffect(() => {
     if (!query.isSuccess) return;
-    if (!autoConsolidateEnabled || user?.role !== 'admin' || !user.storeId) return;
+    if (!autoConsolidateEnabled || !autoConsolidationEnabled || user?.role !== 'admin' || !user.storeId) return;
 
-    void autoConsolidate(user.storeId).catch((error) => {
+    void autoConsolidate(user.storeId, autoConsolidationDay).catch((error) => {
       console.error('Erro ao consolidar mês em segundo plano:', error);
     });
-  }, [autoConsolidateEnabled, query.isSuccess, user?.role, user?.storeId]);
+  }, [autoConsolidateEnabled, autoConsolidationEnabled, autoConsolidationDay, query.isSuccess, user?.role, user?.storeId]);
 
   // Consolida o mês selecionado e informa o resultado
   const handleConsolidate = async () => {

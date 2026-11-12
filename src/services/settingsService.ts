@@ -16,6 +16,8 @@ export interface CompanySettings {
   recentSalesCount: RecentSalesCount;
   autoFocusSaleInput: boolean;
   autoFocusSaleInputDelay: number;
+  autoConsolidationEnabled: boolean;
+  autoConsolidationDay: number;
   pixKey: string;
   pixName: string;
   pixBank: string;
