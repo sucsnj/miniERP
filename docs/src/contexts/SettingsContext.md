@@ -9,7 +9,7 @@
 - Precedência: `localStorage` válido → `company_settings` → default do app.
 - Mantém dados PIX da empresa (`pixKey`, `pixName`, `pixBank`, `pixCity`); não há override local.
 - `patchCompanySettings` atualiza `company_settings` (admin); `clearPixData` limpa PIX da empresa.
-- Expõe `loading` enquanto a busca inicial de `company_settings` está em andamento.
+- Carrega `company_settings` em segundo plano; não bloqueia o carregamento da rota.
 - Persiste overrides locais, cache de `timezoneCompany` e cookie `timezone` efetivo.
 
 ## Relações

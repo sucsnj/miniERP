@@ -8,6 +8,7 @@
 | [captalize.md](./captalize.md) | Capitalização de texto. |
 | [cart.md](./cart.md) | Resumo do carrinho (`getCartSummary`). |
 | [cleaner.md](./cleaner.md) | Limpeza de arquivos temporários do OCR. |
+| [companyCache.md](./companyCache.md) | Cache em memória da razão social da empresa (TTL 10 min). |
 | [clipboard.md](./clipboard.md) | Cópia para a área de transferência com fallback. |
 | [date.md](./date.md) | Datas/horas em `America/Recife` (`dayjs`). |
 | [download.md](./download.md) | Download de Data URL no navegador. |

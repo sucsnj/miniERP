@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSupabaseServerClient } from '../database/supabase';
+import { readCompanyNameCache, writeCompanyNameCache } from './companyCache';
 
 export type AuthRole = 'admin' | 'merchant';
 
@@ -109,6 +110,9 @@ export async function findUserByIdentifier(identifier: string): Promise<UserReco
 }
 
 export async function getCompanyName(companyId: string): Promise<string> {
+  const cached = readCompanyNameCache(companyId);
+  if (cached) return cached;
+
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('companies')
@@ -117,7 +121,9 @@ export async function getCompanyName(companyId: string): Promise<string> {
     .maybeSingle();
 
   if (error || !data) return '';
-  return data.name as string;
+  const companyName = String(data.name);
+  writeCompanyNameCache(companyId, companyName);
+  return companyName;
 }
 
 async function getAuthorizedStores(user: UserRecord): Promise<StoreRecord[]> {

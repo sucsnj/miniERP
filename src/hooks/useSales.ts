@@ -50,21 +50,23 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
     try {
       const date = await fetchDailySales(month, year, filter);
       setSales(date);
-
-      if (autoConsolidateEnabled && user?.role === 'admin') {
-        await autoConsolidate();
-      }
     } finally {
       setInitialLoading(false);
       setRefreshing(false);
       initialLoadedRef.current = true;
     }
-  }, [month, year, filter, autoConsolidateEnabled, user?.role]);
+
+    if (autoConsolidateEnabled && user?.role === 'admin' && user.storeId) {
+      void autoConsolidate(user.storeId).catch((error) => {
+        console.error('Erro ao consolidar mês em segundo plano:', error);
+      });
+    }
+  }, [month, year, filter, autoConsolidateEnabled, user?.role, user?.storeId]);
 
   // Consolida o mês selecionado e informa o resultado
   const handleConsolidate = async () => {
     try {
-      await consolidateMonthly(month, year);
+      await consolidateMonthly(month, year, user?.storeId);
       showToast('O mês foi consolidado com sucesso.', 'success');
     } catch {
       showToast('Não foi possível consolidar o mês.', 'error');

@@ -40,7 +40,7 @@ const SummaryPage: React.FC = () => {
 
   const handleConsolidate = async () => {
     try {
-      await consolidateMonthly(month, year);
+      await consolidateMonthly(month, year, user?.storeId);
       showToast('O mês foi consolidado com sucesso.', 'success');
       await loadMensais();
     } catch {

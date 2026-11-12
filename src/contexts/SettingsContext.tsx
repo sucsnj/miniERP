@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { usePendingTask } from './RouteLoadingContext';
 import {
   readStoredNumber,
   readStoredString,
@@ -52,7 +51,6 @@ interface SettingsContextValue {
   clearAutoFocusSaleInputDelay: () => void;
   patchCompanySettings: (patch: CompanySettingsPatch) => Promise<void>;
   clearPixData: () => Promise<void>;
-  loading: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -100,8 +98,6 @@ function parseTimezoneOverride(): string | null {
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [companySettings, setCompanySettings] = useState<CompanySettings | null>(null);
-  const [loading, setLoading] = useState(true);
-  usePendingTask('company-settings', loading);
   const company = companySettings ?? DEFAULT_COMPANY_SETTINGS;
 
   const [themeModeOverride, setThemeModeOverride] = useState<ThemeMode | null>(null);
@@ -137,17 +133,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         return body.companySettings as CompanySettings | undefined;
       })
       .then((settings) => {
-        if (!active || !settings) {
-          if (active) setLoading(false);
-          return;
-        }
+        if (!active || !settings) return;
         setCompanySettings(settings);
         writeStoredValue('timezoneCompany', settings.timezone);
-        setLoading(false);
       })
-      .catch(() => {
-        if (active) setLoading(false);
-      });
+      .catch(() => undefined);
 
     return () => { active = false; };
   }, []);
@@ -266,7 +256,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         clearAutoFocusSaleInputDelay,
         patchCompanySettings,
         clearPixData,
-        loading,
       }}
     >
       {children}

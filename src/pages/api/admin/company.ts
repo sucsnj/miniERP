@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { requireAdminApi } from '../../../utils/serverAuth';
 import { getCompany, updateCompanyName } from '../../../database/adminRepository';
 import { isValidName, normalizeName } from '../../../utils/serverAuth';
+import { invalidateCompanyNameCache } from '../../../utils/companyCache';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireAdminApi(req, res);
@@ -25,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       await updateCompanyName(name, ctx);
+      invalidateCompanyNameCache(ctx.companyId);
       return res.status(200).json({ company: { id: ctx.companyId, name } });
     } catch (error) {
       console.error('Erro ao atualizar empresa:', error);

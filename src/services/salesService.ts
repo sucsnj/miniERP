@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Camada de serviço do cliente para comunicar a interface com as APIs internas de vendas.
+import { readStoredString, removeStoredValue, writeStoredValue } from '../utils/storage';
 import { getDateArray } from '../utils/date';
 import dayjs from 'dayjs';
 dayjs.locale('pt-br');
@@ -204,12 +205,42 @@ export const fetchAllMonthly = async (): Promise<MonthlySale[]> => {
   return Array.isArray(date) ? date.map(mapMonthlySale) : [];
 };
 
-export const consolidateMonthly = async (month: number, year: number) => {
+const AUTO_CONSOLIDATION_TTL_MS = 60 * 60 * 1000;
+
+const consolidationCacheKey = (storeId: string, month: number, year: number) =>
+  `auto-consolidation:v1:${storeId}:${year}-${String(month).padStart(2, '0')}`;
+
+export const isConsolidationChecked = (storeId: string, month: number, year: number): boolean => {
+  const checkedAt = Number(readStoredString(consolidationCacheKey(storeId, month, year), '0'));
+  return Number.isFinite(checkedAt) && checkedAt > 0 && Date.now() - checkedAt < AUTO_CONSOLIDATION_TTL_MS;
+};
+
+export const markConsolidationChecked = (storeId: string, month: number, year: number) => {
+  writeStoredValue(consolidationCacheKey(storeId, month, year), Date.now());
+};
+
+export const invalidateConsolidationCache = (storeId: string, month: number, year: number) => {
+  removeStoredValue(consolidationCacheKey(storeId, month, year));
+};
+
+export const invalidateAllConsolidationCache = () => {
+  if (typeof window === 'undefined') return;
+  Object.keys(window.localStorage)
+    .filter((key) => key.startsWith('auto-consolidation:v1:'))
+    .forEach((key) => removeStoredValue(key));
+};
+
+export const consolidateMonthly = async (month: number, year: number, storeId?: string) => {
   const response = await fetch('/api/monthly-sales', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ month, year }),
   });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível consolidar: ${body || response.statusText}`);
+  }
+  if (storeId) markConsolidationChecked(storeId, month, year);
   return response.json();
 };
 
@@ -222,9 +253,9 @@ export const isConsolidated = async (month: number, year: number): Promise<boole
   return !!date && date.total !== undefined;
 };
 
-export const autoConsolidate = async () => {
+export const autoConsolidate = async (storeId?: string) => {
   const [day, month, initialYear] = getDateArray();
-  if (!day || !month || !initialYear) return;
+  if (!day || !month || !initialYear || day <= 2 || !storeId) return;
   let year = initialYear;
 
   let previousMonth = month - 1;
@@ -233,21 +264,21 @@ export const autoConsolidate = async () => {
     previousMonth = 12;
   }
 
-  if (day === 3) {
-    await consolidateMonthly(previousMonth, year);
-  }
-
-  const jaConsolidado = await isConsolidated(previousMonth, year);
-  if (jaConsolidado) {
+  if (isConsolidationChecked(storeId, previousMonth, year)) {
     return;
   }
 
-  if (day > 2) {
-    await consolidateMonthly(previousMonth, year);
+  const alreadyConsolidated = await isConsolidated(previousMonth, year);
+  if (alreadyConsolidated) {
+    markConsolidationChecked(storeId, previousMonth, year);
+    return;
   }
+
+  await consolidateMonthly(previousMonth, year, storeId);
 };
 
 export const deleteMonthly = async (id: string | number) => {
+  invalidateAllConsolidationCache();
   const response = await fetch('/api/monthly-sales', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
