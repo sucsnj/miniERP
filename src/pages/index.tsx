@@ -8,7 +8,6 @@ import { useSales } from '../hooks/useSales';
 import { getDateArray, now, toTimestamp } from '../utils/date';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
-import { SkeletonCards, SkeletonText } from '@/components/common/Skeleton';
 
 
 // Data de today (fuso do app) usada como seleção inicial do formulário
@@ -32,7 +31,6 @@ const Home: React.FC = () => {
   // Estado e ações de vendas (carregar, editar, excluir, consolidar, backup)
   const {
     sales,
-    loading,
     editingSale,
     loadSales,
     handleEditSale,
@@ -59,13 +57,8 @@ const Home: React.FC = () => {
   return (
     <>
       <PageShell>
-        <PageHeader title="Dashboard de Vendas" description={loading ? 'Carregando...' : undefined} />
-        {loading && (
-          <>
-            <SkeletonCards cards={3} minHeight="110px" />
-            <SkeletonText lines={5} />
-          </>
-        )}
+        <PageHeader title="Dashboard de Vendas" />
+
         {/* Resumo do período + formulário de registro de venda */}
         <DailySalesTotal
           sales={sales}

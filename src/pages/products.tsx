@@ -271,7 +271,6 @@ const ProductsPage: React.FC = () => {
             {/* Listagem */}
             <ProdutosList
               items={items}
-              loading={loading}
               total={total}
               page={page}
               totalPages={totalPages}

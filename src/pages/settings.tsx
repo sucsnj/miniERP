@@ -5,7 +5,6 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
-import { SkeletonCards, SkeletonText } from '@/components/common/Skeleton';
 import { useToast } from '../hooks/useToast';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -43,7 +42,6 @@ const SettingsPage = () => {
   const settings = useSettings();
   const {
     companySettings,
-    loading,
     themeModeOverride,
     recentSalesCountOverride,
     timezoneOverride,
@@ -121,12 +119,6 @@ const SettingsPage = () => {
       <Head><title>Configurações</title></Head>
       <PageShell>
         <PageHeader title="Configurações" description="Padrão da empresa; cada dispositivo pode usar um override local." />
-        {loading ? (
-          <>
-            <SkeletonCards cards={4} minHeight="160px" />
-            <SkeletonText lines={4} />
-          </>
-        ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
           <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
@@ -253,7 +245,6 @@ const SettingsPage = () => {
             </Panel>
           </form>
         </div>
-        )}
       </PageShell>
     </>
   );

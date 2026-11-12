@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `loading`.
+- Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `initialLoading` (somente primeira carga) e `refreshing` (refetch subsequente).
 - Parâmetros: `(month, year, showToast, options?)` com `UseSalesOptions` (`filter?: 'todas'|'positivas'|'negativas'`, `autoConsolidate?: boolean`).
 - `loadSales()`: busca via `fetchDailySales(month, year, filter)` e dispara `autoConsolidate()` apenas se ativo e o usuário for `admin`.
 - Ações: `handleConsolidate()` (consolida mês), `handleBackup()` (executa backup e exibe mensagem), `handleEditSale(sale)`, `handleCancelEdit()`, `handleSaved()` (fecha edição e recarrega), `handleDeleteSale(id)` (verifica existência e regra `canEdit(sale.data)`; exibe toasts apropriados).
@@ -17,4 +17,5 @@
 ## Notas
 
 - Arquivo `useSales.ts`; identificador exportado é `useSales`.
-- `autoConsolidate` é chamado após carregar quando `autoConsolidateEnabled` for true.
+- `autoConsolidate` é chamado após carregar quando `autoConsolidateEnabled` for true, apenas para admin.
+- Após a primeira carga, `refreshing` é usado para ações/reloads; o conteúdo existente permanece visível.

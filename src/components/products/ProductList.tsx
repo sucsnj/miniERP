@@ -2,7 +2,6 @@ import styles from '../../styles/products.module.css';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
 import PanelHeader from '@/components/common/PanelHeader';
-import { SkeletonTable } from '@/components/common/Skeleton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
@@ -14,7 +13,6 @@ import {
 
 interface ProductListProps {
     items: ItemData[];
-    loading: boolean;
 
     onEdit(item: ItemData): void;
     onDelete(item: ItemData): void;
@@ -28,16 +26,14 @@ interface ProductListProps {
     onPageChange(page: number): void;
 }
 
-const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, loading, onEdit, onDelete, onPageChange, onToggleStatus, canWrite = true }) => {
+const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, onEdit, onDelete, onPageChange, onToggleStatus, canWrite = true }) => {
 
     return (
         <div>
             <Panel>
                 <PanelHeader title="Listagem" chip={<span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>Total: {total} registro(s)</span>} />
 
-                {loading ? (
-                    <SkeletonTable rows={5} columns={7} />
-                ) : items.length === 0 ? (
+                {items.length === 0 ? (
                     <div className={styles.emptyState}>Nenhum registro encontrado.</div>
                 ) : (
                     <div className={styles.tableContainer}>

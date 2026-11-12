@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import styles from '../../styles/products.module.css';
-import { SkeletonTable, SkeletonText } from '@/components/common/Skeleton';
 import type { StockMovementData } from '../../services/productsService';
 import { useFocusTrap } from '../../utils/focus';
 import Button from '@/components/common/Button';
@@ -83,11 +82,11 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({
                 <div className={styles.historySection}>
           <div className={styles.historyHeader}>
             <span>Últimas 10 movimentações</span>
-            {movementsLoading && <SkeletonText lines={1} lastLineWidth="90px" />}
+            {movementsLoading && <span className={styles.historyLoading}>Carregando...</span>}
           </div>
           {movements.length === 0 ? (
             <div className={styles.emptyState}>
-              {movementsLoading ? <SkeletonTable rows={4} columns={4} /> : 'Nenhuma movimentação encontrada para este item.'}
+              {movementsLoading ? 'Carregando histórico...' : 'Nenhuma movimentação encontrada para este item.'}
             </div>
           ) : (
             <div className={styles.historyTableWrapper}>

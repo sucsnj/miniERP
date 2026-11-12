@@ -8,6 +8,7 @@
 - `RouteContent` oculta somente a área de conteúdo (`AuthGate` + página) enquanto houver tarefas, exibindo `PageSkeleton`.
 - `/login` e `/setup` permanecem visíveis; nas demais rotas o conteúdo só aparece quando todas as tarefas iniciais terminarem.
 - `usePendingTask(key, pending)` registra uma tarefa enquanto `pending` for `true`.
+- Depois da primeira carga, ações/refresh não entram no gate; dados existentes permanecem visíveis.
 
 ## Relações
 
@@ -16,5 +17,5 @@
 
 ## Notas
 
-- Tarefas de interação do usuário (busca, OCR, modais e ações) não entram no gate inicial; apenas cargas iniciais.
+- Tarefas de interação do usuário (busca, OCR, modais e ações) e refetchs de dados já carregados mantiveram stale-while-revalidate: o conteúdo atual fica visível e o gate de rota não reabre.
 - O conteúdo permanece montado (`display:none`) para que hooks/effects carreguem e registrem/desregistrem corretamente.

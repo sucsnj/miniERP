@@ -6,7 +6,6 @@ import { formatCurrency } from '../../utils/formatter';
 import styles from '../../styles/payables.module.css';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
-import { SkeletonTable } from '@/components/common/Skeleton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -26,7 +25,6 @@ interface PayablesFilterPanelProps {
   setDueDateToFilter: (value: string) => void;
   today: string;
   filteredAccounts: AccountDetails[];
-  isLoading?: boolean;
   handleView: (account: AccountDetails) => void;
   handleDelete: (id: string) => void;
   handleEdit: (account: AccountDetails) => void;
@@ -45,7 +43,6 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
   dueDateToFilter,
   setDueDateToFilter,
   filteredAccounts,
-  isLoading = false,
   handleView,
   handleDelete,
   canWrite = true,
@@ -120,10 +117,7 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
         </div>
 
         <h3>Contas do mês</h3>
-        {isLoading ? (
-          <SkeletonTable rows={5} columns={6} />
-        ) : (
-          <table className={styles.detailTable}>
+        <table className={styles.detailTable}>
           <thead>
             <tr>
               <th>Distribuidora</th>
@@ -190,7 +184,6 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
             ) : null}
           </tbody>
           </table>
-        )}
       </div>
 
       <ConfirmDialog

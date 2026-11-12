@@ -7,7 +7,6 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '../../styles/monthNotes.module.css';
-import { SkeletonTable } from '@/components/common/Skeleton';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePendingTask } from '../../contexts/RouteLoadingContext';
 
@@ -86,9 +85,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                 </div>
             </div>
 
-            {isLoading ? (
-                <SkeletonTable rows={4} columns={4} />
-            ) : invoices.length === 0 ? (
+            {invoices.length === 0 ? (
                 <p>Nenhuma nota encontrada.</p>
             ) : (
                 <table className={`${styles.summaryTable}`}>

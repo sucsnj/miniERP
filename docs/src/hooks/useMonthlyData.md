@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Estado `mensais` (`MonthlySale[]`) e `loading`.
-- `loadMensais()`: define `loading=true`, busca todas via `fetchAllMonthly` e encerra em `finally`.
+- Estado `mensais` (`MonthlySale[]`), `initialLoading` e `refreshing`.
+- `loadMensais()`: usa `initialLoading` somente na primeira carga; refetches usam `refreshing`.
 - `handleDelete(id)`: exclui via `deleteMonthly` e recarrega, com toasts de sucesso/erro.
 
 ## Relações
@@ -16,4 +16,4 @@
 ## Notas
 
 - Arquivo `useMonthlyData.ts`; identificador exportado é `useMonthlyData`.
-- Callback `loadMensais` depende de `showToast`? Não — `handleDelete` usa `showToast`; `loadMensais` não. Mantido estável conforme código.
+- `loadMensais` é estável via `useCallback`; após a primeira carga, refetches mantêm a lista visível.

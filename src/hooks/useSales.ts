@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   fetchDailySales,
   consolidateMonthly,
@@ -29,10 +29,11 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   const [sales, setSales] = useState<DailySale[]>([]);
   // Venda atualmente em edição (null = nenhuma)
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
-  // Indica se há uma carga de dados em andamento
-  const [loading, setLoading] = useState(true);
-  const [initialLoaded, setInitialLoaded] = useState(false);
-  usePendingTask('sales-initial', loading && !initialLoaded);
+  // Carrega dados: initialLoading mantém a página inteira no skeleton da rota até a primeira carga.
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const initialLoadedRef = useRef(false);
+  usePendingTask('sales-initial', initialLoading);
 
   // Aplica os padrões quando a opção não é informada
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
@@ -40,8 +41,13 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   // Busca as vendas do mês/year conforme o filtro e, opcionalmente, dispara a consolidação automática.
   // useCallback mantém a referência estável enquanto month/year/filter não mudarem.
   const loadSales = useCallback(async () => {
+    const isInitial = !initialLoadedRef.current;
+    if (isInitial) {
+      setInitialLoading(true);
+    } else {
+      setRefreshing(true);
+    }
     try {
-      setLoading(true);
       const date = await fetchDailySales(month, year, filter);
       setSales(date);
 
@@ -49,8 +55,9 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
         await autoConsolidate();
       }
     } finally {
-      setLoading(false);
-      setInitialLoaded(true);
+      setInitialLoading(false);
+      setRefreshing(false);
+      initialLoadedRef.current = true;
     }
   }, [month, year, filter, autoConsolidateEnabled, user?.role]);
 
@@ -107,7 +114,8 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   return {
     sales,
     editingSale,
-    loading,
+    initialLoading,
+    refreshing,
     loadSales,
     handleConsolidate,
     handleEditSale,

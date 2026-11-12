@@ -371,7 +371,6 @@ const Payables: React.FC = () => {
             setDueDateToFilter={handleDueDateToChange}
             today={today}
             filteredAccounts={filteredAccounts}
-            isLoading={monthLoading || yearLoading}
             handleView={handleView}
             handleDelete={handleDelete}
             handleEdit={handleEdit}

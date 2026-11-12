@@ -13,7 +13,7 @@
 ## Relações
 
 - **Usa:** `skeleton.module.css`, `PageShell`, `PageHeader`, `Panel`.
-- **Usado por:** auth/admin/settings/dashboard/history/summary/products/payables/month-notes/edit-sale/components de loading.
+- **Usado por:** gate inicial de rota (`RouteContent`), `AuthGate` e skeleton da navbar; não é usado em ações/modais ou refetch.
 
 ## Notas
 

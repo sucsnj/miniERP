@@ -21,7 +21,6 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useImportItems, type ItemStatus } from '../../hooks/useImportItems';
 import ItemNameDropdown from './ItemNameDropdown';
 import Button from '@/components/common/Button';
-import { SkeletonText } from '@/components/common/Skeleton';
 
 interface ImportItemsModalProps {
   onClose: () => void;
@@ -131,7 +130,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
         {/* Loading */}
         {loading && (
           <div className={importStyles.loadingArea}>
-            <SkeletonText lines={3} />
+            <div className={importStyles.spinner} />
             <p>Lendo nota fiscal...</p>
           </div>
         )}
