@@ -4,15 +4,15 @@
 
 ## O que faz
 
-- `RouteLoadingProvider` mantém uma contagem de tarefas pendentes da rota atual.
-- Enquanto houver tarefas, oculta o conteúdo real e renderiza `PageSkeleton`.
-- `/login` e `/setup` continuam visíveis; nas demais rotas a página só aparece quando todas as tarefas iniciais terminarem.
+- `RouteLoadingProvider` mantém apenas a contagem de tarefas pendentes; não oculta a navbar.
+- `RouteContent` oculta somente a área de conteúdo (`AuthGate` + página) enquanto houver tarefas, exibindo `PageSkeleton`.
+- `/login` e `/setup` permanecem visíveis; nas demais rotas o conteúdo só aparece quando todas as tarefas iniciais terminarem.
 - `usePendingTask(key, pending)` registra uma tarefa enquanto `pending` for `true`.
 
 ## Relações
 
 - **Usa:** `useRouter`, `PageSkeleton`.
-- **Usado por:** `_app`, settings, sales, monthly-data, products/options, admin, payables e componentes com query inicial.
+- **Usado por:** `_app` (`RouteLoadingProvider` + `RouteContent`), settings, sales, monthly-data, products/options, admin, payables e componentes com query inicial.
 
 ## Notas
 

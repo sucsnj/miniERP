@@ -19,8 +19,6 @@ interface RouteLoadingContextValue {
 const RouteLoadingContext = createContext<RouteLoadingContextValue | undefined>(undefined);
 
 export function RouteLoadingProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const isPublic = router.pathname === '/login' || router.pathname === '/setup';
   const [keys, setKeys] = useState<Record<string, number>>({});
 
   const register = useCallback((key: string) => {
@@ -45,19 +43,24 @@ export function RouteLoadingProvider({ children }: { children: ReactNode }) {
     [keys, register]
   );
 
-  if (isPublic) {
-    return <RouteLoadingContext.Provider value={value}>{children}</RouteLoadingContext.Provider>;
-  }
+  return <RouteLoadingContext.Provider value={value}>{children}</RouteLoadingContext.Provider>;
+}
 
-  const isLoading = value.pendingCount > 0;
+export function RouteContent({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const context = useContext(RouteLoadingContext);
+  const isPublic = router.pathname === '/login' || router.pathname === '/setup';
+  const isLoading = !isPublic && (context?.pendingCount ?? 0) > 0;
+
+  if (isPublic) return <>{children}</>;
 
   return (
-    <RouteLoadingContext.Provider value={value}>
+    <>
       {isLoading && <PageSkeleton cards={4} />}
       <div aria-hidden={isLoading} style={{ display: isLoading ? 'none' : undefined }}>
         {children}
       </div>
-    </RouteLoadingContext.Provider>
+    </>
   );
 }
 

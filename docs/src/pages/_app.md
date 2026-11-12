@@ -7,9 +7,9 @@
 - Envolve a aplicação em `RouteLoadingProvider` e `ThemeProvider` → `SettingsProvider` → `AuthProvider` → `QueryClientProvider`.
 - Injeta `QueryClientProvider` (`@tanstack/react-query`) para toda a aplicação.
 - Define metadados HTML globais (título "Vendas", descrição e favicon).
-- Renderiza `Nav` fora de `AuthGate` nas rotas autenticadas (sempre visível inclusive durante loading).
-- `AuthGate` protege as páginas; `Toaster` continua na raiz.
-- Estrutura padrão das telas: `Nav` + `<Component />` + `Toaster`; `/login` e `/setup` ficam sem Nav.
+- Renderiza `Nav` fora de `AuthGate` e fora de `RouteContent` nas rotas autenticadas: permanece montada, não recarrega e não some durante loading.
+- `RouteContent` oculta somente a área da página; `AuthGate` protege a página; `Toaster` continua na raiz.
+- Estrutura padrão das telas: `Nav` + `RouteContent(AuthGate(<Component />))` + `Toaster`; `/login` e `/setup` ficam sem Nav.
 - Importa o CSS global na ordem `tokens → base → utilities → legacy`.
 
 ## Relações

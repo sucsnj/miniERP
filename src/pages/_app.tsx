@@ -9,7 +9,7 @@ import Toaster from '../components/common/Toaster';
 import AuthGate from '../components/auth/AuthGate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../contexts/AuthContext';
-import { RouteLoadingProvider } from '../contexts/RouteLoadingContext';
+import { RouteLoadingProvider, RouteContent } from '../contexts/RouteLoadingContext';
 import { SettingsProvider } from '../contexts/SettingsContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import Head from 'next/head';
@@ -34,10 +34,12 @@ export default function App({ Component, pageProps }: AppProps) {
               <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
             {!isPublic && <Nav />}
-            <AuthGate>
-              <Component {...pageProps} />
-              <Toaster />
-            </AuthGate>
+            <RouteContent>
+              <AuthGate>
+                <Component {...pageProps} />
+              </AuthGate>
+            </RouteContent>
+            <Toaster />
           </QueryClientProvider>
         </AuthProvider>
       </ThemeProvider>
