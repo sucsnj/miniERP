@@ -56,7 +56,7 @@ const SummaryPage: React.FC = () => {
   return (
     <>
       <PageShell>
-        <PageHeader title="Resumo Mensal" />
+        <PageHeader title="Resumo Mensal" description={user ? `Consolidação individual da loja: ${user.storeName}` : undefined} />
         {/* Período e ações de consolidação */}
         <Panel>
           <PanelHeader title="Período e ações" />

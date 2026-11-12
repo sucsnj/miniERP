@@ -10,6 +10,7 @@ import { useSales } from '../hooks/useSales';
 import { useFilter } from '../hooks/useFilter';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
+import { useAuth } from '../contexts/AuthContext';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
 
@@ -23,6 +24,7 @@ const History: React.FC = () => {
 
   // Notificações (toast) exibidas na tela
   const { showToast } = useToast();
+  const { user } = useAuth();
   // Filtro de vendas (persistido no localStorage)
   const { filter, changeFilter } = useFilter();
   // Estado e ações de vendas (carregar, editar, excluir). Aqui o autoConsolidate
@@ -45,7 +47,7 @@ const History: React.FC = () => {
   return (
     <>
       <PageShell>
-        <PageHeader title="Histórico de Vendas" />
+        <PageHeader title="Histórico de Vendas" description={user ? `Loja: ${user.storeName}` : undefined} />
         {/* Filtro de período e botões de amount */}
         <Panel>
           <div className="page-actions">

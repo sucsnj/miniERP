@@ -4,6 +4,7 @@
 
 ## O que faz
 
+- Exporta XLSX/PDF com slug da loja atual no nome do arquivo.
 - Exporta XLSX por mês/dia (`xlsx` importado dinamicamente) e PDF da `.table-container` (`html2canvas` + `jsPDF`).
 - Importa `.xlsx`/`.xls` normalizando headers (`data`/`valor`/`observacoes`/`criado_em`), validando a data por modo e registrando via `registerSaleWithCreatedAt`.
 - Notifica por `onMessage`; chama `onImportCompleted` ao concluir.
@@ -19,7 +20,7 @@ interface ExportButtonsProps {
 ## Relações
 
 - **Usa:** `salesService` (`src/services/salesService.ts`), `parseNumber` (`src/utils/number.ts`), `parseDate` (`src/utils/date.ts`).
-- **Usado por:** `../../pages/index.md`.
+- **Usado por:** [history](../../pages/history.md).
 
 ## Notas
 

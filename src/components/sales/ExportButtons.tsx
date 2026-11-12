@@ -9,6 +9,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Panel from '@/components/common/Panel';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ExportButtonsProps {
   sales: DailySale[];
@@ -27,7 +28,9 @@ const ExportButtons: FC<ExportButtonsProps> = ({
   onMessage,
   onImportCompleted,
 }) => {
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const storeSlug = (user?.storeName ?? 'loja').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'loja';
 
   // Função para notificar mensagens.
   const notify = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -68,8 +71,8 @@ const ExportButtons: FC<ExportButtonsProps> = ({
       a.href = url;
       a.download =
         mode === 'day'
-          ? `vendas-dia-${selectedDate}.xlsx`
-          : `vendas-mes-${month}-${year}.xlsx`;
+          ? `vendas-${storeSlug}-dia-${selectedDate}.xlsx`
+          : `vendas-${storeSlug}-mes-${month}-${year}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
       notify('Arquivo XLSX gerado com sucesso.', 'success');
@@ -240,7 +243,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
       const imgWidth = 190;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-      pdf.save(`vendas-${month}-${year}.pdf`);
+      pdf.save(`vendas-${storeSlug}-${month}-${year}.pdf`);
     }
   };
 
