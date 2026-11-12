@@ -298,7 +298,7 @@ const ProductsPage: React.FC = () => {
 
         {/* Botão flutuante: Novo Cadastro */}
         {isAdmin && (
-          <Link href="/registration" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
+          <Link href="/registration" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro" prefetch>
             <span className={styles.fabIcon}>+</span>
           </Link>
         )}

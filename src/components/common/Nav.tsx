@@ -95,14 +95,14 @@ const Nav: React.FC = () => {
 
   return (
     <nav className={styles.nav} aria-label="Navegação principal">
-      <Link href="/" className={styles.brand}>MinErp</Link>
+      <Link href="/" className={styles.brand} prefetch>MinErp</Link>
 
       <div className={styles.navLinks}>
         {user ? (
           NAV_ITEMS.map(({ href, label, Icon }) => (
             <div className={styles.navItem} key={href}>
-              <span className="icon"><Link href={href}><Icon /></Link></span>
-              <span className="text-responsive"><Link href={href}>{label}</Link></span>
+              <span className="icon"><Link href={href} prefetch><Icon /></Link></span>
+              <span className="text-responsive"><Link href={href} prefetch>{label}</Link></span>
             </div>
           ))
         ) : (
@@ -170,12 +170,12 @@ const Nav: React.FC = () => {
                     <span>{user.companyName} • {user.role === 'admin' ? 'Administrador' : 'Vendedor'}</span>
                   </div>
                   <hr className={styles.menuDivider} />
-                  <Link href="/settings" role="menuitem" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                  <Link href="/settings" role="menuitem" className={styles.menuItem} prefetch onClick={() => setMenuOpen(false)}>
                     <SettingsIcon fontSize="small" />
                     Configurações
                   </Link>
                   {user.role === 'admin' && (
-                    <Link href="/admin" role="menuitem" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                    <Link href="/admin" role="menuitem" className={styles.menuItem} prefetch onClick={() => setMenuOpen(false)}>
                       <SupervisorAccountIcon fontSize="small" />
                       Administração
                     </Link>
