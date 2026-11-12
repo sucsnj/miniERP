@@ -11,6 +11,7 @@
 5. Para banco pré-ADR 0013, aplique `supabase/migrations/0013-auth-multi-tenant.sql` após backup completo. O script atribui dados legados a uma empresa `Empresa legada`, cria loja `Loja principal` e prepara as constraints multi-loja.
 5.1. Se aparecer `PGRST202` para `bootstrap_company_admin`, aplique `supabase/migrations/0014-fix-bootstrap-company-admin.sql` no SQL Editor e confirme a função em Database → Functions.
 5.2. Para foto na navbar, aplique `supabase/migrations/0016-add-user-avatar-url.sql`; a coluna `users.avatar_url` é opcional e o frontend usa inicial do nome quando não há foto.
+5.3. Para salvar presets de PIX na empresa, aplique `supabase/migrations/0017-add-pix-presets-to-company-settings.sql`; a coluna `company_settings.pix_presets` guarda um JSON compartilhado por empresa.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

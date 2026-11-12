@@ -7,8 +7,8 @@
 - Mantém `companySettings` como padrão da empresa (`GET /api/settings`) via TanStack Query.
 - Exibe overrides locais por dispositivo (`localStorage`) para tema, timezone, recentes e foco automático/delay.
 - Precedência: `localStorage` válido → `company_settings` → default do app.
-- Mantém dados PIX da empresa (`pixKey`, `pixName`, `pixBank`, `pixCity`); não há override local.
-- `patchCompanySettings` atualiza `company_settings` via TanStack Query mutation; `clearPixData()` limpa PIX da empresa.
+- Mantém dados PIX da empresa (`pixKey`, `pixName`, `pixBank`, `pixCity`) e presets compartilhados (`pixPresets`); não há override local.
+- `patchCompanySettings` atualiza `company_settings` via TanStack Query mutation; `clearPixData()` limpa o PIX vigente, mas preserva presets.
 - Carrega `company_settings` em segundo plano (stale-while-revalidate), não bloqueia o carregamento da rota.
 - Persiste overrides locais, cache de `timezoneCompany` e cookie `timezone` efetivo.
 

@@ -5,6 +5,7 @@ import {
   type CompanySettingsPatch,
   type RecentSalesCount,
   type ThemeMode,
+  type PixPreset,
   fetchCompanySettings,
   patchCompanySettings as patchCompanySettingsApi,
   clearPixData,
@@ -18,7 +19,7 @@ import {
 import { identityFromUser, tenantKeys } from '../utils/queryKeys';
 import { useAuth } from './AuthContext';
 
-export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode };
+export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode, PixPreset };
 
 interface SettingsContextValue {
   companySettings: CompanySettings | null;
@@ -36,6 +37,7 @@ interface SettingsContextValue {
   pixName: string;
   pixBank: string;
   pixCity: string;
+  pixPresets: PixPreset[];
   setThemeMode: (value: ThemeMode) => void;
   clearThemeMode: () => void;
   setRecentSalesCount: (value: RecentSalesCount) => void;
@@ -64,6 +66,7 @@ const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   pixName: '',
   pixBank: '',
   pixCity: '',
+  pixPresets: [],
 };
 
 function parseThemeOverride(): ThemeMode | null {
@@ -239,6 +242,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         pixName: company.pixName,
         pixBank: company.pixBank,
         pixCity: company.pixCity,
+        pixPresets: company.pixPresets,
         setThemeMode,
         clearThemeMode,
         setRecentSalesCount,

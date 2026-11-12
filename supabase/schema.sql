@@ -93,6 +93,7 @@ create table if not exists public.company_settings (
   pix_name text not null default '',
   pix_bank text not null default '',
   pix_city text not null default '',
+  pix_presets jsonb not null default '[]'::jsonb,
   updated_by uuid references public.users (id),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

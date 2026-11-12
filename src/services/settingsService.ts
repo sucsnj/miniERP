@@ -1,6 +1,15 @@
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 export type ThemeMode = 'system' | 'light' | 'dark';
 
+export interface PixPreset {
+  id: string;
+  label: string;
+  pixKey: string;
+  pixName: string;
+  pixBank: string;
+  pixCity: string;
+}
+
 export interface CompanySettings {
   themeMode: ThemeMode;
   timezone: string;
@@ -11,6 +20,7 @@ export interface CompanySettings {
   pixName: string;
   pixBank: string;
   pixCity: string;
+  pixPresets: PixPreset[];
 }
 
 export type CompanySettingsPatch = Partial<CompanySettings>;

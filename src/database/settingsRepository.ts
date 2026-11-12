@@ -4,6 +4,15 @@ import type { AuthContext } from '../utils/serverAuth';
 export type CompanyThemeMode = 'system' | 'light' | 'dark';
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 
+export interface PixPreset {
+  id: string;
+  label: string;
+  pixKey: string;
+  pixName: string;
+  pixBank: string;
+  pixCity: string;
+}
+
 export interface CompanySettings {
   themeMode: CompanyThemeMode;
   timezone: string;
@@ -14,6 +23,42 @@ export interface CompanySettings {
   pixName: string;
   pixBank: string;
   pixCity: string;
+  pixPresets: PixPreset[];
+}
+
+export const MAX_PIX_PRESETS = 20;
+
+export function normalizePixPresets(input: unknown): PixPreset[] | null {
+  if (!Array.isArray(input) || input.length > MAX_PIX_PRESETS) return null;
+
+  const presets: PixPreset[] = [];
+  for (const item of input) {
+    if (!item || typeof item !== 'object') return null;
+    const source = item as Record<string, unknown>;
+    const preset = {
+      id: String(source.id ?? '').trim(),
+      label: String(source.label ?? '').trim(),
+      pixKey: String(source.pixKey ?? '').trim(),
+      pixName: String(source.pixName ?? '').trim(),
+      pixBank: String(source.pixBank ?? '').trim(),
+      pixCity: String(source.pixCity ?? '').trim(),
+    };
+
+    if (
+      !preset.id || preset.id.length > 100
+      || !preset.label || preset.label.length > 80
+      || !preset.pixKey || preset.pixKey.length > 200
+      || !preset.pixName || preset.pixName.length > 100
+      || !preset.pixBank || preset.pixBank.length > 100
+      || !preset.pixCity || preset.pixCity.length > 100
+    ) {
+      return null;
+    }
+
+    presets.push(preset);
+  }
+
+  return presets;
 }
 
 export interface CompanySettingsPatch {
@@ -26,6 +71,14 @@ export interface CompanySettingsPatch {
   pixName?: string;
   pixBank?: string;
   pixCity?: string;
+  pixPresets?: PixPreset[];
+}
+
+function parsePixPresets(value: unknown): PixPreset[] {
+  const raw = typeof value === 'string'
+    ? (() => { try { return JSON.parse(value) as unknown; } catch { return []; } })()
+    : value;
+  return normalizePixPresets(raw) ?? [];
 }
 
 function mapRow(row: Record<string, unknown>): CompanySettings {
@@ -39,6 +92,7 @@ function mapRow(row: Record<string, unknown>): CompanySettings {
     pixName: String(row.pix_name ?? ''),
     pixBank: String(row.pix_bank ?? ''),
     pixCity: String(row.pix_city ?? ''),
+    pixPresets: parsePixPresets(row.pix_presets),
   };
 }
 
@@ -46,7 +100,7 @@ export async function getCompanySettings(ctx: AuthContext): Promise<CompanySetti
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('company_settings')
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .eq('company_id', ctx.companyId)
     .maybeSingle();
 
@@ -56,7 +110,7 @@ export async function getCompanySettings(ctx: AuthContext): Promise<CompanySetti
   const { data: created, error: insertError } = await client
     .from('company_settings')
     .insert({ company_id: ctx.companyId })
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .single();
 
   if (insertError) throw new Error('Não foi possível criar as configurações da empresa.');
@@ -79,12 +133,17 @@ export async function updateCompanySettings(
   if (patch.pixName !== undefined) row.pix_name = patch.pixName.trim();
   if (patch.pixBank !== undefined) row.pix_bank = patch.pixBank.trim();
   if (patch.pixCity !== undefined) row.pix_city = patch.pixCity.trim();
+  if (patch.pixPresets !== undefined) {
+    const presets = normalizePixPresets(patch.pixPresets);
+    if (!presets) throw new Error('Presets PIX inválidos.');
+    row.pix_presets = presets;
+  }
 
   const { data, error } = await client
     .from('company_settings')
     .update(row)
     .eq('company_id', ctx.companyId)
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .single();
 
   if (error) throw new Error('Não foi possível atualizar as configurações da empresa.');

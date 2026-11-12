@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -12,6 +12,7 @@ import {
   type CompanySettingsPatch,
   type RecentSalesCount,
   type ThemeMode,
+  type PixPreset,
 } from '../contexts/SettingsContext';
 
 const timezoneOptions = [
@@ -35,6 +36,39 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const recentSalesOptions: RecentSalesCount[] = [0, 2, 4, 6, 8];
 
+const MAX_PIX_PRESETS = 20;
+
+const createPresetId = () =>
+  globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+const upsertPixPreset = (presets: PixPreset[], candidate: Omit<PixPreset, 'id' | 'label'> & { label: string }): PixPreset[] => {
+  const existingIndex = presets.findIndex((preset) => (
+    preset.pixKey === candidate.pixKey
+    && preset.pixName === candidate.pixName
+    && preset.pixBank === candidate.pixBank
+    && preset.pixCity === candidate.pixCity
+  ));
+
+  if (existingIndex >= 0) {
+    const existing = presets[existingIndex];
+    return presets.map((preset, index) => (
+      index === existingIndex ? { ...preset, label: candidate.label || existing.label } : preset
+    ));
+  }
+
+  return [
+    {
+      id: createPresetId(),
+      label: candidate.label,
+      pixKey: candidate.pixKey,
+      pixName: candidate.pixName,
+      pixBank: candidate.pixBank,
+      pixCity: candidate.pixCity,
+    },
+    ...presets,
+  ].slice(0, MAX_PIX_PRESETS);
+};
+
 const SettingsPage = () => {
   const { showToast } = useToast();
   const { user } = useAuth();
@@ -52,6 +86,7 @@ const SettingsPage = () => {
     pixName,
     pixBank,
     pixCity,
+    pixPresets,
     setThemeMode,
     clearThemeMode,
     setRecentSalesCount,
@@ -67,6 +102,32 @@ const SettingsPage = () => {
   } = settings;
 
   const [savingCompany, setSavingCompany] = useState(false);
+  const pixFormRef = useRef<HTMLFormElement | null>(null);
+
+  const setPixField = (name: 'pixKey' | 'pixName' | 'pixBank' | 'pixCity' | 'pixPresetLabel', value: string) => {
+    const form = pixFormRef.current;
+    const field = form?.elements.namedItem(name);
+    if (field instanceof HTMLInputElement) {
+      field.value = value;
+    }
+  };
+
+  const clearPixInputValues = () => {
+    for (const name of ['pixKey', 'pixName', 'pixBank', 'pixCity', 'pixPresetLabel'] as const) {
+      setPixField(name, '');
+    }
+  };
+
+  const fillPixPreset = (presetId: string) => {
+    const preset = pixPresets.find((item) => item.id === presetId);
+    if (!preset) return;
+
+    setPixField('pixKey', preset.pixKey);
+    setPixField('pixName', preset.pixName);
+    setPixField('pixBank', preset.pixBank);
+    setPixField('pixCity', preset.pixCity);
+    setPixField('pixPresetLabel', preset.label);
+  };
 
   const patchCompany = async (patch: CompanySettingsPatch) => {
     setSavingCompany(true);
@@ -83,16 +144,31 @@ const SettingsPage = () => {
   const saveCompanyPix = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isAdmin) return;
+
     const data = new FormData(event.currentTarget);
+    const pixValues = {
+      pixKey: String(data.get('pixKey') ?? '').trim(),
+      pixName: String(data.get('pixName') ?? '').trim(),
+      pixBank: String(data.get('pixBank') ?? '').trim(),
+      pixCity: String(data.get('pixCity') ?? '').trim(),
+    };
+    const presetLabel = String(data.get('pixPresetLabel') ?? '').trim();
+    const pixFormFilled = Object.values(pixValues).every(Boolean);
+    const nextPixPresets = pixFormFilled
+      ? upsertPixPreset(pixPresets, {
+          ...pixValues,
+          label: presetLabel || pixValues.pixName || pixValues.pixBank || pixValues.pixKey,
+        })
+      : pixPresets;
+
     await patchCompany({
-      pixKey: String(data.get('pixKey') ?? ''),
-      pixName: String(data.get('pixName') ?? ''),
-      pixBank: String(data.get('pixBank') ?? ''),
-      pixCity: String(data.get('pixCity') ?? ''),
+      ...pixValues,
+      ...(pixFormFilled ? { pixPresets: nextPixPresets } : {}),
     });
   };
 
   const clearPix = async () => {
+    clearPixInputValues();
     try {
       await clearPixData();
       showToast('Dados PIX da empresa foram removidos.', 'success');
@@ -217,12 +293,34 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <form key={`${pixKey}-${pixName}-${pixBank}-${pixCity}`} onSubmit={saveCompanyPix}>
+          <form ref={pixFormRef} key={`${pixKey}-${pixName}-${pixBank}-${pixCity}`} onSubmit={saveCompanyPix} autoComplete="off">
             <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <PanelHeader title="PIX" />
                 <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Dados compartilhados pela empresa. Todos são obrigatórios para o QR Code.</p>
+                {isAdmin && pixPresets.length > 0 && (
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', marginBottom: '8px' }}>
+                    Preenchimento rápido
+                    <select defaultValue="" onChange={(event) => {
+                      fillPixPreset(event.target.value);
+                      event.currentTarget.selectedIndex = 0;
+                    }} style={{ padding: '6px', width: '100%' }}>
+                      <option value="">Selecionar preset...</option>
+                      {pixPresets.map((preset) => (
+                        <option key={preset.id} value={preset.id}>
+                          {preset.label} — {preset.pixBank} · {preset.pixName}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {isAdmin && (
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      Apelido do preset
+                      <input type="text" name="pixPresetLabel" defaultValue="" placeholder="Ex.: Conta principal, loja 2..." autoComplete="off" style={{ padding: '6px', width: '100%' }} />
+                    </label>
+                  )}
                   {[
                     { name: 'pixKey', label: 'Chave PIX', defaultValue: pixKey, placeholder: 'CPF/CNPJ, e-mail, telefone...' },
                     { name: 'pixName', label: 'Nome', defaultValue: pixName, placeholder: 'Nome do recebedor' },
@@ -231,7 +329,7 @@ const SettingsPage = () => {
                   ].map((field) => (
                     <label key={field.name} style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                       {field.label} *
-                      <input type="text" name={field.name} required defaultValue={field.defaultValue} placeholder={field.placeholder} disabled={!isAdmin} style={{ padding: '6px', width: '100%' }} />
+                      <input type="text" name={field.name} required defaultValue={field.defaultValue} placeholder={field.placeholder} disabled={!isAdmin} autoComplete="off" style={{ padding: '6px', width: '100%' }} />
                     </label>
                   ))}
                 </div>

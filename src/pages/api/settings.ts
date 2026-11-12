@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { requireAdminApi, requireApiAuth } from '../../utils/serverAuth';
-import { getCompanySettings, updateCompanySettings, type CompanySettingsPatch, type CompanyThemeMode, type RecentSalesCount } from '../../database/settingsRepository';
+import {
+  getCompanySettings,
+  updateCompanySettings,
+  normalizePixPresets,
+  type CompanySettingsPatch,
+  type CompanyThemeMode,
+  type RecentSalesCount,
+} from '../../database/settingsRepository';
 
 const THEMES: CompanyThemeMode[] = ['system', 'light', 'dark'];
 const COUNTS: RecentSalesCount[] = [0, 2, 4, 6, 8];
@@ -37,6 +44,11 @@ function parsePatch(body: unknown): CompanySettingsPatch | null {
   if (source.pixName !== undefined) patch.pixName = String(source.pixName);
   if (source.pixBank !== undefined) patch.pixBank = String(source.pixBank);
   if (source.pixCity !== undefined) patch.pixCity = String(source.pixCity);
+  if (source.pixPresets !== undefined) {
+    const presets = normalizePixPresets(source.pixPresets);
+    if (!presets) return null;
+    patch.pixPresets = presets;
+  }
 
   return patch;
 }

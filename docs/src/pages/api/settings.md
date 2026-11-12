@@ -5,7 +5,7 @@
 ## O que faz
 
 - `GET`: retorna `company_settings` do tenant (cria default se ainda não existir).
-- `PATCH` (admin-only): atualiza tema, timezone, recentes, foco automático/delay e PIX da empresa; valida enums/intervalos.
+- `PATCH` (admin-only): atualiza tema, timezone, recentes, foco automático/delay, PIX da empresa e presets PIX; valida enums/intervalos e normaliza `pixPresets`.
 
 ## Relações
 
@@ -15,3 +15,5 @@
 ## Notas
 
 - Merchant lê padrões da empresa, mas não altera PIX nem configurações compartilhadas.
+- `pixPresets` exige campos completos (`id`, `label`, quatro dados PIX) e no máximo 20 itens.
+- `clearPixData` no cliente limpa apenas o PIX vigente; presets ficam disponíveis.
