@@ -107,6 +107,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ## Serviços
 
+- [src/services/adminService.md](src/services/adminService.md) - API cliente de administração (empresa, lojas, vendedores).
+- [src/services/settingsService.md](src/services/settingsService.md) - API cliente de configurações do tenant.
 - [src/services/payablesService.md](src/services/payablesService.md) - API cliente de contas a pagar.
 - [src/services/invoicesService.md](src/services/invoicesService.md) - API cliente de notas fiscais.
 - [src/services/ocrService.md](src/services/ocrService.md) - OCR e upload de arquivos.

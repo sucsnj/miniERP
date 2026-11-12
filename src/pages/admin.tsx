@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useCallback, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import RequireAdmin from '@/components/auth/RequireAdmin';
@@ -8,178 +8,43 @@ import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
 import Dialog from '@/components/common/Dialog';
 import { validatePassword } from '../utils/password';
-import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/useToast';
-import { usePendingTask } from '../contexts/RouteLoadingContext';
-
-interface Company {
-  id: string;
-  name: string;
-}
-
-interface StoreAdmin {
-  id: string;
-  name: string;
-  active: boolean;
-}
-
-interface MerchantAdmin {
-  id: string;
-  name: string;
-  login: string;
-  email: string;
-  active: boolean;
-  lastStoreId: string | null;
-  storeIds: string[];
-  avatarUrl?: string | null;
-}
+import { useAdmin } from '../hooks/useAdmin';
 
 const inputStyle = { padding: '8px 10px', width: '100%' };
 
 export default function AdminPage() {
   const { showToast } = useToast();
-  const { refresh } = useAuth();
-  const [loading, setLoading] = useState(true);
-  usePendingTask('admin', loading);
-  const [company, setCompany] = useState<Company | null>(null);
-  const [companyName, setCompanyName] = useState('');
-  const [stores, setStores] = useState<StoreAdmin[]>([]);
-  const [storeDrafts, setStoreDrafts] = useState<Record<string, string>>({});
+  const {
+    stores,
+    merchants,
+    initialLoading,
+    companyName,
+    setCompanyName,
+    storeDrafts,
+    setStoreDrafts,
+    merchantDrafts,
+    saveCompany,
+    createStore,
+    saveStore,
+    toggleStore,
+    newMerchant,
+    setNewMerchant,
+    toggleNewMerchantStore,
+    toggleMerchantStore,
+    updateMerchantDraft,
+    saveMerchant,
+    createMerchant,
+    resetMerchantPassword,
+    createMerchantBusy,
+  } = useAdmin(showToast);
   const [newStoreName, setNewStoreName] = useState('');
-  const [merchants, setMerchants] = useState<MerchantAdmin[]>([]);
-  const [merchantDrafts, setMerchantDrafts] = useState<Record<string, MerchantAdmin>>({});
-  const [newMerchant, setNewMerchant] = useState({
-    name: '',
-    login: '',
-    email: '',
-    password: '',
-    avatarUrl: '',
-    storeIds: [] as string[],
-  });
-  const [resetPasswordMerchant, setResetPasswordMerchant] = useState<MerchantAdmin | null>(null);
+  const [resetPasswordMerchant, setResetPasswordMerchant] = useState<{ id: string; name: string } | null>(null);
   const [resetPassword, setResetPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resettingPassword, setResettingPassword] = useState(false);
 
-  const loadAdmin = useCallback(async () => {
-    try {
-      const [companyResponse, storesResponse, merchantsResponse] = await Promise.all([
-        fetch('/api/admin/company'),
-        fetch('/api/admin/stores'),
-        fetch('/api/admin/merchants'),
-      ]);
-      if (!companyResponse.ok || !storesResponse.ok || !merchantsResponse.ok) {
-        throw new Error('Não foi possível carregar os dados de administração.');
-      }
-      const companyBody = await companyResponse.json();
-      const storesBody = await storesResponse.json();
-      const merchantsBody = await merchantsResponse.json();
-      setCompany(companyBody.company);
-      setCompanyName(companyBody.company?.name ?? '');
-      setStores(storesBody.stores ?? []);
-      setStoreDrafts(Object.fromEntries((storesBody.stores ?? []).map((store: StoreAdmin) => [store.id, store.name])));
-      setMerchants(merchantsBody.merchants ?? []);
-      setMerchantDrafts(Object.fromEntries((merchantsBody.merchants ?? []).map((merchant: MerchantAdmin) => [merchant.id, merchant])));
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao carregar administração.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [showToast]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => void loadAdmin(), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadAdmin]);
-
-  const saveCompany = async () => {
-    const response = await fetch('/api/admin/company', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: companyName }),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar empresa.', 'error');
-    setCompany(body.company);
-    await refresh();
-    showToast('Empresa atualizada.', 'success');
-  };
-
-  const createStore = async () => {
-    const response = await fetch('/api/admin/stores', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newStoreName }),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao criar loja.', 'error');
-    setNewStoreName('');
-    await loadAdmin();
-    showToast('Loja criada.', 'success');
-  };
-
-  const saveStore = async (store: StoreAdmin) => {
-    const name = storeDrafts[store.id] ?? store.name;
-    const response = await fetch('/api/admin/stores', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: store.id, name }),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar loja.', 'error');
-    await loadAdmin();
-    await refresh();
-    showToast('Loja atualizada.', 'success');
-  };
-
-  const toggleStore = async (store: StoreAdmin) => {
-    const response = await fetch('/api/admin/stores', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: store.id, active: !store.active }),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar loja.', 'error');
-    await loadAdmin();
-    await refresh();
-    showToast(store.active ? 'Loja desativada.' : 'Loja ativada.', 'success');
-  };
-
-  const createMerchant = async () => {
-    const response = await fetch('/api/admin/merchants', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newMerchant),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao criar vendedor.', 'error');
-    setNewMerchant({ name: '', login: '', email: '', password: '', avatarUrl: '', storeIds: [] });
-    await loadAdmin();
-    showToast('Vendedor criado.', 'success');
-  };
-
-  const saveMerchant = async (merchant: MerchantAdmin) => {
-    const draft = merchantDrafts[merchant.id];
-    const response = await fetch('/api/admin/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: merchant.id,
-        name: draft.name,
-        login: draft.login,
-        email: draft.email,
-        active: draft.active,
-        storeIds: draft.storeIds,
-        avatarUrl: draft.avatarUrl,
-      }),
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar vendedor.', 'error');
-    await loadAdmin();
-    showToast('Vendedor atualizado.', 'success');
-  };
-
-  const openResetPassword = (merchant: MerchantAdmin) => {
+  const openResetPassword = (merchant: { id: string; name: string }) => {
     setResetPasswordMerchant(merchant);
     setResetPassword('');
     setResetConfirmPassword('');
@@ -192,7 +57,8 @@ export default function AdminPage() {
     setResettingPassword(false);
   };
 
-  const submitResetPassword = async () => {
+  const submitResetPassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!resetPasswordMerchant || resettingPassword) return;
 
     const passwordCheck = validatePassword(resetPassword);
@@ -207,39 +73,9 @@ export default function AdminPage() {
     }
 
     setResettingPassword(true);
-    const response = await fetch('/api/admin/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: resetPasswordMerchant.id, password: resetPassword }),
-    });
-    const body = await response.json().catch(() => ({}));
+    resetMerchantPassword(resetPasswordMerchant.id, resetPassword);
     setResettingPassword(false);
-
-    if (!response.ok) {
-      showToast(body.error ?? 'Erro ao redefinir senha.', 'error');
-      return;
-    }
-
     closeResetPassword();
-    showToast('Senha redefinida.', 'success');
-  };
-
-  const updateMerchantDraft = (id: string, patch: Partial<MerchantAdmin>) => {
-    setMerchantDrafts((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
-  };
-
-  const toggleMerchantStore = (id: string, storeId: string, selected: boolean) => {
-    const current = merchantDrafts[id]?.storeIds ?? [];
-    updateMerchantDraft(id, { storeIds: selected ? [...new Set([...current, storeId])] : current.filter((item) => item !== storeId) });
-  };
-
-  const toggleNewMerchantStore = (storeId: string, selected: boolean) => {
-    setNewMerchant((current) => ({
-      ...current,
-      storeIds: selected
-        ? [...new Set([...current.storeIds, storeId])]
-        : current.storeIds.filter((item) => item !== storeId),
-    }));
   };
 
   return (
@@ -248,7 +84,8 @@ export default function AdminPage() {
         <Head><title>Administração</title></Head>
         <PageShell>
           <PageHeader title="Administração" description="Empresa, lojas e vendedores." />
-          {!loading && (
+
+          {!initialLoading && (
             <div style={{ display: 'grid', gap: '12px' }}>
               <Panel>
                 <PanelHeader title="Empresa" />
@@ -256,21 +93,29 @@ export default function AdminPage() {
                   <input value={companyName} onChange={(event) => setCompanyName(event.target.value)} style={inputStyle} />
                   <Button type="button" onClick={saveCompany}>Salvar</Button>
                 </div>
-                {company && <p>ID: {company.id}</p>}
               </Panel>
 
               <Panel>
                 <PanelHeader title="Lojas" />
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                  <input value={newStoreName} onChange={(event) => setNewStoreName(event.target.value)} placeholder="Nova loja" style={inputStyle} />
-                  <Button type="button" onClick={createStore} disabled={stores.length >= 2}>Criar loja</Button>
+                  <input
+                    value={newStoreName}
+                    onChange={(event) => setNewStoreName(event.target.value)}
+                    placeholder="Nova loja"
+                    style={inputStyle}
+                  />
+                  <Button type="button" onClick={() => { createStore(newStoreName); setNewStoreName(''); }} disabled={stores.length >= 2}>Criar loja</Button>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Máximo de 2 lojas por empresa.</p>
                 {stores.map((store) => (
                   <div key={store.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '8px', marginBottom: '8px' }}>
-                    <input value={storeDrafts[store.id] ?? store.name} onChange={(event) => setStoreDrafts((current) => ({ ...current, [store.id]: event.target.value }))} style={inputStyle} />
-                    <Button type="button" size="sm" onClick={() => void saveStore(store)}>Salvar</Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => void toggleStore(store)}>{store.active ? 'Desativar' : 'Ativar'}</Button>
+                    <input
+                      value={storeDrafts[store.id] ?? store.name}
+                      onChange={(event) => setStoreDrafts((current) => ({ ...current, [store.id]: event.target.value }))}
+                      style={inputStyle}
+                    />
+                    <Button type="button" size="sm" onClick={() => saveStore(store)}>Salvar</Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(store)}>{store.active ? 'Desativar' : 'Ativar'}</Button>
                   </div>
                 ))}
               </Panel>
@@ -294,7 +139,9 @@ export default function AdminPage() {
                       </label>
                     ))}
                   </div>
-                  <Button type="button" onClick={createMerchant}>Criar vendedor</Button>
+                  <Button type="button" onClick={() => createMerchant(newMerchant)} disabled={createMerchantBusy}>
+                    Criar vendedor
+                  </Button>
                 </fieldset>
 
                 {merchants.map((merchant) => {
@@ -320,8 +167,8 @@ export default function AdminPage() {
                         ))}
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <Button type="button" size="sm" onClick={() => void saveMerchant(merchant)}>Salvar vendedor</Button>
-                        <Button type="button" size="sm" variant="outline" onClick={() => openResetPassword(merchant)}>Redefinir senha</Button>
+                        <Button type="button" size="sm" onClick={() => void saveMerchant(merchant.id)}>Salvar vendedor</Button>
+                        <Button type="button" size="sm" variant="outline" onClick={() => openResetPassword({ id: merchant.id, name: merchant.name })}>Redefinir senha</Button>
                       </div>
                     </div>
                   );
@@ -335,35 +182,37 @@ export default function AdminPage() {
             title={`Redefinir senha de ${resetPasswordMerchant?.name ?? 'vendedor'}`}
             onClose={closeResetPassword}
           >
-            <div style={{ display: 'grid', gap: '10px' }}>
-              <input
-                type="password"
-                autoComplete="new-password"
-                placeholder="Nova senha"
-                value={resetPassword}
-                onChange={(event) => setResetPassword(event.target.value)}
-                style={inputStyle}
-              />
-              <input
-                type="password"
-                autoComplete="new-password"
-                placeholder="Confirmação da senha"
-                value={resetConfirmPassword}
-                onChange={(event) => setResetConfirmPassword(event.target.value)}
-                style={inputStyle}
-              />
-              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>
-                A senha deve ter entre 8 e 128 caracteres, letras, número e um caractere especial seguro.
-              </p>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <Button type="button" variant="outline" onClick={closeResetPassword} disabled={resettingPassword}>
-                  Cancelar
-                </Button>
-                <Button type="button" onClick={submitResetPassword} disabled={resettingPassword}>
-                  {resettingPassword ? 'Redefinindo...' : 'Redefinir senha'}
-                </Button>
+            <form onSubmit={submitResetPassword}>
+              <div style={{ display: 'grid', gap: '10px' }}>
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Nova senha"
+                  value={resetPassword}
+                  onChange={(event) => setResetPassword(event.target.value)}
+                  style={inputStyle}
+                />
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Confirmação da senha"
+                  value={resetConfirmPassword}
+                  onChange={(event) => setResetConfirmPassword(event.target.value)}
+                  style={inputStyle}
+                />
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  A senha deve ter entre 8 e 128 caracteres, letras, número e um caractere especial seguro.
+                </p>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                  <Button type="button" variant="outline" onClick={closeResetPassword} disabled={resettingPassword}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={resettingPassword}>
+                    {resettingPassword ? 'Redefinindo...' : 'Redefinir senha'}
+                  </Button>
+                </div>
               </div>
-            </div>
+            </form>
           </Dialog>
         </PageShell>
       </>

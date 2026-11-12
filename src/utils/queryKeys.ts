@@ -45,6 +45,18 @@ export const tenantKeys = {
   invoicesByMonth(identity: TenantIdentity, year: number, month: number) {
     return tenantQueryKey(identity, 'invoices', 'month', year, month);
   },
+  companySettings(identity: TenantIdentity) {
+    return tenantQueryKey(identity, 'settings', 'company');
+  },
+  adminCompany(identity: TenantIdentity) {
+    return tenantQueryKey(identity, 'admin', 'company');
+  },
+  adminStores(identity: TenantIdentity) {
+    return tenantQueryKey(identity, 'admin', 'stores');
+  },
+  adminMerchants(identity: TenantIdentity) {
+    return tenantQueryKey(identity, 'admin', 'merchants');
+  },
 } as const;
 
 export function identityFromUser(user: Pick<AuthUser, 'companyId' | 'storeId'>): TenantIdentity {

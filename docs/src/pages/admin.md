@@ -12,7 +12,7 @@
 
 ## Relações
 
-- **Usa:** `RequireAdmin`, APIs `/api/admin/*`.
+- **Usa:** `RequireAdmin`, APIs `/api/admin/*` (via `useAdmin`/`adminService`).
 - **Usado por:** rota `/admin` (somente admin; link na Nav).
 
 ## Notas

@@ -1,27 +1,24 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type CompanySettings,
+  type CompanySettingsPatch,
+  type RecentSalesCount,
+  type ThemeMode,
+  fetchCompanySettings,
+  patchCompanySettings as patchCompanySettingsApi,
+  clearPixData,
+} from '../services/settingsService';
 import {
   readStoredNumber,
   readStoredString,
   removeStoredValue,
   writeStoredValue,
 } from '../utils/storage';
+import { identityFromUser, tenantKeys } from '../utils/queryKeys';
+import { useAuth } from './AuthContext';
 
-export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
-export type ThemeMode = 'system' | 'light' | 'dark';
-
-export interface CompanySettings {
-  themeMode: ThemeMode;
-  timezone: string;
-  recentSalesCount: RecentSalesCount;
-  autoFocusSaleInput: boolean;
-  autoFocusSaleInputDelay: number;
-  pixKey: string;
-  pixName: string;
-  pixBank: string;
-  pixCity: string;
-}
-
-export type CompanySettingsPatch = Partial<CompanySettings>;
+export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode };
 
 interface SettingsContextValue {
   companySettings: CompanySettings | null;
@@ -57,7 +54,6 @@ const SettingsContext = createContext<SettingsContextValue | undefined>(undefine
 
 const VALID_COUNTS: RecentSalesCount[] = [0, 2, 4, 6, 8];
 const VALID_THEMES: ThemeMode[] = ['system', 'light', 'dark'];
-
 const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   themeMode: 'system',
   timezone: 'America/Recife',
@@ -97,7 +93,19 @@ function parseTimezoneOverride(): string | null {
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [companySettings, setCompanySettings] = useState<CompanySettings | null>(null);
+  const { user } = useAuth();
+  const identity = user ? identityFromUser(user) : null;
+  const queryClient = useQueryClient();
+
+  const settingsQuery = useQuery({
+    queryKey: identity ? tenantKeys.companySettings(identity) : ['settings', 'company', 'disabled'],
+    enabled: Boolean(identity),
+    queryFn: fetchCompanySettings,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+  });
+
+  const companySettings = settingsQuery.data?.companySettings ?? null;
   const company = companySettings ?? DEFAULT_COMPANY_SETTINGS;
 
   const [themeModeOverride, setThemeModeOverride] = useState<ThemeMode | null>(null);
@@ -124,23 +132,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    let active = true;
-
-    fetch('/api/settings', { credentials: 'same-origin' })
-      .then(async (response) => {
-        if (!response.ok) return null;
-        const body = await response.json();
-        return body.companySettings as CompanySettings | undefined;
-      })
-      .then((settings) => {
-        if (!active || !settings) return;
-        setCompanySettings(settings);
-        writeStoredValue('timezoneCompany', settings.timezone);
-      })
-      .catch(() => undefined);
-
-    return () => { active = false; };
-  }, []);
+    if (!companySettings) return;
+    writeStoredValue('timezoneCompany', companySettings.timezone);
+  }, [companySettings]);
 
   const themeMode = themeModeOverride ?? company.themeMode;
   const recentSalesCount = recentSalesCountOverride ?? company.recentSalesCount;
@@ -204,27 +198,28 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     removeStoredValue('autoFocusSaleInputDelay');
   };
 
-  const patchCompanySettings = useCallback(async (patch: CompanySettingsPatch) => {
-    const response = await fetch('/api/settings', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify(patch),
-    });
+  const patchCompanySettingsMutation = useMutation({
+    mutationFn: (patch: CompanySettingsPatch) => patchCompanySettingsApi(patch),
+    onSuccess: (body) => {
+      if (identity) {
+        queryClient.setQueryData(
+          tenantKeys.companySettings(identity),
+          { companySettings: body.companySettings }
+        );
+      }
+    },
+  });
 
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(body.error ?? 'Não foi possível atualizar as configurações.');
+  const handlePatchCompanySettings = useCallback(async (patch: CompanySettingsPatch) => {
+    await patchCompanySettingsMutation.mutateAsync(patch);
+  }, [patchCompanySettingsMutation]);
+
+  const clearPix = useCallback(async () => {
+    await clearPixData();
+    if (identity) {
+      queryClient.invalidateQueries({ queryKey: tenantKeys.companySettings(identity), refetchType: 'all' });
     }
-
-    const settings = body.companySettings as CompanySettings;
-    setCompanySettings(settings);
-    writeStoredValue('timezoneCompany', settings.timezone);
-  }, []);
-
-  const clearPixData = useCallback(async () => {
-    await patchCompanySettings({ pixKey: '', pixName: '', pixBank: '', pixCity: '' });
-  }, [patchCompanySettings]);
+  }, [identity, queryClient]);
 
   return (
     <SettingsContext.Provider
@@ -254,8 +249,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         clearAutoFocusSaleInput,
         setAutoFocusSaleInputDelay,
         clearAutoFocusSaleInputDelay,
-        patchCompanySettings,
-        clearPixData,
+        patchCompanySettings: handlePatchCompanySettings,
+        clearPixData: clearPix,
       }}
     >
       {children}

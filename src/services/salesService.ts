@@ -213,8 +213,12 @@ export const fetchMonthlyTotal = async (month: number, year: number): Promise<Mo
 
 export const fetchAllMonthly = async (): Promise<MonthlySale[]> => {
   const response = await fetch('/api/monthly-sales');
-  const date = await response.json();
-  return Array.isArray(date) ? date.map(mapMonthlySale) : [];
+  if (!response.ok) {
+    throw new Error(`Não foi possível carregar as consolidações mensais: ${response.status}`);
+  }
+  const text = await response.text();
+  const rows = text ? JSON.parse(text) : [];
+  return Array.isArray(rows) ? rows.map(mapMonthlySale) : [];
 };
 
 const AUTO_CONSOLIDATION_TTL_MS = 60 * 60 * 1000;
@@ -294,8 +298,12 @@ export const deleteMonthly = async (id: string | number) => {
   const response = await fetch('/api/monthly-sales', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: String(id) }),
+    body: JSON.stringify({ id }),
   });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível excluir a consolidação: ${response.status} ${body}`);
+  }
   return response.json();
 };
 

@@ -1,19 +1,21 @@
 # `src/hooks/useMonthlyData.ts`
 
-> Hook para concentrar estado de consolidações mensais e ações (carregar/excluir). Exporta `useMonthlyData`.
+> Hook para consolidações mensais com TanStack Query (`useQuery`/`useMutation`). Exporta `useMonthlyData`.
 
 ## O que faz
 
-- Estado `mensais` (`MonthlySale[]`), `initialLoading` e `refreshing`.
-- `loadMensais()`: usa `initialLoading` somente na primeira carga; refetches usam `refreshing`.
-- `handleDelete(id)`: exclui via `deleteMonthly` e recarrega, com toasts de sucesso/erro.
+- `mensais` (`MonthlySale[]`): lista otimista com rollback em falha de exclusão.
+- `initialLoading`: gate da rota apenas na primeira carga.
+- `refreshing`: `isFetching` para refletir revalidações.
+- `handleDelete(id)`: mutation com `onMutate` removendo item, `onError` restaurando snapshot e `onSettled` invalidando a lista.
+- `handleConsolidate(month, year)`: mutation que chama `consolidateMonthly` e invalida a lista otimista (com toast).
 
 ## Relações
 
-- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `MonthlySale` (`src/services/salesService.ts`).
-- **Usado por:** páginas/componentes de consolidações mensais.
+- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `consolidateMonthly`, `MonthlySale` (`src/services/salesService.ts`), `useAuth`, `tenantKeys`.
+- **Usado por:** `src/pages/summary.tsx`.
 
 ## Notas
 
-- Arquivo `useMonthlyData.ts`; identificador exportado é `useMonthlyData`.
-- `loadMensais` é estável via `useCallback`; após a primeira carga, refetches mantêm a lista visível.
+- A lista é tenant-scoped (`tenantKeys.monthlySalesAll`).
+- Toda resposta de serviço (`fetchAllMonthly`, `deleteMonthly`) lança `Error` em `!response.ok`.

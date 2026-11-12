@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Envolve a aplicação em `RouteLoadingProvider` e `ThemeProvider` → `SettingsProvider` → `AuthProvider` → `QueryClientProvider`.
+- Envolve a aplicação em `RouteLoadingProvider` → `QueryClientProvider` → `AuthProvider` → `SettingsProvider` → `ThemeProvider`.
 - Injeta `QueryClientProvider` (`@tanstack/react-query`) para toda a aplicação.
 - Configura o `QueryClient` com defaults: `staleTime=5min`, `gcTime=5min`, `retry=2`, `refetchOnWindowFocus=false`, `refetchOnReconnect=false` (ações/financeiros habilitam refetch seletivo por query).
 - Define metadados HTML globais (título "Vendas", descrição e favicon).

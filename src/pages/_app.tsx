@@ -34,10 +34,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <RouteLoadingProvider>
-    <SettingsProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SettingsProvider>
+          <ThemeProvider>
             <Head>
               <title>Vendas</title>
               <meta name="description" content="Vendas" />
@@ -50,10 +50,10 @@ export default function App({ Component, pageProps }: AppProps) {
               </AuthGate>
             </RouteContent>
             <Toaster />
-          </QueryClientProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </SettingsProvider>
+          </ThemeProvider>
+        </SettingsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
     </RouteLoadingProvider>
   );
 }

@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatCurrency } from '../utils/formatter';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import { capitalize } from '../utils/captalize';
 import { formatMonthName, getDateArray } from '../utils/date';
-import { consolidateMonthly } from '../services/salesService';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -28,7 +27,7 @@ const SummaryPage: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   // Consolidações mensais (carregar e excluir)
-  const { mensais, loadMensais, handleDelete } = useMonthlyData(showToast);
+  const { mensais, handleDelete, handleConsolidate } = useMonthlyData(showToast);
   // Diálogo de confirmação antes de excluir
   const { confirmOpen, openConfirm, handleConfirm, cancelConfirm } = useConfirmDialog(handleDelete);
 
@@ -37,21 +36,6 @@ const SummaryPage: React.FC = () => {
   // Período usado para consolidar o mês
   const [month, setMonth] = useState(getDateArray()[1]);
   const [year, setYear] = useState(getDateArray()[2]);
-
-  const handleConsolidate = async () => {
-    try {
-      await consolidateMonthly(month, year, user?.storeId);
-      showToast('O mês foi consolidado com sucesso.', 'success');
-      await loadMensais();
-    } catch {
-      showToast('Não foi possível consolidar o mês.', 'error');
-    }
-  };
-
-  // Carrega as consolidações ao montar o componente
-  useEffect(() => {
-    loadMensais();
-  }, [loadMensais]);
 
   return (
     <>
@@ -84,7 +68,7 @@ const SummaryPage: React.FC = () => {
               />
             </label>
             {isAdmin && (
-              <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
+              <Button variant="primary" onClick={() => handleConsolidate(month, year)} leftIcon={<DoneAllIcon />}>
                 Consolidar Mês
               </Button>
             )}

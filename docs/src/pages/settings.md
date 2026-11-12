@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `src/contexts/SettingsContext.tsx`, `src/contexts/ThemeContext.tsx`, `src/contexts/AuthContext.tsx`, componentes comuns de layout.
+- **Usa:** `src/contexts/SettingsContext.tsx`, `src/services/settingsService.ts`, `src/contexts/ThemeContext.tsx`, `src/contexts/AuthContext.tsx`, componentes comuns de layout.
 - **Acessada por:** link de configurações na [Nav](../components/common/Nav.md).
 
 ## Notas

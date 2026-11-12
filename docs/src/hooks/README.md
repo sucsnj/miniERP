@@ -6,6 +6,7 @@
 
 | Arquivo | Resumo |
 | --- | --- |
+| [useAdmin.md](./useAdmin.md) | Carrega empresa/lojas/vendedores e mutações do tenant via TanStack Query. |
 | [useBrand.md](./useBrand.md) | Gerencia marca (criação/edição/exclusão) no cadastro rápido. Exporta `useBrand`. |
 | [useCart.md](./useCart.md) | Centraliza carrinho e catálogo de seleção (produtos/serviços), com debounce e totais. |
 | [useAutoFocus.md](./useAutoFocus.md) | Foca periodicamente um elemento e o mantém visível; ativável por opção. |
@@ -16,6 +17,7 @@
 | [useFilter.md](./useFilter.md) | Filtro do histórico com persistência em localStorage. |
 | [useImportItems.md](./useImportItems.md) | Estado/lógica de importação de itens via XML de NF-e. |
 | [useMonthlyData.md](./useMonthlyData.md) | Consolidações mensais (carregar/excluir). Exporta `useMonthlyData`. |
+| [useProducts.md](./useProducts.md) | Catálogo/auxiliares e mutations com invalidação tenant-scoped. |
 | [usePayables.md](./usePayables.md) | Consultas do módulo de contas (mês/ano) via `useQuery`, tenant-scoped. Exporta `usePayables`. |
 | [usePayablesMutations.md](./usePayablesMutations.md) | Mutations de payables/invoices com optimistic update/rollback no cache do TanStack Query. |
 | [useSales.md](./useSales.md) | Estado/ações de vendas diárias por período. Exporta `useSales`. |
