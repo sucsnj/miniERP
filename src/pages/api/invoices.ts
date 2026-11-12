@@ -8,6 +8,7 @@ import {
   deleteInvoice,
 } from '../../database/payablesRepository';
 import parseNumber from '../../utils/number';
+import { requireApiAuth } from '../../utils/serverAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapInvoice(inv: any) {
@@ -21,15 +22,18 @@ function mapInvoice(inv: any) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     const { year: yearParam, month: monthParam, id, amount: amountParam } = req.query;
     if (id) {
-      const invoice = await getInvoiceById(String(id));
+      const invoice = await getInvoiceById(String(id), ctx);
       if (!invoice) return res.status(404).json({ error: 'Nota não encontrada' });
       return res.status(200).json(mapInvoice(invoice));
     }
     if (amountParam) {
-      const invoice = await getInvoiceByAmount(parseNumber(amountParam as string));
+      const invoice = await getInvoiceByAmount(parseNumber(amountParam as string), ctx);
       if (!invoice) return res.status(404).json({ error: 'Nenhuma nota encontrada com esse valor' });
       return res.status(200).json(mapInvoice(invoice));
     }
@@ -37,9 +41,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!yearParam) {
       return res.status(400).json({ error: 'Ano é obrigatório' });
     }
-    const invoices = await listInvoicesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined);
+    const invoices = await listInvoicesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined, ctx);
 
-    const allInvoices = await listAllInvoices();
+    const allInvoices = await listAllInvoices(ctx);
     if (allInvoices.length === 0) {
       return res.status(200).json([]);
     }
@@ -56,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!distributor || !key || !issueDate || !invoiceAmount) {
       return res.status(400).json({ error: 'Data de emissão e valor da nota são obrigatórios' });
     }
-    const id = await createInvoice({ supplierName: distributor, accessKey: key, issueDate, amount: invoiceAmount });
+    const id = await createInvoice({ supplierName: distributor, accessKey: key, issueDate, amount: invoiceAmount }, ctx);
     return res.status(201).json({ id });
   }
 
@@ -64,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const body = req.body ?? {};
     const id = body.id;
     if (!id) return res.status(400).json({ error: 'ID é obrigatório para exclusão' });
-    await deleteInvoice(String(id));
+    await deleteInvoice(String(id), ctx);
     return res.status(200).json({ changes: 1 });
   }
 

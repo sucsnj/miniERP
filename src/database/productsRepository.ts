@@ -1,5 +1,6 @@
 
 import { getSupabaseServerClient } from './supabase';
+import type { AuthContext } from '../utils/serverAuth';
 
 type SupabaseClient = ReturnType<typeof getSupabaseServerClient>;
 
@@ -224,24 +225,25 @@ function mapUnit(row: unknown): UnitOfMeasure {
   };
 }
 
-export async function listCategories(): Promise<Category[]> {
-  const { data, error } = await sb().from('categories').select('*').order('name', { ascending: true });
+export async function listCategories(ctx: AuthContext): Promise<Category[]> {
+  const { data, error } = await sb().from('categories').select('*').eq('company_id', ctx.companyId).order('name', { ascending: true });
   if (error) throw error;
   return asArray(data).map(mapCategory);
 }
 
-export async function createCategory(name: string, description?: string): Promise<string> {
+export async function createCategory(name: string, description: string | undefined, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb()
     .from('categories')
-    .insert({ name: name.trim(), description: description?.trim() || null })
+    .insert({ company_id: ctx.companyId, name: name.trim(), description: description?.trim() || null })
     .select('id')
     .single();
   if (error) throw error;
   return String(asRecord(data).id);
 }
 
-export async function updateCategory(id: string, name: string, description?: string): Promise<void> {
+export async function updateCategory(id: string, name: string, description: string | undefined, ctx: AuthContext): Promise<void> {
   const { error } = await sb().rpc('update_category', {
+    p_company_id: ctx.companyId,
     p_id: id,
     p_name: name.trim(),
     p_description: description?.trim() || null,
@@ -249,73 +251,74 @@ export async function updateCategory(id: string, name: string, description?: str
   if (error) throw error;
 }
 
-export async function deleteCategory(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_category', { p_id: id });
+export async function deleteCategory(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_category', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
-export async function listBrands(): Promise<Brand[]> {
-  const { data, error } = await sb().from('brands').select('*').order('name', { ascending: true });
+export async function listBrands(ctx: AuthContext): Promise<Brand[]> {
+  const { data, error } = await sb().from('brands').select('*').eq('company_id', ctx.companyId).order('name', { ascending: true });
   if (error) throw error;
   return asArray(data).map(mapBrand);
 }
 
-export async function createBrand(name: string): Promise<string> {
-  const { data, error } = await sb().from('brands').insert({ name: name.trim() }).select('id').single();
+export async function createBrand(name: string, ctx: AuthContext): Promise<string> {
+  const { data, error } = await sb().from('brands').insert({ company_id: ctx.companyId, name: name.trim() }).select('id').single();
   if (error) throw error;
   return String(asRecord(data).id);
 }
 
-export async function updateBrand(id: string, name: string): Promise<void> {
-  const { error } = await sb().rpc('update_brand', { p_id: id, p_name: name.trim() });
+export async function updateBrand(id: string, name: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('update_brand', { p_company_id: ctx.companyId, p_id: id, p_name: name.trim() });
   if (error) throw error;
 }
 
-export async function deleteBrand(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_brand', { p_id: id });
+export async function deleteBrand(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_brand', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
-export async function listSuppliers(): Promise<Supplier[]> {
-  const { data, error } = await sb().from('suppliers').select('*').order('name', { ascending: true });
+export async function listSuppliers(ctx: AuthContext): Promise<Supplier[]> {
+  const { data, error } = await sb().from('suppliers').select('*').eq('company_id', ctx.companyId).order('name', { ascending: true });
   if (error) throw error;
   return asArray(data).map(mapSupplier);
 }
 
-export async function createSupplier(name: string): Promise<string> {
-  const { data, error } = await sb().from('suppliers').insert({ name: name.trim() }).select('id').single();
+export async function createSupplier(name: string, ctx: AuthContext): Promise<string> {
+  const { data, error } = await sb().from('suppliers').insert({ company_id: ctx.companyId, name: name.trim() }).select('id').single();
   if (error) throw error;
   return String(asRecord(data).id);
 }
 
-export async function updateSupplier(id: string, name: string): Promise<void> {
-  const { error } = await sb().rpc('update_supplier', { p_id: id, p_name: name.trim() });
+export async function updateSupplier(id: string, name: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('update_supplier', { p_company_id: ctx.companyId, p_id: id, p_name: name.trim() });
   if (error) throw error;
 }
 
-export async function deleteSupplier(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_supplier', { p_id: id });
+export async function deleteSupplier(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_supplier', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
-export async function listUnitsOfMeasure(): Promise<UnitOfMeasure[]> {
-  const { data, error } = await sb().from('units_of_measure').select('*').order('abbreviation', { ascending: true });
+export async function listUnitsOfMeasure(ctx: AuthContext): Promise<UnitOfMeasure[]> {
+  const { data, error } = await sb().from('units_of_measure').select('*').eq('company_id', ctx.companyId).order('abbreviation', { ascending: true });
   if (error) throw error;
   return asArray(data).map(mapUnit);
 }
 
-export async function createUnitOfMeasure(abbreviation: string, description?: string): Promise<string> {
+export async function createUnitOfMeasure(abbreviation: string, description: string | undefined, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb()
     .from('units_of_measure')
-    .insert({ abbreviation: abbreviation.trim(), description: description?.trim() || null })
+    .insert({ company_id: ctx.companyId, abbreviation: abbreviation.trim(), description: description?.trim() || null })
     .select('id')
     .single();
   if (error) throw error;
   return String(asRecord(data).id);
 }
 
-export async function updateUnitOfMeasure(id: string, abbreviation: string, description?: string): Promise<void> {
+export async function updateUnitOfMeasure(id: string, abbreviation: string, description: string | undefined, ctx: AuthContext): Promise<void> {
   const { error } = await sb().rpc('update_unit_of_measure', {
+    p_company_id: ctx.companyId,
     p_id: id,
     p_abbreviation: abbreviation.trim(),
     p_description: description?.trim() || null,
@@ -323,8 +326,8 @@ export async function updateUnitOfMeasure(id: string, abbreviation: string, desc
   if (error) throw error;
 }
 
-export async function deleteUnitOfMeasure(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_unit_of_measure', { p_id: id });
+export async function deleteUnitOfMeasure(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_unit_of_measure', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
@@ -380,8 +383,9 @@ export async function listProducts(options: {
   active?: boolean | null;
   page?: number;
   pageSize?: number;
-}): Promise<PagedResult<Product>> {
+}, ctx: AuthContext): Promise<PagedResult<Product>> {
   const { data, error } = await sb().rpc('list_products', {
+    p_company_id: ctx.companyId,
     p_search: options.search ?? null,
     p_category_id: options.categoryId ?? null,
     p_brand_id: options.brandId ?? null,
@@ -401,12 +405,13 @@ export async function listProducts(options: {
   };
 }
 
-export async function getProduct(id: string): Promise<Product | null> {
+export async function getProduct(id: string, ctx: AuthContext): Promise<Product | null> {
   const { data, error } = await sb()
     .from('products')
     .select(
       '*, categories(name), brands(name), units_of_measure:base_unit_id(abbreviation, description), product_barcodes(barcode, is_primary), product_units(unit_id, unit_multiplier, is_primary, units_of_measure(abbreviation, description))'
     )
+    .eq('company_id', ctx.companyId)
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
@@ -438,7 +443,7 @@ export async function getProduct(id: string): Promise<Product | null> {
   return product;
 }
 
-export async function createProduct(input: ProductInput): Promise<string> {
+export async function createProduct(input: ProductInput, ctx: AuthContext): Promise<string> {
   const barcodes = (input.barcodes ?? []).map((b) => ({ barcode: b.barcode, isPrimary: b.isPrimary }));
   const units = (input.units ?? []).map((u) => ({
     unitId: u.unitId,
@@ -446,6 +451,7 @@ export async function createProduct(input: ProductInput): Promise<string> {
     isPrimary: u.isPrimary,
   }));
   const { data, error } = await sb().rpc('create_product', {
+    p_company_id: ctx.companyId,
     p_name: input.name,
     p_description: input.description ?? null,
     p_category_id: input.categoryId,
@@ -467,7 +473,7 @@ export async function createProduct(input: ProductInput): Promise<string> {
   return String(data);
 }
 
-export async function updateProduct(id: string, input: ProductInput): Promise<void> {
+export async function updateProduct(id: string, input: ProductInput, ctx: AuthContext): Promise<void> {
   const barcodes = (input.barcodes ?? []).map((b) => ({ barcode: b.barcode, isPrimary: b.isPrimary }));
   const units = (input.units ?? []).map((u) => ({
     unitId: u.unitId,
@@ -475,6 +481,7 @@ export async function updateProduct(id: string, input: ProductInput): Promise<vo
     isPrimary: u.isPrimary,
   }));
   const { error } = await sb().rpc('update_product', {
+    p_company_id: ctx.companyId,
     p_id: id,
     p_name: input.name,
     p_description: input.description ?? null,
@@ -495,29 +502,29 @@ export async function updateProduct(id: string, input: ProductInput): Promise<vo
   if (error) throw error;
 }
 
-export async function deleteProduct(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_product', { p_id: id });
+export async function deleteProduct(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_product', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
-export async function toggleProductStatus(id: string, active: boolean): Promise<void> {
-  const { error } = await sb().from('products').update({ active }).eq('id', id);
+export async function toggleProductStatus(id: string, active: boolean, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('products').update({ active }).eq('company_id', ctx.companyId).eq('id', id);
   if (error) throw error;
 }
 
-export async function checkDuplicateInternalCode(internalCode: string, excludeId?: string): Promise<boolean> {
+export async function checkDuplicateInternalCode(internalCode: string, excludeId: string | undefined, ctx: AuthContext): Promise<boolean> {
   if (!internalCode.trim()) return false;
-  let query = sb().from('products').select('id').ilike('internal_code', internalCode.trim());
+  let query = sb().from('products').select('id').eq('company_id', ctx.companyId).ilike('internal_code', internalCode.trim());
   if (excludeId) query = query.neq('id', excludeId);
   const { data, error } = await query.limit(1);
   if (error) throw error;
   return asArray(data).length > 0;
 }
 
-export async function checkDuplicateBarcode(barcodes: string[], excludeProductId?: string): Promise<string | null> {
+export async function checkDuplicateBarcode(barcodes: string[], excludeProductId: string | undefined, ctx: AuthContext): Promise<string | null> {
   const cleaned = barcodes.map((b) => b.trim()).filter(Boolean);
   if (cleaned.length === 0) return null;
-  let query = sb().from('product_barcodes').select('barcode').in('barcode', cleaned);
+  let query = sb().from('product_barcodes').select('barcode').eq('company_id', ctx.companyId).in('barcode', cleaned);
   if (excludeProductId) query = query.neq('product_id', excludeProductId);
   const { data, error } = await query.limit(1);
   if (error) throw error;
@@ -525,8 +532,9 @@ export async function checkDuplicateBarcode(barcodes: string[], excludeProductId
   return row.barcode ? String(row.barcode) : null;
 }
 
-export async function listServices(options: { search?: string; categoryId?: string; page?: number; pageSize?: number } = {}): Promise<PagedResult<Service>> {
+export async function listServices(options: { search?: string; categoryId?: string; page?: number; pageSize?: number } = {}, ctx: AuthContext): Promise<PagedResult<Service>> {
   const { data, error } = await sb().rpc('list_services', {
+    p_company_id: ctx.companyId,
     p_search: options.search ?? null,
     p_category_id: options.categoryId ?? null,
     p_page: options.page ?? 1,
@@ -559,10 +567,11 @@ export async function listServices(options: { search?: string; categoryId?: stri
   };
 }
 
-export async function getService(id: string): Promise<Service | null> {
+export async function getService(id: string, ctx: AuthContext): Promise<Service | null> {
   const { data, error } = await sb()
     .from('services')
     .select('*, categories(name)')
+    .eq('company_id', ctx.companyId)
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
@@ -584,8 +593,9 @@ export async function getService(id: string): Promise<Service | null> {
   };
 }
 
-export async function createService(input: ServiceInput): Promise<string> {
+export async function createService(input: ServiceInput, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb().rpc('create_service', {
+    p_company_id: ctx.companyId,
     p_name: input.name,
     p_description: input.description ?? null,
     p_category_id: input.categoryId,
@@ -598,8 +608,9 @@ export async function createService(input: ServiceInput): Promise<string> {
   return String(data);
 }
 
-export async function updateService(id: string, input: ServiceInput): Promise<void> {
+export async function updateService(id: string, input: ServiceInput, ctx: AuthContext): Promise<void> {
   const { error } = await sb().rpc('update_service', {
+    p_company_id: ctx.companyId,
     p_id: id,
     p_name: input.name,
     p_description: input.description ?? null,
@@ -612,15 +623,16 @@ export async function updateService(id: string, input: ServiceInput): Promise<vo
   if (error) throw error;
 }
 
-export async function deleteService(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_service', { p_id: id });
+export async function deleteService(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_service', { p_company_id: ctx.companyId, p_id: id });
   if (error) throw error;
 }
 
-export async function listStockMovements(productId: string): Promise<StockMovement[]> {
+export async function listStockMovements(productId: string, ctx: AuthContext): Promise<StockMovement[]> {
   const { data, error } = await sb()
     .from('stock_movements')
     .select('*')
+    .eq('company_id', ctx.companyId)
     .eq('product_id', productId)
     .order('moved_at', { ascending: false });
   if (error) throw error;
@@ -643,9 +655,11 @@ export async function applyStockMovement(
   productId: string,
   type: 'IN' | 'OUT' | 'ADJUST',
   quantity: number,
-  description?: string | null
+  description: string | null | undefined,
+  ctx: AuthContext
 ): Promise<StockMovement> {
   const { data, error } = await sb().rpc('apply_stock_movement', {
+    p_company_id: ctx.companyId,
     p_product_id: productId,
     p_type: type,
     p_quantity: quantity,
@@ -665,56 +679,57 @@ export async function applyStockMovement(
   };
 }
 
-export async function findProductByBarcode(barcode: string): Promise<Product | null> {
+export async function findProductByBarcode(barcode: string, ctx: AuthContext): Promise<Product | null> {
   const cleaned = barcode.trim();
   if (!cleaned) return null;
   const { data: barcodeRow, error: barcodeError } = await sb()
     .from('product_barcodes')
     .select('product_id')
+    .eq('company_id', ctx.companyId)
     .eq('barcode', cleaned)
     .maybeSingle();
   if (barcodeError) throw barcodeError;
   const productId = barcodeRow ? String(asRecord(barcodeRow).product_id) : null;
   if (!productId) return null;
-  return getProduct(productId);
+  return getProduct(productId, ctx);
 }
 
-export async function findProductByInternalCode(code: string): Promise<Product | null> {
+export async function findProductByInternalCode(code: string, ctx: AuthContext): Promise<Product | null> {
   const cleaned = code.trim();
   if (!cleaned) return null;
-  const { data, error } = await sb().from('products').select('id').ilike('internal_code', cleaned).limit(1).maybeSingle();
+  const { data, error } = await sb().from('products').select('id').eq('company_id', ctx.companyId).ilike('internal_code', cleaned).limit(1).maybeSingle();
   if (error) throw error;
   const id = data ? String(asRecord(data).id) : null;
   if (!id) return null;
-  return getProduct(id);
+  return getProduct(id, ctx);
 }
 
-export async function findProductByName(name: string): Promise<Product | null> {
+export async function findProductByName(name: string, ctx: AuthContext): Promise<Product | null> {
   const cleaned = name.trim();
   if (!cleaned) return null;
-  const { data, error } = await sb().from('products').select('id').ilike('name', cleaned).limit(1).maybeSingle();
+  const { data, error } = await sb().from('products').select('id').eq('company_id', ctx.companyId).ilike('name', cleaned).limit(1).maybeSingle();
   if (error) throw error;
   const id = data ? String(asRecord(data).id) : null;
   if (!id) return null;
-  return getProduct(id);
+  return getProduct(id, ctx);
 }
 
-export async function findServiceByInternalCode(code: string): Promise<Service | null> {
+export async function findServiceByInternalCode(code: string, ctx: AuthContext): Promise<Service | null> {
   const cleaned = code.trim();
   if (!cleaned) return null;
-  const { data, error } = await sb().from('services').select('id').ilike('internal_code', cleaned).limit(1).maybeSingle();
+  const { data, error } = await sb().from('services').select('id').eq('company_id', ctx.companyId).ilike('internal_code', cleaned).limit(1).maybeSingle();
   if (error) throw error;
   const id = data ? String(asRecord(data).id) : null;
   if (!id) return null;
-  return getService(id);
+  return getService(id, ctx);
 }
 
-export async function findServiceByName(name: string): Promise<Service | null> {
+export async function findServiceByName(name: string, ctx: AuthContext): Promise<Service | null> {
   const cleaned = name.trim();
   if (!cleaned) return null;
-  const { data, error } = await sb().from('services').select('id').ilike('name', cleaned).limit(1).maybeSingle();
+  const { data, error } = await sb().from('services').select('id').eq('company_id', ctx.companyId).ilike('name', cleaned).limit(1).maybeSingle();
   if (error) throw error;
   const id = data ? String(asRecord(data).id) : null;
   if (!id) return null;
-  return getService(id);
+  return getService(id, ctx);
 }

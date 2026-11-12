@@ -9,6 +9,7 @@
 - Lista, cria, atualiza, exclui e alterna status de produtos (via RPCs `create_product`, `update_product`, `delete_product` e `list_products`).
 - Lista, cria, atualiza e exclui serviços (via RPCs `create_service`, `update_service`, `delete_service` e `list_services`).
 - Lista e aplica movimentações de estoque (`apply_stock_movement`), com validação de duplicidade de código interno e código de barras.
+- A partir da ADR 0013 Fase 3, as funções recebem `AuthContext` e filtram/escrevem por `company_id`; RPCs recebem o tenant explicitamente.
 
 ## Relações
 

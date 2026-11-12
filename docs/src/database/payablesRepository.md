@@ -8,6 +8,7 @@
 - Lista, cria, atualiza, exclui e paga/cancela contas a pagar (`payables`), com filtro por período.
 - Lista, cria e exclui notas fiscais (`invoices`), busca por valor, soma por ano e filtro por período.
 - Gerencia histórico de busca de medicamentos: buscar, salvar (upsert + poda para 25), listar recentes e limpar.
+- A partir da ADR 0013 Fase 3, as funções recebem `AuthContext` e filtram/escrevem por `company_id`.
 
 ## Relações
 

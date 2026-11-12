@@ -1,5 +1,6 @@
 
 import { getSupabaseServerClient } from './supabase';
+import type { AuthContext } from '../utils/serverAuth';
 
 type SupabaseClient = ReturnType<typeof getSupabaseServerClient>;
 
@@ -133,12 +134,17 @@ function mapMonthlySale(row: unknown): MonthlySale {
   };
 }
 
-export async function listDailySales(month: number, year: number, filter: 'positivas' | 'negativas' | 'todas' = 'todas'): Promise<DailySale[]> {
+export async function listDailySales(month: number, year: number, filter: 'positivas' | 'negativas' | 'todas' = 'todas', ctx: AuthContext): Promise<DailySale[]> {
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const lastDay = new Date(year, month, 0).getDate();
   const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
-  const query = sb().from('sales').select('*').gte('sale_date', startDate).lte('sale_date', endDate).order('sale_date', { ascending: false });
+  const query = sb()
+    .from('sales')
+    .select('*')
+    .eq('company_id', ctx.companyId)
+    .eq('store_id', ctx.storeId)
+    .gte('sale_date', startDate).lte('sale_date', endDate).order('sale_date', { ascending: false });
   const { data, error } = await query;
   if (error) throw error;
 
@@ -148,8 +154,8 @@ export async function listDailySales(month: number, year: number, filter: 'posit
   return sales;
 }
 
-export async function getDailySaleById(id: string): Promise<DailySale | null> {
-  const { data, error } = await sb().from('sales').select('*').eq('id', id).maybeSingle();
+export async function getDailySaleById(id: string, ctx: AuthContext): Promise<DailySale | null> {
+  const { data, error } = await sb().from('sales').select('*').eq('company_id', ctx.companyId).eq('store_id', ctx.storeId).eq('id', id).maybeSingle();
   if (error) throw error;
   return data ? mapDailySale(data) : null;
 }
@@ -160,8 +166,10 @@ export async function createSale(input: {
   notes?: string | null;
   createdAt?: string | null;
   items?: SaleItemInput[];
-}): Promise<string> {
+}, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb().rpc('create_sale', {
+    p_company_id: ctx.companyId,
+    p_store_id: ctx.storeId,
     p_sale_date: input.saleDate,
     p_amount: input.amount,
     p_notes: input.notes ?? null,
@@ -188,8 +196,10 @@ export async function updateSale(input: {
   amount: number;
   notes?: string | null;
   items?: SaleItemInput[];
-}): Promise<void> {
+}, ctx: AuthContext): Promise<void> {
   const { error } = await sb().rpc('update_sale', {
+    p_company_id: ctx.companyId,
+    p_store_id: ctx.storeId,
     p_id: input.id,
     p_sale_date: input.saleDate,
     p_amount: input.amount,
@@ -209,36 +219,42 @@ export async function updateSale(input: {
   if (error) throw error;
 }
 
-export async function deleteSale(id: string): Promise<void> {
-  const { error } = await sb().rpc('delete_sale', { p_id: id });
+export async function deleteSale(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().rpc('delete_sale', { p_company_id: ctx.companyId, p_store_id: ctx.storeId, p_id: id });
   if (error) throw error;
 }
 
-export async function getSaleItems(saleId: string): Promise<SaleItem[]> {
-  const { data, error } = await sb().from('sale_items').select('*').eq('sale_id', saleId).order('created_at', { ascending: true });
+export async function getSaleItems(saleId: string, ctx: AuthContext): Promise<SaleItem[]> {
+  const { data, error } = await sb()
+    .from('sale_items')
+    .select('*, sales!inner(company_id, store_id)')
+    .eq('sale_id', saleId)
+    .eq('sales.company_id', ctx.companyId)
+    .eq('sales.store_id', ctx.storeId)
+    .order('created_at', { ascending: true });
   if (error) throw error;
   return asArray(data).map(mapSaleItem);
 }
 
-export async function getMonthlyTotal(month: number, year: number): Promise<MonthlySale | null> {
-  const { data, error } = await sb().from('monthly_sales').select('*').eq('month', month).eq('year', year).maybeSingle();
+export async function getMonthlyTotal(month: number, year: number, ctx: AuthContext): Promise<MonthlySale | null> {
+  const { data, error } = await sb().from('monthly_sales').select('*').eq('company_id', ctx.companyId).eq('store_id', ctx.storeId).eq('month', month).eq('year', year).maybeSingle();
   if (error) throw error;
   return data ? mapMonthlySale(data) : null;
 }
 
-export async function listMonthlySales(): Promise<MonthlySale[]> {
-  const { data, error } = await sb().from('monthly_sales').select('*').order('year', { ascending: false }).order('month', { ascending: false });
+export async function listMonthlySales(ctx: AuthContext): Promise<MonthlySale[]> {
+  const { data, error } = await sb().from('monthly_sales').select('*').eq('company_id', ctx.companyId).eq('store_id', ctx.storeId).order('year', { ascending: false }).order('month', { ascending: false });
   if (error) throw error;
   return asArray(data).map(mapMonthlySale);
 }
 
-export async function deleteMonthlySale(id: string): Promise<void> {
-  const { error } = await sb().from('monthly_sales').delete().eq('id', id);
+export async function deleteMonthlySale(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('monthly_sales').delete().eq('company_id', ctx.companyId).eq('store_id', ctx.storeId).eq('id', id);
   if (error) throw error;
 }
 
-export async function consolidateMonthly(month: number, year: number): Promise<void> {
-  const sales = await listDailySales(month, year, 'todas');
+export async function consolidateMonthly(month: number, year: number, ctx: AuthContext): Promise<void> {
+  const sales = await listDailySales(month, year, 'todas', ctx);
   const specialSales = sales.filter((sale) => sale.amount <= 0);
 
   const total = sales.reduce((sum, sale) => sum + sale.amount, 0);
@@ -265,6 +281,8 @@ export async function consolidateMonthly(month: number, year: number): Promise<v
 
   const { error } = await sb().from('monthly_sales').upsert(
     {
+      company_id: ctx.companyId,
+      store_id: ctx.storeId,
       month,
       year,
       average_ticket: averageTicket,
@@ -279,7 +297,7 @@ export async function consolidateMonthly(month: number, year: number): Promise<v
       special_total: specialTotal,
       updated_at: new Date().toISOString(),
     },
-    { onConflict: 'year,month' }
+    { onConflict: 'company_id,store_id,year,month' }
   );
   if (error) throw error;
 }

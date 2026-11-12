@@ -9,6 +9,7 @@ import {
   payPayable,
   cancelPayablePayment,
 } from '../../database/payablesRepository';
+import { requireApiAuth } from '../../utils/serverAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapPayable(p: any) {
@@ -25,13 +26,16 @@ function mapPayable(p: any) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     const { year: yearParam, month: monthParam } = req.query;
     if (!yearParam) {
       return res.status(400).json({ error: 'Ano é obrigatório' });
     }
 
-    const accounts = await listPayablesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined);
+    const accounts = await listPayablesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined, ctx);
     return res.status(200).json(accounts.map(mapPayable));
   }
 
@@ -41,17 +45,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (action === 'pagar') {
       if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para pagar' });
-      const existing = await getPayableById(String(id));
+      const existing = await getPayableById(String(id), ctx);
       if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
-      await payPayable(String(id));
+      await payPayable(String(id), ctx);
       return res.status(200).json({ message: 'Conta marcada como Pago' });
     }
 
     if (action === 'cancelar') {
       if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para cancelar o pagamento' });
-      const existing = await getPayableById(String(id));
+      const existing = await getPayableById(String(id), ctx);
       if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
-      await cancelPayablePayment(String(id));
+      await cancelPayablePayment(String(id), ctx);
       return res.status(200).json({ message: 'Pagamento cancelado e conta voltou a Pendente' });
     }
 
@@ -65,13 +69,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Dados inválidos para criação de conta' });
     }
 
-    const allAccounts = await listAllPayables();
+    const allAccounts = await listAllPayables(ctx);
     const duplicateAccount = allAccounts.find((c) => c.supplierName === distributor && c.document === documentNumber);
     if (duplicateAccount) {
       return res.status(400).json({ error: 'Já existe uma conta com a mesma distribuidora e documento' });
     }
 
-    await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes });
+    await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes }, ctx);
     return res.status(200).json({ message: 'Conta registrada com sucesso' });
   }
 
@@ -88,10 +92,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Dados inválidos para atualização de conta' });
     }
 
-    const existing = await getPayableById(String(id));
+    const existing = await getPayableById(String(id), ctx);
     if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
 
-    await updatePayable({ id: String(id), supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes });
+    await updatePayable({ id: String(id), supplierName: distributor, amount, dueDate, document: documentNumber, bankNotes }, ctx);
     return res.status(200).json({ message: 'Conta atualizada com sucesso' });
   }
 
@@ -100,10 +104,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const id = body.id;
     if (!id) return res.status(400).json({ error: 'ID da conta é obrigatório para exclusão' });
 
-    const existing = await getPayableById(String(id));
+    const existing = await getPayableById(String(id), ctx);
     if (!existing) return res.status(404).json({ error: 'Conta não encontrada' });
 
-    await deletePayable(String(id));
+    await deletePayable(String(id), ctx);
     return res.status(200).json({ message: 'Conta excluída com sucesso' });
   }
 

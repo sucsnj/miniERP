@@ -5,6 +5,7 @@ import path from "path";
 
 import { readDigitableLine } from "@/services/ocrService";
 import { readPdfWithOcr, info } from "@/services/pdfService";
+import { requireApiAuth } from "../../utils/serverAuth";
 
 export const config = {
     api: {
@@ -41,6 +42,9 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    const ctx = await requireApiAuth(req, res);
+    if (!ctx) return;
+    void ctx;
 
     if (req.method !== "POST") {
         return res.status(405).json({

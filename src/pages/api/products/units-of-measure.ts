@@ -1,10 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { listUnitsOfMeasure, createUnitOfMeasure, deleteUnitOfMeasure, updateUnitOfMeasure } from '../../../database/productsRepository';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
-      return res.status(200).json(await listUnitsOfMeasure());
+      return res.status(200).json(await listUnitsOfMeasure(ctx));
     } catch (error) {
       console.error('Erro ao buscar unidades de medida:', error);
       return res.status(500).json({ error: 'Erro ao buscar unidades de medida.' });
@@ -19,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!abbreviation || !String(abbreviation).trim()) {
         return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
       }
-      const id = await createUnitOfMeasure(String(abbreviation).trim(), description ? String(description) : undefined);
+      const id = await createUnitOfMeasure(String(abbreviation).trim(), description ? String(description) : undefined, ctx);
       return res.status(201).json({ id, message: 'Unidade de medida cadastrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar unidade de medida:', error);
@@ -31,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const id = req.query.id;
       if (!id) return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
-      await deleteUnitOfMeasure(String(id));
+      await deleteUnitOfMeasure(String(id), ctx);
       return res.status(200).json({ message: 'Unidade de medida apagada com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar unidade de medida:', error);
@@ -47,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const description = body.description ?? body.description;
       if (!id) return res.status(400).json({ error: 'ID da unidade de medida é inválido.' });
       if (!abbreviation || !String(abbreviation).trim()) return res.status(400).json({ error: 'Sigla da unidade de medida é obrigatória.' });
-      await updateUnitOfMeasure(String(id), String(abbreviation).trim(), description ? String(description) : undefined);
+      await updateUnitOfMeasure(String(id), String(abbreviation).trim(), description ? String(description) : undefined, ctx);
       return res.status(200).json({ message: 'Unidade de medida atualizada com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar unidade de medida:', error);

@@ -259,6 +259,15 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
   };
 }
 
+export async function requireApiAuth(req: NextApiRequest, res: NextApiResponse): Promise<AuthContext | null> {
+  const ctx = await getAuthContext(req);
+  if (!ctx) {
+    res.status(401).json({ error: 'Não autenticado.' });
+    return null;
+  }
+  return ctx;
+}
+
 export function requireAdmin(ctx: AuthContext): void {
   if (ctx.role !== 'admin') throw new Error('Forbidden');
 }

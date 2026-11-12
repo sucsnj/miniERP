@@ -9,6 +9,7 @@
 - Lista itens de uma venda e totais/consolidações mensais.
 - Consolida mês (`consolidateMonthly`) e exclui consolidação (`deleteMonthlySale`).
 - Integra com `productsRepository` via IDs UUID de produtos/serviços.
+- A partir da ADR 0013 Fase 3, as funções recebem `AuthContext` e filtram/escrevem por `company_id`/`store_id`; RPCs recebem o mesmo tenant explicitamente.
 
 ## Relações
 

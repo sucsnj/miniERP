@@ -15,6 +15,7 @@ import {
 } from '../../../database/productsRepository';
 import { parseNumber } from '../../../utils/number';
 import { parseStringPromise } from 'xml2js';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 interface ExistingItem {
   id: string;
@@ -38,6 +39,9 @@ interface ProductPreview {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
   }
@@ -74,28 +78,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         let existingItem: ExistingItem | null = null;
         if (ean) {
-          const product = await findProductByBarcode(ean);
+          const product = await findProductByBarcode(ean, ctx);
           if (product) {
             existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           }
         }
         if (!existingItem && cProd) {
-          const product = await findProductByInternalCode(cProd);
+          const product = await findProductByInternalCode(cProd, ctx);
           if (product) {
             existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           } else {
-            const service = await findServiceByInternalCode(cProd);
+            const service = await findServiceByInternalCode(cProd, ctx);
             if (service) {
               existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, stock: 0, isService: true };
             }
           }
         }
         if (!existingItem && description) {
-          const product = await findProductByName(description);
+          const product = await findProductByName(description, ctx);
           if (product) {
             existingItem = { id: product.id, name: product.name, salePrice: product.salePrice, stock: product.stock, isService: false };
           } else {
-            const service = await findServiceByName(description);
+            const service = await findServiceByName(description, ctx);
             if (service) {
               existingItem = { id: service.id, name: service.name, salePrice: service.salePrice, stock: 0, isService: true };
             }
@@ -137,26 +141,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } = productPayload;
 
       if (existingItemId) {
-        await applyStockMovement(String(existingItemId), (movementType || 'ENTRADA').toUpperCase() === 'SAIDA' ? 'OUT' : 'IN', quantity, 'Importação de XML de NF-e');
+        await applyStockMovement(String(existingItemId), (movementType || 'ENTRADA').toUpperCase() === 'SAIDA' ? 'OUT' : 'IN', quantity, 'Importação de XML de NF-e', ctx);
         return res.status(200).json({ sucesso: true, id: existingItemId, estoqueAtualizado: true });
       }
 
       if (ean) {
-        const existingProduct = await findProductByBarcode(String(ean));
+        const existingProduct = await findProductByBarcode(String(ean), ctx);
         if (existingProduct) {
-          await applyStockMovement(existingProduct.id, 'IN', quantity, 'Importação de XML de NF-e');
+          await applyStockMovement(existingProduct.id, 'IN', quantity, 'Importação de XML de NF-e', ctx);
           return res.status(200).json({ sucesso: true, id: existingProduct.id, estoqueAtualizado: true });
         }
-        const duplicate = await checkDuplicateBarcode([String(ean)]);
+        const duplicate = await checkDuplicateBarcode([String(ean)], undefined, ctx);
         if (duplicate) {
           return res.status(400).json({ error: 'Código de barras já está cadastrado em outro produto', duplicado: true });
         }
       }
 
-      const categories = await listCategories();
-      const brands = await listBrands();
-      const suppliers = await listSuppliers();
-      const units = await listUnitsOfMeasure();
+      const categories = await listCategories(ctx);
+      const brands = await listBrands(ctx);
+      const suppliers = await listSuppliers(ctx);
+      const units = await listUnitsOfMeasure(ctx);
       const defaultCategory = categories.find((c) => c.isDefault)?.id ?? categories[0]?.id;
       const defaultBrand = brands.find((b) => b.isDefault)?.id ?? brands[0]?.id;
       const defaultSupplier = suppliers.find((s) => s.isDefault)?.id ?? suppliers[0]?.id;
@@ -184,7 +188,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         active: true,
         barcodes: listBarcodes,
         units: [{ unitId: String(defaultUnit), unitMultiplier: 1, isPrimary: true }],
-      });
+      }, ctx);
 
       return res.status(201).json({ sucesso: true, id: itemId });
     }
@@ -195,3 +199,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: error instanceof Error ? error.message : 'Erro interno no servidor' });
   }
 }
+

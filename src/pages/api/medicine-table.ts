@@ -9,6 +9,7 @@ import {
   listMedicineSearchHistory,
   clearMedicineSearchHistory,
 } from '../../database/payablesRepository';
+import { requireApiAuth } from '../../utils/serverAuth';
 
 export const config = {
   api: {
@@ -192,6 +193,9 @@ const searchTableData = (query: string, table: Record<string, unknown>[]) => {
 loadTableData();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'POST') {
     await runMiddleware(req, res, upload.single('file') as unknown as MulterMiddleware);
 
@@ -279,7 +283,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (history === '1' || history === 'true') {
       try {
-      const table = await listMedicineSearchHistory();
+        const table = await listMedicineSearchHistory(ctx);
       return res.status(200).json(table);
       } catch (error) {
         console.error('Erro ao buscar histórico de tabela:', error);
@@ -297,7 +301,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const normalizedQuery = normalizeText(query);
-    const cached = await findMedicineSearchHistory(normalizedQuery);
+      const cached = await findMedicineSearchHistory(normalizedQuery, ctx);
     if (cached) {
       try {
         const results = cached.results;
@@ -314,7 +318,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const results = searchTableData(query, table);
     try {
-      await saveMedicineSearchHistory(query, normalizedQuery, results);
+        await saveMedicineSearchHistory(query, normalizedQuery, results, ctx);
     } catch (error) {
       console.error('Erro ao salvar histórico de tabela:', error);
     }
@@ -324,7 +328,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'DELETE') {
     try {
-      await clearMedicineSearchHistory();
+        await clearMedicineSearchHistory(ctx);
       return res.status(200).json({ message: 'Histórico de tabela limpo com sucesso.' });
     } catch (error) {
       console.error('Erro ao limpar histórico de tabela:', error);

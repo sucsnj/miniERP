@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { listStockMovements, applyStockMovement } from '../../../database/productsRepository';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 const mapTypeToEnglish = (type: string): 'IN' | 'OUT' | 'ADJUST' => {
   const upper = type.trim().toUpperCase();
@@ -9,6 +10,9 @@ const mapTypeToEnglish = (type: string): 'IN' | 'OUT' | 'ADJUST' => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
       const productId = req.query.productId ?? req.query.item_id;
@@ -16,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'ID do item é obrigatório para buscar movimentações.' });
       }
 
-      const movements = await listStockMovements(String(productId));
+      const movements = await listStockMovements(String(productId), ctx);
       return res.status(200).json(movements);
     } catch (error) {
       console.error('Erro ao buscar movimentações de estoque:', error);
@@ -39,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Tipo de movimentação é obrigatório.' });
       }
 
-      const movement = await applyStockMovement(String(productId), mapTypeToEnglish(String(movementType)), Number(quantity), description ?? null);
+      const movement = await applyStockMovement(String(productId), mapTypeToEnglish(String(movementType)), Number(quantity), description ?? null, ctx);
       return res.status(201).json({ id: movement.id, message: 'Movimentação de estoque registrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao registrar movimentação de estoque:', error);

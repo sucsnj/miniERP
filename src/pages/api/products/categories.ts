@@ -5,11 +5,15 @@ import {
   deleteCategory,
   updateCategory,
 } from '../../../database/productsRepository';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
-      const categories = await listCategories();
+      const categories = await listCategories(ctx);
       return res.status(200).json(categories);
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
@@ -26,12 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
 
-      const categories = await listCategories();
+      const categories = await listCategories(ctx);
       if (categories.some((c) => c.name.toLowerCase() === String(name).trim().toLowerCase())) {
         return res.status(400).json({ error: 'Esta categoria já existe.' });
       }
 
-      const id = await createCategory(String(name).trim(), description ? String(description) : undefined);
+      const id = await createCategory(String(name).trim(), description ? String(description) : undefined, ctx);
       return res.status(201).json({ id, message: 'Categoria cadastrada com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar categoria:', error);
@@ -45,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!id) {
         return res.status(400).json({ error: 'ID da categoria é inválido.' });
       }
-      await deleteCategory(String(id));
+      await deleteCategory(String(id), ctx);
       return res.status(200).json({ message: 'Categoria apagada com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar categoria:', error);
@@ -65,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
       }
-      await updateCategory(String(id), String(name).trim(), description ? String(description) : undefined);
+      await updateCategory(String(id), String(name).trim(), description ? String(description) : undefined, ctx);
       return res.status(200).json({ message: 'Categoria atualizada com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar categoria:', error);

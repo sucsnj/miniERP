@@ -4,6 +4,7 @@ import { listAllInvoices, createInvoice } from '../../../database/payablesReposi
 import parseNumber, { parseCurrency } from '../../../utils/number';
 import { toDate } from '../../../utils/date';
 import { parseStringPromise } from 'xml2js';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 // Nomes de distribuidoras válidos
 const validNames = [
@@ -40,6 +41,9 @@ const normalizeDocument = (document: string) => {
 
 // Função mainBarcode do endpoint
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
   }
@@ -86,14 +90,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         distributor = 'Mbca';
       }
 
-      const allAccounts = await listAllPayables();
+      const allAccounts = await listAllPayables(ctx);
       // se já existir uma conta com a mesma supplierName e document, pule para a próxima
       const duplicateAccount = allAccounts.find(c => c.supplierName === distributor && c.document === documentNumber);
       if (duplicateAccount) {
         continue; // pula pra proxima duplicata
       }
 
-      await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber });
+      await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber }, ctx);
 
       records.push({ supplierName: distributor, amount: amount, dueDate: dueDate, document: documentNumber });
     }
@@ -102,7 +106,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let invoiceInserted = false;
 
     // se já existir uma nota com a mesma chave
-    const allInvoices = await listAllInvoices();
+    const allInvoices = await listAllInvoices(ctx);
     const existingInvoice = allInvoices.find(n => n.accessKey === accessKey);
 
     if (existingInvoice) {
@@ -115,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } else {
       // adiciona nota
-      await createInvoice({ supplierName: distributor, accessKey, issueDate, amount: invoiceTotal });
+      await createInvoice({ supplierName: distributor, accessKey, issueDate, amount: invoiceTotal }, ctx);
       invoiceInserted = true;
     }
 

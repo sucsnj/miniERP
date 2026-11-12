@@ -64,6 +64,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ## Referência de API
 
+> ADR 0013 Fase 3: todas as API routes não pertencentes a `/api/auth/*` exigem sessão via `requireApiAuth` e repassam `AuthContext` (`companyId`/`storeId`) aos repositories. Permissão por role (`admin` × `merchant`) é aplicada na Fase 4.
+
 ### Backup
 
 

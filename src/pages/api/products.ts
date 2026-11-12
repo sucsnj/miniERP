@@ -10,6 +10,7 @@ import {
   checkDuplicateBarcode,
 } from '../../database/productsRepository';
 import { parseNumber } from '../../utils/number';
+import { requireApiAuth } from '../../utils/serverAuth';
 
 interface UnitPayload {
   unit_measure_id?: number | string;
@@ -29,6 +30,9 @@ interface BarcodePayload {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
       const { search, categoryId, brandId, supplierId, active, page, pageSize } = req.query;
@@ -43,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         active: activeParam,
         page: page ? Number(page) : 1,
         pageSize: pageSize ? Number(pageSize) : 10,
-      });
+      }, ctx);
       return res.status(200).json(result);
     } catch (error) {
       console.error('Erro ao buscar itens:', error);
@@ -61,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const active = body.active;
         if (!id) return res.status(400).json({ error: 'ID é obrigatório para alterar status.' });
       const isActive = active === 1 || active === true || active === '1';
-      await toggleProductStatus(String(id), isActive);
+      await toggleProductStatus(String(id), isActive, ctx);
       return res.status(200).json({ message: `Item ${isActive ? 'ativado' : 'desativado'} com sucesso.` });
       }
 
@@ -154,14 +158,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         }
 
-        const dbDuplicate = await checkDuplicateBarcode(codes);
+        const dbDuplicate = await checkDuplicateBarcode(codes, undefined, ctx);
         if (dbDuplicate) {
           return res.status(400).json({ error: `O código de barras "${dbDuplicate}" já está cadastrado em outro produto.` });
         }
       }
 
       const internalCode = body.internalCode ?? body.internalCode ?? body.internal_code;
-      if (internalCode && await checkDuplicateInternalCode(String(internalCode))) {
+      if (internalCode && await checkDuplicateInternalCode(String(internalCode), undefined, ctx)) {
         return res.status(400).json({ error: `O código interno "${internalCode}" já está cadastrado.` });
       }
 
@@ -191,7 +195,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         active: body.active !== undefined ? (body.active === 1 || body.active === true) : true,
         barcodes: listBarcodes,
         units: unitList.map((u) => ({ unitId: u.unitId, unitMultiplier: u.unitMultiplier, isPrimary: u.isPrimary })),
-      });
+      }, ctx);
 
       return res.status(201).json({ id, message: 'Item cadastrado com sucesso.' });
     } catch (error) {
@@ -206,7 +210,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id = body.id;
       if (!id) return res.status(400).json({ error: 'O ID do item é obrigatório para atualização.' });
 
-      const existing = await getProduct(String(id));
+      const existing = await getProduct(String(id), ctx);
       if (!existing) return res.status(404).json({ error: 'Item não encontrado.' });
 
       const itemType = body.kind ?? body.type ?? 'PRODUCT';
@@ -293,7 +297,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         }
 
-        const dbDuplicate = await checkDuplicateBarcode(codes, String(id));
+        const dbDuplicate = await checkDuplicateBarcode(codes, String(id), ctx);
         if (dbDuplicate) {
           return res.status(400).json({ error: `O código de barras "${dbDuplicate}" já está cadastrado em outro produto.` });
         }
@@ -330,7 +334,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         active: body.active !== undefined ? (body.active === 1 || body.active === true) : existing.active,
         barcodes: listBarcodes,
         units: unitList.length > 0 ? unitList.map((u) => ({ unitId: u.unitId, unitMultiplier: u.unitMultiplier, isPrimary: u.isPrimary })) : [{ unitId: finalUnitId, unitMultiplier: finalMultiplier, isPrimary: true }],
-      });
+      }, ctx);
 
       return res.status(200).json({ message: 'Item atualizado com sucesso.' });
     } catch (error) {
@@ -344,9 +348,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const body = req.body ?? {};
       const id = body.id;
       if (!id) return res.status(400).json({ error: 'ID é obrigatório para exclusão.' });
-      const existing = await getProduct(String(id));
+      const existing = await getProduct(String(id), ctx);
       if (!existing) return res.status(404).json({ error: 'Item não encontrado.' });
-      await deleteProduct(String(id));
+      await deleteProduct(String(id), ctx);
       return res.status(200).json({ message: 'Item excluído com sucesso.' });
     } catch (error) {
       console.error('Erro ao excluir item:', error);

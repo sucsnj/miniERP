@@ -6,12 +6,16 @@ import {
   updateService,
   deleteService,
 } from '../../../database/productsRepository';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
       if (req.query.id) {
-        const service = await getService(String(req.query.id));
+        const service = await getService(String(req.query.id), ctx);
         return res.status(200).json(service);
       }
 
@@ -20,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         categoryId: req.query.categoryId ? String(req.query.categoryId) : undefined,
         page: req.query.page ? Number(req.query.page) : undefined,
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
-      });
+      }, ctx);
 
       return res.status(200).json({
         items: result.items,
@@ -61,8 +65,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         internalCode: internalCode ? String(internalCode).trim() : null,
         reference: reference ? String(reference).trim() : null,
         durationMinutes: Number(durationMinutes) || 0,
-      });
-      const service = await getService(id);
+      }, ctx);
+      const service = await getService(id, ctx);
       return res.status(201).json(service ?? { id });
     } catch (error) {
       console.error('Erro ao criar serviço:', error);
@@ -76,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const body = req.body ?? {};
       if (!id) return res.status(400).json({ error: 'ID do serviço é obrigatório.' });
 
-      const existing = await getService(id);
+      const existing = await getService(id, ctx);
       if (!existing) return res.status(404).json({ error: 'Serviço não encontrado.' });
 
       const name = body.name ?? body.name ?? existing.name;
@@ -99,8 +103,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         internalCode: internalCode ? String(internalCode).trim() : null,
         reference: reference ? String(reference).trim() : null,
         durationMinutes: Number(durationMinutes) || 0,
-      });
-      return res.status(200).json(await getService(id));
+      }, ctx);
+      return res.status(200).json(await getService(id, ctx));
     } catch (error) {
       console.error('Erro ao atualizar serviço:', error);
       return res.status(500).json({ error: error instanceof Error ? error.message : 'Erro ao atualizar serviço.' });
@@ -111,9 +115,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const id = String(req.query.id ?? req.body?.id);
       if (!id) return res.status(400).json({ error: 'ID do serviço é obrigatório.' });
-      const existing = await getService(id);
+      const existing = await getService(id, ctx);
       if (!existing) return res.status(404).json({ error: 'Serviço não encontrado.' });
-      await deleteService(id);
+      await deleteService(id, ctx);
       return res.status(200).json({ message: 'Serviço excluído com sucesso.' });
     } catch (error) {
       console.error('Erro ao excluir serviço:', error);

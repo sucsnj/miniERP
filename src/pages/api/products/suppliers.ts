@@ -1,10 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { listSuppliers, createSupplier, deleteSupplier, updateSupplier } from '../../../database/productsRepository';
+import { requireApiAuth } from '../../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'GET') {
     try {
-      return res.status(200).json(await listSuppliers());
+      return res.status(200).json(await listSuppliers(ctx));
     } catch (error) {
       console.error('Erro ao buscar fornecedores:', error);
       return res.status(500).json({ error: 'Erro ao buscar fornecedores.' });
@@ -18,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: 'Nome do fornecedor é obrigatório.' });
       }
-      const id = await createSupplier(String(name).trim());
+      const id = await createSupplier(String(name).trim(), ctx);
       return res.status(201).json({ id, message: 'Fornecedor cadastrado com sucesso.' });
     } catch (error) {
       console.error('Erro ao salvar fornecedor:', error);
@@ -30,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const id = req.query.id;
       if (!id) return res.status(400).json({ error: 'ID do fornecedor é inválido.' });
-      await deleteSupplier(String(id));
+      await deleteSupplier(String(id), ctx);
       return res.status(200).json({ message: 'Fornecedor apagado com sucesso.' });
     } catch (error) {
       console.error('Erro ao apagar fornecedor:', error);
@@ -45,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const name = body.name ?? body.name;
       if (!id) return res.status(400).json({ error: 'ID do fornecedor é inválido.' });
       if (!name || !String(name).trim()) return res.status(400).json({ error: 'Nome do fornecedor é obrigatório.' });
-      await updateSupplier(String(id), String(name).trim());
+      await updateSupplier(String(id), String(name).trim(), ctx);
       return res.status(200).json({ message: 'Fornecedor atualizado com sucesso.' });
     } catch (error) {
       console.error('Erro ao atualizar fornecedor:', error);

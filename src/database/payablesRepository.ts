@@ -1,4 +1,5 @@
 import { getSupabaseServerClient } from './supabase';
+import type { AuthContext } from '../utils/serverAuth';
 
 type SupabaseClient = ReturnType<typeof getSupabaseServerClient>;
 
@@ -61,7 +62,7 @@ export interface MedicineSearchHistory {
 }
 
 // Payables
-export async function listPayablesByPeriod(year: number, month?: number): Promise<Payable[]> {
+export async function listPayablesByPeriod(year: number, month: number | undefined, ctx: AuthContext): Promise<Payable[]> {
   const startDate = `${year}-${String(month ?? 1).padStart(2, '0')}-01`;
   const endDate = month
     ? new Date(year, month, 0).toISOString().slice(0, 10)
@@ -70,6 +71,7 @@ export async function listPayablesByPeriod(year: number, month?: number): Promis
   const { data, error } = await sb()
     .from('payables')
     .select('*')
+    .eq('company_id', ctx.companyId)
     .gte('due_date', startDate)
     .lte('due_date', endDate)
     .order('due_date', { ascending: false })
@@ -92,8 +94,8 @@ export async function listPayablesByPeriod(year: number, month?: number): Promis
   });
 }
 
-export async function listAllPayables(): Promise<Payable[]> {
-  const { data, error } = await sb().from('payables').select('*').order('due_date', { ascending: false }).order('created_at', { ascending: false });
+export async function listAllPayables(ctx: AuthContext): Promise<Payable[]> {
+  const { data, error } = await sb().from('payables').select('*').eq('company_id', ctx.companyId).order('due_date', { ascending: false }).order('created_at', { ascending: false });
   if (error) throw error;
   return asArray(data).map((row) => {
     const r = asRecord(row);
@@ -112,8 +114,8 @@ export async function listAllPayables(): Promise<Payable[]> {
   });
 }
 
-export async function getPayableById(id: string): Promise<Payable | null> {
-  const { data, error } = await sb().from('payables').select('*').eq('id', id).maybeSingle();
+export async function getPayableById(id: string, ctx: AuthContext): Promise<Payable | null> {
+  const { data, error } = await sb().from('payables').select('*').eq('company_id', ctx.companyId).eq('id', id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const r = asRecord(data);
@@ -137,10 +139,11 @@ export async function createPayable(input: {
   dueDate: string;
   document: string;
   bankNotes?: string | null;
-}): Promise<string> {
+}, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb()
     .from('payables')
     .insert({
+      company_id: ctx.companyId,
       supplier_name: input.supplierName,
       amount: input.amount,
       due_date: input.dueDate,
@@ -160,7 +163,7 @@ export async function updatePayable(input: {
   dueDate: string;
   document: string;
   bankNotes?: string | null;
-}): Promise<void> {
+}, ctx: AuthContext): Promise<void> {
   const { error } = await sb()
     .from('payables')
     .update({
@@ -171,27 +174,28 @@ export async function updatePayable(input: {
       bank_notes: input.bankNotes ?? null,
       updated_at: new Date().toISOString(),
     })
+    .eq('company_id', ctx.companyId)
     .eq('id', input.id);
   if (error) throw error;
 }
 
-export async function deletePayable(id: string): Promise<void> {
-  const { error } = await sb().from('payables').delete().eq('id', id);
+export async function deletePayable(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('payables').delete().eq('company_id', ctx.companyId).eq('id', id);
   if (error) throw error;
 }
 
-export async function payPayable(id: string): Promise<void> {
-  const { error } = await sb().from('payables').update({ status: 'PAID', paid_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', id);
+export async function payPayable(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('payables').update({ status: 'PAID', paid_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id);
   if (error) throw error;
 }
 
-export async function cancelPayablePayment(id: string): Promise<void> {
-  const { error } = await sb().from('payables').update({ status: 'PENDING', paid_at: null, updated_at: new Date().toISOString() }).eq('id', id);
+export async function cancelPayablePayment(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('payables').update({ status: 'PENDING', paid_at: null, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id);
   if (error) throw error;
 }
 
 // Invoices
-export async function listInvoicesByPeriod(year: number, month?: number): Promise<Invoice[]> {
+export async function listInvoicesByPeriod(year: number, month: number | undefined, ctx: AuthContext): Promise<Invoice[]> {
   const startDate = `${year}-${String(month ?? 1).padStart(2, '0')}-01`;
   const endDate = month
     ? new Date(year, month, 0).toISOString().slice(0, 10)
@@ -200,6 +204,7 @@ export async function listInvoicesByPeriod(year: number, month?: number): Promis
   const { data, error } = await sb()
     .from('invoices')
     .select('*')
+    .eq('company_id', ctx.companyId)
     .gte('issue_date', startDate)
     .lte('issue_date', endDate)
     .order('issue_date', { ascending: false })
@@ -218,8 +223,8 @@ export async function listInvoicesByPeriod(year: number, month?: number): Promis
   });
 }
 
-export async function listAllInvoices(): Promise<Invoice[]> {
-  const { data, error } = await sb().from('invoices').select('*').order('issue_date', { ascending: false }).order('created_at', { ascending: false });
+export async function listAllInvoices(ctx: AuthContext): Promise<Invoice[]> {
+  const { data, error } = await sb().from('invoices').select('*').eq('company_id', ctx.companyId).order('issue_date', { ascending: false }).order('created_at', { ascending: false });
   if (error) throw error;
   return asArray(data).map((row) => {
     const r = asRecord(row);
@@ -234,8 +239,8 @@ export async function listAllInvoices(): Promise<Invoice[]> {
   });
 }
 
-export async function getInvoiceById(id: string): Promise<Invoice | null> {
-  const { data, error } = await sb().from('invoices').select('*').eq('id', id).maybeSingle();
+export async function getInvoiceById(id: string, ctx: AuthContext): Promise<Invoice | null> {
+  const { data, error } = await sb().from('invoices').select('*').eq('company_id', ctx.companyId).eq('id', id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const r = asRecord(data);
@@ -249,8 +254,8 @@ export async function getInvoiceById(id: string): Promise<Invoice | null> {
   };
 }
 
-export async function getInvoiceByAmount(amount: number): Promise<Invoice | null> {
-  const { data, error } = await sb().from('invoices').select('*').eq('amount', amount).limit(1).maybeSingle();
+export async function getInvoiceByAmount(amount: number, ctx: AuthContext): Promise<Invoice | null> {
+  const { data, error } = await sb().from('invoices').select('*').eq('company_id', ctx.companyId).eq('amount', amount).limit(1).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const r = asRecord(data);
@@ -264,10 +269,11 @@ export async function getInvoiceByAmount(amount: number): Promise<Invoice | null
   };
 }
 
-export async function createInvoice(input: { supplierName: string; accessKey: string; issueDate: string; amount: number }): Promise<string> {
+export async function createInvoice(input: { supplierName: string; accessKey: string; issueDate: string; amount: number }, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb()
     .from('invoices')
     .insert({
+      company_id: ctx.companyId,
       supplier_name: input.supplierName,
       access_key: input.accessKey,
       issue_date: input.issueDate,
@@ -279,20 +285,20 @@ export async function createInvoice(input: { supplierName: string; accessKey: st
   return String(asRecord(data).id);
 }
 
-export async function deleteInvoice(id: string): Promise<void> {
-  const { error } = await sb().from('invoices').delete().eq('id', id);
+export async function deleteInvoice(id: string, ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('invoices').delete().eq('company_id', ctx.companyId).eq('id', id);
   if (error) throw error;
 }
 
-export async function getInvoiceSumByYear(year: number): Promise<number> {
-  const { data, error } = await sb().from('invoices').select('amount').gte('issue_date', `${year}-01-01`).lte('issue_date', `${year}-12-31`);
+export async function getInvoiceSumByYear(year: number, ctx: AuthContext): Promise<number> {
+  const { data, error } = await sb().from('invoices').select('amount').eq('company_id', ctx.companyId).gte('issue_date', `${year}-01-01`).lte('issue_date', `${year}-12-31`);
   if (error) throw error;
   return asArray(data).reduce((sum: number, row) => sum + toNumber(asRecord(row).amount), 0);
 }
 
 // Medicine search history
-export async function findMedicineSearchHistory(normalizedQuery: string): Promise<MedicineSearchHistory | null> {
-  const { data, error } = await sb().from('medicine_search_history').select('*').eq('normalized_query', normalizedQuery).maybeSingle();
+export async function findMedicineSearchHistory(normalizedQuery: string, ctx: AuthContext): Promise<MedicineSearchHistory | null> {
+  const { data, error } = await sb().from('medicine_search_history').select('*').eq('company_id', ctx.companyId).eq('normalized_query', normalizedQuery).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const r = asRecord(data);
@@ -306,27 +312,27 @@ export async function findMedicineSearchHistory(normalizedQuery: string): Promis
   };
 }
 
-export async function saveMedicineSearchHistory(query: string, normalizedQuery: string, results: unknown[]): Promise<void> {
+export async function saveMedicineSearchHistory(query: string, normalizedQuery: string, results: unknown[], ctx: AuthContext): Promise<void> {
   const { error } = await sb().from('medicine_search_history').upsert({
+    company_id: ctx.companyId,
     query,
     normalized_query: normalizedQuery,
     results,
     result_count: results.length,
     updated_at: new Date().toISOString(),
-  }, { onConflict: 'normalized_query' });
+  }, { onConflict: 'company_id,normalized_query' });
   if (error) throw error;
 
-  // prune to 25
-  const { data } = await sb().from('medicine_search_history').select('id').order('updated_at', { ascending: false });
+  const { data } = await sb().from('medicine_search_history').select('id').eq('company_id', ctx.companyId).order('updated_at', { ascending: false });
   const ids = asArray(data).map((row) => String(asRecord(row).id));
   const toDelete = ids.slice(25);
   if (toDelete.length > 0) {
-    await sb().from('medicine_search_history').delete().in('id', toDelete);
+    await sb().from('medicine_search_history').delete().eq('company_id', ctx.companyId).in('id', toDelete);
   }
 }
 
-export async function listMedicineSearchHistory(): Promise<Array<{ id: string; query: string; result_count: number; updated_at: string }>> {
-  const { data, error } = await sb().from('medicine_search_history').select('id, query, result_count, updated_at').order('updated_at', { ascending: false }).limit(25);
+export async function listMedicineSearchHistory(ctx: AuthContext): Promise<Array<{ id: string; query: string; result_count: number; updated_at: string }>> {
+  const { data, error } = await sb().from('medicine_search_history').select('id, query, result_count, updated_at').eq('company_id', ctx.companyId).order('updated_at', { ascending: false }).limit(25);
   if (error) throw error;
   return asArray(data).map((row) => {
     const r = asRecord(row);
@@ -339,7 +345,7 @@ export async function listMedicineSearchHistory(): Promise<Array<{ id: string; q
   });
 }
 
-export async function clearMedicineSearchHistory(): Promise<void> {
-  const { error } = await sb().from('medicine_search_history').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+export async function clearMedicineSearchHistory(ctx: AuthContext): Promise<void> {
+  const { error } = await sb().from('medicine_search_history').delete().eq('company_id', ctx.companyId).neq('id', '00000000-0000-0000-0000-000000000000');
   if (error) throw error;
 }

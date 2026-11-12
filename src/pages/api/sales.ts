@@ -9,6 +9,7 @@ import {
 import { parseCurrency } from '../../utils/number';
 import { toDate } from '../../utils/date';
 import { canEdit } from '../../utils/edit';
+import { requireApiAuth } from '../../utils/serverAuth';
 
 interface SaleItemApi {
   kind?: 'PRODUCT' | 'SERVICE';
@@ -56,6 +57,9 @@ function normalizeItem(item: SaleItemApi): {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ctx = await requireApiAuth(req, res);
+  if (!ctx) return;
+
   if (req.method === 'POST') {
     const body = req.body ?? {};
     const date = body.saleDate ?? body.date;
@@ -78,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         notes: notes ?? null,
         createdAt: createdAt ?? null,
         items: items.map(normalizeItem),
-      });
+      }, ctx);
 
       res.status(200).json({ message: 'Venda registrada com sucesso', id });
     } catch (error) {
@@ -101,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const originalSale = await getDailySaleById(String(id));
+      const originalSale = await getDailySaleById(String(id), ctx);
       if (!originalSale) {
         return res.status(404).json({ error: 'Venda não encontrada' });
       }
@@ -115,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         amount: validValue,
         notes: notes ?? null,
         items: items.map(normalizeItem),
-      });
+      }, ctx);
 
       res.status(200).json({ message: 'Venda atualizada com sucesso' });
     } catch (error) {
@@ -130,7 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const originalSale = await getDailySaleById(String(id));
+      const originalSale = await getDailySaleById(String(id), ctx);
       if (!originalSale) {
         return res.status(404).json({ error: 'Venda não encontrada' });
       }
@@ -138,7 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ error: 'Exclusão permitida apenas para vendas dos últimos 2 dias' });
       }
 
-      await deleteSale(String(id));
+      await deleteSale(String(id), ctx);
       res.status(200).json({ message: 'Venda excluída com sucesso' });
     } catch (error) {
       console.error('Erro na API DELETE /api/sales:', error);
@@ -154,7 +158,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const sales = await listDailySales(
         parseInt(monthParam as string),
         parseInt(yearParam as string),
-        validFilter
+        validFilter,
+        ctx
       );
       res.status(200).json(sales);
     } catch (error) {
