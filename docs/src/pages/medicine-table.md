@@ -4,17 +4,19 @@
 
 ## O que faz
 
-- Carrega status (`fetchTableStatus`) e histórico (`fetchTableHistory`) ao montar.
-- Faz upload XLS/XLSX via `uploadTable` (FormData campo `file`) e busca por termo via `searchTable` (fonte `history` ou `table`).
-- Limpa o histórico (`clearTableHistory`) e repete buscas clicando em um item do histórico.
-- Escape limpa o input de busca via `document.querySelector('.search-input')`.
+- Carrega status e histórico via `useMedicineTable` (TanStack Query: `status`/`history`).
+- Faz upload XLS/XLSX via mutation (`upload`) e busca por termo via mutation (`search`).
+- Limpa o histórico com `clearHistory` (optimistic update + rollback).
+- Repete buscas clicando em um item do histórico.
+- Escape limpa o input de busca (controle via estado `query`).
 
 ## Relações
 
-- **Usa:** `medicineTableService`; utils `shortcuts`, `date`; `src/styles/payables.module.css`.
+- **Usa:** `useMedicineTable`; `medicineTableService` (tipos); utils `shortcuts`, `date`; `src/styles/payables.module.css`.
 - **Usado por:** consome `./api/medicine-table.md`.
 
 ## Notas
 
 - A UI diz "Últimas 100 buscas", mas o banco retém no máximo 25.
 - Aceita apenas `.xlsx`/`.xls` (validação no input e no servidor).
+- Erros de status/histórico são logados no console; erros de ações mostram toast.

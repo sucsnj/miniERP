@@ -4,14 +4,14 @@
 
 ## O que faz
 
-- Expõe interfaces: `TableRow`, `TableSearchHistoryItem`, `TabelaSearchResponse`, `TabelaStatusResponse`.
+- Expõe interfaces: `TableRow`, `TableSearchHistoryItem`, `TableUploadResponse`, `TabelaSearchResponse`, `TabelaStatusResponse`.
 - Centraliza tratamento de resposta com `handleJsonResponse(response)` (lança `Error` com `json.error` se `!response.ok`).
 - Realiza upload de arquivo (`uploadTable` via `FormData` POST), busca (`searchTable` com `query` codificada), histórico (`fetchTableHistory`), limpa histórico (`clearTableHistory` DELETE) e consulta status (`fetchTableStatus`).
 
 ## Relações
 
 - **Usa:** [`/api/medicine-table`](../pages/api/medicine-table.md)
-- **Usado por:** página [`/medicine-table`](../pages/medicine-table.md) e componentes relacionados
+- **Usado por:** `src/hooks/useMedicineTable.ts`, página [`/medicine-table`](../pages/medicine-table.md) e componentes relacionados
 
 ## Notas
 

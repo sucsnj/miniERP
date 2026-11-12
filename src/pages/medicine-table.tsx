@@ -4,14 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
 import contasStyles from '../styles/payables.module.css';
 import {
-  uploadTable,
-  searchTable,
-  fetchTableHistory,
-  clearTableHistory,
-  fetchTableStatus,
   TableRow,
   TableSearchHistoryItem,
 } from '../services/medicineTableService';
+import { useMedicineTable } from '../hooks/useMedicineTable';
 import { useShortcuts } from '../utils/shortcuts';
 import { parseDate } from '../utils/date';
 import styles from '../styles/medicine-table.module.css';
@@ -24,82 +20,59 @@ import Button from '@/components/common/Button';
 const Tabela: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState('');
-  const [rowCount, setRowCount] = useState<number | null>(null);
-  const [tabelaLoaded, setTabelaLoaded] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<TableRow[]>([]);
-  const [history, setHistory] = useState<TableSearchHistoryItem[]>([]);
   const [source, setSource] = useState<'history' | 'table' | ''>('');
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   const { showToast } = useToast();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  const [loadingStatus, setLoadingStatus] = useState(true);
-  const [loadingHistory, setLoadingHistory] = useState(true);
-  usePendingTask('medicine-table-status', loadingStatus);
-  usePendingTask('medicine-table-history', loadingHistory);
-
-  const loadSearchHistory = useCallback(async () => {
-    setLoadingHistory(true);
-    try {
-      const recent = await fetchTableHistory();
-      setHistory(recent);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingHistory(false);
-    }
-  }, []);
-
-  const loadTableStatus = useCallback(async () => {
-    setLoadingStatus(true);
-    try {
-      const status = await fetchTableStatus();
-      setTabelaLoaded(status.loaded);
-      setRowCount(status.rowCount);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingStatus(false);
-    }
-  }, []);
+  const {
+    status,
+    statusInitialLoading,
+    statusError,
+    history,
+    historyInitialLoading,
+    historyError,
+    search,
+    upload,
+    clearHistory,
+  } = useMedicineTable();
+  const tabelaLoaded = status.loaded;
+  const rowCount = status.rowCount;
+  const loading = search.isPending;
+  const uploading = upload.isPending;
+  usePendingTask('medicine-table-status', statusInitialLoading);
+  usePendingTask('medicine-table-history', historyInitialLoading);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      loadSearchHistory();
-      loadTableStatus();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [loadSearchHistory, loadTableStatus]);
+    if (!statusError) return;
+    console.error(statusError);
+  }, [statusError]);
+
+  useEffect(() => {
+    if (!historyError) return;
+    console.error(historyError);
+  }, [historyError]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) return;
 
-    setUploading(true);
-    setFileName(file.name);
-
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const result = await uploadTable(formData);
-      setRowCount(result.rowCount ?? null);
-      setTabelaLoaded(true);
+      await upload.mutateAsync(formData);
+      setFileName(file.name);
       setResults([]);
       setSource('');
       showToast('Planilha de tabela carregada com sucesso.', 'success');
-      await loadSearchHistory();
     } catch (error) {
       console.error(error);
-      setRowCount(null);
-      setTabelaLoaded(false);
+      setFileName('');
       showToast(error instanceof Error ? error.message : 'Erro ao carregar a planilha.', 'error');
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -109,9 +82,8 @@ const Tabela: React.FC = () => {
       return;
     }
 
-    setLoading(true);
     try {
-      const response = await searchTable(searchTerm);
+      const response = await search.mutateAsync(searchTerm);
       setResults(response.results ?? []);
       setSource(response.source);
       if ((response.results ?? []).length === 0) {
@@ -119,14 +91,11 @@ const Tabela: React.FC = () => {
       } else {
         showToast(`Busca feita com sucesso (${response.results.length} registros).`, 'success');
       }
-      await loadSearchHistory();
     } catch (error) {
       console.error(error);
       setResults([]);
       setSource('');
       showToast(error instanceof Error ? error.message : 'Erro ao buscar na tabela.', 'error');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -142,8 +111,7 @@ const Tabela: React.FC = () => {
 
   const handleClearHistory = async () => {
     try {
-      await clearTableHistory();
-      setHistory([]);
+      await clearHistory.mutateAsync();
       showToast('Histórico de pesquisas limpo.', 'success');
     } catch (error) {
       console.error(error);
@@ -151,13 +119,9 @@ const Tabela: React.FC = () => {
     }
   };
 
-  // apagar o texto do input de classe 'search-input' quando pressionar escape
-  useShortcuts(['Escape'], () => {
-    const input = document.querySelector<HTMLInputElement>('.search-input');
-    if (input) {
-      input.value = '';
-    }
-  });
+  const clearSearchInput = useCallback(() => setQuery(''), []);
+
+  useShortcuts(['Escape'], clearSearchInput);
 
   return (
       <PageShell>

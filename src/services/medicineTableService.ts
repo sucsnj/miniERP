@@ -16,6 +16,11 @@ export interface TableSearchHistoryItem {
   updated_at: string;
 }
 
+export interface TableUploadResponse {
+  message: string;
+  rowCount?: number;
+}
+
 export interface TabelaSearchResponse {
   source: 'history' | 'table';
   results: TableRow[];
@@ -36,12 +41,12 @@ const handleJsonResponse = async (response: Response) => {
 };
 
 // Função assíncrona exportada.
-export const uploadTable = async (formData: FormData) => {
+export const uploadTable = async (formData: FormData): Promise<TableUploadResponse> => {
   const response = await fetch('/api/medicine-table', {
     method: 'POST',
     body: formData,
   });
-  return handleJsonResponse(response);
+  return handleJsonResponse(response) as Promise<TableUploadResponse>;
 };
 
 // Função assíncrona exportada.
