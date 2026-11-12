@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../contexts/AuthContext';
 import contasStyles from '../styles/payables.module.css';
 import {
   uploadTable,
@@ -32,6 +33,8 @@ const Tabela: React.FC = () => {
   const [uploading, setUploading] = useState(false);
 
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const loadSearchHistory = useCallback(async () => {
     try {
@@ -151,16 +154,20 @@ const Tabela: React.FC = () => {
       <Panel className={styles.uploadPanel}>
         <div className={`${styles.panelRow}`}>
           <div className={`${styles.uploadHelp}`}>
-            <Button type="button" variant="primary" className={`${styles.uploadButton}`} onClick={() => fileInputRef.current?.click()} isLoading={uploading}>
-              {uploading ? 'Carregando...' : 'Enviar nova planilha'}
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xls"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
+            {isAdmin && (
+              <Button type="button" variant="primary" className={`${styles.uploadButton}`} onClick={() => fileInputRef.current?.click()} isLoading={uploading}>
+                {uploading ? 'Carregando...' : 'Enviar nova planilha'}
+              </Button>
+            )}
+            {isAdmin && (
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            )}
 
             <form onSubmit={handleSearch} className={`${styles.searchForm}`}>
               <div className={`${styles.searchField}`}>
@@ -245,9 +252,11 @@ const Tabela: React.FC = () => {
               <h2>Histórico de pesquisas</h2>
               <p>Últimas 100 buscas gravadas no cache.</p>
             </div>
-            <Button type="button" variant="outline" onClick={handleClearHistory}>
-              Limpar histórico
-            </Button>
+            {isAdmin && (
+              <Button type="button" variant="outline" onClick={handleClearHistory}>
+                Limpar histórico
+              </Button>
+            )}
           </div>
 
           {history.length > 0 ? (

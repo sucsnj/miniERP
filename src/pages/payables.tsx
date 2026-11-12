@@ -25,6 +25,7 @@ import { highlightField } from '../utils/forms';
 import { useShortcuts } from '../utils/shortcuts';
 import { getDateArray, toTimestamp, now } from '../utils/date';
 import { validateRequired, validateCurrency } from '../utils/validation';
+import { useAuth } from '../contexts/AuthContext';
 
 const today = now().format('YYYY-MM-DD');
 
@@ -87,6 +88,8 @@ const Payables: React.FC = () => {
   };
 
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const loadMonthAccounts = useCallback(async () => {
     try {
@@ -356,6 +359,7 @@ const Payables: React.FC = () => {
             handleView={handleView}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
+            canWrite={isAdmin}
             handleStartPayment={(account) => {
               setSelectedAccount(account);
               setPaymentNotes(account.bankNotes || '');
@@ -374,7 +378,8 @@ const Payables: React.FC = () => {
             }}
           />
 
-          <PayablesForm
+          {isAdmin && (
+            <PayablesForm
             distributor={distributor}
             setDistributor={setDistributor}
             amount={amount}
@@ -394,13 +399,15 @@ const Payables: React.FC = () => {
             amountInputRef={amountInputRef}
             dataInputRef={dataInputRef}
             documentInputRef={documentInputRef}
-          />
+            />
+          )}
 
           <PayablesLastTen
             latestAccounts={latestAccounts}
             handleView={handleView}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
+            canWrite={isAdmin}
           />
         </section>
 
@@ -444,6 +451,7 @@ const Payables: React.FC = () => {
         }}
         onClosePayModal={() => setPayModalOpen(false)}
         onCancelPayment={handleCancelPayment}
+        canWrite={isAdmin}
       />
     </PageShell>
   );

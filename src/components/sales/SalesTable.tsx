@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import { toTimestamp } from '../../utils/date';
 import { readStoredNumber, writeStoredValue } from '../../utils/storage';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SalesTableProps {
   sales: DailySale[];
@@ -20,6 +21,8 @@ interface SalesTableProps {
 }
 
 const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const totalSales = sales.reduce((total, sale) => total + sale.amount, 0);
 
   const [maxSales, setMaxSales] = React.useState(() => readStoredNumber('maxSales', 5));
@@ -130,7 +133,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ sales, onEditSale, onDeleteSale
                           Editar
                         </Button>
                       ) : null}
-                      {onDeleteSale ? (
+                      {onDeleteSale && isAdmin ? (
                         <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(sale.id)} leftIcon={<DeleteIcon />}>
                           Excluir
                         </Button>

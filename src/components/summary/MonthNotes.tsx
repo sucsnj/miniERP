@@ -7,6 +7,7 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '../../styles/monthNotes.module.css';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Array com os months
 const months = [
@@ -23,6 +24,8 @@ interface MonthNotesProps {
 
 const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth }) => {
     const queryClient = useQueryClient();
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'admin';
 
     // estado para o diálogo
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -90,7 +93,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                             <th>Emissão</th>
                             <th>Distribuidora</th>
                             <th>Valor</th>
-                            <th>Ações</th>
+                            {isAdmin && <th>Ações</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -99,11 +102,13 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                                 <td>{formatDateString(n.issueDate, 'DD/MM/YYYY HH:mm')}</td>
                                 <td>{n.supplierName}</td>
                                 <td>R$ {formatCurrency(Number(n.amount), 2)}</td>
-                                <td>
-                                    <Button variant="danger" size="sm" onClick={() => openConfirm(n.id)} leftIcon={<DeleteIcon />}>
-                                        Excluir
-                                    </Button>
-                                </td>
+                                {isAdmin && (
+                                  <td>
+                                      <Button variant="danger" size="sm" onClick={() => openConfirm(n.id)} leftIcon={<DeleteIcon />}>
+                                          Excluir
+                                      </Button>
+                                  </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>

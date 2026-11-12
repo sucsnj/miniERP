@@ -7,6 +7,7 @@ import {
   autoConsolidate
 } from '../services/salesService';
 import { canEdit } from '../utils/edit';
+import { useAuth } from '../contexts/AuthContext';
 
 // Função que exibe mensagens (injetada pelo hook useToast)
 type ToastFn = (message: string, type: 'success' | 'error' | 'info') => void;
@@ -22,6 +23,7 @@ export interface UseSalesOptions {
 // Hook que concentra o estado de vendas e todas as ações de vendas:
 // carregar, consolidar, fazer backup, editar, salvar e excluir.
 export const useSales = (month: number, year: number, showToast: ToastFn, options: UseSalesOptions = {}) => {
+  const { user } = useAuth();
   // Lista de vendas diárias do período selecionado
   const [sales, setSales] = useState<DailySale[]>([]);
   // Venda atualmente em edição (null = nenhuma)
@@ -40,13 +42,13 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
       const date = await fetchDailySales(month, year, filter);
       setSales(date);
 
-      if (autoConsolidateEnabled) {
+      if (autoConsolidateEnabled && user?.role === 'admin') {
         await autoConsolidate();
       }
     } finally {
       setLoading(false);
     }
-  }, [month, year, filter, autoConsolidateEnabled]);
+  }, [month, year, filter, autoConsolidateEnabled, user?.role]);
 
   // Consolida o mês selecionado e informa o resultado
   const handleConsolidate = async () => {

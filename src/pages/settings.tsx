@@ -4,6 +4,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
+import RequireAdmin from '@/components/auth/RequireAdmin';
 import { useThemeMode, type ThemeMode } from '../contexts/ThemeContext';
 import { useSettings, type RecentSalesCount } from '../contexts/SettingsContext';
 
@@ -31,6 +32,7 @@ const SettingsPage = () => {
   const { recentSalesCount, setRecentSalesCount, timezone, setTimezone, autoFocusSaleInput, setAutoFocusSaleInput, autoFocusSaleInputDelay, setAutoFocusSaleInputDelay, pixKey, setPixKey, pixName, setPixName, pixBank, setPixBank, pixCity, setPixCity, clearPixData } = useSettings();
 
   return (
+    <RequireAdmin>
     <>
       <Head>
         <title>Configurações</title>
@@ -170,6 +172,7 @@ const SettingsPage = () => {
         </div>
       </PageShell>
     </>
+    </RequireAdmin>
   );
 };
 

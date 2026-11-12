@@ -15,6 +15,7 @@ interface PayablesLastTenProps {
   handleView: (account: AccountDetails) => void;
   handleDelete: (id: string) => void;
   handleEdit: (account: AccountDetails) => void;
+  canWrite?: boolean;
 }
 
 const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
@@ -22,6 +23,7 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
   handleView,
   handleDelete,
   handleEdit,
+  canWrite = true,
 }) => {
 
   // Estado para o diálogo
@@ -55,12 +57,16 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
                 <Button type="button" variant="info" size="sm" onClick={() => handleView(account)} leftIcon={<VisibilityIcon />}>
                   Ver
                 </Button>
-                <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
-                  Excluir
-                </Button>
-                <Button type="button" variant="info" size="sm" onClick={() => handleEdit(account)} leftIcon={<EditIcon />}>
-                  Editar
-                </Button>
+                {canWrite && (
+                  <>
+                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
+                      Excluir
+                    </Button>
+                    <Button type="button" variant="info" size="sm" onClick={() => handleEdit(account)} leftIcon={<EditIcon />}>
+                      Editar
+                    </Button>
+                  </>
+                )}
               </td>
             </tr>
           ))}

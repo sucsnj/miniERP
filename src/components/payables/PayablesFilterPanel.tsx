@@ -28,6 +28,7 @@ interface PayablesFilterPanelProps {
   handleView: (account: AccountDetails) => void;
   handleDelete: (id: string) => void;
   handleEdit: (account: AccountDetails) => void;
+  canWrite?: boolean;
   handleStartPayment: (account: AccountDetails) => void;
   onClearFilters: () => void;
 }
@@ -44,6 +45,7 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
   filteredAccounts,
   handleView,
   handleDelete,
+  canWrite = true,
   handleStartPayment,
   onClearFilters,
 }) => {
@@ -154,10 +156,12 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
                   <Button type="button" variant="info" size="sm" onClick={() => handleView(account)} leftIcon={<VisibilityIcon />}>
                     Ver
                   </Button>
-                  <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
-                    Excluir
-                  </Button>
-                  {account.status === 'Pendente' ? (
+                  {canWrite && (
+                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
+                      Excluir
+                    </Button>
+                  )}
+                  {canWrite && account.status === 'Pendente' ? (
                     <Button
                       type="button"
                       variant="success"

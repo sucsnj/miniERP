@@ -24,6 +24,7 @@ import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 import { ProductFiltersState } from '@/components/products/ProductFilters';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProductsPage: React.FC = () => {
 
@@ -61,6 +62,8 @@ const ProductsPage: React.FC = () => {
 
   // Notificações (toast) do store global
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   // Carrega opções auxiliares para os filtros
   const loadAuxiliaryData = useCallback(async () => {
@@ -265,6 +268,7 @@ const ProductsPage: React.FC = () => {
               totalPages={totalPages}
               onPageChange={setPage}
               onToggleStatus={handleToggleStatus}
+              canWrite={isAdmin}
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}
             />
@@ -285,9 +289,11 @@ const ProductsPage: React.FC = () => {
         )}
 
         {/* Botão flutuante: Novo Cadastro */}
-        <Link href="/registration" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
-          <span className={styles.fabIcon}>+</span>
-        </Link>
+        {isAdmin && (
+          <Link href="/registration" className={styles.fab} id="fab-novo-cadastro" title="Novo cadastro">
+            <span className={styles.fabIcon}>+</span>
+          </Link>
+        )}
       </PageShell>
     </>
   );

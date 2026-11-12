@@ -1,19 +1,20 @@
 # `src/components/common/Nav.tsx`
 
-> Barra de navegação superior com links das rotas e menu de configurações.
+> Barra superior autenticada com links, seletor de loja e logout.
 
 ## O que faz
 
-- Links para `/`, `/resumo`, `/historico`, `/payables`, `/medicine-table`, `/products`.
-- Menu de configurações (ícone de engrenagem) com a primeira função disponível: alteração de tema (`system`, `light`, `dark`), aplicando `data-theme` em `document.documentElement` e persistindo em `localStorage['themeMode']`.
+- Links para `/`, `/summary`, `/history`, `/payables`, `/medicine-table`, `/products`.
+- Seletor de loja: admin vê todas as lojas ativas da empresa; merchant, apenas lojas autorizadas.
+- Mostra nome do usuário e acesso a Settings apenas para `admin`.
+- Botão de logout revoga a sessão atual.
 
 ## Relações
 
-- **Usa:** `next/link`, `nav.module.css`, ícones MUI (`Settings`, `Check`) e `@mui/material/Menu`.
-- **Usado por:** layout global (aparece em todas as páginas).
+- **Usa:** `useAuth` (`src/contexts/AuthContext.tsx`), `next/link`, ícones MUI, `nav.module.css`, `/api/stores`.
+- **Usado por:** layout global (fora de `/login` e `/setup`).
 
 ## Notas
 
-- Estado inicial do tema lido do `localStorage` (default `system`); aplicação direta no `document`.
-- O tema inicial é aplicado antes da hidratação por [_document](../../pages/_document.md), evitando flash.
-- Bloco de logo comentado aguardando melhoria de UI.
+- Troca de loja chama `POST /api/stores` e depois `refresh()` do contexto.
+- Settings é ocultado para merchant.

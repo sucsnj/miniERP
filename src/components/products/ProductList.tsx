@@ -18,6 +18,7 @@ interface ProductListProps {
     onEdit(item: ItemData): void;
     onDelete(item: ItemData): void;
     onToggleStatus(item: ItemData): void;
+    canWrite?: boolean;
 
     total: number;
     page: number;
@@ -26,7 +27,7 @@ interface ProductListProps {
     onPageChange(page: number): void;
 }
 
-const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, loading, onEdit, onDelete, onPageChange, onToggleStatus }) => {
+const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, loading, onEdit, onDelete, onPageChange, onToggleStatus, canWrite = true }) => {
 
     return (
         <div>
@@ -48,7 +49,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                     <th>Preço Venda</th>
                                     <th>Estoque</th>
                                     <th>Status</th>
-                                    <th style={{ width: '100px' }}>Ações</th>
+                                    {canWrite && <th style={{ width: '100px' }}>Ações</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -99,9 +100,10 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                     </span>
                                                 )}
                                             </td>
-                                            <td>
-                                                <div className={styles.actionsCell}>
-                                                    {item.kind === 'PRODUCT' && (
+                                            {canWrite && (
+                                                <td>
+                                                 <div className={styles.actionsCell}>
+                                                     {item.kind === 'PRODUCT' && (
                                                         <Button
                                                             type="button"
                                                             variant={item.active === 1 ? 'warning' : 'success'}
@@ -136,8 +138,9 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                         id={`delete-item-${item.id}`}
                                                         leftIcon={<DeleteIcon fontSize="small" />}
                                                     />
-                                                </div>
-                                            </td>
+                                                 </div>
+                                                </td>
+                                                )}
                                         </tr>
                                     );
                                 })}

@@ -16,6 +16,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
+import { useAuth } from '../contexts/AuthContext';
 dayjs.locale('pt-br');
 
 // Componente React: tela de Resumo Mensal.
@@ -24,6 +25,8 @@ dayjs.locale('pt-br');
 const SummaryPage: React.FC = () => {
   // Notificações (toast) exibidas na tela
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   // Consolidações mensais (carregar e excluir)
   const { mensais, loadMensais, handleDelete } = useMonthlyData(showToast);
   // Diálogo de confirmação antes de excluir
@@ -80,9 +83,11 @@ const SummaryPage: React.FC = () => {
                 }}
               />
             </label>
-            <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
-              Consolidar Mês
-            </Button>
+            {isAdmin && (
+              <Button variant="primary" onClick={handleConsolidate} leftIcon={<DoneAllIcon />}>
+                Consolidar Mês
+              </Button>
+            )}
           </div>
         </Panel>
         <Panel>
@@ -119,7 +124,7 @@ const SummaryPage: React.FC = () => {
                 <th>Maior venda</th>
                 <th>Quantidade</th>
                 <th>Total</th>
-                <th>Ações</th>
+                {isAdmin && <th>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -135,11 +140,13 @@ const SummaryPage: React.FC = () => {
                   <td>R$ {formatCurrency(m.maiorVenda, 2)}</td>
                   <td>{m.qtdVendas}</td>
                   <td>R$ {formatCurrency(m.total, 2)}</td>
-                  <td>
-                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
-                      Excluir
-                    </Button>
-                  </td>
+                  {isAdmin && (
+                    <td>
+                      <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
+                        Excluir
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -153,7 +160,7 @@ const SummaryPage: React.FC = () => {
                 <th>Média de clientes</th>
                 <th>Quantidade</th>
                 <th>Total</th>
-                <th>Ações</th>
+                {isAdmin && <th>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -163,11 +170,13 @@ const SummaryPage: React.FC = () => {
                   <td>{formatCurrency(m.mediaClientesEsp)}</td>
                   <td>{m.qtdVendasEsp}</td>
                   <td>R$ {formatCurrency(m.totalEsp, 2)}</td>
-                  <td>
-                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
-                      Excluir
-                    </Button>
-                  </td>
+                  {isAdmin && (
+                    <td>
+                      <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(m.id)} leftIcon={<DeleteIcon />}>
+                        Excluir
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

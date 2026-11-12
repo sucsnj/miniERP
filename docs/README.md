@@ -76,6 +76,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
 - [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.
 - [src/pages/api/auth/change-password.md](src/pages/api/auth/change-password.md) - troca de senha e revogação de sessões.
+- [src/pages/api/stores.md](src/pages/api/stores.md) - lojas autorizadas e troca de loja atual.
 - [src/pages/api/sales.md](src/pages/api/sales.md) - CRUD de vendas diárias.
 - [src/pages/api/sale-items.md](src/pages/api/sale-items.md) - itens de venda (carrinho).
 - [src/pages/api/invoices.md](src/pages/api/invoices.md) - consulta de notas fiscais.
@@ -173,6 +174,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 - [src/contexts/AuthContext.md](src/contexts/AuthContext.md) - contexto global do usuário autenticado (`/api/auth/me`, login e logout).
 - [src/components/auth/AuthGate.md](src/components/auth/AuthGate.md) - gate client-side que protege as rotas autenticadas e redireciona para login.
+- [src/components/auth/RequireAdmin.md](src/components/auth/RequireAdmin.md) - gate de áreas exclusivas de administradores.
 
 ### Gerais (`src/components/common/`)
 

@@ -6,12 +6,12 @@
 
 - Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `loading`.
 - Parâmetros: `(month, year, showToast, options?)` com `UseSalesOptions` (`filter?: 'todas'|'positivas'|'negativas'`, `autoConsolidate?: boolean`).
-- `loadSales()`: busca via `fetchDailySales(month, year, filter)` e dispara `autoConsolidate()` se ativo (padrões aplicados).
+- `loadSales()`: busca via `fetchDailySales(month, year, filter)` e dispara `autoConsolidate()` apenas se ativo e o usuário for `admin`.
 - Ações: `handleConsolidate()` (consolida mês), `handleBackup()` (executa backup e exibe mensagem), `handleEditSale(sale)`, `handleCancelEdit()`, `handleSaved()` (fecha edição e recarrega), `handleDeleteSale(id)` (verifica existência e regra `canEdit(sale.data)`; exibe toasts apropriados).
 
 ## Relações
 
-- **Usa:** `fetchDailySales`, `consolidateMonthly`, `backupDatabase`, `deleteSale`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit` (`src/utils/edit.ts`).
+- **Usa:** `fetchDailySales`, `consolidateMonthly`, `backupDatabase`, `deleteSale`, `autoConsolidate`, `DailySale` (`src/services/salesService.ts`), `canEdit` (`src/utils/edit.ts`), `useAuth` (`src/contexts/AuthContext.tsx`).
 - **Usado por:** páginas/componentes relacionados a vendas diárias.
 
 ## Notas

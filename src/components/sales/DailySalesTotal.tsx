@@ -1,3 +1,4 @@
+import { useAuth } from '../../contexts/AuthContext';
 import { ReactNode } from 'react';
 import { DailySale } from '../../services/salesService';
 import { formatCurrency } from '../../utils/formatter';
@@ -21,6 +22,8 @@ interface DailySalesTotalProps {
 
 const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, recentSales = [], recentSalesCount = 4, onEditSale, onDeleteSale, children }) => {
   
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const total = sales.reduce((sum, sale) => sum + sale.amount, 0);
   const salesCount = sales.length;
   const averageTicket = salesCount > 0 ? total / salesCount : 0;
@@ -32,7 +35,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
 
   // Deleta a última venda do histórico de vendas
   useShortcuts(['Delete'], () => {
-    if (recentSales.length > 0 && onDeleteSale) {
+    if (recentSales.length > 0 && onDeleteSale && isAdmin) {
       const latestSale = [...recentSales]
         .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
 
@@ -126,7 +129,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                               </Button>
                             )}
 
-                            {onDeleteSale && (
+                            {onDeleteSale && isAdmin && (
                               <Button
                                 type="button"
                                 variant="danger"

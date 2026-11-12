@@ -31,6 +31,7 @@ interface PayablesModalsProps {
   onClosePayModal: () => void;
   onCancelPayment: (id: string) => void;
   onSave: (event: React.FormEvent<HTMLButtonElement>) => void;
+  canWrite?: boolean;
 }
 
 const PayablesModals: React.FC<PayablesModalsProps> = ({
@@ -57,6 +58,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
   onConfirmPayment,
   onClosePayModal,
   onCancelPayment,
+  canWrite = true,
 }) => {
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -96,18 +98,22 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
             <h2>
               Detalhes da conta
               {editingAccount?.id === selectedAccount.id ? (
-                <>
-                  <Button type="button" variant="success" size="sm" onClick={(event) => onSave(event)}>
-                    Salvar
-                  </Button>
-                  <Button type="button" variant="outline" size="sm" onClick={onCancelEdit}>
-                    Cancelar
-                  </Button>
-                </>
+                canWrite && (
+                  <>
+                    <Button type="button" variant="success" size="sm" onClick={(event) => onSave(event)}>
+                      Salvar
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={onCancelEdit}>
+                      Cancelar
+                    </Button>
+                  </>
+                )
               ) : (
-                <Button type="button" variant="info" size="sm" onClick={() => onEdit(selectedAccount)}>
-                  Editar
-                </Button>
+                canWrite && (
+                  <Button type="button" variant="info" size="sm" onClick={() => onEdit(selectedAccount)}>
+                    Editar
+                  </Button>
+                )
               )}
             </h2>
 
@@ -181,27 +187,29 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
               )}
             </div>
             <div className={styles.modalActions}>
-              {selectedAccount.status === 'Pendente' ? (
-                <Button
-                  type="button"
-                  variant="success"
-                  size="sm"
-                  onClick={() => onStartPayment(selectedAccount)}
-                >
-                  Pagar conta
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="warning"
-                  size="sm"
-                  onClick={() => {
-                    onCancelPayment(selectedAccount.id);
-                    onCancelEdit();
-                  }}
-                >
-                  Cancelar pagamento
-                </Button>
+              {canWrite && (
+                selectedAccount.status === 'Pendente' ? (
+                  <Button
+                    type="button"
+                    variant="success"
+                    size="sm"
+                    onClick={() => onStartPayment(selectedAccount)}
+                  >
+                    Pagar conta
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="warning"
+                    size="sm"
+                    onClick={() => {
+                      onCancelPayment(selectedAccount.id);
+                      onCancelEdit();
+                    }}
+                  >
+                    Cancelar pagamento
+                  </Button>
+                )
               )}
               <Button
                 type="button"

@@ -37,6 +37,7 @@ import { useBrand } from '@/hooks/useBrand';
 import { useSupplier } from '@/hooks/useSupplier';
 import { useUnitOfMeasure } from '@/hooks/useUnitOfMeasure';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
+import RequireAdmin from '@/components/auth/RequireAdmin';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -660,6 +661,7 @@ const RegistrationPage: React.FC = () => {
     };
 
     return (
+        <RequireAdmin>
         <>
             <Head>
                 <title>Produtos e Serviços | Cadastro e Edição</title>
@@ -1115,6 +1117,7 @@ const RegistrationPage: React.FC = () => {
                 />
             </PageShell>
         </>
+        </RequireAdmin>
     );
 };
 
