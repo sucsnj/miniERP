@@ -22,8 +22,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const isPublic = PUBLIC_PATHS.includes(router.pathname);
 
   return (
-    <ThemeProvider>
-      <SettingsProvider>
+    <SettingsProvider>
+      <ThemeProvider>
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
             <Head>
@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
             </AuthGate>
           </QueryClientProvider>
         </AuthProvider>
-      </SettingsProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }

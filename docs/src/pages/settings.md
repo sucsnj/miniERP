@@ -4,14 +4,14 @@
 
 ## O que faz
 
-- Exibe as preferências do aplicativo.
-- Permite alterar o tema (`system`, `light`, `dark`) via `useThemeMode`.
-- Permite ativar/desativar o foco automático no campo de venda e escolher o delay, em segundos (desabilitado quando o foco automático está desativado).
-- Permite preencher os dados obrigatórios do PIX (`pixKey`, `pixName`, `pixBank`, `pixCity`) e limpá-los (campos e `localStorage`).
+- Exibe o padrão da empresa (`company_settings`) e overrides locais por dispositivo.
+- Admin altera tema, fuso horário, histórico recente, foco automático/delay e PIX da empresa.
+- Merchant visualiza os padrões da empresa e pode usar overrides locais (tema, fuso, recentes, foco/delay).
+- PIX da empresa é compartilhado, editável apenas por admin; merchant pode gerar QR, mas não alterar dados PIX.
 
 ## Relações
 
-- **Usa:** `src/contexts/ThemeContext.tsx`, componentes comuns de layout.
+- **Usa:** `src/contexts/SettingsContext.tsx`, `src/contexts/ThemeContext.tsx`, `src/contexts/AuthContext.tsx`, componentes comuns de layout.
 - **Acessada por:** link de configurações na [Nav](../components/common/Nav.md).
 
 ## Notas

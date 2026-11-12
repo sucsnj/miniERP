@@ -1,17 +1,14 @@
 # `src/contexts/ThemeContext.tsx`
 
-> Contexto global de tema do aplicativo.
+> Aplica `data-theme` conforme o tema efetivo de `SettingsContext`.
 
 ## O que faz
 
-- Mantém o modo de tema (`system`, `light`, `dark`).
-- Lê a preferência salva em `localStorage['themeMode']` após a montagem.
-- Aplica `data-theme` em `document.documentElement` e persiste a escolha.
+- Lê `themeMode` efetivo (override local ou padrão da empresa).
+- Aplica/remove `data-theme` em `document.documentElement`.
+- Mantém `useThemeMode()` como alias de compatibilidade.
 
 ## Relações
 
-- **Usado por:** [Nav](../components/common/Nav.md), [settings](../pages/settings.md).
-
-## Notas
-
-- Estado inicial consistente (`system`) para evitar mismatch de hidratação; leitura do `localStorage` ocorre em efeito.
+- **Usa:** `src/contexts/SettingsContext.tsx`.
+- **Usado por:** `/settings`, navegação.

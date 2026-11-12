@@ -1,26 +1,15 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import { readStoredString, writeStoredValue } from '../utils/storage';
+import { useEffect, type ReactNode } from 'react';
+import { useSettings, type ThemeMode } from './SettingsContext';
 
-export type ThemeMode = 'system' | 'light' | 'dark';
+export type { ThemeMode };
 
 interface ThemeContextValue {
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
-
-  useEffect(() => {
-    const saved = readStoredString('themeMode');
-    if (saved === 'light' || saved === 'dark' || saved === 'system') {
-      const id = window.setTimeout(() => setThemeMode(saved), 0);
-      return () => window.clearTimeout(id);
-    }
-  }, []);
+  const { themeMode } = useSettings();
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -30,18 +19,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       root.dataset.theme = themeMode;
     }
-    if (typeof window !== 'undefined') {
-      writeStoredValue('themeMode', themeMode);
-    }
   }, [themeMode]);
 
-  return <ThemeContext.Provider value={{ themeMode, setThemeMode }}>{children}</ThemeContext.Provider>;
+  return <>{children}</>;
 }
 
 export function useThemeMode(): ThemeContextValue {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useThemeMode must be used within ThemeProvider');
-  }
-  return context;
+  const { themeMode, setThemeMode } = useSettings();
+  return { themeMode, setThemeMode };
 }

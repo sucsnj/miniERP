@@ -6,7 +6,7 @@
 
 - Links para `/`, `/summary`, `/history`, `/payables`, `/medicine-table`, `/products` e, para admin, `/admin`.
 - Seletor de loja: admin vê todas as lojas ativas da empresa; merchant, apenas lojas autorizadas.
-- Mostra nome do usuário e acesso a Settings apenas para `admin`.
+- Mostra nome do usuário; Settings disponível para admin e merchant (merchant com controles administrativos desabilitados).
 - Botão de logout revoga a sessão atual.
 
 ## Relações

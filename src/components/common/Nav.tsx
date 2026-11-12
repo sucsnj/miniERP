@@ -109,11 +109,9 @@ const Nav: React.FC = () => {
             {user.name}
           </span>
         )}
-        {isAdmin && (
-          <Link href="/settings" className={styles.settingsLink} aria-label="Configurações">
-            <SettingsIcon />
-          </Link>
-        )}
+        <Link href="/settings" className={styles.settingsLink} aria-label="Configurações">
+          <SettingsIcon />
+        </Link>
         <button type="button" onClick={() => void logout()} aria-label="Sair" title="Sair" style={{ display: 'inline-flex', alignItems: 'center', padding: '6px' }}>
           <LogoutIcon fontSize="small" />
         </button>

@@ -13,7 +13,7 @@ const DEFAULT_TZ = 'America/Recife';
 
 export function getTimezone(): string {
   if (typeof window === 'undefined') return DEFAULT_TZ;
-  return window.localStorage.getItem('timezone') || DEFAULT_TZ;
+  return window.localStorage.getItem('timezone') || window.localStorage.getItem('timezoneCompany') || DEFAULT_TZ;
 }
 
 // Função utilitária para pegar o "agora"
