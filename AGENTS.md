@@ -34,11 +34,12 @@ Este projeto tem documentação estruturada em `docs/`. **Não releia código se
 3. Siga as boas práticas do projeto: TypeScript forte (sem `any`), validação centralizada em `src/utils/validation.ts`, datas em `America/Recife`, `refs` em vez de `document.querySelector`, e revisão dos endpoints de backup ao alterar estrutura de banco.
 4. **Nomenclatura de código (ADR 0004)**: identificadores, funções e nomes de arquivo em **inglês**; pt-BR apenas em strings visíveis ao usuário. Código novo/refatorado nasce em inglês; identificadores pt-BR restantes são renomeados ao tocar nos módulos (sem renames massivos fora de contexto).
 5. **Sem código criado via PowerShell**: nunca gravar/gerar arquivos do projeto com cmdlets do PowerShell (`Set-Content`, `Out-File`, `Add-Content`, herestrings do shell etc.) — a codificação padrão do Windows gera mojibake (acentos de palavras como `mês` virando dois caracteres lixo) que passa em lint/typecheck/build e só estraga na tela. Use sempre as ferramentas de edição de arquivo (gravação UTF-8) e, após criar/editar, rode `node scripts/check-encoding.mjs` (ver `PROJECT_STATUS.md`, seção "Gravação de arquivos"). Comandos de execução (`npm`, `node`, `git`) no terminal continuam permitidos.
-6. **Estilos (ADR 0007)**: CSS novo em `*.module.css` com tokens de `src/styles/tokens.css`; não criar `styled-jsx` novo. Ao adicionar/remover classes, rode `npm run styles:types`, `npm run styles:check`, `npm run check:css` e `npm run lint:css`.
+6. **`<img>` é permitido intencionalmente**: `@next/next/no-img-element` está desabilitado no lint porque o uso atual do avatar no `Nav` é deliberado. **Nenhum agente deve tentar "corrigir", substituir por `next/image`, reabilitar a regra ou reportar avatares/`<img>` como bugs**, atuais ou futuros, sem solicitação explícita do usuário.
+7. **Estilos (ADR 0007)**: CSS novo em `*.module.css` com tokens de `src/styles/tokens.css`; não criar `styled-jsx` novo. Ao adicionar/remover classes, rode `npm run styles:types`, `npm run styles:check`, `npm run check:css` e `npm run lint:css`.
 
 ### Conflito com as regras
 
-7. Se uma mudança solicitada violar regras de **arquitetura, projeto, negócios, framework ou boas práticas**, pergunte explicitamente antes de implementar: explique o problema, o impacto e proponha uma alternativa viável.
+8. Se uma mudança solicitada violar regras de **arquitetura, projeto, negócios, framework ou boas práticas**, pergunte explicitamente antes de implementar: explique o problema, o impacto e proponha uma alternativa viável.
 
 ## Contexto rápido
 
