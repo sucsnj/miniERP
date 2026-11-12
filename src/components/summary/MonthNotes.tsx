@@ -1,6 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react';
-import { fetchInvoicesByPeriod, deleteInvoice, InvoiceDetails } from '../../services/invoicesService';
+import { fetchInvoicesByPeriod, type InvoiceDetails } from '../../services/invoicesService';
+import { tenantKeys, identityFromUser } from '../../utils/queryKeys';
+import { useDeleteInvoice } from '../../hooks/usePayablesMutations';
 import { formatCurrency } from '../../utils/formatter';
 import { formatDateString, getCurrentYear } from '../../utils/date';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
@@ -24,20 +26,25 @@ interface MonthNotesProps {
 }
 
 const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth }) => {
-    const queryClient = useQueryClient();
     const { user } = useAuth();
     const isAdmin = user?.role === 'admin';
+    const deleteInvoiceMutation = useDeleteInvoice();
 
     // estado para o diálogo
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
+    const identity = user ? identityFromUser(user) : null;
     // Hook que busca notas automaticamente
     const { data: invoices = [], isLoading } = useQuery<InvoiceDetails[]>({
-        queryKey: ['notas', year, month],
-        queryFn: () => fetchInvoicesByPeriod(year, month).then((data) =>
-            Array.isArray(data) ? data : [data]
-        ),
+        queryKey: identity
+            ? tenantKeys.invoicesByMonth(identity, year, month)
+            : ['invoices', 'disabled', year, month],
+        enabled: Boolean(identity),
+        queryFn: () => fetchInvoicesByPeriod(year, month),
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 
     usePendingTask('month-notes', isLoading);
@@ -47,9 +54,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
 
     const handleDelete = async (id: string) => {
         try {
-            await deleteInvoice(id);
-            // invalida cache e força refetch
-            queryClient.invalidateQueries({ queryKey: ['notas', year, month] });
+            await deleteInvoiceMutation.mutateAsync({ id });
         } catch (error) {
             console.error('Erro ao excluir nota:', error);
         }

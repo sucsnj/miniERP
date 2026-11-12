@@ -5,8 +5,8 @@
 ## O que faz
 
 - Expõe `AccountDetails` com campos de conta a pagar (vencimento `YYYY-MM-DD`, status `Pendente`/`Pago`).
-- Faz chamadas REST/ação para listar, criar, importar XML, pagar/cancelar, atualizar, excluir e gerar backup.
-- Retorna `response.json()` sem lançar erro (a página valida `error`/`message`).
+- Envia e recebe payloads tipados; `parseResponse<T>` lanca `Error` em `!response.ok` para as mutations usarem rollback.
+- `fetchAccounts` mapeia a resposta para `AccountDetails` e lanca erro em falha.
 
 ## Relações
 

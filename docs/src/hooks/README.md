@@ -16,6 +16,8 @@
 | [useFilter.md](./useFilter.md) | Filtro do histórico com persistência em localStorage. |
 | [useImportItems.md](./useImportItems.md) | Estado/lógica de importação de itens via XML de NF-e. |
 | [useMonthlyData.md](./useMonthlyData.md) | Consolidações mensais (carregar/excluir). Exporta `useMonthlyData`. |
+| [usePayables.md](./usePayables.md) | Consultas do módulo de contas (mês/ano) via `useQuery`, tenant-scoped. Exporta `usePayables`. |
+| [usePayablesMutations.md](./usePayablesMutations.md) | Mutations de payables/invoices com optimistic update/rollback no cache do TanStack Query. |
 | [useSales.md](./useSales.md) | Estado/ações de vendas diárias por período. Exporta `useSales`. |
 | [useSalesMutations.md](./useSalesMutations.md) | Mutations de vendas com optimistic update/rollback no cache do TanStack Query. |
 | [useSupplier.md](./useSupplier.md) | Gerencia fornecedor no cadastro rápido. Exporta `useSupplier`. |

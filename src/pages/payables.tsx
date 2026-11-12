@@ -1,6 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMemo, useRef, useState } from 'react';
 import { useToast } from '../hooks/useToast';
+import { usePayables } from '../hooks/usePayables';
+import {
+  useCreateAccount,
+  useUpdateAccount,
+  useDeleteAccount,
+  usePayAccount,
+  useCancelPayment,
+  useImportAccountsFromXml,
+} from '../hooks/usePayablesMutations';
 import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
@@ -12,37 +20,31 @@ import PayablesLastTen from '@/components/payables/PayablesLastTen';
 import PayablesModals from '@/components/payables/PayablesModals';
 import styles from '@/styles/payables.module.css';
 import PageShell from '@/components/common/PageShell';
-import {
-  fetchAccounts,
-  updateAccount,
-  cancelAccountPayment,
-  deleteAccount,
-  payAccount,
-  registerAccount,
-  AccountDetails,
-} from '../services/payablesService';
+import type { AccountDetails } from '../services/payablesService';
 import { highlightField } from '../utils/forms';
 import { useShortcuts } from '../utils/shortcuts';
 import { getDateArray, toTimestamp, now } from '../utils/date';
 import { validateRequired, validateCurrency } from '../utils/validation';
 import { useAuth } from '../contexts/AuthContext';
-import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 const today = now().format('YYYY-MM-DD');
 
 // Componente React.
 const Payables: React.FC = () => {
-  const queryClient = useQueryClient();
   const [year, setYear] = useState(getDateArray()[2]);
   const [month, setMonth] = useState(getDateArray()[1]);
-  const [monthLoading, setMonthLoading] = useState(true);
-  const [yearLoading, setYearLoading] = useState(true);
-  const [monthReady, setMonthReady] = useState(false);
-  const [yearReady, setYearReady] = useState(false);
-  usePendingTask('payables-month-initial', monthLoading && !monthReady);
-  usePendingTask('payables-year-initial', yearLoading && !yearReady);
-  const [accountsMonth, setAccountsMonth] = useState<AccountDetails[]>([]);
-  const [accountsYear, setAccountsYear] = useState<AccountDetails[]>([]);
+  const {
+    accountsMonth,
+    accountsYear,
+    loadMonthAccounts,
+    loadYearAccounts,
+  } = usePayables({ month, year });
+  const createAccountMutation = useCreateAccount();
+  const updateAccountMutation = useUpdateAccount();
+  const deleteAccountMutation = useDeleteAccount();
+  const payAccountMutation = usePayAccount();
+  const cancelPaymentMutation = useCancelPayment();
+  const importAccountsFromXmlMutation = useImportAccountsFromXml();
   const [distributor, setDistributor] = useState('');
   const [amount, setAmount] = useState('');
   const [dueDate, setDueDate] = useState(today);
@@ -64,6 +66,7 @@ const Payables: React.FC = () => {
   const amountInputRef = useRef<HTMLInputElement | null>(null);
   const dataInputRef = useRef<HTMLInputElement | null>(null);
   const documentInputRef = useRef<HTMLInputElement | null>(null);
+  const xmlInputRef = useRef<HTMLInputElement | null>(null);
 
   const [payModalOpen, setPayModalOpen] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState('');
@@ -97,46 +100,6 @@ const Payables: React.FC = () => {
   const { showToast } = useToast();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
-
-  const loadMonthAccounts = useCallback(async () => {
-    setMonthLoading(true);
-    try {
-      const date = await fetchAccounts(year, month);
-      setAccountsMonth(date);
-    } catch {
-      showToast('Não foi possível carregar as contas do mês.', 'error');
-    } finally {
-      setMonthLoading(false);
-      setMonthReady(true);
-    }
-  }, [year, month, showToast]);
-
-  const loadYearAccounts = useCallback(async () => {
-    setYearLoading(true);
-    try {
-      const date = await fetchAccounts(year);
-      setAccountsYear(date);
-    } catch {
-      showToast('Não foi possível carregar o resumo anual.', 'error');
-    } finally {
-      setYearLoading(false);
-      setYearReady(true);
-    }
-  }, [year, showToast]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadMonthAccounts();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [loadMonthAccounts]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadYearAccounts();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [loadYearAccounts]);
 
   const resetForm = () => {
     setDistributor('');
@@ -194,32 +157,30 @@ const Payables: React.FC = () => {
 
     try {
       if (editingAccount) {
-        await updateAccount(
-          editingAccount.id,
-          distributor,
-          numericAmount,
+        await updateAccountMutation.mutateAsync({
+          id: editingAccount.id,
+          supplierName: distributor,
+          amount: numericAmount,
           dueDate,
-          documentNumber,
+          document: documentNumber,
           bankNotes,
-        );
+        });
         showToast('Conta atualizada com sucesso.', 'success');
       } else {
-        // traz o retorno do backend para mostrar a mensagem de sucesso ou erro específico
-        // o retorno do json
-        const response = await registerAccount(distributor, numericAmount, dueDate, documentNumber, bankNotes);
-        if (response.error) {
-          showToast(response.error, 'error');
-          return;
-        }
-        // await registerAccount(distributor, numericAmount, dueDate, documentNumber, bankNotes);
-        showToast(response.message, 'success');
+        await createAccountMutation.mutateAsync({
+          supplierName: distributor,
+          amount: numericAmount,
+          dueDate,
+          document: documentNumber,
+          bankNotes,
+        });
+        showToast('Conta registrada com sucesso.', 'success');
       }
 
       resetForm();
-      loadMonthAccounts();
-      loadYearAccounts();
-    } catch {
-      showToast('Erro ao salvar a conta.', 'error');
+      await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao salvar a conta.', 'error');
     }
   };
 
@@ -239,13 +200,11 @@ const Payables: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteAccount(id);
+      await deleteAccountMutation.mutateAsync({ id });
       showToast('Conta excluída com sucesso.', 'success');
-      loadMonthAccounts();
-      loadYearAccounts();
       setSelectedAccount((current) => (current?.id === String(id) ? null : current));
-    } catch {
-      showToast('Erro ao excluir a conta.', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao excluir a conta.', 'error');
     }
   };
 
@@ -253,76 +212,59 @@ const Payables: React.FC = () => {
     if (!selectedAccount) return;
 
     try {
-      await updateAccount(
-        selectedAccount.id,
-        selectedAccount.supplierName,
-        selectedAccount.amount,
-        selectedAccount.dueDate,
-        selectedAccount.document,
-        paymentNotes
-      );
+      await updateAccountMutation.mutateAsync({
+        id: selectedAccount.id,
+        supplierName: selectedAccount.supplierName,
+        amount: selectedAccount.amount,
+        dueDate: selectedAccount.dueDate,
+        document: selectedAccount.document,
+        bankNotes: paymentNotes,
+      });
 
-      await payAccount(selectedAccount.id);
+      await payAccountMutation.mutateAsync({ id: selectedAccount.id });
 
       showToast('Conta paga com sucesso.', 'success');
-
       setPayModalOpen(false);
-
-      loadMonthAccounts();
-      loadYearAccounts();
-
       setSelectedAccount(null);
-    } catch {
-      showToast('Erro ao pagar conta.', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao pagar conta.', 'error');
     }
   };
 
   const handleCancelPayment = async (id: string) => {
     try {
-      await cancelAccountPayment(id);
+      await cancelPaymentMutation.mutateAsync({ id });
       showToast('Pagamento cancelado e conta voltou a Pendente.', 'success');
-      loadMonthAccounts();
-      loadYearAccounts();
       setSelectedAccount(null);
-    } catch {
-      showToast('Erro ao cancelar o pagamento.', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao cancelar o pagamento.', 'error');
     }
   };
 
   // Função para importação de XML
   const handleImportXml = async () => {
+    xmlInputRef.current?.click();
+  };
+
+  const handleImportXmlFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    const file = files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
     try {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = '.xml';
-      fileInput.onchange = async (event: Event) => {
-        const files = (event.target as HTMLInputElement).files;
-        const file = files?.[0];
-        if (!file) return;
+      const text = await file.text();
+      const result = await importAccountsFromXmlMutation.mutateAsync({ xml: text });
 
-        const text = await file.text();
-
-        const response = await fetch('/api/payables/import', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ xml: text }),
-        });
-
-        const result = await response.json();
-
-        if (result.sucesso) {
-          showToast(`Importação concluída: ${result.registros.length} registros inseridos`, 'success');
-          // Atualiza imediatamente a UI
-          await loadMonthAccounts();
-          await loadYearAccounts();
-          queryClient.invalidateQueries({ queryKey: ['notas'] });
-        } else {
-          showToast(`Erro: ${result.error || 'Falha ao importar XML'}`, 'error');
-        }
-      };
-      fileInput.click();
+      if (result.sucesso) {
+        showToast(`Importação concluída: ${result.registros?.length ?? 0} registros inseridos`, 'success');
+        // Atualiza imediatamente a UI
+        await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+      } else {
+        showToast(`Erro: ${result.error || 'Falha ao importar XML'}`, 'error');
+      }
     } catch (error) {
-      showToast('Erro ao importar XML', 'error');
+      showToast(error instanceof Error ? error.message : 'Erro ao importar XML', 'error');
       console.error(error);
     }
   };
@@ -433,6 +375,15 @@ const Payables: React.FC = () => {
         <Summary accountsYear={accountsYear} year={year} month={month} setYear={setYear} setMonth={setMonth} />
 
       </main>
+
+      <input
+        ref={xmlInputRef}
+        type="file"
+        accept=".xml"
+        className="hidden"
+        onChange={(event) => void handleImportXmlFile(event)}
+        aria-label="Arquivo XML da nota fiscal"
+      />
 
       <PayablesModals
         selectedAccount={selectedAccount}

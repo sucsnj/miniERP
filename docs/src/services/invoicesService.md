@@ -6,7 +6,8 @@
 
 - Expõe `InvoiceDetails` (distribuidora, chave, data_emissao `YYYY-MM-DD`, valor_nota).
 - Lista notas por período (`fetchInvoicesByPeriod`), busca por valor (`fetchInvoiceByAmount`), lista todas (`fetchAllInvoices`) e exclui (`deleteInvoice`).
-- Retorna `null` em `fetchInvoiceByAmount` quando a API responde com status 404.
+- Envia e recebe payloads tipados; `parseResponse<T>` lanca `Error` em `!response.ok` (callback `useDeleteInvoice` usa rollback).
+- Mapeia resposta para `InvoiceDetails` (normaliza `chave`/`access_key`).
 
 ## Relações
 

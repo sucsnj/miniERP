@@ -4,9 +4,9 @@
 
 ## O que faz
 
-- Busca as notas com `useQuery(['notas', ano, mes])` e soma os valores.
+- Busca as notas com `useQuery(tenantKeys.invoicesByMonth(identity, year, month))` e soma os valores.
 - Seletores de mês (12) e ano (últimos 5); tabela Emissão/Distribuidora/Valor/Ações.
-- Excluir passa pelo [ConfirmDialog](../common/ConfirmDialog.md) e invalida a query.
+- Excluir passa pelo [ConfirmDialog](../common/ConfirmDialog.md) e usa `useDeleteInvoice` (optimistic update, rollback, invalidação granular).
 
 ```ts
 interface MonthNotesProps {
@@ -17,9 +17,9 @@ interface MonthNotesProps {
 
 ## Relações
 
-- **Usa:** React Query, `fetchInvoicesByPeriod`/`deleteInvoice`/`InvoiceDetails` (`src/services/invoicesService.ts`), [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`getCurrentYear` (`src/utils/date.ts`).
+- **Usa:** React Query, `fetchInvoicesByPeriod`/`InvoiceDetails` (`src/services/invoicesService.ts`), `useDeleteInvoice` (`src/hooks/usePayablesMutations.ts`), [ConfirmDialog](../common/ConfirmDialog.md), `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString`/`getCurrentYear` (`src/utils/date.ts`).
 - **Usado por:** [Summary](./Summary.md).
 
 ## Notas
 
-- `queryFn` normaliza a resposta para array (`Array.isArray(data) ? data : [data]`).
+- `useDeleteInvoice` atualiza todas as invoices do mês em cache (optimistic update) e invalida `invoices/month` do tenant.
