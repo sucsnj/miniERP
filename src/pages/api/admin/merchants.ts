@@ -14,12 +14,15 @@ function normalizeStoreIds(value: unknown): string[] {
   return Array.isArray(value) ? value.map((id) => String(id)).filter(Boolean) : [];
 }
 
+const MAX_AVATAR_URL_LENGTH = 1024;
+
 function normalizeAvatarUrl(value: unknown): string | null | undefined {
   if (value === undefined) return undefined;
   const url = String(value).trim();
   if (!url) return null;
+  if (url.length > MAX_AVATAR_URL_LENGTH) return undefined;
   if (url.startsWith('/')) return url;
-  if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(url)) return url;
+  if (/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]{1,200}$/i.test(url)) return url;
   try {
     const parsed = new URL(url);
     if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return url;

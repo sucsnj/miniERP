@@ -6,7 +6,7 @@
 
 - `GET`: lista vendedores com lojas vinculadas.
 - `POST`: cria merchant (`name`, `login`, `email`, `password`, `storeIds`).
-- `POST`/`PATCH`: aceita `avatarUrl` opcional (URL http/https, path absoluto ou data URI de imagem) para a foto do vendedor.
+- `POST`/`PATCH`: aceita `avatarUrl` opcional (URL http/https, path absoluto com no máximo 1024 caracteres) ou uma pequena data URI de imagem `png|jpg|gif|webp` (sem SVG); URLs maiores são rejeitadas com 400.
 
 ## Relações
 

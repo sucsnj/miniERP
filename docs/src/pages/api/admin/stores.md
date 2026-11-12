@@ -12,3 +12,8 @@
 
 - **Usa:** `requireAdminApi`, `src/database/adminRepository.ts`.
 - **Usado por:** `/admin`, seletor de loja.
+
+## Notas
+
+- Após `POST`/`PATCH`, o frontend chama `AuthContext.refresh()` para manter loja/empresa sincronizadas.
+- Loja inexistente, desativada ou fora do tenant não aparece em listas e não pode ser selecionada/atualizada pelo cliente.

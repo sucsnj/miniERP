@@ -171,24 +171,83 @@ async function replaceStoreAssignments(userId: string, storeIds: string[], ctx: 
   const client = getSupabaseServerClient();
   const unique = await validateStoreIds(storeIds, ctx);
 
-  const { error: deleteError } = await client
+  // Snapshot para poder compensar em caso de falha em alguma etapa.
+  const { data: currentRows, error: snapshotError } = await client
     .from('user_stores')
-    .delete()
+    .select('store_id')
     .eq('user_id', userId);
-  if (deleteError) throw oneError('Não foi possível atualizar as lojas do vendedor.');
+  if (snapshotError) throw oneError('Não foi possível atualizar as lojas do vendedor.');
 
-  const { error: insertError } = await client
-    .from('user_stores')
-    .insert(unique.map((storeId) => ({ user_id: userId, store_id: storeId })));
-  if (insertError) throw oneError('Não foi possível atualizar as lojas do vendedor.');
-
-  const { error: updateError } = await client
+  const previousStoreIds = (currentRows ?? []).map((row) => String(row.store_id));
+  const { data: merchant, error: merchantError } = await client
     .from('users')
-    .update({ last_store_id: unique[0] ?? null })
+    .select('last_store_id')
     .eq('id', userId)
     .eq('company_id', ctx.companyId)
-    .eq('role', 'merchant');
-  if (updateError) throw oneError('Não foi possível atualizar a loja atual do vendedor.');
+    .eq('role', 'merchant')
+    .maybeSingle();
+  if (merchantError || !merchant) throw oneError('Vendedor não encontrado.');
+
+  const previousLastStoreId = merchant.last_store_id ? String(merchant.last_store_id) : null;
+
+  let deletedOld = false;
+  let insertedNew = false;
+  try {
+    const { error: deleteError } = await client
+      .from('user_stores')
+      .delete()
+      .eq('user_id', userId);
+    if (deleteError) throw oneError('Não foi possível atualizar as lojas do vendedor.');
+    deletedOld = true;
+
+    const { error: insertError } = await client
+      .from('user_stores')
+      .insert(unique.map((storeId) => ({ user_id: userId, store_id: storeId })));
+    if (insertError) throw insertError;
+    insertedNew = true;
+
+    const { error: updateError } = await client
+      .from('users')
+      .update({ last_store_id: unique[0] ?? null })
+      .eq('id', userId)
+      .eq('company_id', ctx.companyId)
+      .eq('role', 'merchant');
+    if (updateError) throw updateError;
+  } catch {
+    try {
+      if (insertedNew) {
+        await client
+          .from('user_stores')
+          .delete()
+          .eq('user_id', userId)
+          .in('store_id', unique);
+      }
+
+      if (deletedOld) {
+        await client
+          .from('user_stores')
+          .delete()
+          .eq('user_id', userId);
+
+        if (previousStoreIds.length > 0) {
+          await client
+            .from('user_stores')
+            .insert(previousStoreIds.map((storeId) => ({ user_id: userId, store_id: storeId })));
+        }
+      }
+
+      await client
+        .from('users')
+        .update({ last_store_id: previousLastStoreId })
+        .eq('id', userId)
+        .eq('company_id', ctx.companyId)
+        .eq('role', 'merchant');
+    } catch (compensationError) {
+      console.error('Falha ao compensar atualização de lojas do vendedor:', compensationError);
+    }
+
+    throw oneError('Não foi possível atualizar as lojas do vendedor.');
+  }
 }
 
 export async function createMerchant(

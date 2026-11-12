@@ -15,3 +15,4 @@
 ## Notas
 
 - Admin gerencia somente a empresa à qual pertence.
+- Após `PATCH`, o frontend chama `AuthContext.refresh()` para refletir o novo nome na UI.

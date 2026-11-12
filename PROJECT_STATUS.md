@@ -30,7 +30,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 - **Migração Supabase (ADR 0012) — Fases 0 a 4:** concluídas.
 - **Fase 5:** Vercel (variáveis de ambiente, upload XLSX em `/tmp` ou Storage) e validação do deploy; autenticação/proteção será feita no plano ADR 0013.
 - **Autenticação e multiempresa/multi-loja (ADR 0013):** fases 0–9 concluídas; auth/multitenancy validado por build/lint/testes estáticos; PDF de exportação removido completamente. Rollout/deploy e validação runtime completa permanecem pendentes.
-- **TanStack Query (`local-first`):** Fases 1–4 concluídas (defaults canônicos, `tenantKeys`, `/` e `/payables` em `useQuery`/`useMutation`, optimistic updates, invalidação granular, prefetch explícito e navegação instantânea).
+- **TanStack Query (`local-first`):** Fases 1–5 concluídas (defaults canônicos, `tenantKeys`, `/` e `/payables`, optimistic updates, invalidação granular, prefetch explícito, navegação instantânea, verificação e documentação).
 - **Navbar:** redesenhada com menu do usuário (`avatar_url` ou inicial), sempre visível, alto contraste/compacta e seletor de loja + ações à direita. Banco: aplicar `supabase/migrations/0016-add-user-avatar-url.sql`.
 - **Refatoração de grandes componentes:** CartModal, ImportItemsModal, SelectItemsModal já estão apresentacionais; ProductForm foi dividido em ProductPriceSection e ProductUnitsSection.
 

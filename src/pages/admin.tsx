@@ -6,6 +6,9 @@ import RequireAdmin from '@/components/auth/RequireAdmin';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
+import Dialog from '@/components/common/Dialog';
+import { validatePassword } from '../utils/password';
+import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/useToast';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
 
@@ -35,6 +38,7 @@ const inputStyle = { padding: '8px 10px', width: '100%' };
 
 export default function AdminPage() {
   const { showToast } = useToast();
+  const { refresh } = useAuth();
   const [loading, setLoading] = useState(true);
   usePendingTask('admin', loading);
   const [company, setCompany] = useState<Company | null>(null);
@@ -52,6 +56,10 @@ export default function AdminPage() {
     avatarUrl: '',
     storeIds: [] as string[],
   });
+  const [resetPasswordMerchant, setResetPasswordMerchant] = useState<MerchantAdmin | null>(null);
+  const [resetPassword, setResetPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
+  const [resettingPassword, setResettingPassword] = useState(false);
 
   const loadAdmin = useCallback(async () => {
     try {
@@ -93,6 +101,7 @@ export default function AdminPage() {
     const body = await response.json().catch(() => ({}));
     if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar empresa.', 'error');
     setCompany(body.company);
+    await refresh();
     showToast('Empresa atualizada.', 'success');
   };
 
@@ -119,6 +128,7 @@ export default function AdminPage() {
     const body = await response.json().catch(() => ({}));
     if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar loja.', 'error');
     await loadAdmin();
+    await refresh();
     showToast('Loja atualizada.', 'success');
   };
 
@@ -131,6 +141,7 @@ export default function AdminPage() {
     const body = await response.json().catch(() => ({}));
     if (!response.ok) return showToast(body.error ?? 'Erro ao atualizar loja.', 'error');
     await loadAdmin();
+    await refresh();
     showToast(store.active ? 'Loja desativada.' : 'Loja ativada.', 'success');
   };
 
@@ -168,16 +179,48 @@ export default function AdminPage() {
     showToast('Vendedor atualizado.', 'success');
   };
 
-  const resetMerchantPassword = async (merchant: MerchantAdmin) => {
-    const password = window.prompt('Nova senha para o vendedor:');
-    if (password === null) return;
+  const openResetPassword = (merchant: MerchantAdmin) => {
+    setResetPasswordMerchant(merchant);
+    setResetPassword('');
+    setResetConfirmPassword('');
+  };
+
+  const closeResetPassword = () => {
+    setResetPasswordMerchant(null);
+    setResetPassword('');
+    setResetConfirmPassword('');
+    setResettingPassword(false);
+  };
+
+  const submitResetPassword = async () => {
+    if (!resetPasswordMerchant || resettingPassword) return;
+
+    const passwordCheck = validatePassword(resetPassword);
+    if (!passwordCheck.ok) {
+      showToast(passwordCheck.message ?? 'Senha inválida.', 'error');
+      return;
+    }
+
+    if (resetPassword !== resetConfirmPassword) {
+      showToast('A confirmação da senha não confere.', 'error');
+      return;
+    }
+
+    setResettingPassword(true);
     const response = await fetch('/api/admin/merchants', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: merchant.id, password }),
+      body: JSON.stringify({ id: resetPasswordMerchant.id, password: resetPassword }),
     });
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast(body.error ?? 'Erro ao redefinir senha.', 'error');
+    setResettingPassword(false);
+
+    if (!response.ok) {
+      showToast(body.error ?? 'Erro ao redefinir senha.', 'error');
+      return;
+    }
+
+    closeResetPassword();
     showToast('Senha redefinida.', 'success');
   };
 
@@ -278,7 +321,7 @@ export default function AdminPage() {
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button type="button" size="sm" onClick={() => void saveMerchant(merchant)}>Salvar vendedor</Button>
-                        <Button type="button" size="sm" variant="outline" onClick={() => void resetMerchantPassword(merchant)}>Redefinir senha</Button>
+                        <Button type="button" size="sm" variant="outline" onClick={() => openResetPassword(merchant)}>Redefinir senha</Button>
                       </div>
                     </div>
                   );
@@ -286,6 +329,42 @@ export default function AdminPage() {
               </Panel>
             </div>
           )}
+
+          <Dialog
+            open={Boolean(resetPasswordMerchant)}
+            title={`Redefinir senha de ${resetPasswordMerchant?.name ?? 'vendedor'}`}
+            onClose={closeResetPassword}
+          >
+            <div style={{ display: 'grid', gap: '10px' }}>
+              <input
+                type="password"
+                autoComplete="new-password"
+                placeholder="Nova senha"
+                value={resetPassword}
+                onChange={(event) => setResetPassword(event.target.value)}
+                style={inputStyle}
+              />
+              <input
+                type="password"
+                autoComplete="new-password"
+                placeholder="Confirmação da senha"
+                value={resetConfirmPassword}
+                onChange={(event) => setResetConfirmPassword(event.target.value)}
+                style={inputStyle}
+              />
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>
+                A senha deve ter entre 8 e 128 caracteres, letras, número e um caractere especial seguro.
+              </p>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <Button type="button" variant="outline" onClick={closeResetPassword} disabled={resettingPassword}>
+                  Cancelar
+                </Button>
+                <Button type="button" onClick={submitResetPassword} disabled={resettingPassword}>
+                  {resettingPassword ? 'Redefinindo...' : 'Redefinir senha'}
+                </Button>
+              </div>
+            </div>
+          </Dialog>
         </PageShell>
       </>
     </RequireAdmin>
