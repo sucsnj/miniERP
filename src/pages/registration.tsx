@@ -5,23 +5,8 @@ import styles from '../styles/products.module.css';
 import Button from '@/components/common/Button';
 import { useToast } from '../hooks/useToast';
 import {
-    fetchProducts,
-    fetchServices,
-    registerProduct,
-    updateProduct,
-    deleteProduct,
-    fetchCategories,
-    fetchBrands,
-    fetchSuppliers,
-    fetchUnitsOfMeasure,
-    fetchStockMovements,
-    registerService,
-    updateService,
-    deleteService,
     ItemData,
-    ServiceData,
     BarcodeData,
-    StockMovementData,
 } from '../services/productsService';
 import { parseNumber } from '../utils/number';
 import { validateNumber, validateRequired } from '../utils/validation';
@@ -31,11 +16,17 @@ import CatalogEntityModal from '@/components/catalog/CatalogEntityModal';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 import StockAdjustModal from '@/components/products/StockAdjustModal';
 import ImportItemsModal from '@/components/import/ImportItemsModal';
-import { ProductFormData, ProductOptions } from '@/components/products/ProductForm';
+import { ProductFormData } from '@/components/products/ProductForm';
 import { useCategory } from '@/hooks/useCategory';
 import { useBrand } from '@/hooks/useBrand';
 import { useSupplier } from '@/hooks/useSupplier';
 import { useUnitOfMeasure } from '@/hooks/useUnitOfMeasure';
+import {
+    useProductMutations,
+    useProductsCatalog,
+    useProductsOptions,
+    useStockMovements,
+} from '@/hooks/useProducts';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import RequireAdmin from '@/components/auth/RequireAdmin';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
@@ -44,19 +35,33 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 
+const ALL_ITEMS_FILTERS = {
+    search: '',
+    type: 'TODOS' as const,
+    categoryId: '' as const,
+    brandId: '' as const,
+    supplierId: '' as const,
+    status: 'TODOS' as const,
+};
+
 const RegistrationPage: React.FC = () => {
 
     const router = useRouter();
+    const editQueryId = typeof router.query.id === 'string'
+        ? router.query.id
+        : typeof router.query.id?.[0] === 'string'
+            ? router.query.id[0]
+            : null;
 
-    // Listas auxiliares para dropdowns
-    const [options, setOptions] = useState<ProductOptions>({
-        categories: [],
-        brands: [],
-        suppliers: [],
-        unitsOfMeasure: [],
+    const optionsQuery = useProductsOptions();
+    const catalogQuery = useProductsCatalog(ALL_ITEMS_FILTERS, {
+        enabled: Boolean(editQueryId),
     });
-    const [auxiliaryLoading, setAuxiliaryLoading] = useState(true);
+    const { data: options, setOptions } = optionsQuery;
+    const auxiliaryLoading = optionsQuery.isLoading;
+    const editQueryLoading = Boolean(editQueryId) && catalogQuery.isLoading;
     usePendingTask('registration-options', auxiliaryLoading);
+    usePendingTask('registration-edit', editQueryLoading);
 
     // Estado do formulário de Cadastro/Edição
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -82,8 +87,6 @@ const RegistrationPage: React.FC = () => {
     const [stockAdjustModalOpen, setStockAdjustModalOpen] = useState(false);
     const [adjustQuantity, setAdjustQuantity] = useState('');
     const [adjustDescription, setAdjustDescription] = useState('');
-    const [stockMovements, setStockMovements] = useState<StockMovementData[]>([]);
-    const [movementsLoading, setMovementsLoading] = useState(false);
     const [formBarcodes, setFormBarcodes] = useState<BarcodeData[]>([]);
     const [newBarcode, setNewBarcode] = useState('');
 
@@ -118,30 +121,22 @@ const RegistrationPage: React.FC = () => {
     // Refs para focar campos
     const nameInputRef = useRef<HTMLInputElement | null>(null);
     const barcodeInputRef = useRef<HTMLInputElement | null>(null);
+    const productMutations = useProductMutations();
+    const movementsQuery = useStockMovements(editingId, stockAdjustModalOpen);
+    const movementsLoading = movementsQuery.isFetching;
+    const stockMovements = movementsQuery.data?.slice(0, 10) ?? [];
 
-    // Carrega opções auxiliares
-    const loadAuxiliaryData = useCallback(async () => {
-        setAuxiliaryLoading(true);
-        try {
-            const [categories, brands, suppliers, uoms] = await Promise.all([
-                fetchCategories(),
-                fetchBrands(),
-                fetchSuppliers(),
-                fetchUnitsOfMeasure(),
-            ]);
-            setOptions({
-        categories: categories,
-        brands: brands,
-        suppliers: suppliers,
-                unitsOfMeasure: uoms,
-            });
-        } catch (error) {
-            console.error(error);
-            showToast('Erro ao carregar dados auxiliares (categorias, marcas, fornecedores, unidades de medida).', 'error');
-        } finally {
-            setAuxiliaryLoading(false);
-        }
-    }, [showToast]);
+    useEffect(() => {
+        if (!optionsQuery.error) return;
+        console.error(optionsQuery.error);
+        showToast('Erro ao carregar dados auxiliares (categorias, marcas, fornecedores, unidades de medida).', 'error');
+    }, [optionsQuery.error, showToast]);
+
+    useEffect(() => {
+        if (!catalogQuery.error) return;
+        console.error(catalogQuery.error);
+        showToast('Erro ao carregar item para edição.', 'error');
+    }, [catalogQuery.error, showToast]);
 
     // Preenche o formulário com os dados de um item existente
     const fillFormWithItem = useCallback((item: ItemData) => {
@@ -173,64 +168,10 @@ const RegistrationPage: React.FC = () => {
         setNewBarcode('');
         setAdjustQuantity('');
         setAdjustDescription('');
-        setStockMovements([]);
         setStockAdjustModalOpen(false);
         setIsDirty(false);
         nameInputRef.current?.focus();
     }, []);
-
-    // Carrega item pelo ID (vindo da query ?id=X) para pré-preencher o formulário de edição
-    const loadItemForEditing = useCallback(async (id: string) => {
-        try {
-            // Tenta buscar como product primeiro, depois como serviço
-            const [productsData, servicesData] = await Promise.all([
-                fetchProducts({ page: 1, pageSize: 10000 }),
-                fetchServices({ page: 1, pageSize: 10000 }),
-            ]);
-
-            const allProducts: ItemData[] = productsData?.items || [];
-            const allServices: ItemData[] = (servicesData?.items || []).map((service: ServiceData) => ({
-                id: service.id,
-        kind: 'SERVICE',
-        name: service.name,
-        description: service.description,
-                categoryId: service.categoryId,
-                unit_measure_id: '21',
-                brandId: '',
-                supplierId: '',
-                purchasePrice: 0,
-                profitMargin: 0,
-                salePrice: service.salePrice,
-        stock: 0,
-                unit_multiplier: 1,
-                totalStock: 0,
-                internalCode: service.internalCode,
-        reference: service.reference || '',
-                duration_minutes: service.duration_minutes,
-                createdAt: service.createdAt,
-                updatedAt: service.updatedAt,
-                categoryName: service.categoryName,
-            }));
-
-            const item = [...allProducts, ...allServices].find((i) => i.id === id);
-            if (!item) {
-                showToast('Item não encontrado para edição.', 'error');
-                return;
-            }
-
-            fillFormWithItem(item);
-        } catch (error) {
-            console.error(error);
-            showToast('Erro ao carregar item para edição.', 'error');
-        }
-    }, [showToast, fillFormWithItem]);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            void loadAuxiliaryData();
-        }, 0);
-        return () => clearTimeout(timer);
-    }, [loadAuxiliaryData]);
 
     const isQueryProcessed = useRef(false);
 
@@ -240,11 +181,19 @@ const RegistrationPage: React.FC = () => {
         const { id, newImport: isNewImport, name: nameParam, purchasePrice, stock: stockParam, unit: unitParam, ean, internalCode } = router.query;
 
         if (id) {
+            if (catalogQuery.isLoading || catalogQuery.error) return;
             isQueryProcessed.current = true;
             const timer = setTimeout(() => {
-                void loadItemForEditing(String(id));
+                const item = catalogQuery.data?.catalog.find((i) => i.id === String(id));
+                if (item) {
+                    fillFormWithItem(item);
+                } else {
+                    showToast('Item não encontrado para edição.', 'error');
+                }
             }, 0);
             return () => clearTimeout(timer);
+        } else if (optionsQuery.isLoading) {
+            return;
         } else if (isNewImport || nameParam) {
             isQueryProcessed.current = true;
             const timer = setTimeout(() => {
@@ -299,7 +248,7 @@ const RegistrationPage: React.FC = () => {
             return () => clearTimeout(timer);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router.isReady, router.query, options.unitsOfMeasure, loadItemForEditing, showToast]);
+    }, [router.isReady, router.query, options.unitsOfMeasure, optionsQuery.isLoading, catalogQuery.isLoading, catalogQuery.data, catalogQuery.error, fillFormWithItem, showToast]);
 
     // Guard: aviso nativo do browser ao fechar aba ou recarregar página
     useEffect(() => {
@@ -356,24 +305,9 @@ const RegistrationPage: React.FC = () => {
         setNewBarcode('');
         setAdjustQuantity('');
         setAdjustDescription('');
-        setStockMovements([]);
         setStockAdjustModalOpen(false);
         // Remove o ?id da URL sem recarregar a página
         router.replace('/registration', undefined, { shallow: true });
-    };
-
-    const loadMovements = async (itemId: string) => {
-        setMovementsLoading(true);
-        try {
-            const date = await fetchStockMovements(itemId);
-            setStockMovements(date.slice(0, 10));
-        } catch (error) {
-            console.error(error);
-            showToast('Erro ao carregar histórico de movimentações.', 'error');
-            setStockMovements([]);
-        } finally {
-            setMovementsLoading(false);
-        }
     };
 
     // Adiciona Código de Barras ao formulário
@@ -516,23 +450,13 @@ const RegistrationPage: React.FC = () => {
         };
 
         try {
-            if (form.type === 'SERVICE') {
-                if (editingId) {
-                    await updateService(editingId, servicePayload);
-                    showToast('Serviço atualizado com sucesso. Redirecionando...', 'success');
-                } else {
-                    await registerService(servicePayload);
-                    showToast('Serviço cadastrado com sucesso. Redirecionando...', 'success');
-                }
-            } else {
-                if (editingId) {
-                    await updateProduct(editingId, payload);
-                    showToast('Item atualizado com sucesso. Redirecionando...', 'success');
-                } else {
-                    await registerProduct(payload);
-                    showToast('Item cadastrado com sucesso. Redirecionando...', 'success');
-                }
-            }
+            await productMutations.save.mutateAsync({
+                id: editingId,
+                type: form.type,
+                productPayload: payload,
+                servicePayload,
+            });
+            showToast(editingId ? 'Item atualizado com sucesso. Redirecionando...' : 'Item cadastrado com sucesso. Redirecionando...', 'success');
             // Limpa dirty antes de navegar para não disparar o guard
             setIsDirty(false);
             skipDirtyGuard.current = true;
@@ -546,11 +470,7 @@ const RegistrationPage: React.FC = () => {
     const handleConfirmDelete = async () => {
         if (!itemToDelete) return;
         try {
-            if (itemToDelete.kind === 'SERVICE') {
-                await deleteService(itemToDelete.id);
-            } else {
-                await deleteProduct(itemToDelete.id);
-            }
+            await productMutations.remove.mutateAsync(itemToDelete);
             showToast('Item excluído com sucesso.', 'success');
             setDeleteConfirmOpen(false);
             setItemToDelete(null);
@@ -715,10 +635,7 @@ const RegistrationPage: React.FC = () => {
                                             setUomForm({ abbreviation: '', description: '' });
                                             setUnitOfMeasureModalOpen(true);
                                         },
-                                        openStockAdjustModal: async () => {
-                                            if (editingId) {
-                                                await loadMovements(editingId);
-                                            }
+                                        openStockAdjustModal: () => {
                                             setStockAdjustModalOpen(true);
                                         },
                                         editCategory: handleOpenEditModal,
