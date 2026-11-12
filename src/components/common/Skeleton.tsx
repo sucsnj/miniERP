@@ -32,18 +32,22 @@ export const Skeleton: FC<SkeletonProps> = ({
   height,
   className,
   style,
-}) => (
-  <>
-    {Array.from({ length: count }, (_, index) => (
-      <div
-        key={index}
-        aria-hidden="true"
-        className={className ? `${styles.skeleton} ${VARIANT_CLASS[variant]} ${className}` : `${styles.skeleton} ${VARIANT_CLASS[variant]}`}
-        style={{ ...style, width, height }}
-      />
-    ))}
-  </>
-);
+}) => {
+  const classes = [styles.skeleton, VARIANT_CLASS[variant], className].filter(Boolean).join(' ');
+
+  return (
+    <>
+      {Array.from({ length: count }, (_, index) => (
+        <div
+          key={index}
+          aria-hidden="true"
+          className={classes}
+          style={{ width, height, ...style }}
+        />
+      ))}
+    </>
+  );
+};
 
 export const SkeletonText: FC<{ lines?: number; lastLineWidth?: CSSProperties['width'] }> = ({
   lines = 3,
@@ -51,26 +55,31 @@ export const SkeletonText: FC<{ lines?: number; lastLineWidth?: CSSProperties['w
 }) => (
   <div aria-busy="true" style={{ display: 'grid', gap: '8px' }}>
     {Array.from({ length: lines }, (_, index) => (
-      <Skeleton key={index} variant="line" width={index === lines - 1 ? lastLineWidth : undefined} />
+      <Skeleton
+        key={index}
+        variant="line"
+        width={index === lines - 1 ? lastLineWidth : undefined}
+      />
     ))}
   </div>
 );
 
+const COLUMN_WIDTHS = ['75%', '55%', '65%', '40%', '50%'];
+
 export const SkeletonTable: FC<{ rows?: number; columns?: number }> = ({ rows = 5, columns = 4 }) => (
-  <div aria-busy="true" style={{ display: 'grid', gap: '8px' }}>
-    <Skeleton variant="row" height="36px" />
+  <div aria-busy="true" style={{ display: 'grid', gap: '4px' }}>
+    <Skeleton variant="row" height="38px" style={{ marginBottom: '4px' }} />
     {Array.from({ length: rows }, (_, rowIndex) => (
       <div
         key={rowIndex}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-          gap: '12px',
-        }}
+        className={styles.rowGroup}
+        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
-        {Array.from({ length: columns }, (_, columnIndex) => (
-          <Skeleton key={columnIndex} variant="line" height="16px" />
-        ))}
+        {Array.from({ length: columns }, (_, columnIndex) => {
+          // Varia a largura de forma determinística para parecer texto real
+          const width = COLUMN_WIDTHS[(rowIndex + columnIndex) % COLUMN_WIDTHS.length];
+          return <Skeleton key={columnIndex} variant="line" height="14px" width={width} />;
+        })}
       </div>
     ))}
   </div>
@@ -78,21 +87,32 @@ export const SkeletonTable: FC<{ rows?: number; columns?: number }> = ({ rows = 
 
 export const SkeletonCards: FC<{ cards?: number; minHeight?: CSSProperties['height'] }> = ({
   cards = 3,
-  minHeight,
+  minHeight = '116px',
 }) => (
   <div
     aria-busy="true"
-    style={{ display: 'grid', gridTemplateColumns: `repeat(${cards}, minmax(0, 1fr))`, gap: '12px' }}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+      gap: '12px',
+    }}
   >
     {Array.from({ length: cards }, (_, index) => (
-      <Skeleton key={index} variant="card" height={minHeight} />
+      <div key={index} className={styles.kpiCard} style={{ minHeight }}>
+        <Skeleton variant="line" width="42%" height="12px" />
+        <Skeleton variant="title" width="65%" height="26px" />
+        <Skeleton variant="line" width="55%" height="11px" />
+      </div>
     ))}
   </div>
 );
 
-export const PageSkeleton: FC<{ cards?: number }> = ({ cards = 3 }) => (
+export const PageSkeleton: FC<{ title?: string; cards?: number }> = ({
+  title = 'Carregando...',
+  cards = 3,
+}) => (
   <PageShell>
-    <PageHeader title="Carregando..." />
+    <PageHeader title={title} />
     <SkeletonCards cards={cards} minHeight="110px" />
     <Panel>
       <SkeletonText lines={5} />

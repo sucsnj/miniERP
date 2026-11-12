@@ -8,6 +8,8 @@ declare const styles: {
   readonly "tableRow": string;
   readonly "text": string;
   readonly "title": string;
+  readonly "kpiCard": string;
+  readonly "rowGroup": string;
 };
 export = styles;
 
