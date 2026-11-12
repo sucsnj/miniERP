@@ -15,5 +15,5 @@
 ## Notas
 
 - Merchant lê padrões da empresa, mas não altera PIX nem configurações compartilhadas.
-- `pixPresets` exige campos completos (`id`, `label`, quatro dados PIX) e no máximo 20 itens.
+- `pixPresets` exige no máximo 20 itens com `id` e quatro dados PIX completos; `label` é opcional.
 - `clearPixData` no cliente limpa apenas o PIX vigente; presets ficam disponíveis.

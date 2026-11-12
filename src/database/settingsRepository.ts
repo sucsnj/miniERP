@@ -46,7 +46,7 @@ export function normalizePixPresets(input: unknown): PixPreset[] | null {
 
     if (
       !preset.id || preset.id.length > 100
-      || !preset.label || preset.label.length > 80
+      || preset.label.length > 80
       || !preset.pixKey || preset.pixKey.length > 200
       || !preset.pixName || preset.pixName.length > 100
       || !preset.pixBank || preset.pixBank.length > 100

@@ -5,6 +5,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useToast } from '../hooks/useToast';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -50,9 +51,8 @@ const upsertPixPreset = (presets: PixPreset[], candidate: Omit<PixPreset, 'id' |
   ));
 
   if (existingIndex >= 0) {
-    const existing = presets[existingIndex];
     return presets.map((preset, index) => (
-      index === existingIndex ? { ...preset, label: candidate.label || existing.label } : preset
+      index === existingIndex ? { ...preset, label: candidate.label } : preset
     ));
   }
 
@@ -68,6 +68,10 @@ const upsertPixPreset = (presets: PixPreset[], candidate: Omit<PixPreset, 'id' |
     ...presets,
   ].slice(0, MAX_PIX_PRESETS);
 };
+
+const formatPixPresetLabel = (preset: PixPreset) => (
+  preset.label ? `${preset.label} · ${preset.pixKey}` : preset.pixKey
+);
 
 const SettingsPage = () => {
   const { showToast } = useToast();
@@ -103,6 +107,7 @@ const SettingsPage = () => {
 
   const [savingCompany, setSavingCompany] = useState(false);
   const pixFormRef = useRef<HTMLFormElement | null>(null);
+  const [selectedPixPresetId, setSelectedPixPresetId] = useState('');
 
   const setPixField = (name: 'pixKey' | 'pixName' | 'pixBank' | 'pixCity' | 'pixPresetLabel', value: string) => {
     const form = pixFormRef.current;
@@ -157,7 +162,7 @@ const SettingsPage = () => {
     const nextPixPresets = pixFormFilled
       ? upsertPixPreset(pixPresets, {
           ...pixValues,
-          label: presetLabel || pixValues.pixName || pixValues.pixBank || pixValues.pixKey,
+          label: presetLabel,
         })
       : pixPresets;
 
@@ -165,6 +170,14 @@ const SettingsPage = () => {
       ...pixValues,
       ...(pixFormFilled ? { pixPresets: nextPixPresets } : {}),
     });
+  };
+
+  const deletePixPreset = async (presetId: string) => {
+    const pixPresetsNext = pixPresets.filter((item) => item.id !== presetId);
+    if (selectedPixPresetId === presetId) {
+      setSelectedPixPresetId('');
+    }
+    await patchCompany({ pixPresets: pixPresetsNext });
   };
 
   const clearPix = async () => {
@@ -299,20 +312,40 @@ const SettingsPage = () => {
                 <PanelHeader title="PIX" />
                 <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Dados compartilhados pela empresa. Todos são obrigatórios para o QR Code.</p>
                 {isAdmin && pixPresets.length > 0 && (
-                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', marginBottom: '8px' }}>
                     Preenchimento rápido
-                    <select defaultValue="" onChange={(event) => {
-                      fillPixPreset(event.target.value);
-                      event.currentTarget.selectedIndex = 0;
-                    }} style={{ padding: '6px', width: '100%' }}>
-                      <option value="">Selecionar preset...</option>
-                      {pixPresets.map((preset) => (
-                        <option key={preset.id} value={preset.id}>
-                          {preset.label} — {preset.pixBank} · {preset.pixName}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <select
+                        value={selectedPixPresetId}
+                        onChange={(event) => {
+                          const presetId = event.target.value;
+                          setSelectedPixPresetId(presetId);
+                          if (presetId) fillPixPreset(presetId);
+                        }}
+                        style={{ padding: '6px', width: '100%' }}
+                      >
+                        <option value="">Selecionar preset...</option>
+                        {pixPresets.map((preset) => (
+                          <option key={preset.id} value={preset.id}>
+                            {formatPixPresetLabel(preset)}
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        iconOnly
+                        leftIcon={<DeleteIcon fontSize="small" />}
+                        onClick={() => void deletePixPreset(selectedPixPresetId)}
+                        aria-label="Excluir preset selecionado"
+                        title="Excluir preset selecionado"
+                        disabled={!selectedPixPresetId || savingCompany}
+                      >
+                        Excluir preset selecionado
+                      </Button>
+                    </div>
+                  </div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {isAdmin && (
