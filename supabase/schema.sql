@@ -50,6 +50,7 @@ create table if not exists public.users (
   name text not null,
   login text not null unique,
   email text not null unique,
+  avatar_url text,
   password_hash text not null,
   active boolean not null default true,
   last_store_id uuid references public.stores (id),

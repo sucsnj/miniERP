@@ -29,6 +29,7 @@ interface MerchantAdmin {
   active: boolean;
   lastStoreId: string | null;
   storeIds: string[];
+  avatarUrl?: string | null;
 }
 
 const inputStyle = { padding: '8px 10px', width: '100%' };
@@ -49,6 +50,7 @@ export default function AdminPage() {
     login: '',
     email: '',
     password: '',
+    avatarUrl: '',
     storeIds: [] as string[],
   });
 
@@ -141,7 +143,7 @@ export default function AdminPage() {
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) return showToast(body.error ?? 'Erro ao criar vendedor.', 'error');
-    setNewMerchant({ name: '', login: '', email: '', password: '', storeIds: [] });
+    setNewMerchant({ name: '', login: '', email: '', password: '', avatarUrl: '', storeIds: [] });
     await loadAdmin();
     showToast('Vendedor criado.', 'success');
   };
@@ -158,6 +160,7 @@ export default function AdminPage() {
         email: draft.email,
         active: draft.active,
         storeIds: draft.storeIds,
+        avatarUrl: draft.avatarUrl,
       }),
     });
     const body = await response.json().catch(() => ({}));
@@ -243,6 +246,7 @@ export default function AdminPage() {
                     <input placeholder="Nome" value={newMerchant.name} onChange={(event) => setNewMerchant({ ...newMerchant, name: event.target.value })} style={inputStyle} />
                     <input placeholder="Login" value={newMerchant.login} onChange={(event) => setNewMerchant({ ...newMerchant, login: event.target.value.toLowerCase() })} style={inputStyle} />
                     <input placeholder="E-mail" value={newMerchant.email} onChange={(event) => setNewMerchant({ ...newMerchant, email: event.target.value })} style={inputStyle} />
+                    <input placeholder="URL da foto (opcional)" value={newMerchant.avatarUrl} onChange={(event) => setNewMerchant({ ...newMerchant, avatarUrl: event.target.value })} style={inputStyle} />
                     <input type="password" placeholder="Senha" value={newMerchant.password} onChange={(event) => setNewMerchant({ ...newMerchant, password: event.target.value })} style={inputStyle} />
                   </div>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', margin: '8px 0' }}>
@@ -264,6 +268,7 @@ export default function AdminPage() {
                         <input value={draft.name} onChange={(event) => updateMerchantDraft(merchant.id, { name: event.target.value })} style={inputStyle} />
                         <input value={draft.login} onChange={(event) => updateMerchantDraft(merchant.id, { login: event.target.value.toLowerCase() })} style={inputStyle} />
                         <input value={draft.email} onChange={(event) => updateMerchantDraft(merchant.id, { email: event.target.value })} style={inputStyle} />
+                        <input placeholder="URL da foto (opcional)" value={draft.avatarUrl ?? ''} onChange={(event) => updateMerchantDraft(merchant.id, { avatarUrl: event.target.value || null })} style={inputStyle} />
                         <label style={{ display: 'inline-flex', gap: '4px', alignItems: 'center' }}>
                           <input type="checkbox" checked={draft.active} onChange={(event) => updateMerchantDraft(merchant.id, { active: event.target.checked })} />
                           Ativo

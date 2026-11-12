@@ -26,6 +26,7 @@ export interface MerchantAdmin {
   active: boolean;
   lastStoreId: string | null;
   storeIds: string[];
+  avatarUrl?: string | null;
 }
 
 function oneError(message: string): Error {
@@ -119,7 +120,7 @@ export async function listMerchants(ctx: AuthContext): Promise<MerchantAdmin[]> 
   const client = getSupabaseServerClient();
   const { data: users, error } = await client
     .from('users')
-    .select('id, name, login, email, active, last_store_id')
+    .select('id, name, login, email, active, last_store_id, avatar_url')
     .eq('company_id', ctx.companyId)
     .eq('role', 'merchant')
     .order('name', { ascending: true });
@@ -150,6 +151,7 @@ export async function listMerchants(ctx: AuthContext): Promise<MerchantAdmin[]> 
     active: Boolean(user.active),
     lastStoreId: user.last_store_id ? String(user.last_store_id) : null,
     storeIds: storeIdsByUser.get(String(user.id)) ?? [],
+    avatarUrl: user.avatar_url ?? null,
   }));
 }
 
@@ -190,7 +192,7 @@ async function replaceStoreAssignments(userId: string, storeIds: string[], ctx: 
 }
 
 export async function createMerchant(
-  input: { name: string; login: string; email: string; password: string; storeIds: string[] },
+  input: { name: string; login: string; email: string; password: string; storeIds: string[]; avatarUrl?: string | null },
   ctx: AuthContext
 ): Promise<MerchantAdmin> {
   const client = getSupabaseServerClient();
@@ -208,6 +210,7 @@ export async function createMerchant(
       name,
       login,
       email,
+      avatar_url: input.avatarUrl ?? null,
       password_hash: passwordHash,
       last_store_id: uniqueStoreIds[0] ?? null,
     })
@@ -244,6 +247,7 @@ export async function updateMerchant(
     active?: boolean;
     storeIds?: string[];
     password?: string;
+    avatarUrl?: string | null;
   },
   ctx: AuthContext
 ): Promise<void> {
@@ -258,6 +262,7 @@ export async function updateMerchant(
   if (input.login !== undefined) patch.login = normalizeIdentifier(input.login);
   if (input.email !== undefined) patch.email = normalizeEmail(input.email);
   if (input.active !== undefined) patch.active = input.active;
+  if (input.avatarUrl !== undefined) patch.avatar_url = input.avatarUrl ?? null;
   if (input.password) patch.password_hash = await hashPassword(input.password);
 
   if (Object.keys(patch).length > 0) {

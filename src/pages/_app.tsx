@@ -33,8 +33,8 @@ export default function App({ Component, pageProps }: AppProps) {
               <meta name="description" content="Vendas" />
               <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
+            {!isPublic && <Nav />}
             <AuthGate>
-              {!isPublic && <Nav />}
               <Component {...pageProps} />
               <Toaster />
             </AuthGate>

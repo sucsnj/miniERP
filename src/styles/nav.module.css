@@ -6,104 +6,165 @@
   z-index: 1000;
   display: flex;
   align-items: center;
-  height: 48px;
+  height: 56px;
   width: 100%;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 8px;
+  padding: 8px 12px;
   justify-content: space-between;
-  background: var(--surface);
+  background: var(--surface-strong);
   color: var(--foreground);
-  backdrop-filter: blur(1000px);
-  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+  border-bottom: 2px solid var(--accent);
+}
+
+.brand {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  margin-right: 8px;
 }
 
 .rightSide {
   display: flex;
   align-items: center;
-}
-
-.settingsLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-  text-decoration: none;
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.settingsLink:hover {
-  opacity: 0.8;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  margin-right: 12px;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 0;
 }
 
 .navLinks {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
-.navItem  {
-  flex: 1;                  /* cada item ocupa espaço proporcional */
-  display: flex;            /* ícone + texto lado a lado */
-  align-items: center;
-  justify-content: center;  /* centraliza dentro do espaço */
-  gap: 6px;                 /* espaço entre ícone e texto */
-  min-width: 10vw;
-}
-
-.themeButton {
-  margin-left: 12px;
-  border-radius: 999px;
-  border: 0 solid var(--border);
-  background: var(--surface);
-  color: inherit;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: none;
-  font-size: 0.78rem;
-  outline: none;
-  box-shadow: none;
-  -webkit-tap-highlight-color: transparent;
-
-  display: inline-flex;
+.navItem {
+  display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  padding: 4px 6px;
+  min-width: 0;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.navItem:hover {
+  background: var(--surface-soft);
+}
+
+.userMenuWrapper {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.userMenuButton {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.themeButton:hover,
-.themeButton:focus,
-.themeButton:focus-visible,
-.themeButton:active {
-  background: var(--surface);
-  transform: none;
-  outline: none;
-  box-shadow: none;
+.userMenuButton:hover {
+  background: var(--surface-soft);
 }
 
-.themeIcon {
-  display: inline-flex;
+.avatar {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--surface-soft);
+}
+
+.avatarInitial {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1100;
+  width: 220px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.menuIdentity {
+  padding: 8px 10px;
+}
+
+.menuIdentity strong {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.menuIdentity span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuDivider {
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.menuItem {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  animation: themeIconTransition 180ms ease-out;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
 }
 
-@keyframes themeIconTransition {
-  0% {
-    opacity: 0;
-    transform: scale(0.7) rotate(-8deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
+.menuItem:hover {
+  background: var(--surface-soft);
+}
+
+.navSkeleton {
+  border-radius: 8px;
+  background: var(--surface-soft);
+  min-height: 28px;
 }
 
 .navLinks a {
@@ -114,7 +175,7 @@
 
 .navLinks span {
   font-size: 0.78rem;
-  opacity: 0.5;
+  opacity: 0.75;
 }
 
 /* Responsividade para 1180px */

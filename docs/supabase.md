@@ -10,6 +10,7 @@
 4. Confira em **Table Editor** os tenants (`companies`, `stores`, `users`, `user_stores`, `sessions`, `company_settings`) e as tabelas de negócio. Não há seed global: o primeiro admin cria/adota a empresa e recebe os cadastrais padrão atomicamente via `bootstrap_company_admin`.
 5. Para banco pré-ADR 0013, aplique `supabase/migrations/0013-auth-multi-tenant.sql` após backup completo. O script atribui dados legados a uma empresa `Empresa legada`, cria loja `Loja principal` e prepara as constraints multi-loja.
 5.1. Se aparecer `PGRST202` para `bootstrap_company_admin`, aplique `supabase/migrations/0014-fix-bootstrap-company-admin.sql` no SQL Editor e confirme a função em Database → Functions.
+5.2. Para foto na navbar, aplique `supabase/migrations/0016-add-user-avatar-url.sql`; a coluna `users.avatar_url` é opcional e o frontend usa inicial do nome quando não há foto.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

@@ -12,6 +12,7 @@ export interface AuthContext {
   name: string;
   login: string;
   email: string;
+  avatarUrl?: string | null;
   storeId: string;
   storeName: string;
   sessionId: string;
@@ -27,6 +28,7 @@ interface UserRecord {
   password_hash: string;
   active: boolean;
   last_store_id: string | null;
+  avatar_url?: string | null;
 }
 
 interface StoreRecord {
@@ -98,7 +100,7 @@ export async function findUserByIdentifier(identifier: string): Promise<UserReco
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('users')
-    .select('id, company_id, role, name, login, email, password_hash, active, last_store_id')
+    .select('id, company_id, role, name, login, email, password_hash, active, last_store_id, avatar_url')
     .or(`login.eq.${identifier},email.eq.${identifier}`)
     .maybeSingle();
 
@@ -169,7 +171,7 @@ export async function getAuthContext(req: NextApiRequest): Promise<AuthContext |
   const client = getSupabaseServerClient();
   const { data: session, error } = await client
     .from('sessions')
-    .select('id, store_id, expires_at, revoked_at, users!inner(id, company_id, role, name, login, email, active, last_store_id)')
+    .select('id, store_id, expires_at, revoked_at, users!inner(id, company_id, role, name, login, email, active, last_store_id, avatar_url)')
     .eq('token_hash', hashSessionToken(token))
     .maybeSingle();
 
@@ -202,6 +204,7 @@ export async function getAuthContext(req: NextApiRequest): Promise<AuthContext |
     name: user.name,
     login: user.login,
     email: user.email,
+    avatarUrl: user.avatar_url ?? null,
     storeId: preferredStore.id,
     storeName: preferredStore.name,
     sessionId: String(session.id),
@@ -230,7 +233,7 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
   const client = getSupabaseServerClient();
   const { data: user, error } = await client
     .from('users')
-    .select('id, company_id, role, name, login, email, active, last_store_id')
+    .select('id, company_id, role, name, login, email, active, last_store_id, avatar_url')
     .eq('id', userId)
     .eq('company_id', companyId)
     .maybeSingle();
@@ -253,6 +256,7 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
     name: user.name as string,
     login: user.login as string,
     email: user.email as string,
+    avatarUrl: (user.avatar_url ?? null) as string | null,
     storeId: store.id as string,
     storeName: store.name as string,
     sessionId: '',

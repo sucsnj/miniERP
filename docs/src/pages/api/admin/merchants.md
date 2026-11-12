@@ -6,7 +6,7 @@
 
 - `GET`: lista vendedores com lojas vinculadas.
 - `POST`: cria merchant (`name`, `login`, `email`, `password`, `storeIds`).
-- `PATCH`: altera `name`, `login`, `email`, `active`, `storeIds` e/ou `password`; desativa revoga sessões.
+- `POST`/`PATCH`: aceita `avatarUrl` opcional (URL http/https, path absoluto ou data URI de imagem) para a foto do vendedor.
 
 ## Relações
 

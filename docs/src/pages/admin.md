@@ -6,7 +6,7 @@
 
 - Permite ao admin atualizar o nome da empresa.
 - Permite criar/editar/desativar até 2 lojas.
-- Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar e redefinir senha.
+- Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar, redefinir senha e informar URL de foto.
 
 ## Relações
 

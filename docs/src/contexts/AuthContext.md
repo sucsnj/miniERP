@@ -16,5 +16,5 @@
 
 ## Notas
 
-- `AuthUser` carrega `userId`, empresa, role, loja atual e dados do usuário.
+- `AuthUser` carrega `userId`, empresa, role, loja atual e dados do usuário, incluindo `avatarUrl`.
 - Contexto é normalizado server-side; não aceitar empresa/loja vindos do cliente.

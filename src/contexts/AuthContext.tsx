@@ -11,6 +11,7 @@ export interface AuthUser {
   name: string;
   login: string;
   email: string;
+  avatarUrl?: string | null;
   storeId: string;
   storeName: string;
   sessionId: string;
