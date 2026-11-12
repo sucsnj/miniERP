@@ -16,6 +16,7 @@ import { ItemData } from '../../services/productsService';
 import type { CartItem } from '../../types/sale';
 import styles from '../../styles/selectItemsModal.module.css';
 import Button from '@/components/common/Button';
+import { SkeletonTable } from '@/components/common/Skeleton';
 
 interface SelectItemsModalProps {
   isOpen: boolean;
@@ -100,7 +101,7 @@ const SelectItemsModal: React.FC<SelectItemsModalProps> = ({
 
       <div className={`${styles.cartCatalogList}`}>
         {loadingCatalog ? (
-          <div className={`${styles.cartCatalogEmpty}`}>Buscando itens...</div>
+          <SkeletonTable rows={5} columns={3} />
         ) : catalogItems.length === 0 ? (
           <div className={`${styles.cartCatalogEmpty}`}>Nenhum produto ou serviço encontrado</div>
         ) : (

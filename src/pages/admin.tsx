@@ -7,6 +7,8 @@ import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
 import { useToast } from '../hooks/useToast';
+import { SkeletonCards, SkeletonText } from '@/components/common/Skeleton';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 interface Company {
   id: string;
@@ -34,6 +36,7 @@ const inputStyle = { padding: '8px 10px', width: '100%' };
 export default function AdminPage() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
+  usePendingTask('admin', loading);
   const [company, setCompany] = useState<Company | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [stores, setStores] = useState<StoreAdmin[]>([]);
@@ -200,7 +203,12 @@ export default function AdminPage() {
         <Head><title>Administração</title></Head>
         <PageShell>
           <PageHeader title="Administração" description="Empresa, lojas e vendedores." />
-          {loading ? <p>Carregando...</p> : (
+          {loading ? (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              <SkeletonCards cards={3} minHeight="110px" />
+              <Panel><SkeletonText lines={8} /></Panel>
+            </div>
+          ) : (
             <div style={{ display: 'grid', gap: '12px' }}>
               <Panel>
                 <PanelHeader title="Empresa" />

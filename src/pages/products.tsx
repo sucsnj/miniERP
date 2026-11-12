@@ -25,6 +25,7 @@ import { ProductFiltersState } from '@/components/products/ProductFilters';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 const ProductsPage: React.FC = () => {
 
@@ -36,6 +37,10 @@ const ProductsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [itemsReady, setItemsReady] = useState(false);
+  const [auxiliaryLoading, setAuxiliaryLoading] = useState(true);
+  usePendingTask('products-initial', loading && !itemsReady);
+  usePendingTask('product-options', auxiliaryLoading);
 
   // Filtros de busca
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,6 +72,7 @@ const ProductsPage: React.FC = () => {
 
   // Carrega opções auxiliares para os filtros
   const loadAuxiliaryData = useCallback(async () => {
+    setAuxiliaryLoading(true);
     try {
       const [categories, brands, suppliers, uoms] = await Promise.all([
         fetchCategories(),
@@ -83,6 +89,8 @@ const ProductsPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       showToast('Erro ao carregar dados auxiliares.', 'error');
+    } finally {
+      setAuxiliaryLoading(false);
     }
   }, [showToast]);
 
@@ -142,6 +150,7 @@ const ProductsPage: React.FC = () => {
       showToast('Erro ao carregar products e serviços.', 'error');
     } finally {
       setLoading(false);
+      setItemsReady(true);
     }
   }, [page, searchQuery, state.type, state.categoryId, state.brandId, state.supplierId, state.status, showToast]);
 

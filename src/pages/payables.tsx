@@ -26,6 +26,7 @@ import { useShortcuts } from '../utils/shortcuts';
 import { getDateArray, toTimestamp, now } from '../utils/date';
 import { validateRequired, validateCurrency } from '../utils/validation';
 import { useAuth } from '../contexts/AuthContext';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 const today = now().format('YYYY-MM-DD');
 
@@ -34,6 +35,12 @@ const Payables: React.FC = () => {
   const queryClient = useQueryClient();
   const [year, setYear] = useState(getDateArray()[2]);
   const [month, setMonth] = useState(getDateArray()[1]);
+  const [monthLoading, setMonthLoading] = useState(true);
+  const [yearLoading, setYearLoading] = useState(true);
+  const [monthReady, setMonthReady] = useState(false);
+  const [yearReady, setYearReady] = useState(false);
+  usePendingTask('payables-month-initial', monthLoading && !monthReady);
+  usePendingTask('payables-year-initial', yearLoading && !yearReady);
   const [accountsMonth, setAccountsMonth] = useState<AccountDetails[]>([]);
   const [accountsYear, setAccountsYear] = useState<AccountDetails[]>([]);
   const [distributor, setDistributor] = useState('');
@@ -92,20 +99,28 @@ const Payables: React.FC = () => {
   const isAdmin = user?.role === 'admin';
 
   const loadMonthAccounts = useCallback(async () => {
+    setMonthLoading(true);
     try {
       const date = await fetchAccounts(year, month);
       setAccountsMonth(date);
     } catch {
       showToast('Não foi possível carregar as contas do mês.', 'error');
+    } finally {
+      setMonthLoading(false);
+      setMonthReady(true);
     }
   }, [year, month, showToast]);
 
   const loadYearAccounts = useCallback(async () => {
+    setYearLoading(true);
     try {
       const date = await fetchAccounts(year);
       setAccountsYear(date);
     } catch {
       showToast('Não foi possível carregar o resumo anual.', 'error');
+    } finally {
+      setYearLoading(false);
+      setYearReady(true);
     }
   }, [year, showToast]);
 
@@ -356,6 +371,7 @@ const Payables: React.FC = () => {
             setDueDateToFilter={handleDueDateToChange}
             today={today}
             filteredAccounts={filteredAccounts}
+            isLoading={monthLoading || yearLoading}
             handleView={handleView}
             handleDelete={handleDelete}
             handleEdit={handleEdit}

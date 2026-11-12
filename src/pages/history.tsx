@@ -10,6 +10,7 @@ import { useSales } from '../hooks/useSales';
 import { useFilter } from '../hooks/useFilter';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
+import { SkeletonTable, SkeletonCards } from '@/components/common/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
@@ -31,6 +32,7 @@ const History: React.FC = () => {
   // fica desligado e o filtro é dinâmico, diferente do dashboard.
   const {
     sales,
+    loading,
     editingSale,
     loadSales,
     handleEditSale,
@@ -96,11 +98,17 @@ const History: React.FC = () => {
           />
         )}
 
-        {/* Gráfico com a evolução diária das vendas do período */}
-        <SalesChart date={sales} />
-
-        {/* Tabela com as vendas do período */}
-        <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} />
+        {loading ? (
+          <>
+            <SkeletonCards cards={2} minHeight="220px" />
+            <SkeletonTable rows={6} columns={4} />
+          </>
+        ) : (
+          <>
+            <SalesChart date={sales} />
+            <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} />
+          </>
+        )}
         {/* Exportação e importação de vendas */}
         <ExportButtons sales={sales} month={month} year={year} onMessage={showToast} />
       </PageShell>

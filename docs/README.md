@@ -178,6 +178,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ### Autenticação (`src/components/auth/`, `src/contexts/AuthContext.tsx`)
 
 - [src/contexts/AuthContext.md](src/contexts/AuthContext.md) - contexto global do usuário autenticado (`/api/auth/me`, login e logout).
+- [src/contexts/RouteLoadingContext.md](src/contexts/RouteLoadingContext.md) - gate global de carregamento da rota: só exibe a página quando todas as tarefas iniciais terminarem.
 - [src/components/auth/AuthGate.md](src/components/auth/AuthGate.md) - gate client-side que protege as rotas autenticadas e redireciona para login.
 - [src/components/auth/RequireAdmin.md](src/components/auth/RequireAdmin.md) - gate de áreas exclusivas de administradores.
 
@@ -192,6 +193,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/components/common/PageGrid.md](src/components/common/PageGrid.md) - grid padrão de página.
 - [src/components/common/Panel.md](src/components/common/Panel.md) - painel padrão.
 - [src/components/common/PanelHeader.md](src/components/common/PanelHeader.md) - cabeçalho padrão de painel.
+- [src/components/common/Skeleton.md](src/components/common/Skeleton.md) - helper de skeleton loading (blocos, texto, tabela, cards, página).
 - [src/components/common/StatusChip.md](src/components/common/StatusChip.md) - chip de status padrão.
 - [src/components/common/Form.md](src/components/common/Form.md) - formulário padrão.
 - [src/components/common/FormRow.md](src/components/common/FormRow.md) - linha padrão de campos.

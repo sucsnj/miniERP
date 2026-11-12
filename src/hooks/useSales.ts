@@ -8,6 +8,7 @@ import {
 } from '../services/salesService';
 import { canEdit } from '../utils/edit';
 import { useAuth } from '../contexts/AuthContext';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 // Função que exibe mensagens (injetada pelo hook useToast)
 type ToastFn = (message: string, type: 'success' | 'error' | 'info') => void;
@@ -30,6 +31,8 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
   // Indica se há uma carga de dados em andamento
   const [loading, setLoading] = useState(true);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+  usePendingTask('sales-initial', loading && !initialLoaded);
 
   // Aplica os padrões quando a opção não é informada
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
@@ -47,6 +50,7 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
       }
     } finally {
       setLoading(false);
+      setInitialLoaded(true);
     }
   }, [month, year, filter, autoConsolidateEnabled, user?.role]);
 

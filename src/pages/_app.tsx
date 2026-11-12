@@ -9,6 +9,7 @@ import Toaster from '../components/common/Toaster';
 import AuthGate from '../components/auth/AuthGate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../contexts/AuthContext';
+import { RouteLoadingProvider } from '../contexts/RouteLoadingContext';
 import { SettingsProvider } from '../contexts/SettingsContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import Head from 'next/head';
@@ -22,6 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const isPublic = PUBLIC_PATHS.includes(router.pathname);
 
   return (
+    <RouteLoadingProvider>
     <SettingsProvider>
       <ThemeProvider>
         <AuthProvider>
@@ -40,5 +42,6 @@ export default function App({ Component, pageProps }: AppProps) {
         </AuthProvider>
       </ThemeProvider>
     </SettingsProvider>
+    </RouteLoadingProvider>
   );
 }

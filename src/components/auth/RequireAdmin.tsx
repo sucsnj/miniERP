@@ -4,17 +4,13 @@ import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import { useAuth } from '../../contexts/AuthContext';
+import { PageSkeleton } from '../common/Skeleton';
 
 export default function RequireAdmin({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <PageShell>
-        <PageHeader title="Acesso restrito" />
-        <p>Carregando sessão...</p>
-      </PageShell>
-    );
+    return <PageSkeleton cards={3} />;
   }
 
   if (user?.role !== 'admin') {

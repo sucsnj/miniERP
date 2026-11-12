@@ -1,0 +1,21 @@
+# `src/components/common/Skeleton.tsx`
+
+> Helpers reutilizáveis de skeleton loading.
+
+## O que faz
+
+- `Skeleton`: bloco com variante (`line`, `title`, `circle`, `button`, `card`, `row`, `block`) e `count`.
+- `SkeletonText`: linhas de texto.
+- `SkeletonTable`: linhas/colunas para tabelas.
+- `SkeletonCards`: grade de cards.
+- `PageSkeleton`: página inteira com `PageShell`, header e blocos/skeletons.
+
+## Relações
+
+- **Usa:** `skeleton.module.css`, `PageShell`, `PageHeader`, `Panel`.
+- **Usado por:** auth/admin/settings/dashboard/history/summary/products/payables/month-notes/edit-sale/components de loading.
+
+## Notas
+
+- Respeita `prefers-reduced-motion: reduce`.
+- O helper evita replicar markup/estilos de placeholder por toda a UI.

@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
+import { SkeletonText } from '@/components/common/Skeleton';
 import importStyles from '../../styles/modalImport.module.css';
 import { fetchProducts, fetchServices } from '../../services/productsService';
 import type { ItemWithStatus } from '../../hooks/useImportItems';
@@ -163,8 +164,7 @@ const ItemNameDropdown: React.FC<ItemNameDropdownProps> = ({
         <div className={importStyles.dropdownMenu}>
           {loading ? (
             <div className={importStyles.dropdownLoading}>
-              <div className={importStyles.spinnerMini} />
-              <span>Buscando itens...</span>
+              <SkeletonText lines={2} lastLineWidth="60%" />
             </div>
           ) : suggestions.length > 0 ? (
             <>

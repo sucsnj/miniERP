@@ -13,6 +13,7 @@ import { useMonthlyData } from '../hooks/useMonthlyData';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
+import { SkeletonTable, SkeletonText } from '@/components/common/Skeleton';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
@@ -28,7 +29,7 @@ const SummaryPage: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   // Consolidações mensais (carregar e excluir)
-  const { mensais, loadMensais, handleDelete } = useMonthlyData(showToast);
+  const { mensais, loading, loadMensais, handleDelete } = useMonthlyData(showToast);
   // Diálogo de confirmação antes de excluir
   const { confirmOpen, openConfirm, handleConfirm, cancelConfirm } = useConfirmDialog(handleDelete);
 
@@ -91,8 +92,15 @@ const SummaryPage: React.FC = () => {
           </div>
         </Panel>
         <Panel>
+          {loading ? (
+            <>
+              <SkeletonText lines={3} />
+              <SkeletonTable rows={6} columns={7} />
+            </>
+          ) : (
+            <>
 
-      {/* Botões de alternância entre as tabelas */}
+{/* Botões de alternância entre as tabelas */}
       <div className="toggle-buttons">
         <Button
           variant={view === 'comum' ? 'primary' : 'ghost'}
@@ -184,7 +192,9 @@ const SummaryPage: React.FC = () => {
           </table>
         </div>
       </div>
-      </Panel>
+            </>
+          )}
+       </Panel>
 
       {/* Diálogo de confirmação de exclusão */}
       <ConfirmDialog

@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Estado `mensais` (`MonthlySale[]`).
-- `loadMensais()`: busca todas via `fetchAllMonthly` (estável via `useCallback`).
+- Estado `mensais` (`MonthlySale[]`) e `loading`.
+- `loadMensais()`: define `loading=true`, busca todas via `fetchAllMonthly` e encerra em `finally`.
 - `handleDelete(id)`: exclui via `deleteMonthly` e recarrega, com toasts de sucesso/erro.
 
 ## Relações

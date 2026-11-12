@@ -1,0 +1,59 @@
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-soft);
+  border-radius: 6px;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, var(--surface-strong) 50%, transparent 100%);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.circle {
+  border-radius: 9999px;
+}
+
+.text {
+  height: 14px;
+}
+
+.title {
+  height: 20px;
+}
+
+.button {
+  height: 36px;
+  border-radius: 8px;
+}
+
+.card {
+  height: 120px;
+  border-radius: var(--radius-lg, 12px);
+}
+
+.tableRow {
+  height: 44px;
+}
+
+.block {
+  height: 80px;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+    transform: none;
+    background: transparent;
+  }
+}

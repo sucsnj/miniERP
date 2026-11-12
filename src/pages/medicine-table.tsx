@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '../hooks/useToast';
 import { useAuth } from '../contexts/AuthContext';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 import contasStyles from '../styles/payables.module.css';
 import {
   uploadTable,
@@ -36,22 +37,33 @@ const Tabela: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
+  const [loadingStatus, setLoadingStatus] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  usePendingTask('medicine-table-status', loadingStatus);
+  usePendingTask('medicine-table-history', loadingHistory);
+
   const loadSearchHistory = useCallback(async () => {
+    setLoadingHistory(true);
     try {
       const recent = await fetchTableHistory();
       setHistory(recent);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoadingHistory(false);
     }
   }, []);
 
   const loadTableStatus = useCallback(async () => {
+    setLoadingStatus(true);
     try {
       const status = await fetchTableStatus();
       setTabelaLoaded(status.loaded);
       setRowCount(status.rowCount);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoadingStatus(false);
     }
   }, []);
 

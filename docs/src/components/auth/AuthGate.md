@@ -5,7 +5,7 @@
 ## O que faz
 
 - Permite `/login` e `/setup` sem sessão.
-- Enquanto `loading`, mostra placeholder de carregamento.
+- Enquanto `loading`, renderiza `PageSkeleton`.
 - Sem usuário autenticado, redireciona para `/login`.
 - Com usuário, renderiza os filhos dentro de um `Fragment key={user.storeId}`, para remontar as páginas ao trocar de loja.
 

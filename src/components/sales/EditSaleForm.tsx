@@ -13,6 +13,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Form from '@/components/common/Form';
+import { SkeletonText } from '@/components/common/Skeleton';
 
 interface EditSaleFormProps {
   sale: DailySale;
@@ -179,9 +180,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
             </span>
           )}
           {loadingItems && (
-            <span className={styles.cartHint}>
-              Carregando itens...
-            </span>
+            <SkeletonText lines={2} />
           )}
         </label>
 

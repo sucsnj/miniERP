@@ -2,6 +2,7 @@ import styles from '../../styles/products.module.css';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
 import PanelHeader from '@/components/common/PanelHeader';
+import { SkeletonTable } from '@/components/common/Skeleton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
@@ -35,7 +36,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                 <PanelHeader title="Listagem" chip={<span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>Total: {total} registro(s)</span>} />
 
                 {loading ? (
-                    <div className={styles.emptyState}>Carregando...</div>
+                    <SkeletonTable rows={5} columns={7} />
                 ) : items.length === 0 ? (
                     <div className={styles.emptyState}>Nenhum registro encontrado.</div>
                 ) : (

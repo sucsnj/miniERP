@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Enquanto a sessão carrega, exibe placeholder.
+- Enquanto a sessão carrega, renderiza `PageSkeleton`.
 - Se `user.role !== 'admin'`, mostra "Apenas administradores".
 - Caso contrário, renderiza os children.
 

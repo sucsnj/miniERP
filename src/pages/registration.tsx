@@ -38,6 +38,7 @@ import { useSupplier } from '@/hooks/useSupplier';
 import { useUnitOfMeasure } from '@/hooks/useUnitOfMeasure';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import RequireAdmin from '@/components/auth/RequireAdmin';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -54,6 +55,8 @@ const RegistrationPage: React.FC = () => {
         suppliers: [],
         unitsOfMeasure: [],
     });
+    const [auxiliaryLoading, setAuxiliaryLoading] = useState(true);
+    usePendingTask('registration-options', auxiliaryLoading);
 
     // Estado do formulário de Cadastro/Edição
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -118,6 +121,7 @@ const RegistrationPage: React.FC = () => {
 
     // Carrega opções auxiliares
     const loadAuxiliaryData = useCallback(async () => {
+        setAuxiliaryLoading(true);
         try {
             const [categories, brands, suppliers, uoms] = await Promise.all([
                 fetchCategories(),
@@ -134,6 +138,8 @@ const RegistrationPage: React.FC = () => {
         } catch (error) {
             console.error(error);
             showToast('Erro ao carregar dados auxiliares (categorias, marcas, fornecedores, unidades de medida).', 'error');
+        } finally {
+            setAuxiliaryLoading(false);
         }
     }, [showToast]);
 

@@ -4,6 +4,7 @@ import {
   deleteMonthly,
   MonthlySale,
 } from '../services/salesService';
+import { usePendingTask } from '../contexts/RouteLoadingContext';
 
 // Função que exibe mensagens (injetada pelo hook useToast)
 type ToastFn = (message: string, type: 'success' | 'error' | 'info', duration?: number | null) => void;
@@ -13,12 +14,21 @@ type ToastFn = (message: string, type: 'success' | 'error' | 'info', duration?: 
 export const useMonthlyData = (showToast: ToastFn) => {
   // Lista de consolidações mensais
   const [mensais, setMensais] = useState<MonthlySale[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+  usePendingTask('monthly-sales-initial', loading && !initialLoaded);
 
   // Busca todas as consolidações mensais e atualiza o estado.
   // useCallback mantém a referência estável (usado em useEffect).
   const loadMensais = useCallback(async () => {
-    const date = await fetchAllMonthly();
-    setMensais(date);
+    setLoading(true);
+    try {
+      const date = await fetchAllMonthly();
+      setMensais(date);
+    } finally {
+      setLoading(false);
+      setInitialLoaded(true);
+    }
   }, []);
 
   // Exclui a consolidação de um mês e recarrega a lista
@@ -34,6 +44,7 @@ export const useMonthlyData = (showToast: ToastFn) => {
 
   return {
     mensais,
+    loading,
     loadMensais,
     handleDelete,
   };

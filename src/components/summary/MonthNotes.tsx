@@ -7,7 +7,9 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '../../styles/monthNotes.module.css';
+import { SkeletonTable } from '@/components/common/Skeleton';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePendingTask } from '../../contexts/RouteLoadingContext';
 
 // Array com os months
 const months = [
@@ -38,6 +40,8 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
             Array.isArray(data) ? data : [data]
         ),
     });
+
+    usePendingTask('month-notes', isLoading);
 
     // Somatório de notas
     const invoiceTotal = invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
@@ -83,7 +87,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
             </div>
 
             {isLoading ? (
-                <p>Carregando notas...</p>
+                <SkeletonTable rows={4} columns={4} />
             ) : invoices.length === 0 ? (
                 <p>Nenhuma nota encontrada.</p>
             ) : (
