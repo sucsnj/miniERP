@@ -6,7 +6,7 @@
 
 - **Agenda**: agrupa `accountsYear` por vencimento somando pendentes; ordena e limita a 8 linhas.
 - **Próximas contas**: pendentes ordenadas por vencimento, limite 12.
-- **Leitura de Contas**: embute o [OcrUpload](../import/OcrUpload.md).
+- **Leitura de Contas**: embute o [OcrUpload](../import/OcrUpload.md), visível somente para usuários `admin`.
 
 ```ts
 interface AgendaProps {

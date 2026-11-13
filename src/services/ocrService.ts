@@ -1,55 +1,51 @@
-import Tesseract from "tesseract.js";
+import Tesseract from 'tesseract.js';
+import sharp from 'sharp';
+import { extractDigitableLineFromText } from './boletoBarcode';
 
-export async function readDigitableLine(imagePath: string, regexName: string = "regex1") {
+const WHITELIST = '0123456789. ';
+const MAX_IMAGE_DIMENSION = 2200;
 
-    try {
+const imageVariants = async (source: Buffer): Promise<Buffer[]> => {
+  const metadata = await sharp(source).metadata();
+  const width = metadata.width ?? 1600;
+  const resizeWidth = Math.min(Math.max(width, 1200), MAX_IMAGE_DIMENSION);
+  const height = metadata.height ?? 1600;
 
-        console.log("OCR EXECUTANDO:", imagePath);
+  const grayscale = sharp(source, { failOn: 'none' }).grayscale().resize({ width: resizeWidth, withoutEnlargement: true });
+  const bottom = sharp(source, { failOn: 'none' }).extract({
+    left: 0,
+    top: Math.floor(height * 0.55),
+    width,
+    height: height - Math.floor(height * 0.55),
+  }).grayscale().resize({ width: resizeWidth, withoutEnlargement: true });
 
-        const worker = await Tesseract.createWorker("eng");
+  return [
+    source,
+    await grayscale.clone().threshold(160).toBuffer(),
+    await grayscale.clone().linear(1.4, -40).threshold(190).toBuffer(),
+    await grayscale.clone().threshold(220).toBuffer(),
+    await bottom.clone().threshold(160).toBuffer(),
+    await bottom.clone().linear(1.3, -30).threshold(190).toBuffer(),
+  ];
+};
 
-        await worker.setParameters({
-            tessedit_char_whitelist: "0123456789. "
-        });
+export const readDigitableLine = async (source: Buffer): Promise<string | null> => {
+  const worker = await Tesseract.createWorker('eng');
 
-        const result = await worker.recognize(imagePath);
+  try {
+    await worker.setParameters({
+      tessedit_char_whitelist: WHITELIST,
+      preserve_interword_spaces: '1',
+    });
 
-        await worker.terminate();
-
-        console.log("TEXTO OCR:");
-        console.log(result.data.text);
-
-        const text = result.data.text
-            .replace(/\n/g, " ")
-            .replace(/\s+/g, " ");
-
-        const regex1 = /\d{5}\.?\d{5}\s?\d{5}\.?\d{6}\s?\d{5}\.?\d{6}\s?\d\s?\d{14}/g;
-        const regex2 = /\d{5}[\s\.]?\d{5}[\s\.]?\d{5}[\s\.]?\d{6}[\s\.]?\d{5}[\s\.]?\d{6}[\s\.]?\d[\s\.]?\d{13,14}/g;
-        let regex = null;
-
-        if (regexName === "regex1") {
-            regex = regex1;
-        } else {
-            regex = regex2;
-        }
-
-        const matches = text.match(regex);
-        console.log("MATCHES:", matches);
-
-        if (matches && matches.length > 0) {
-            // pega sempre a última line encontrada
-            const line = matches[matches.length - 1]
-                .replace(/\s/g, "")
-                .replace(/\./g, "");
-            return line;
-        }
-
-        return null;
-
-    } catch (err) {
-
-        console.error("Erro no OCR:", err);
-
-        return null;
+    for (const variant of await imageVariants(source)) {
+      const result = await worker.recognize(variant);
+      const line = extractDigitableLineFromText(result.data.text);
+      if (line) return line;
     }
-}
+
+    return null;
+  } finally {
+    await worker.terminate();
+  }
+};

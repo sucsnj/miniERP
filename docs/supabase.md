@@ -89,7 +89,7 @@ Todas as RPCs de negócio foram alteradas para operar com `company_id` (e `store
 ## Vercel
 
 - O Supabase elimina a restrição do SQLite; as API routes com `service role` funcionam em serverless.
-- OCR/PDF será removido (ADR 0012). O upload XLSX de `/medicine-table` usa `multer` em `uploads/` e precisará gravar em `/tmp` ou Supabase Storage.
+- OCR/PDF funciona localmente sem binários de sistema (ver ADR 0014). O upload XLSX de `/medicine-table` usa `multer` em `uploads/` e ainda precisará gravar em `/tmp` ou Supabase Storage.
 - Autenticação própria e multiempresa/multi-loja são definidas no ADR 0013; schema e proteção server-side ficam em rollout pausado.
 
 ## Estado da migração

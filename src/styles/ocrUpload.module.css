@@ -78,7 +78,21 @@
                         transform 0.2s ease;
                 }
 
-                .ocrUpload::file-selector-button:hover {
-                    background: var(--surface-soft);
-                    transform: translateY(-1px);
-                }
+.ocrUpload::file-selector-button:hover {
+    background: var(--surface-soft);
+    transform: translateY(-1px);
+}
+
+.clearHistory {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+    font: inherit;
+}
+
+.clearHistory:hover {
+    background: var(--surface-soft);
+}

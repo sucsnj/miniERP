@@ -30,7 +30,8 @@ O projeto é uma aplicação Next.js 16 com front-end React e back-end API route
 - `@tanstack/react-query`: cache de dados e refetch automático.
 - `better-sqlite3`: persistência local SQLite no servidor.
 - `multer`: upload de arquivos para endpoints de OCR e tabela.
-- `pdf2pic`, `sharp`, `tesseract.js`: pipeline de OCR / conversão de PDF.
+- `unpdf`, `pdfjs-dist`, `@napi-rs/canvas`: leitura/render de PDFs para OCR.
+- `sharp`, `tesseract.js`: pré-processamento e OCR de boletos.
 - `xlsx`: leitura e escrita de planilhas.
 - `recharts`: exibição de gráficos.
 
@@ -38,7 +39,7 @@ O projeto é uma aplicação Next.js 16 com front-end React e back-end API route
 
 - Separação clara entre UI, serviços e banco.
 - Uso consistente de componentes React funcionais.
-- Suporte a importação/exportação XLSX, PDF, backup e OCR.
+- Suporte a importação/exportação XLSX, PDF, backup e OCR local de boletos (ver ADR 0014).
 - Estrutura de dados simples e fácil de entender para vendas e contas.
 
 ## Pontos Fracos e Riscos

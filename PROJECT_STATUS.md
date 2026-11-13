@@ -6,7 +6,7 @@ Atualizado em: **13/11/2026**
 
 ## Resumo executivo
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Persistência 100% Supabase; SQLite/better-sqlite3/backups removidos. OCR mantido desativado para evolução futura. Offline/PWA planejado para depois.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Query). Persistência 100% Supabase; SQLite/better-sqlite3/backups removidos. OCR de boletos reabilitado localmente (PDF/imagem, linha digitável). Offline/PWA planejado para depois.
 
 ## Estado atual
 
@@ -22,7 +22,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | `node scripts/check-encoding.mjs` | sem mojibake/BOM |
 | Persistência | Supabase |
 | Offline/PWA | não implementado |
-| Teste manual | funcionalidades críticas validadas; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
+| Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
 
 ## Pendentes
 

@@ -1,20 +1,20 @@
 # `src/pages/api/ocr.ts`
 
-> OCR de boletos: recebe PDFs/imagens, lê a linha digitável e devolve os resultados por arquivo.
+> OCR de boletos: recebe PDFs/imagens, lê a linha digitável e devolve um resultado por arquivo.
 
 ## O que faz
 
-- Só aceita `POST` multipart, campo `files` (um ou mais); `bodyParser` desligado, upload via `multer`.
-- Encaminha `.pdf` para `readPdfWithOcr` e as demais extensões para `readDigitableLine`.
-- Responde `200` com `[{ arquivo, linha }]` ou `[{ arquivo, erro }]`; `400` sem arquivos; `405` fora de POST.
-- Remove cada arquivo de upload no `finally`.
+- `POST /api/ocr` (admin-only) com `multipart/form-data`, campo `files` (até 10, até 8 MB por arquivo).
+- Tipos aceitos: PDF, PNG, JPEG, WebP.
+- Detecta magic bytes/MIME; rejeita arquivo inválido sem processá-lo.
+- Retorna um array `{ id, arquivo, linhaDigitavel?, erro? }`; um arquivo inválido não interrompe o lote.
 
 ## Relações
 
-- **Usa:** `src/services/ocrService.ts`, `src/services/pdfService.ts`; `multer`.
-- **Usado por:** `src/components/import/OcrUpload.tsx`.
+- **Usa:** [`../../services/ocrService.md`](../../services/ocrService.md), [`../../services/pdfService.md`](../../services/pdfService.md), `multer`.
+- **Usado por:** [`../../components/import/OcrUpload.md`](../../components/import/OcrUpload.md).
 
 ## Notas
 
-- A flag `info` (de `pdfService`) sufixa o nome quando a leitura só veio por `regex2` (OCR inconsistente).
-- Arquivos temporários ficam em `./temp` (limpos por `cleanTemp()`).
+- Não grava arquivos no servidor; uploads entram na memória (`multer.memoryStorage()`).
+- O PDF é limitado a 2 páginas.

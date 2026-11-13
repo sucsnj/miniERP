@@ -1,19 +1,18 @@
 # `src/services/ocrService.ts`
 
-> Serviço de OCR para extrair linha digitável de boletos a partir de imagem, usando `tesseract.js`.
+> Serviço de OCR para extrair linha digitável de boletos a partir de imagem.
 
 ## O que faz
 
-- Cria worker `eng`, restringe charset a `0123456789. ` e reconhece texto da imagem.
-- Normaliza quebras/espaços e tenta duas regex para capturar linha digitável.
-- Retorna a linha limpa (sem espaços/pontos) ou `null` em caso de falha.
+- `readDigitableLine(source: Buffer)`: cria worker Tesseract e tenta múltiplos pré-processamentos (`sharp`).
+- Restringe whitelist a dígitos, espaço e `.`; reduz ruído em imagens reais.
+- Normaliza candidatos plausíveis em texto OCR; não exige checksum por tolerar boletos de baixa qualidade.
 
 ## Relações
 
-- **Usa:** [`tesseract.js`](https://github.com/naptha/tesseract.js)
-- **Usado por:** [`src/services/pdfService.ts`](./pdfService.md)
+- **Usa:** `tesseract.js`, `sharp`, `src/services/boletoBarcode.ts`.
+- **Usado por:** [`src/services/pdfService.ts`](./pdfService.md) e [`src/pages/api/ocr.ts`](../pages/api/ocr.md).
 
 ## Notas
 
-- Pega **sempre a última** ocorrência encontrada (`matches[matches.length - 1]`).
-- Regex padrão: `regex1`; fallback: `regex2` (quando chamado com `regexConst='regex2'`).
+- Apenas candidatos plausíveis retornam; o serviço não preenche formulários.

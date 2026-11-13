@@ -45,6 +45,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0011-integracao-carrinho-estoque.md](adr/0011-integracao-carrinho-estoque.md) - ADR: integração do carrinho com estoque (devolução explícita, quantidade inteira, estoque negativo configurável, backend-first). botões com variantes funcionais, tamanhos, carregamento e `iconOnly`.
 - [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
 - [adr/0013-autenticacao-multiempresa-multiloja.md](adr/0013-autenticacao-multiempresa-multiloja.md) - ADR: autenticação própria, sessão de 48h, papéis admin/merchant e isolamento multiempresa/multi-loja.
+- [adr/0014-ocr-local-e-indexeddb.md](adr/0014-ocr-local-e-indexeddb.md) - ADR: OCR local de boletos, IndexedDB para histórico e sem preencher contas automaticamente.
 
 ## Páginas do Frontend
 
@@ -118,8 +119,10 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/services/settingsService.md](src/services/settingsService.md) - API cliente de configurações do tenant.
 - [src/services/payablesService.md](src/services/payablesService.md) - API cliente de contas a pagar.
 - [src/services/invoicesService.md](src/services/invoicesService.md) - API cliente de notas fiscais.
-- [src/services/ocrService.md](src/services/ocrService.md) - OCR e upload de arquivos.
-- [src/services/pdfService.md](src/services/pdfService.md) - conversão de PDF em imagem e pré-processamento para OCR.
+- [src/services/boletoBarcode.md](src/services/boletoBarcode.md) - normalização e validação de linha digitável (47/48 dígitos).
+- [src/services/ocrHistoryRepository.md](src/services/ocrHistoryRepository.md) - histórico do OCR no IndexedDB (5 dias).
+- [src/services/ocrService.md](src/services/ocrService.md) - OCR e leitura da linha digitável.
+- [src/services/pdfService.md](src/services/pdfService.md) - extração/renderização de PDF para OCR.
 - [src/services/productsService.md](src/services/productsService.md) - API cliente de produtos/catálogo.
 - [src/services/medicineTableService.md](src/services/medicineTableService.md) - API cliente da tabela de medicamentos (upload, busca, histórico, status).
 - [src/services/salesService.md](src/services/salesService.md) - API cliente de vendas diárias.

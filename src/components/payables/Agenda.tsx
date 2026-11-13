@@ -1,7 +1,6 @@
-const OCR_ENABLED = false;
-
 import React, { useMemo } from 'react';
 import OcrUpload from '@/components/import/OcrUpload';
+import { useAuth } from '@/contexts/AuthContext';
 import { AccountDetails, } from '../../services/payablesService';
 import { formatCurrency } from '../../utils/formatter';
 import styles from '../../styles/payables.module.css';
@@ -15,6 +14,8 @@ interface AgendaProps {
 }
 
 const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'admin';
     // Mapeamento de contas por date de dueDate
     const agenda = useMemo(() => {
         const map = new Map<string, { date: string; pendingTotal: number }>();
@@ -83,7 +84,8 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
                     <div className={styles.panelHeader}>
                         <h3>Leitura de Contas</h3>
                     </div>
-                    {OCR_ENABLED && <OcrUpload />}
+                    {isAdmin && <OcrUpload />}
+                    {!isAdmin && <p>Leitura de contas disponível apenas para administradores.</p>}
                 </Panel>
             </Panel>
         </div>

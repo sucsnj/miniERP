@@ -14,7 +14,9 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação s
 - **@supabase/supabase-js** — persistência remota no Supabase (acesso server-only via API routes).
 - **dayjs** — datas (timezone padrão `America/Recife`).
 - **recharts** — gráficos; **xlsx** — planilhas.
-- **multer + pdf2pic + sharp + tesseract.js** — upload e OCR de notas.
+- **multer**: upload de arquivos para OCR e tabela.
+- **sharp + tesseract.js**: pré-processamento e OCR de boletos.
+- **unpdf/pdfjs-dist**: leitura de PDF (texto direto ou renderização fallback para PDF scanned).
 
 ## Camadas (onde mora cada coisa)
 
@@ -61,7 +63,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |
 | Formulários de venda (dia/item) | `docs/src/components/sales/DailySaleForm.md`, `docs/src/components/products/ItemForm.md`, `docs/src/components/sales/EditSaleForm.md` |
-| OCR / importação | `docs/src/pages/api/ocr.md`, `docs/src/services/ocrService.md`, `docs/src/services/pdfService.md`, `docs/src/components/import/OcrUpload.md` |
+| OCR / importação | `docs/src/pages/api/ocr.md`, `docs/src/services/ocrService.md`, `docs/src/services/pdfService.md`, `docs/src/services/boletoBarcode.md`, `docs/src/services/ocrHistoryRepository.md`, `docs/src/components/import/OcrUpload.md`, `docs/adr/0014-ocr-local-e-indexeddb.md` |
 | Tabela de medicamentos | `docs/src/pages/medicine-table.md`, `docs/src/database/medicine-tableDb.md` |
 | Notas fiscais | `docs/src/pages/api/invoices.md`, `docs/src/database/notasDb.md` |
 | Backup | `docs/src/pages/api/backup.md`, `docs/src/pages/api/contas/backup.md` |
