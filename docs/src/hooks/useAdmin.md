@@ -6,7 +6,7 @@
 
 - Carrega empresa, lojas e vendedores via TanStack Query (`tenantKeys.adminCompany`, `tenantKeys.adminStores`, `tenantKeys.adminMerchants`).
 - Mantém rascunhos locais de nome de empresa, rascunhos de lojas e de vendedores (com merge apenas de novos vendedores/lojas para não sobrescrever edição).
-- Expõe `createStore`, `saveStore`, `toggleStore`, `saveMerchant`, `createMerchant`, `resetMerchantPassword`, `saveCompany`, `toggleMerchantStore` etc.
+- Expõe `createStore`, `saveStore`, `toggleStore`, `saveMerchant`, `createMerchant`, `resetMerchantPassword`, `saveCompany`, `toggleMerchantStore`, `updateMerchantAvatar` etc.
 - Mutations com optimistic update em stores/merchants e invalidação prefixada `['tenant', companyId, storeId, 'admin']`.
 
 ## Relações

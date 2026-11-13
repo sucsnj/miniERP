@@ -11,11 +11,11 @@
 
 ## Relações
 
-- **Usa:** `RequireAdmin`, `useAuth`, `profileService`, componentes comuns.
+- **Usa:** `RequireAdmin`, `useAuth`, `AvatarPicker`, `avatarService`, `profileService`.
 - **Acessada por:** menu de usuário da [Nav](../components/common/Nav.md).
 
 ## Notas
 
-- A foto é enviada como data URL e persistida no Supabase Storage (`avatars`), com URL pública em `users.avatar_url`.
+- A foto é enviada como data URL e persistida no Supabase Storage (`avatars`) via `/api/avatar`, com URL pública em `users.avatar_url`.
 - O apelido persiste no campo `login` da tabela `users`.
 - A troca de senha revoga sessões anteriores e mantém a sessão devolvida pela API.

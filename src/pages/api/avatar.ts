@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getAuthContext, requireAdminApi } from '../../../../utils/serverAuth';
-import { getSupabaseServerClient } from '../../../../database/supabase';
+import { getAuthContext, requireAdminApi } from '../../utils/serverAuth';
+import { getSupabaseServerClient } from '../../database/supabase';
 
 export const config = {
   api: {
@@ -21,7 +21,11 @@ const extensionFor = (mimeType: string): string => {
   return 'webp';
 };
 
-const removeOldAvatar = async (avatarUrl: string | null | undefined, companyId: string, userId: string): Promise<void> => {
+const removeOldAvatar = async (
+  avatarUrl: string | null | undefined,
+  companyId: string,
+  userId: string
+): Promise<void> => {
   const marker = `/object/public/${AVATAR_BUCKET}/`;
   if (!avatarUrl) return;
   const markerIndex = avatarUrl.indexOf(marker);
@@ -42,32 +46,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ctx = await requireAdminApi(req, res);
   if (!ctx) return;
 
+  const targetUserId = String(req.body?.userId ?? ctx.userId).trim();
   const match = String(req.body?.dataUrl ?? '').trim().match(DATA_URL_PATTERN);
   if (!match) {
     return res.status(400).json({ error: 'Selecione uma imagem PNG, JPEG, GIF ou WebP.' });
   }
 
   const mimeType = match[1].toLowerCase();
-  const base64 = match[2];
-  const file = Buffer.from(base64, 'base64');
+  const file = Buffer.from(match[2], 'base64');
 
   if (file.length === 0 || file.length > MAX_FILE_SIZE) {
     return res.status(400).json({ error: 'A foto deve ter no máximo 5 MB.' });
   }
 
   const client = getSupabaseServerClient();
-  const { data: current, error: currentError } = await client
+  const { data: target, error: targetError } = await client
     .from('users')
-    .select('avatar_url')
-    .eq('id', ctx.userId)
+    .select('id, avatar_url')
+    .eq('id', targetUserId)
     .eq('company_id', ctx.companyId)
     .maybeSingle();
 
-  if (currentError) {
-    return res.status(500).json({ error: 'Não foi possível carregar o perfil atual.' });
+  if (targetError || !target) {
+    return res.status(404).json({ error: 'Usuário não encontrado.' });
   }
 
-  const filePath = `${ctx.companyId}/${ctx.userId}/avatar-${Date.now()}.${extensionFor(mimeType)}`;
+  const filePath = `${ctx.companyId}/${targetUserId}/avatar-${Date.now()}.${extensionFor(mimeType)}`;
   const { error: uploadError } = await client.storage
     .from(AVATAR_BUCKET)
     .upload(filePath, file, {
@@ -86,20 +90,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { error: updateError } = await client
     .from('users')
     .update({ avatar_url: avatarUrl })
-    .eq('id', ctx.userId)
+    .eq('id', targetUserId)
     .eq('company_id', ctx.companyId);
 
   if (updateError) {
     await client.storage.from(AVATAR_BUCKET).remove([filePath]);
-    return res.status(500).json({ error: 'Não foi possível atualizar a foto do perfil.' });
+    return res.status(500).json({ error: 'Não foi possível atualizar a foto.' });
   }
 
   try {
-    await removeOldAvatar(typeof current?.avatar_url === 'string' ? current.avatar_url : null, ctx.companyId, ctx.userId);
+    await removeOldAvatar(typeof target.avatar_url === 'string' ? target.avatar_url : null, ctx.companyId, targetUserId);
   } catch (cleanupError) {
     console.warn('Não foi possível remover o avatar anterior:', cleanupError);
   }
 
-  const refreshed = await getAuthContext(req);
-  return res.status(200).json({ user: refreshed });
+  const response: Record<string, unknown> = { avatarUrl, userId: targetUserId };
+  if (targetUserId === ctx.userId) {
+    response.user = await getAuthContext(req);
+  }
+
+  return res.status(200).json(response);
 }

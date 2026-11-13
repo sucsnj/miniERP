@@ -1,19 +1,20 @@
 # `src/pages/api/admin/merchants.ts`
 
-> Administração de vendedores da empresa.
+> Administração de vendedores da empresa atual.
 
 ## O que faz
 
-- `GET`: lista vendedores com lojas vinculadas.
-- `POST`: cria merchant (`name`, `login`, `email`, `password`, `storeIds`).
-- `POST`/`PATCH`: aceita `avatarUrl` opcional (URL http/https, path absoluto com no máximo 1024 caracteres) ou uma pequena data URI de imagem `png|jpg|gif|webp` (sem SVG); URLs maiores são rejeitadas com 400.
+- `GET`: lista vendedores e lojas autorizadas.
+- `POST`: cria vendedor (`name`, `login`, `email`, `password`, `storeIds`).
+- `PATCH`: atualiza vendedor (`name`, `login`, `email`, `active`, `storeIds`, `password`).
 
 ## Relações
 
-- **Usa:** `requireAdminApi`, `src/database/adminRepository.ts`, `src/utils/password.ts`, `src/utils/serverAuth.ts`.
-- **Usado por:** `/admin`.
+- **Usa:** `requireAdminApi`, `validateLogin`, `validatePassword`, `adminRepository`.
+- **Usado por:** `src/hooks/useAdmin.ts`.
 
 ## Notas
 
-- `login` somente letras (mínimo 4); e-mail obrigatório e único; senha segue política.
-- Não é possível promover merchant a admin.
+- Foto de vendedor é alterada somente via [`/api/avatar`](../avatar.md), com upload do dispositivo e limite de 5 MB.
+- O endpoint não aceita URL manual nem data URI pequena; ela foi removida para evitar burlar o limite/mime-type.
+- `login` somente letras (mínimo 4); e-mail obrigatório e único.

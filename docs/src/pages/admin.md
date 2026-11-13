@@ -7,12 +7,12 @@
 - Permite ao admin atualizar o nome da empresa; o `AuthContext` é reutilizado pela navegação após alteração.
 - Permite criar/editar/desativar até 2 lojas; impacta a sessão atual quando necessário.
 - Redefine senha de vendedores via modal validável (confirmação + política mínima), sem `window.prompt`.
-- `avatarUrl` de vendedores é limitado a 1024 caracteres; data URI restrita a imagens pequenas e sem SVG.
-- Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar, redefinir senha e informar URL de foto.
+- Foto de vendedores é escolhida do dispositivo via `AvatarPicker` (PNG, JPEG, GIF ou WebP, até 5 MB); não há campo de URL manual.
+- Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar, redefinir senha e escolher foto.
 
 ## Relações
 
-- **Usa:** `RequireAdmin`, APIs `/api/admin/*` (via `useAdmin`/`adminService`).
+- **Usa:** `RequireAdmin`, `AvatarPicker`, `avatarService`, `useAdmin`, `adminService`.
 - **Usado por:** rota `/admin` (somente admin; link na Nav).
 
 ## Notas

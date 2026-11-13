@@ -27,7 +27,6 @@ export interface UpdateMerchantPatch {
   active?: boolean;
   storeIds?: string[];
   password?: string;
-  avatarUrl?: string | null;
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -86,7 +85,6 @@ export const createMerchant = (input: {
   email: string;
   password: string;
   storeIds: string[];
-  avatarUrl?: string | null;
 }) =>
   fetchJson<{ merchant: MerchantAdmin }>('/api/admin/merchants', {
     method: 'POST',

@@ -78,8 +78,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
 - [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.
 - [src/pages/api/auth/change-password.md](src/pages/api/auth/change-password.md) - troca de senha e revogação de sessões.
+- [src/pages/api/avatar.md](src/pages/api/avatar.md) - upload de foto de usuário para Supabase Storage.
 - [src/pages/api/auth/profile.md](src/pages/api/auth/profile.md) - perfil do administrador (nome, apelido e e-mail).
-- [src/pages/api/auth/profile/avatar.md](src/pages/api/auth/profile/avatar.md) - upload de foto de perfil para Supabase Storage.
 - [src/pages/api/auth/profile/password.md](src/pages/api/auth/profile/password.md) - troca de senha do administrador.
 - [src/pages/api/admin/company.md](src/pages/api/admin/company.md) - empresa atual (admin).
 - [src/pages/api/admin/stores.md](src/pages/api/admin/stores.md) - lojas da empresa (admin).
@@ -112,6 +112,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ## Serviços
 
 - [src/services/profileService.md](src/services/profileService.md) - API cliente de perfil do administrador.
+- [src/services/avatarService.md](src/services/avatarService.md) - upload e validação de fotos de usuário (5 MB).
 - [src/services/adminService.md](src/services/adminService.md) - API cliente de administração (empresa, lojas, vendedores).
 - [src/services/settingsService.md](src/services/settingsService.md) - API cliente de configurações do tenant.
 - [src/services/payablesService.md](src/services/payablesService.md) - API cliente de contas a pagar.
@@ -211,6 +212,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/components/common/Field.md](src/components/common/Field.md) - campo de formulário compartilhado.
 - [src/components/common/Table.md](src/components/common/Table.md) - tabela compartilhada.
 - [src/components/common/BarcodeManager.md](src/components/common/BarcodeManager.md) - leitura de código de barras.
+- [src/components/common/AvatarPicker.md](src/components/common/AvatarPicker.md) - seletor compartilhado de foto de usuário.
 
 ## Hooks
 

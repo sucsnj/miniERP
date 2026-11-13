@@ -184,14 +184,13 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
   });
 
   const createMerchantMutation = useMutation({
-    mutationFn: (input: MerchantDraft) =>
+    mutationFn: (input: Omit<MerchantDraft, 'avatarUrl'>) =>
       createMerchant({
         name: input.name,
         login: input.login.toLowerCase(),
         email: input.email.trim(),
         password: input.password,
         storeIds: input.storeIds,
-        avatarUrl: input.avatarUrl.trim() || undefined,
       }),
     onSuccess: () => {
       invalidateAdmin();
@@ -218,7 +217,6 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
                 email: input.email ?? merchant.email,
                 active: input.active ?? merchant.active,
                 storeIds: input.storeIds ?? merchant.storeIds,
-                avatarUrl: typeof input.avatarUrl === 'undefined' ? merchant.avatarUrl : input.avatarUrl,
               }
             : merchant
         )
@@ -334,10 +332,36 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
         ...trimmed,
         active: draft.active,
         storeIds: draft.storeIds,
-        avatarUrl: draft.avatarUrl ?? null,
       });
     },
     [merchantDrafts, showToast, updateMerchantMutation]
+  );
+
+  const updateMerchantAvatar = useCallback(
+    (merchantId: string, avatarUrl: string) => {
+      setMerchantDrafts((current) =>
+        current[merchantId]
+          ? {
+              ...current,
+              [merchantId]: {
+                ...current[merchantId],
+                avatarUrl,
+              },
+            }
+          : current
+      );
+
+      if (identity) {
+        queryClient.setQueriesData<MerchantAdmin[] | undefined>(
+          { queryKey: tenantKeys.adminMerchants(identity) },
+          (current) =>
+            current?.map((merchant) =>
+              merchant.id === merchantId ? { ...merchant, avatarUrl } : merchant
+            )
+        );
+      }
+    },
+    [identity, queryClient]
   );
 
   const createMerchantDraft = useCallback(
@@ -348,7 +372,6 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
         email: draft.email.trim(),
         password: draft.password,
         storeIds: [...new Set(draft.storeIds)],
-        avatarUrl: draft.avatarUrl.trim() || undefined,
       };
 
       if (!trimmed.name || !trimmed.login || !trimmed.email || !trimmed.password) {
@@ -366,7 +389,7 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
         return;
       }
 
-      createMerchantMutation.mutate({ ...trimmed, avatarUrl: trimmed.avatarUrl ?? '' });
+      createMerchantMutation.mutate(trimmed);
     },
     [createMerchantMutation, showToast]
   );
@@ -398,6 +421,7 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
     toggleNewMerchantStore,
     toggleMerchantStore,
     updateMerchantDraft,
+    updateMerchantAvatar,
     createMerchant: createMerchantDraft,
     saveMerchant: saveMerchantDraft,
     resetMerchantPassword: resetMerchantPasswordDraft,

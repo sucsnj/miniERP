@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -11,20 +11,19 @@ import { useToast } from '../hooks/useToast';
 import {
   changeProfilePassword,
   updateProfile,
-  uploadProfileAvatar,
 } from '../services/profileService';
+import { uploadAvatar } from '../services/avatarService';
+import AvatarPicker from '@/components/common/AvatarPicker';
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
   const { showToast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [savingAvatar, setSavingAvatar] = useState(false);
 
   const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -71,26 +70,11 @@ const ProfilePage = () => {
     }
   };
 
-  const selectAvatar = () => fileInputRef.current?.click();
-
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
-    setSavingAvatar(true);
-    try {
-      const body = await uploadProfileAvatar(file);
-      if (body.user) setUser(body.user);
-      showToast('Foto de perfil atualizada.', 'success');
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao atualizar a foto.', 'error');
-    } finally {
-      setSavingAvatar(false);
-    }
+  const uploadProfileAvatar = async (file: File) => {
+    const body = await uploadAvatar(file);
+    if (body.user) setUser(body.user);
+    showToast('Foto de perfil atualizada.', 'success');
   };
-
-  const avatarInitial = user?.name.trim().charAt(0).toUpperCase() || '?';
 
   return (
     <RequireAdmin>
@@ -104,30 +88,14 @@ const ProfilePage = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
             <Panel style={{ padding: '12px' }}>
               <PanelHeader title="Foto de perfil" />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-                {user?.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={`Foto de ${user.name}`}
-                    width={96}
-                    height={96}
-                    style={{ width: 96, height: 96, borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <span aria-hidden="true" style={{ width: 96, height: 96, borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'var(--primary)', color: '#fff', fontSize: '2rem', fontWeight: 700 }}>
-                    {avatarInitial}
-                  </span>
-                )}
-                <Button type="button" variant="outline" size="sm" onClick={selectAvatar} isLoading={savingAvatar}>
-                  {savingAvatar ? 'Enviando...' : 'Escolher foto'}
-                </Button>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>PNG, JPEG, GIF ou WebP, até 5 MB.</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/gif,image/webp"
-                  onChange={handleAvatarChange}
-                  hidden
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+                <AvatarPicker
+                  value={user?.avatarUrl}
+                  fallback={user?.name ?? ''}
+                  size={96}
+                  label="Escolher foto"
+                  caption="PNG, JPEG, GIF ou WebP, até 5 MB."
+                  onUpload={uploadProfileAvatar}
                 />
               </div>
             </Panel>

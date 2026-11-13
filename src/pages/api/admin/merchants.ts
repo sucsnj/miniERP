@@ -14,24 +14,6 @@ function normalizeStoreIds(value: unknown): string[] {
   return Array.isArray(value) ? value.map((id) => String(id)).filter(Boolean) : [];
 }
 
-const MAX_AVATAR_URL_LENGTH = 1024;
-
-function normalizeAvatarUrl(value: unknown): string | null | undefined {
-  if (value === undefined) return undefined;
-  const url = String(value).trim();
-  if (!url) return null;
-  if (url.length > MAX_AVATAR_URL_LENGTH) return undefined;
-  if (url.startsWith('/')) return url;
-  if (/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]{1,200}$/i.test(url)) return url;
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return url;
-  } catch {
-    return undefined;
-  }
-  return undefined;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireAdminApi(req, res);
   if (!ctx) return;
@@ -52,10 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const email = normalizeEmail(req.body?.email);
     const password = String(req.body?.password ?? '');
     const storeIds = normalizeStoreIds(req.body?.storeIds);
-    const avatarUrl = normalizeAvatarUrl(req.body?.avatarUrl);
-    if (avatarUrl === undefined && req.body?.avatarUrl !== undefined) {
-      return res.status(400).json({ error: 'Foto inválida. Use uma URL http/https, caminho local absoluto ou data URI de imagem.' });
-    }
 
     if (!isValidName(name)) {
       return res.status(400).json({ error: 'O nome deve ter entre 2 e 120 caracteres.' });
@@ -75,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const merchant = await createMerchant({ name, login, email, password, storeIds, avatarUrl }, ctx);
+      const merchant = await createMerchant({ name, login, email, password, storeIds }, ctx);
       return res.status(201).json({ merchant });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Não foi possível criar o vendedor.';
@@ -94,7 +72,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       active?: boolean;
       storeIds?: string[];
       password?: string;
-      avatarUrl?: string | null;
     } = {};
 
     if (req.body?.name !== undefined) {
@@ -115,11 +92,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.body?.active !== undefined) {
       if (typeof req.body.active !== 'boolean') return res.status(400).json({ error: 'Status do vendedor deve ser booleano.' });
       input.active = req.body.active;
-    }
-    if (req.body?.avatarUrl !== undefined) {
-      const avatarUrl = normalizeAvatarUrl(req.body.avatarUrl);
-      if (avatarUrl === undefined) return res.status(400).json({ error: 'Foto inválida. Use uma URL http/https, caminho local absoluto ou data URI de imagem.' });
-      input.avatarUrl = avatarUrl;
     }
     if (req.body?.storeIds !== undefined) {
       const storeIds = normalizeStoreIds(req.body.storeIds);

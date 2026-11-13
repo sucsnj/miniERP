@@ -56,7 +56,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | Histórico / relatórios | `docs/src/pages/history.md`, `docs/src/pages/summary.md`, `docs/src/pages/api/monthly-sales.md` |
 | Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
 | Produtos / estoque | `docs/src/pages/products.md`, `docs/src/database/productsDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/products/*.md`, `docs/src/services/productsService.md` |
-| Perfil / autenticação admin | `docs/src/pages/profile.md`, `docs/src/pages/api/auth/profile.md`, `docs/src/pages/api/auth/profile/avatar.md`, `docs/src/pages/api/auth/profile/password.md`, `docs/src/services/profileService.md` |
+| Perfil / autenticação admin | `docs/src/pages/profile.md`, `docs/src/pages/api/auth/profile.md`, `docs/src/pages/api/auth/profile/password.md`, `docs/src/pages/api/avatar.md`, `docs/src/services/profileService.md`, `docs/src/services/avatarService.md` |
 | Cadastros auxiliares | `docs/src/pages/registration.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |

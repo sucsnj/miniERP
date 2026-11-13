@@ -251,7 +251,7 @@ async function replaceStoreAssignments(userId: string, storeIds: string[], ctx: 
 }
 
 export async function createMerchant(
-  input: { name: string; login: string; email: string; password: string; storeIds: string[]; avatarUrl?: string | null },
+  input: { name: string; login: string; email: string; password: string; storeIds: string[] },
   ctx: AuthContext
 ): Promise<MerchantAdmin> {
   const client = getSupabaseServerClient();
@@ -269,7 +269,7 @@ export async function createMerchant(
       name,
       login,
       email,
-      avatar_url: input.avatarUrl ?? null,
+      avatar_url: null,
       password_hash: passwordHash,
       last_store_id: uniqueStoreIds[0] ?? null,
     })
@@ -306,7 +306,6 @@ export async function updateMerchant(
     active?: boolean;
     storeIds?: string[];
     password?: string;
-    avatarUrl?: string | null;
   },
   ctx: AuthContext
 ): Promise<void> {
@@ -321,7 +320,6 @@ export async function updateMerchant(
   if (input.login !== undefined) patch.login = normalizeIdentifier(input.login);
   if (input.email !== undefined) patch.email = normalizeEmail(input.email);
   if (input.active !== undefined) patch.active = input.active;
-  if (input.avatarUrl !== undefined) patch.avatar_url = input.avatarUrl ?? null;
   if (input.password) patch.password_hash = await hashPassword(input.password);
 
   if (Object.keys(patch).length > 0) {

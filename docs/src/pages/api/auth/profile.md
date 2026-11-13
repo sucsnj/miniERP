@@ -8,6 +8,7 @@
 - Valida nome (2–120 caracteres), apelido (mínimo 4 letras) e e-mail válido.
 - Marca erros de unicidade de apelido/e-mail como erro 400.
 - Retorna o contexto de sessão renovado (`{ user }`).
+- A alteração da foto vive em [`/api/avatar`](../avatar.md); a senha em `./profile/password.md`.
 
 ## Relações
 
@@ -16,5 +17,4 @@
 
 ## Notas
 
-- A alteração da foto vive em `./profile/avatar.md`; a senha em `./profile/password.md`.
 - Apenas administradores podem chamar este endpoint.
