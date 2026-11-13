@@ -182,9 +182,9 @@ const SettingsPage = () => {
     const pixFormFilled = Object.values(pixValues).every(Boolean);
     const nextPixPresets = pixFormFilled
       ? upsertPixPreset(pixPresets, {
-          ...pixValues,
-          label: presetLabel,
-        })
+        ...pixValues,
+        label: presetLabel,
+      })
       : pixPresets;
 
     await patchCompany({
@@ -266,7 +266,11 @@ const SettingsPage = () => {
               ))}
               <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                 Neste dispositivo
-                <select value={recentSalesCountOverride ?? 'company'} onChange={(event) => event.target.value === 'company' ? clearRecentSalesCount() : setRecentSalesCount(Number(event.target.value) as RecentSalesCount)} style={{ padding: '6px' }}>
+                <select
+                  value={recentSalesCountOverride ?? 'company'}
+                  onChange={(event) => event.target.value === 'company' ? clearRecentSalesCount() : setRecentSalesCount(Number(event.target.value) as RecentSalesCount)}
+                  style={{ padding: '6px', width: '80%', maxWidth: '100%' }}
+                >
                   <option value="company">Usar padrão da empresa</option>
                   {recentSalesOptions.map((value) => <option key={value} value={value}>{value}</option>)}
                 </select>
@@ -305,7 +309,7 @@ const SettingsPage = () => {
                   </div>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', marginBottom: '8px' }}>
                     Delay (segundos)
-                    <input type="number" min={5} step={5} disabled={savingCompany || !companyAutoFocusSaleInput} defaultValue={companyAutoFocusSaleInputDelay} key={companyAutoFocusSaleInputDelay} onBlur={(event) => void patchCompany({ autoFocusSaleInputDelay: Number(event.target.value) })} style={{ padding: '6px', width: '100%' }} />
+                    <input type="number" min={5} step={5} disabled={savingCompany || !companyAutoFocusSaleInput} defaultValue={companyAutoFocusSaleInputDelay} key={companyAutoFocusSaleInputDelay} onBlur={(event) => void patchCompany({ autoFocusSaleInputDelay: Number(event.target.value) })} style={{ padding: '6px', width: '120px', maxWidth: '100%' }} />
                   </label>
                 </>
               ))}
@@ -321,7 +325,7 @@ const SettingsPage = () => {
                 <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', opacity: autoFocusSaleInput ? 1 : 0.5 }}>
                   Delay (segundos)
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <input type="number" min={5} step={5} disabled={!autoFocusSaleInput} key={autoFocusSaleInputDelay} defaultValue={autoFocusSaleInputDelay} onBlur={(event) => setAutoFocusSaleInputDelay(Number(event.target.value))} style={{ padding: '6px', width: '100%' }} />
+                    <input type="number" min={5} step={5} disabled={!autoFocusSaleInput} key={autoFocusSaleInputDelay} defaultValue={autoFocusSaleInputDelay} onBlur={(event) => setAutoFocusSaleInputDelay(Number(event.target.value))} style={{ padding: '6px', width: '80px', maxWidth: '100%' }} />
                     <Button type="button" size="sm" variant="outline" onClick={clearAutoFocusSaleInputDelay}>Usar padrão</Button>
                   </div>
                 </label>
@@ -345,7 +349,7 @@ const SettingsPage = () => {
                       value={companyAutoConsolidationDay}
                       disabled={savingCompany || !companyAutoConsolidationEnabled}
                       onChange={(event) => void patchCompany({ autoConsolidationDay: Number(event.target.value) })}
-                      style={{ padding: '6px', width: '100%' }}
+                      style={{ padding: '6px', width: '96px', maxWidth: '100%' }}
                     >
                       {Array.from({ length: 28 }, (_, index) => index + 1).map((day) => (
                         <option key={day} value={day}>{day}</option>
