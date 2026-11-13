@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '../../styles/monthNotes.module.css';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePendingTask } from '../../contexts/RouteLoadingContext';
+import { LIVE_TENANT_QUERY_OPTIONS } from '../../utils/queryProfiles';
 
 // Array com os months
 const months = [
@@ -42,9 +43,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
             : ['invoices', 'disabled', year, month],
         enabled: Boolean(identity),
         queryFn: () => fetchInvoicesByPeriod(year, month),
-        staleTime: 1000 * 60 * 5,
-        refetchOnWindowFocus: true,
-        refetchOnReconnect: true,
+        ...LIVE_TENANT_QUERY_OPTIONS,
     });
 
     usePendingTask('month-notes', isLoading);

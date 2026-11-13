@@ -6,7 +6,7 @@
 
 - Envolve a aplicação em `RouteLoadingProvider` → `QueryClientProvider` → `AuthProvider` → `SettingsProvider` → `ThemeProvider`.
 - Injeta `QueryClientProvider` (`@tanstack/react-query`) para toda a aplicação.
-- Configura o `QueryClient` com defaults: `staleTime=5min`, `gcTime=5min`, `retry=2`; queries tenant-scoped (`queryKey[0] === "tenant"`) revalidam sempre no mount/focus/reconnect, preservando dados visíveis enquanto buscam novos.
+- Configura o `QueryClient` com defaults conservadores (`staleTime=5min`, `gcTime=5min`, `retry=2`); rotas principais revalidam via `queryProfiles.ts` nas queries específicas.
 - Define metadados HTML globais (título "Vendas", descrição e favicon).
 - Renderiza `Nav` fora de `AuthGate` e fora de `RouteContent` nas rotas autenticadas: permanece montada, não recarrega e não some durante loading.
 - `RouteContent` oculta somente a área da página; `AuthGate` protege a página; `Toaster` continua na raiz.
@@ -15,7 +15,7 @@
 
 ## Relações
 
-- **Usa:** `src/contexts/RouteLoadingContext`, `src/components/auth/AuthGate`, `src/contexts/AuthContext`, `src/contexts/SettingsContext`, `src/contexts/ThemeContext`, `src/components/common/Nav`, `src/components/common/Toaster`, `src/utils/queryKeys.ts`, `src/styles/{tokens,base,utilities,legacy}.css`.
+- **Usa:** `src/contexts/RouteLoadingContext`, `src/components/auth/AuthGate`, `src/contexts/AuthContext`, `src/contexts/SettingsContext`, `src/contexts/ThemeContext`, `src/components/common/Nav`, `src/components/common/Toaster`, `src/utils/queryProfiles.ts`, `src/styles/{tokens,base,utilities,legacy}.css`.
 - **Usado por:** todas as páginas do Pages Router.
 - **Complementa:** [_document](_document.md), que aplica o tema antes da hidratação.
 

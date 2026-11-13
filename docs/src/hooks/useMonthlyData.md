@@ -12,7 +12,7 @@
 
 ## Relações
 
-- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `consolidateMonthly`, `MonthlySale` (`src/services/salesService.ts`), `useAuth`, `tenantKeys`.
+- **Usa:** `fetchAllMonthly`, `deleteMonthly`, `consolidateMonthly`, `MonthlySale` (`src/services/salesService.ts`), `useAuth`, `tenantKeys`, `queryProfiles` (`LIVE_TENANT_QUERY_OPTIONS`).
 - **Usado por:** `src/pages/summary.tsx`.
 
 ## Notas

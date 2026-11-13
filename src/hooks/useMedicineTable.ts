@@ -17,6 +17,7 @@ import {
   type TabelaStatusResponse,
 } from '../services/medicineTableService';
 import { identityFromUser, tenantQueryKey } from '../utils/queryKeys';
+import { LIVE_TENANT_QUERY_OPTIONS } from '../utils/queryProfiles';
 import { useAuth } from '../contexts/AuthContext';
 
 const DEFAULT_STATUS: TabelaStatusResponse = {
@@ -34,7 +35,7 @@ export const useMedicineTable = () => {
       ? tenantQueryKey(identity, 'medicine-table', 'status')
       : ['medicine-table', 'status'],
     enabled: Boolean(identity),
-    staleTime: 1000 * 30,
+    ...LIVE_TENANT_QUERY_OPTIONS,
     queryFn: fetchTableStatus,
   });
 
@@ -43,7 +44,7 @@ export const useMedicineTable = () => {
       ? tenantQueryKey(identity, 'medicine-table', 'history')
       : ['medicine-table', 'history'],
     enabled: Boolean(identity),
-    staleTime: 1000 * 60,
+    ...LIVE_TENANT_QUERY_OPTIONS,
     queryFn: fetchTableHistory,
   });
 

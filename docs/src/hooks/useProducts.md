@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `productsService.ts`, `useAuth`, `tenantQueryKey`.
+- **Usa:** `productsService.ts`, `useAuth`, `tenantQueryKey`, `queryProfiles` (catálogo apenas no mount; auxiliares semi-estáticas).
 - **Usado por:** `src/pages/products.tsx`, `src/pages/registration.tsx`.
 
 ## Notas

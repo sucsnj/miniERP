@@ -28,6 +28,7 @@
 | [productPrice.md](./productPrice.md) | Preço de venda e margem do catálogo. |
 | [productUnits.md](./productUnits.md) | Regras das unidades de medida do produto. |
 | [qrPix.md](./qrPix.md) | Renderização e exportação do QR Code. |
+| [queryProfiles.md](./queryProfiles.md) | Perfis de `useQuery` para queries tenant-scoped. |
 | [queryKeys.md](./queryKeys.md) | Fábrica de queryKeys do TanStack Query com isolamento por tenant. |
 | [queryPredicates.md](./queryPredicates.md) | Predicados puros de `queryKey` tenant-scoped para `get/set`/`invalidate`. |
 | [shortcuts.md](./shortcuts.md) | Hooks de atalhos de teclado. |

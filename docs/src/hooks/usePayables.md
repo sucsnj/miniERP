@@ -12,5 +12,5 @@
 
 ## Relações
 
-- **Usa:** `useQuery`, `useAuth`, `fetchAccounts`, `tenantKeys`, `identityFromUser`, `usePendingTask` (`RouteLoadingContext`).
+- **Usa:** `useQuery`, `useAuth`, `fetchAccounts`, `tenantKeys`, `identityFromUser`, `usePendingTask` (`RouteLoadingContext`), `queryProfiles` (`LIVE_TENANT_QUERY_OPTIONS`).
 - **Usado por:** `src/pages/payables.tsx`.

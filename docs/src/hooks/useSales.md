@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Consulta `sales` com `useQuery` (staleTime: 5 min; refetch on window focus/reconnect para vendas), com `queryKey` tenant-scoped pelo período/filtro.
+- Consulta `sales` com `useQuery` (`staleTime=0`, `refetchOnMount:'always'`, refetch em focus/reconnect), com `queryKey` tenant-scoped pelo período/filtro.
 - Estado: `sales` (`DailySale[]`), `editingSale` (`DailySale | null`), `initialLoading` (primeiro fetch para o gate) e `refreshing` (isFetching posterior).
 - Parâmetros: `(month, year, showToast, options?)` com `UseSalesOptions` (`filter?: 'todas'|'positivas'|'negativas'`, `autoConsolidate?: boolean`).
 - `loadSales()` dispara `refetch()`; `autoConsolidate()` roda em background fora do bloqueio da rota (somente admin com `storeId`, `autoConsolidate` ativo e auto consolidação habilitada nas configurações, no dia configurado).

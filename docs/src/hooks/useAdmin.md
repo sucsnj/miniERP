@@ -11,7 +11,7 @@
 
 ## Relações
 
-- **Usa:** `adminService.ts`, `AuthContext`, `usePendingTask`, `tenantKeys`.
+- **Usa:** `adminService.ts`, `AuthContext`, `usePendingTask`, `tenantKeys`, `queryProfiles` (queries live: `staleTime=0`, `refetchOnMount:'always'`).
 - **Usado por:** `src/pages/admin.tsx`.
 
 ## Notas

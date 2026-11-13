@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Busca as notas com `useQuery(tenantKeys.invoicesByMonth(identity, year, month))` e soma os valores.
+- Busca as notas com `useQuery` (`staleTime=0`, refetch em mount/focus/reconnect) e soma os valores.
 - Seletores de mês (12) e ano (últimos 5); tabela Emissão/Distribuidora/Valor/Ações.
 - Excluir passa pelo [ConfirmDialog](../common/ConfirmDialog.md) e usa `useDeleteInvoice` (optimistic update, rollback, invalidação granular).
 

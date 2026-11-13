@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Mantém `companySettings` como padrão da empresa (`GET /api/settings`) via TanStack Query.
+- Mantém `companySettings` como padrão da empresa (`GET /api/settings`) via TanStack Query; query tenant-scoped com política `LIVE_TENANT_QUERY_OPTIONS`.
 - Exibe overrides locais por dispositivo (`localStorage`) para tema, timezone, recentes e foco automático/delay.
 - Precedência: `localStorage` válido → `company_settings` → default do app.
 - Mantém dados PIX da empresa (`pixKey`, `pixName`, `pixBank`, `pixCity`) e presets compartilhados (`pixPresets`); não há override local.

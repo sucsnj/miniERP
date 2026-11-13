@@ -19,6 +19,7 @@ import {
   writeStoredValue,
 } from '../utils/storage';
 import { identityFromUser, tenantKeys } from '../utils/queryKeys';
+import { LIVE_TENANT_QUERY_OPTIONS } from '../utils/queryProfiles';
 import { useAuth } from './AuthContext';
 
 export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode, PixPreset };
@@ -114,8 +115,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     queryKey: identity ? tenantKeys.companySettings(identity) : ['settings', 'company', 'disabled'],
     enabled: Boolean(identity),
     queryFn: fetchCompanySettings,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: true,
+    ...LIVE_TENANT_QUERY_OPTIONS,
   });
 
   const companySettings = settingsQuery.data?.companySettings ?? null;

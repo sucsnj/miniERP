@@ -8,6 +8,7 @@ import {
 import { identityFromUser, tenantKeys } from '../utils/queryKeys';
 import { useAuth } from '../contexts/AuthContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
+import { LIVE_TENANT_QUERY_OPTIONS } from '../utils/queryProfiles';
 import {
   fetchCompany,
   updateCompanyProfile,
@@ -53,7 +54,7 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
     queryKey: identity ? tenantKeys.adminCompany(identity) : ['admin', 'company', 'disabled'],
     enabled: Boolean(identity),
     queryFn: () => fetchCompany().then((body) => body.company),
-    staleTime: 1000 * 60 * 5,
+    ...LIVE_TENANT_QUERY_OPTIONS,
     placeholderData: keepPreviousData,
   });
 
@@ -61,7 +62,7 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
     queryKey: identity ? tenantKeys.adminStores(identity) : ['admin', 'stores', 'disabled'],
     enabled: Boolean(identity),
     queryFn: () => fetchStores().then((body) => body.stores),
-    staleTime: 1000 * 60 * 5,
+    ...LIVE_TENANT_QUERY_OPTIONS,
     placeholderData: keepPreviousData,
   });
 
@@ -69,7 +70,7 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
     queryKey: identity ? tenantKeys.adminMerchants(identity) : ['admin', 'merchants', 'disabled'],
     enabled: Boolean(identity),
     queryFn: () => fetchMerchants().then((body) => body.merchants),
-    staleTime: 1000 * 60 * 5,
+    ...LIVE_TENANT_QUERY_OPTIONS,
     placeholderData: keepPreviousData,
   });
 

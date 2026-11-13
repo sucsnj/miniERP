@@ -11,7 +11,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../contexts/AuthContext';
 import { RouteLoadingProvider, RouteContent } from '../contexts/RouteLoadingContext';
 import { SettingsProvider } from '../contexts/SettingsContext';
-import { tenantQueryPredicate } from '../utils/queryKeys';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import Head from 'next/head';
 
@@ -21,14 +20,8 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 5,
       retry: 2,
-      refetchOnWindowFocus: (query) =>
-        Array.isArray(query.queryKey) && tenantQueryPredicate(query.queryKey as readonly unknown[]),
-      refetchOnReconnect: (query) =>
-        Array.isArray(query.queryKey) && tenantQueryPredicate(query.queryKey as readonly unknown[]),
-      refetchOnMount: (query) =>
-        Array.isArray(query.queryKey) && tenantQueryPredicate(query.queryKey as readonly unknown[])
-          ? 'always'
-          : false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     },
   },
 });

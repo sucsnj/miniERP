@@ -27,6 +27,7 @@ import {
   type StockMovementData,
 } from '../services/productsService';
 import { identityFromUser, tenantQueryKey } from '../utils/queryKeys';
+import { MOUNT_TENANT_QUERY_OPTIONS } from '../utils/queryProfiles';
 import { useAuth } from '../contexts/AuthContext';
 
 export interface ProductCatalogFilters {
@@ -90,6 +91,7 @@ export const useProductsCatalog = (filters: ProductCatalogFilters, options: { en
       : ['products', 'catalog', filters],
 
     enabled: Boolean(identity) && options.enabled !== false,
+    ...MOUNT_TENANT_QUERY_OPTIONS,
     placeholderData: keepPreviousData,
     queryFn: async (): Promise<CatalogResult> => {
       const [productsData, servicesData] = await Promise.all([
