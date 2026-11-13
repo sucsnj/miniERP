@@ -46,6 +46,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
 - [adr/0013-autenticacao-multiempresa-multiloja.md](adr/0013-autenticacao-multiempresa-multiloja.md) - ADR: autenticação própria, sessão de 48h, papéis admin/merchant e isolamento multiempresa/multi-loja.
 - [adr/0014-ocr-local-e-indexeddb.md](adr/0014-ocr-local-e-indexeddb.md) - ADR: OCR local de boletos, IndexedDB para histórico e sem preencher contas automaticamente.
+- [adr/0015-multiplos-admins-por-bootstrap.md](adr/0015-multiplos-admins-por-bootstrap.md) - ADR: permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`.
 
 ## Páginas do Frontend
 
@@ -62,6 +63,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/settings.md](src/pages/settings.md) - configurações do aplicativo.
 - [src/pages/login.md](src/pages/login.md) - login com `login` ou `email`.
 - [src/pages/setup.md](src/pages/setup.md) - bootstrap do primeiro admin via `PIN_MASTER`.
+- [src/pages/login.md](src/pages/login.md) - login e bootstrap autenticado de admin/tenant.
 - [src/pages/_app.md](src/pages/_app.md) - configuração global do app, ordem do CSS e integração com React Query.
 - [src/pages/_document.md](src/pages/_document.md) - documento HTML, idioma e aplicação do tema antes da hidratação.
 
@@ -74,7 +76,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Financeiro
 
-- [src/pages/api/auth/bootstrap.md](src/pages/api/auth/bootstrap.md) - bootstrap do primeiro admin/empresa via PIN_MASTER.
+- [src/pages/api/auth/bootstrap.md](src/pages/api/auth/bootstrap.md) - bootstrap autenticado de empresa/loja/settings/admin.
 - [src/pages/api/auth/login.md](src/pages/api/auth/login.md) - login por login/e-mail com sessão de 48h.
 - [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
 - [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.

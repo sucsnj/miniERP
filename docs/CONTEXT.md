@@ -4,7 +4,7 @@
 
 ## O que é este projeto
 
-Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). A autenticação própria e o isolamento multiempresa/multi-loja foram definidos no ADR 0013; auth core está implementado, enforcement tenant/permissões seguem em rollout.
+Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript). Aplicação single-app: frontend e API interna rodam no mesmo processo; a persistência oficial é o Supabase/Postgres (ADR 0012). A autenticação própria e o isolamento multiempresa/multi-loja foram definidos no ADR 0013; auth core está implementado, enforcement tenant/permissões seguem em rollout. Bootstrap autenticado permite criar admins/tenants de novas empresas; ver ADR 0015.
 
 ## Pilha mainBarcode
 
@@ -59,6 +59,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
 | Produtos / estoque | `docs/src/pages/products.md`, `docs/src/database/productsDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/products/*.md`, `docs/src/services/productsService.md` |
 | Perfil / autenticação admin | `docs/src/pages/profile.md`, `docs/src/pages/api/auth/profile.md`, `docs/src/pages/api/auth/profile/password.md`, `docs/src/pages/api/avatar.md`, `docs/src/services/profileService.md`, `docs/src/services/avatarService.md` |
+| Autenticação / bootstrap | `docs/src/pages/login.md`, `docs/src/pages/api/auth/bootstrap.md`, `docs/src/contexts/AuthContext.md`, `docs/adr/0013-autenticacao-multiempresa-multiloja.md`, `docs/adr/0015-multiplos-admins-por-bootstrap.md` |
 | Cadastros auxiliares | `docs/src/pages/registration.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |

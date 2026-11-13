@@ -503,7 +503,7 @@ create trigger set_updated_at before update on public.payables
   for each row execute function public.set_updated_at();
 
 -- ----------------------------------------------------------------------------
--- Atomic bootstrap for first admin/company
+-- Atomic bootstrap per admin/company (including later tenants)
 -- ----------------------------------------------------------------------------
 
 create or replace function public.bootstrap_company_admin(
@@ -516,21 +516,22 @@ create or replace function public.bootstrap_company_admin(
 )
 returns jsonb
 language plpgsql
+set search_path = public
 as $$
 declare
   v_company_id uuid;
   v_store_id uuid;
   v_user_id uuid;
 begin
-  if exists (select 1 from public.users) then
-    raise exception 'Bootstrap already completed';
-  end if;
+  perform pg_advisory_xact_lock(727265);
 
-  select id into v_company_id
-  from public.companies
-  order by created_at asc
-  limit 1
-  for update;
+  if not exists (select 1 from public.users) then
+    select id into v_company_id
+    from public.companies
+    order by created_at asc
+    limit 1
+    for update;
+  end if;
 
   if v_company_id is null then
     insert into public.companies (name)

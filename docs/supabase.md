@@ -19,6 +19,7 @@
 5.8. Para operações atômicas de presets PIX da empresa, aplique `supabase/migrations/0022-add-atomic-pix-preset-functions.sql`.
 5.9. Para desativação segura de loja e reassociação automática de vendedores, aplique `supabase/migrations/0023-add-deactivate-store-function.sql`.
 5.10. Para modo de auto consolidação e função `missing_monthly_consolidation_months`, aplique `supabase/migrations/0024-add-auto-consolidation-mode.sql`.
+5.11. Para permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`, aplique `supabase/migrations/0025-multiple-company-bootstraps.sql`.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente
@@ -61,7 +62,7 @@ A validação é centralizada em `src/utils/env.ts` e falha na primeira leitura 
 
 | RPC | Para que serve |
 | --- | --- |
-| `bootstrap_company_admin` | Reivindica tenant legado sem usuários ou cria empresa/loja/settings/admin atomicamente; usado somente no primeiro bootstrap. |
+| `bootstrap_company_admin` | Para os primeiros admin/tenants de instalação vazia, reivindica tenant legado; nos demais casos, cria empresa/loja/settings/admin atomicamente. |
 | `apply_stock_movement` | Atualiza `products.stock` e grava `stock_movements` atomicamente; filtra por `company_id`. |
 | `create_sale` | Cria venda + itens + saída de estoque dos produtos; exige `company_id`/`store_id`. |
 | `update_sale` | Atualiza venda/itens + reconcilia diferenças de estoque; exige `company_id`/`store_id`. |

@@ -17,13 +17,8 @@ const EMAIL_MAX_LENGTH = 254;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const client = getSupabaseServerClient();
-    const { count, error } = await client
-      .from('users')
-      .select('id', { count: 'exact', head: true });
-
-    if (error) return res.status(500).json({ error: 'Não foi possível verificar o bootstrap.' });
-    return res.status(200).json({ available: (count ?? 0) === 0 });
+    const available = Boolean(process.env.PIN_MASTER?.trim());
+    return res.status(200).json({ available });
   }
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });

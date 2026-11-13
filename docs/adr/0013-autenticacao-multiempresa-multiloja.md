@@ -58,7 +58,7 @@ A autenticação por e-mail não será usada neste momento por limitações do p
      - vínculo empresa ↔ admin;
      - primeira loja somente se o fluxo de setup assim decidir;
      - sessão autenticada.
-   - Após existir qualquer admin, o bootstrap retorna `403`.
+   - Após existir qualquer admin, o bootstrap retorna `403`. **Alterado:** a partir da multi-empresa, bootstraps posteriores com `PIN_MASTER` criam um novo tenant ao invés de bloquear (ver [ADR 0015](./0015-multiplos-admins-por-bootstrap.md)).
    - Comparação do PIN com `crypto.timingSafeEqual`.
    - Admins posteriores são criados por admins já autenticados.
 

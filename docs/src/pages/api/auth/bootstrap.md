@@ -1,18 +1,18 @@
 # `src/pages/api/auth/bootstrap.ts`
 
-> Bootstrap do primeiro admin/empresa.
+> Bootstrap autenticado de novo tenant de admin/empresa.
 
 ## O que faz
 
-- `GET`: informa `{ available: boolean }`, `true` apenas quando não há usuários.
+- `GET`: informa `{ available: true }` quando `PIN_MASTER` está configurado.
 - `POST`: valida `PIN_MASTER`, política de login/senha, cria empresa/loja/settings/admin/seed atomicamente via RPC `bootstrap_company_admin` e abre sessão de 2 dias.
 
 ## Relações
 
-- **Usa:** `src/utils/password.ts`, `src/utils/serverAuth.ts`, `src/database/supabase.ts`.
-- **Usado por:** página `/setup`.
+- **Usa:** `getSupabaseServerClient`, `hashPassword`, `validateLogin`, `validatePassword`, `createSession`, `setSessionCookie`, `verifyMasterPin`.
+- **Usado por:** `src/pages/login.tsx`.
 
 ## Notas
 
-- Após existir qualquer usuário, `POST` retorna `403`.
-- O PIN_MASTER é comparado com hash + `timingSafeEqual`.
+- Primeira instalação (ou instalação ainda sem usuário) reivindica o tenant legado existente.
+- Depois disso, cada bootstrap cria uma nova empresa/loja/admin/seeds.
