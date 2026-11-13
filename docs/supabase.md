@@ -15,6 +15,7 @@
 5.4. Para auto consolidação mensal configurável, aplique `supabase/migrations/0018-add-auto-consolidation-settings.sql`; `auto_consolidation_enabled` ativa/desativa e `auto_consolidation_day` define o dia (1–28) do mês seguinte.
 5.5. Para foto de perfil no perfil do administrador, aplique `supabase/migrations/0019-create-avatars-storage-bucket.sql`; o bucket público `avatars` aceita imagens de até 5 MB.
 5.6. Para dados cadastrais completos de empresa e loja, aplique `supabase/migrations/0020-add-company-store-profile-fields.sql`.
+5.7. Para dados de contato do administrador, aplique `supabase/migrations/0021-add-user-contact-fields.sql`.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

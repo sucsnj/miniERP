@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSupabaseServerClient } from '../database/supabase';
 import { readCompanyNameCache, writeCompanyNameCache } from './companyCache';
+import type { ContactProfile } from './businessProfile';
 
 export type AuthRole = 'admin' | 'merchant';
 
@@ -17,6 +18,7 @@ export interface AuthContext {
   storeId: string;
   storeName: string;
   sessionId: string;
+  contact: ContactProfile;
 }
 
 interface UserRecord {
@@ -30,6 +32,14 @@ interface UserRecord {
   active: boolean;
   last_store_id: string | null;
   avatar_url?: string | null;
+  phone?: string | null;
+  address_street?: string | null;
+  address_number?: string | null;
+  address_complement?: string | null;
+  address_district?: string | null;
+  address_city?: string | null;
+  address_state?: string | null;
+  address_zip?: string | null;
 }
 
 interface StoreRecord {
@@ -41,6 +51,8 @@ const SESSION_MAX_AGE_SECONDS = 2 * 24 * 60 * 60;
 const SESSION_COOKIE = 'minierp_session';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const IDENTIFIER_PATTERN = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$|^[a-z]{4,}$/;
+const USER_PROFILE_SELECT = 'id, company_id, role, name, login, email, password_hash, active, last_store_id, avatar_url, phone, address_street, address_number, address_complement, address_district, address_city, address_state, address_zip';
+const USER_PUBLIC_PROFILE_SELECT = 'id, company_id, role, name, login, email, active, last_store_id, avatar_url, phone, address_street, address_number, address_complement, address_district, address_city, address_state, address_zip';
 
 export function normalizeIdentifier(value: unknown): string {
   return String(value ?? '').trim().toLowerCase();
@@ -49,6 +61,17 @@ export function normalizeIdentifier(value: unknown): string {
 export function isValidIdentifier(value: string): boolean {
   return IDENTIFIER_PATTERN.test(value);
 }
+
+const userContact = (user: UserRecord): ContactProfile => ({
+  phone: String(user.phone ?? ''),
+  addressStreet: String(user.address_street ?? ''),
+  addressNumber: String(user.address_number ?? ''),
+  addressComplement: String(user.address_complement ?? ''),
+  addressDistrict: String(user.address_district ?? ''),
+  addressCity: String(user.address_city ?? ''),
+  addressState: String(user.address_state ?? ''),
+  addressZip: String(user.address_zip ?? ''),
+});
 
 export function normalizeEmail(value: unknown): string {
   return String(value ?? '').trim().toLowerCase();
@@ -101,7 +124,7 @@ export async function findUserByIdentifier(identifier: string): Promise<UserReco
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('users')
-    .select('id, company_id, role, name, login, email, password_hash, active, last_store_id, avatar_url')
+    .select(USER_PROFILE_SELECT)
     .or(`login.eq.${identifier},email.eq.${identifier}`)
     .maybeSingle();
 
@@ -177,7 +200,7 @@ export async function getAuthContext(req: NextApiRequest): Promise<AuthContext |
   const client = getSupabaseServerClient();
   const { data: session, error } = await client
     .from('sessions')
-    .select('id, store_id, expires_at, revoked_at, users!inner(id, company_id, role, name, login, email, active, last_store_id, avatar_url)')
+    .select(`id, store_id, expires_at, revoked_at, users!inner(${USER_PUBLIC_PROFILE_SELECT})`)
     .eq('token_hash', hashSessionToken(token))
     .maybeSingle();
 
@@ -214,6 +237,7 @@ export async function getAuthContext(req: NextApiRequest): Promise<AuthContext |
     storeId: preferredStore.id,
     storeName: preferredStore.name,
     sessionId: String(session.id),
+    contact: userContact(user),
   };
 }
 
@@ -239,7 +263,7 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
   const client = getSupabaseServerClient();
   const { data: user, error } = await client
     .from('users')
-    .select('id, company_id, role, name, login, email, active, last_store_id, avatar_url')
+    .select(USER_PUBLIC_PROFILE_SELECT)
     .eq('id', userId)
     .eq('company_id', companyId)
     .maybeSingle();
@@ -266,6 +290,7 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
     storeId: store.id as string,
     storeName: store.name as string,
     sessionId: '',
+    contact: userContact(user as UserRecord),
   };
 }
 

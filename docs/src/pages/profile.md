@@ -5,8 +5,9 @@
 ## O que faz
 
 - Somente administradores acedem (`RequireAdmin`).
+- O card "Dados de contato" edita endereço completo e telefone do administrador.
 - Altera foto do usuário via upload de imagem no dispositivo; aceita PNG, JPEG, GIF e WebP de até 5 MB.
-- Atualiza nome, apelido (`login`) e e-mail do administrador.
+- Atualiza nome, apelido (`login`), e-mail e dados de contato (logradouro, número, complemento, bairro, cidade, UF, CEP e telefone) do administrador.
 - Altera a senha mediante senha atual e validação do servidor.
 
 ## Relações

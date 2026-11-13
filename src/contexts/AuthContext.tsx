@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import type { ContactProfile } from '../utils/businessProfile';
 
 export type AuthRole = 'admin' | 'merchant';
 
@@ -15,6 +16,7 @@ export interface AuthUser {
   storeId: string;
   storeName: string;
   sessionId: string;
+  contact: ContactProfile;
 }
 
 interface AuthContextValue {

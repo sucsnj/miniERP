@@ -1,5 +1,16 @@
 import { isValidCnpj, isValidCpf } from './pix';
 
+export interface ContactProfile {
+  phone: string;
+  addressStreet: string;
+  addressNumber: string;
+  addressComplement: string;
+  addressDistrict: string;
+  addressCity: string;
+  addressState: string;
+  addressZip: string;
+}
+
 export interface CompanyProfile {
   id?: string;
   name: string;
@@ -90,6 +101,35 @@ const validateProfile = (input: Record<string, unknown>): ProfileValidationBaseR
   }
   return { ok: true, message: null };
 };
+
+export function normalizeContactProfile(
+  input: Record<string, unknown>
+): ProfileValidationResult<ContactProfile> {
+  const phone = normalizePhone(input.phone);
+  const state = normalizeUf(input.addressState);
+  const zip = normalizeZip(input.addressZip);
+
+  if (!isValidPhone(phone)) {
+    return { ok: false, message: 'Telefone inválido.' };
+  }
+  if (state && !BRAZILIAN_STATES.has(state)) {
+    return { ok: false, message: 'UF inválida.' };
+  }
+  if (!isValidZip(zip)) {
+    return { ok: false, message: 'CEP inválido.' };
+  }
+
+  return ok({
+    phone,
+    addressStreet: normalizeOptionalString(input.addressStreet, 160),
+    addressNumber: normalizeOptionalString(input.addressNumber, 30),
+    addressComplement: normalizeOptionalString(input.addressComplement, 160),
+    addressDistrict: normalizeOptionalString(input.addressDistrict, 120),
+    addressCity: normalizeOptionalString(input.addressCity, 120),
+    addressState: state,
+    addressZip: zip,
+  });
+}
 
 export function normalizeCompanyProfile(
   input: Record<string, unknown>

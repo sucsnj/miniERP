@@ -10,6 +10,7 @@ import {
 } from '../../../utils/serverAuth';
 import { validateLogin } from '../../../utils/password';
 import { getSupabaseServerClient } from '../../../database/supabase';
+import { normalizeContactProfile } from '../../../utils/businessProfile';
 
 const buildProfile = (ctx: Awaited<ReturnType<typeof getAuthContext>>) => {
   if (!ctx) return null;
@@ -25,6 +26,7 @@ const buildProfile = (ctx: Awaited<ReturnType<typeof getAuthContext>>) => {
     storeId: ctx.storeId,
     storeName: ctx.storeName,
     sessionId: ctx.sessionId,
+    contact: ctx.contact,
   };
 };
 
@@ -34,6 +36,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method !== 'PATCH') {
     return res.status(405).json({ error: 'Método não permitido.' });
+  }
+
+  if (req.body?.contact !== undefined) {
+    const parsed = normalizeContactProfile(req.body.contact as Record<string, unknown>);
+    if (!parsed.ok) {
+      return res.status(400).json({ error: parsed.message });
+    }
+
+    const client = getSupabaseServerClient();
+    const { error } = await client
+      .from('users')
+      .update({
+        phone: parsed.value.phone,
+        address_street: parsed.value.addressStreet,
+        address_number: parsed.value.addressNumber,
+        address_complement: parsed.value.addressComplement,
+        address_district: parsed.value.addressDistrict,
+        address_city: parsed.value.addressCity,
+        address_state: parsed.value.addressState,
+        address_zip: parsed.value.addressZip,
+      })
+      .eq('id', ctx.userId)
+      .eq('company_id', ctx.companyId);
+
+    if (error) {
+      return res.status(500).json({ error: 'Não foi possível atualizar o contato.' });
+    }
+
+    const refreshed = await getAuthContext(req);
+    return res.status(200).json({ user: buildProfile(refreshed) });
   }
 
   const name = normalizeName(req.body?.name);

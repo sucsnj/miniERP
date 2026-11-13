@@ -11,10 +11,12 @@ import { useToast } from '../hooks/useToast';
 import {
   changeProfilePassword,
   updateProfile,
+  updateProfileContact,
 } from '../services/profileService';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
 import { CARDS_GRID_STYLE } from '../utils/layout';
+import { normalizeContactProfile } from '../utils/businessProfile';
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
@@ -24,6 +26,7 @@ const ProfilePage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
+  const [savingContact, setSavingContact] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
   const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
@@ -44,6 +47,29 @@ const ProfilePage = () => {
       showToast(error instanceof Error ? error.message : 'Erro ao atualizar o perfil.', 'error');
     } finally {
       setSavingProfile(false);
+    }
+  };
+
+  const saveContact = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user) return;
+
+    const data = new FormData(event.currentTarget);
+    const parsed = normalizeContactProfile(Object.fromEntries(data.entries()));
+    if (!parsed.ok) {
+      showToast(parsed.message, 'error');
+      return;
+    }
+
+    setSavingContact(true);
+    try {
+      const body = await updateProfileContact(parsed.value);
+      if (body.user) setUser(body.user);
+      showToast('Dados de contato atualizados com sucesso.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar os dados de contato.', 'error');
+    } finally {
+      setSavingContact(false);
     }
   };
 
@@ -119,6 +145,49 @@ const ProfilePage = () => {
                   </label>
                   <Button type="submit" size="sm" disabled={savingProfile}>
                     {savingProfile ? 'Salvando...' : 'Salvar dados'}
+                  </Button>
+                </div>
+              </Panel>
+            </form>
+
+            <form key={`${user?.userId}-contact`} onSubmit={saveContact}>
+              <Panel style={{ padding: '12px' }}>
+                <PanelHeader title="Dados de contato" />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginTop: '12px' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                    Telefone
+                    <input type="tel" name="phone" defaultValue={user?.contact.phone ?? ''} autoComplete="tel" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                    Logradouro
+                    <input type="text" name="addressStreet" defaultValue={user?.contact.addressStreet ?? ''} autoComplete="street-address" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Número
+                    <input type="text" name="addressNumber" defaultValue={user?.contact.addressNumber ?? ''} autoComplete="off" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Complemento
+                    <input type="text" name="addressComplement" defaultValue={user?.contact.addressComplement ?? ''} autoComplete="off" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Bairro
+                    <input type="text" name="addressDistrict" defaultValue={user?.contact.addressDistrict ?? ''} autoComplete="off" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Cidade
+                    <input type="text" name="addressCity" defaultValue={user?.contact.addressCity ?? ''} autoComplete="address-level2" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    UF
+                    <input type="text" name="addressState" defaultValue={user?.contact.addressState ?? ''} maxLength={2} autoComplete="address-level1" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    CEP
+                    <input type="text" name="addressZip" defaultValue={user?.contact.addressZip ?? ''} maxLength={9} autoComplete="postal-code" style={{ padding: '8px' }} />
+                  </label>
+                  <Button type="submit" size="sm" disabled={savingContact} style={{ alignSelf: 'flex-start' }}>
+                    {savingContact ? 'Salvando...' : 'Salvar contato'}
                   </Button>
                 </div>
               </Panel>

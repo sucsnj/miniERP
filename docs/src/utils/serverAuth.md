@@ -6,7 +6,7 @@
 
 - Normaliza/valida identificadores (`login` ou `email`).
 - Cria sessão opaca de 2 dias na tabela `sessions`; cookie contém apenas token aleatório.
-- Resolve o contexto da sessão (usuário, empresa, role e loja autorizada).
+- Resolve o contexto da sessão (usuário, empresa, role, loja autorizada e `contact` com telefone/endereço).
 - Revoga sessões; troca de senha revoga todas as sessões.
 - Compara `PIN_MASTER` com `crypto.timingSafeEqual`.
 

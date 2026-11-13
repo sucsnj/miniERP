@@ -1,4 +1,5 @@
 import type { AuthUser } from '../contexts/AuthContext';
+import type { ContactProfile } from '../utils/businessProfile';
 
 export interface ProfilePatch {
   name: string;
@@ -10,6 +11,8 @@ export interface PasswordPatch {
   currentPassword: string;
   newPassword: string;
 }
+
+export type ContactProfilePatch = ContactProfile;
 
 async function fetchJson<T>(input: string, init?: RequestInit): Promise<T> {
   const response = await fetch(input, { credentials: 'same-origin', ...init });
@@ -31,6 +34,13 @@ export const updateProfile = (patch: ProfilePatch) =>
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(patch),
+  });
+
+export const updateProfileContact = (patch: ContactProfilePatch) =>
+  fetchJson<{ user: AuthUser }>('/api/auth/profile', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contact: patch }),
   });
 
 export const changeProfilePassword = (patch: PasswordPatch) =>

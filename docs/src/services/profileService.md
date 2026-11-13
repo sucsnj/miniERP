@@ -5,6 +5,7 @@
 ## O que faz
 
 - `updateProfile(patch)` (`PATCH /api/auth/profile`).
+- `updateProfileContact(patch)` (`PATCH /api/auth/profile` com `{ contact }`).
 - `changeProfilePassword(patch)` (`POST /api/auth/profile/password`).
 - `fetchJson` propaga `Error` em respostas não OK com mensagem legível.
 

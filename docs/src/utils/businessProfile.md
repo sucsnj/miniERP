@@ -6,6 +6,7 @@
 
 - `normalizeCompanyProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número, complemento, bairro, cidade, UF e CEP.
 - `normalizeStoreProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número e bairro.
+- `normalizeContactProfile`: valida/normaliza telefone e endereço do usuário (logradouro, número, complemento, bairro, cidade, UF, CEP).
 - CEP é normalizado para `00000-000`; UF é uppercased e validada contra UFs brasileiras.
 - Telefone e CPF/CNPJ são normalizados/validados antes do persistir.
 
