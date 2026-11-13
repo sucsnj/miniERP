@@ -12,8 +12,9 @@ import { useToast } from '../hooks/useToast';
 import { useAdmin } from '../hooks/useAdmin';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
+import { MASONRY_STYLE, MASONRY_CARD_STYLE } from '../utils/layout';
 
-const inputStyle = { padding: '8px 10px', width: '100%' };
+const inputStyle = { padding: '6px 8px', width: '100%' };
 
 export default function AdminPage() {
   const { showToast } = useToast();
@@ -95,8 +96,8 @@ export default function AdminPage() {
           <PageHeader title="Administração" description="Empresa, lojas e vendedores." />
 
           {!initialLoading && (
-            <div style={{ display: 'grid', gap: '12px' }}>
-              <Panel>
+            <div style={MASONRY_STYLE}>
+              <Panel style={MASONRY_CARD_STYLE}>
                 <PanelHeader title="Empresa" />
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input value={companyName} onChange={(event) => setCompanyName(event.target.value)} style={inputStyle} />
@@ -104,9 +105,9 @@ export default function AdminPage() {
                 </div>
               </Panel>
 
-              <Panel>
+              <Panel style={MASONRY_CARD_STYLE}>
                 <PanelHeader title="Lojas" />
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
                   <input
                     value={newStoreName}
                     onChange={(event) => setNewStoreName(event.target.value)}
@@ -117,7 +118,7 @@ export default function AdminPage() {
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Máximo de 2 lojas por empresa.</p>
                 {stores.map((store) => (
-                  <div key={store.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '8px', marginBottom: '8px' }}>
+                  <div key={store.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto auto', gap: '6px', marginBottom: '4px' }}>
                     <input
                       value={storeDrafts[store.id] ?? store.name}
                       onChange={(event) => setStoreDrafts((current) => ({ ...current, [store.id]: event.target.value }))}
@@ -129,17 +130,17 @@ export default function AdminPage() {
                 ))}
               </Panel>
 
-              <Panel>
+              <Panel style={MASONRY_CARD_STYLE}>
                 <PanelHeader title="Vendedores" />
-                <fieldset style={{ border: '1px solid var(--border)', padding: '10px', marginBottom: '12px' }}>
+                <fieldset style={{ border: '1px solid var(--border)', padding: '8px', marginBottom: '8px' }}>
                   <legend>Novo vendedor</legend>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '6px' }}>
                     <input placeholder="Nome" value={newMerchant.name} onChange={(event) => setNewMerchant({ ...newMerchant, name: event.target.value })} style={inputStyle} />
                     <input placeholder="Login" value={newMerchant.login} onChange={(event) => setNewMerchant({ ...newMerchant, login: event.target.value.toLowerCase() })} style={inputStyle} />
                     <input placeholder="E-mail" value={newMerchant.email} onChange={(event) => setNewMerchant({ ...newMerchant, email: event.target.value })} style={inputStyle} />
                     <input type="password" placeholder="Senha" value={newMerchant.password} onChange={(event) => setNewMerchant({ ...newMerchant, password: event.target.value })} style={inputStyle} />
                   </div>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', margin: '8px 0' }}>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '4px 0' }}>
                     {stores.filter((store) => store.active).map((store) => (
                       <label key={store.id} style={{ display: 'inline-flex', gap: '4px' }}>
                         <input type="checkbox" checked={newMerchant.storeIds.includes(store.id)} onChange={(event) => toggleNewMerchantStore(store.id, event.target.checked)} />
@@ -147,7 +148,7 @@ export default function AdminPage() {
                       </label>
                     ))}
                   </div>
-                  <p style={{ margin: '8px 0', fontSize: '0.75rem', color: 'var(--muted)' }}>
+                  <p style={{ margin: '4px 0', fontSize: '0.75rem', color: 'var(--muted)' }}>
                     Para adicionar uma foto, crie o vendedor e use o seletor no card correspondente.
                   </p>
                   <Button type="button" onClick={() => createMerchant(newMerchant)} disabled={createMerchantBusy}>
@@ -158,17 +159,16 @@ export default function AdminPage() {
                 {merchants.map((merchant) => {
                   const draft = merchantDrafts[merchant.id] ?? merchant;
                   return (
-                    <div key={merchant.id} style={{ border: '1px solid var(--border)', padding: '10px', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                    <div key={merchant.id} style={{ border: '1px solid var(--border)', padding: '6px', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                       <AvatarPicker
                         value={draft.avatarUrl}
                         fallback={draft.name}
-                        size={64}
+                        size={48}
                         label="Escolher foto"
-                        caption="PNG, JPEG, GIF ou WebP, até 5 MB."
                         onUpload={(file) => uploadMerchantAvatar(merchant.id, file)}
                       />
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px', flex: 1 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '6px', flex: 1 }}>
                         <input value={draft.name} onChange={(event) => updateMerchantDraft(merchant.id, { name: event.target.value })} style={inputStyle} />
                         <input value={draft.login} onChange={(event) => updateMerchantDraft(merchant.id, { login: event.target.value.toLowerCase() })} style={inputStyle} />
                         <input value={draft.email} onChange={(event) => updateMerchantDraft(merchant.id, { email: event.target.value })} style={inputStyle} />
@@ -178,7 +178,7 @@ export default function AdminPage() {
                         </label>
                       </div>
                     </div>
-                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', margin: '8px 0' }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '4px 0' }}>
                         {stores.filter((store) => store.active).map((store) => (
                           <label key={store.id} style={{ display: 'inline-flex', gap: '4px' }}>
                             <input type="checkbox" checked={draft.storeIds.includes(store.id)} onChange={(event) => toggleMerchantStore(merchant.id, store.id, event.target.checked)} />
@@ -186,7 +186,7 @@ export default function AdminPage() {
                           </label>
                         ))}
                       </div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                         <Button type="button" size="sm" onClick={() => void saveMerchant(merchant.id)}>Salvar vendedor</Button>
                         <Button type="button" size="sm" variant="outline" onClick={() => openResetPassword({ id: merchant.id, name: merchant.name })}>Redefinir senha</Button>
                       </div>

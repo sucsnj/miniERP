@@ -7,6 +7,7 @@
 - Permite ao admin atualizar o nome da empresa; o `AuthContext` é reutilizado pela navegação após alteração.
 - Permite criar/editar/desativar até 2 lojas; impacta a sessão atual quando necessário.
 - Redefine senha de vendedores via modal validável (confirmação + política mínima), sem `window.prompt`.
+- Cards em layout masonry (colunas com altura independente, compartilhado com Configurações via `src/utils/layout.ts`).
 - Foto de vendedores é escolhida do dispositivo via `AvatarPicker` (PNG, JPEG, GIF ou WebP, até 5 MB); não há campo de URL manual.
 - Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar, redefinir senha e escolher foto.
 

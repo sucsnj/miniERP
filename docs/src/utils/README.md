@@ -20,6 +20,7 @@
 | [focus.md](./focus.md) | Focus trap para modais. |
 | [formatter.md](./formatter.md) | Formatação/arredondamento monetário. |
 | [forms.md](./forms.md) | Realce e mostrar/ocultar campos de formulário. |
+| [layout.md](./layout.md) | Estilos inline compartilhados de layout masonry. |
 | [number.md](./number.md) | Parsing de números e moeda. |
 | [pix.md](./pix.md) | Payload PIX EMVCo e validação de chaves. |
 | [pixActions.md](./pixActions.md) | Baixar PNG e imprimir folha do PIX. |
