@@ -4,9 +4,9 @@
 
 ## O que faz
 
-- Exporta XLSX por mês/dia (`xlsx` importado dinamicamente), com slug da loja atual no nome do arquivo.
-- Importa `.xlsx`/`.xls` normalizando headers (`data`/`valor`/`observacoes`/`criado_em`), validando a data por modo e registrando via `registerSaleWithCreatedAt`.
-- Notifica por `onMessage`; chama `onImportCompleted` ao concluir.
+- Exporta XLSX por mês ou dia (`xlsx` importado dinamicamente), com slug da loja atual no nome do arquivo.
+- Importa `.xlsx`/`.xls` normalizando headers (`data`/`valor`/`observacoes`/`criado_em`), suporta datas Excel/ISO/BR (`DD/MM/AAAA`) e datas de qualquer mês/ano, não dependendo da seleção de `/history`.
+- Notifica por `onMessage`; invalida tenant-scoped queries e chama `onImportCompleted` ao concluir.
 
 ```ts
 interface ExportButtonsProps {
@@ -18,10 +18,10 @@ interface ExportButtonsProps {
 
 ## Relações
 
-- **Usa:** `salesService` (`src/services/salesService.ts`), `parseNumber` (`src/utils/number.ts`), `parseDate` (`src/utils/date.ts`).
+- **Usa:** `salesService` (`src/services/salesService.ts`), `parseNumber` (`src/utils/number.ts`), `dayjs`, `queryClient` + `tenantQueryRoot`.
 - **Usado por:** [history](../../pages/history.md).
 
 ## Notas
 
-- No modo dia a data precisa bater com `selectedDate`; no mês, pertencer a `mes/ano`.
-- Exportação/importação permanece em XLSX.
+- A importação não exige o mês/ano selecionado em `/history`; aceita datas em qualquer período válido.
+- No modo dia, a data deve bater com `selectedDate`.

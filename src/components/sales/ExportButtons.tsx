@@ -1,12 +1,14 @@
 import { useRef, type ChangeEvent, type FC } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { registerSaleWithCreatedAt, DailySale } from '../../services/salesService';
 import parseNumber from '../../utils/number';
-import { parseDate } from '../../utils/date';
+import dayjs from 'dayjs';
 import Button from '@/components/common/Button';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Panel from '@/components/common/Panel';
 import { useAuth } from '../../contexts/AuthContext';
+import { tenantQueryRoot, identityFromUser } from '../../utils/queryKeys';
 
 interface ExportButtonsProps {
   sales: DailySale[];
@@ -17,6 +19,30 @@ interface ExportButtonsProps {
   onImportCompleted?: () => void;
 }
 
+const parseDateCell = (value: unknown): string | null => {
+  if (value instanceof Date && !Number.isNaN(value.valueOf())) {
+    return dayjs(value).format('YYYY-MM-DD');
+  }
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const timestamp = Math.round((value - 25569) * 86400 * 1000);
+    const date = dayjs(timestamp);
+    return date.isValid() ? date.format('YYYY-MM-DD') : null;
+  }
+
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+
+  const direct = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? dayjs(raw, 'YYYY-MM-DD', true) : null;
+  if (direct?.isValid()) return direct.format('YYYY-MM-DD');
+
+  const brazilian = dayjs(raw, 'DD/MM/YYYY', true);
+  if (brazilian.isValid()) return brazilian.format('YYYY-MM-DD');
+
+  const iso = dayjs(raw);
+  return iso.isValid() ? iso.format('YYYY-MM-DD') : null;
+};
+
 const ExportButtons: FC<ExportButtonsProps> = ({
   sales,
   month,
@@ -26,6 +52,8 @@ const ExportButtons: FC<ExportButtonsProps> = ({
   onImportCompleted,
 }) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const identity = user ? identityFromUser(user) : null;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const storeSlug = (user?.storeName ?? 'loja').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'loja';
 
@@ -80,13 +108,8 @@ const ExportButtons: FC<ExportButtonsProps> = ({
   };
 
   // Função para disparar a importação.
-  const triggerImport = (mode: 'day' | 'month') => {
-    if (mode === 'day' && !selectedDate) {
-      notify('Selecione um dia antes de importar por dia.', 'error');
-      return;
-    }
+  const triggerImport = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.dataset.mode = mode;
       fileInputRef.current.click();
     }
   };
@@ -103,7 +126,6 @@ const ExportButtons: FC<ExportButtonsProps> = ({
   // Função para manipular a mudança do arquivo.
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    const mode = event.currentTarget.dataset.mode as 'day' | 'month';
     event.target.value = '';
 
     if (!file) return;
@@ -111,7 +133,7 @@ const ExportButtons: FC<ExportButtonsProps> = ({
     try { // Pega o arquivo, importa o XLSX, cria a planilha, adiciona ao workbook, escreve o workbook e cria um blob.
       const date = await file.arrayBuffer();
       const XLSX = await import('xlsx');
-      const workbook = XLSX.read(date, { type: 'array' });
+      const workbook = XLSX.read(date, { type: 'array', cellDates: true });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, {
@@ -132,12 +154,12 @@ const ExportButtons: FC<ExportButtonsProps> = ({
           normalizedRow[normalizeHeader(key)] = row[key];
         });
 
-        let dataValue = String(
+        const dataValue = parseDateCell(
           normalizedRow['data'] ||
           normalizedRow['date'] ||
           normalizedRow['dia'] ||
           ''
-        ).trim();
+        ) ?? '';
 
         const amountValue =
           normalizedRow['valor'] || normalizedRow['value'] || normalizedRow['amount'];
@@ -152,28 +174,8 @@ const ExportButtons: FC<ExportButtonsProps> = ({
           normalizedRow['created_at'] ||
           '';
 
-        // Se não houver date
         if (!dataValue) {
-          if (mode === 'day') {
-            dataValue = selectedDate ?? '';
-          } else {
-            errors.push(`Linha ${index + 1}: data ausente.`);
-            return;
-          }
-        }
-
-        // Validação por modo
-        if (mode === 'day' && selectedDate && dataValue !== selectedDate) {
-          errors.push(
-            `Linha ${index + 1}: a data deve ser igual ao dia selecionado (${selectedDate}).`
-          );
-          return;
-        }
-
-        if (mode === 'month' && !dateMatchesMonth(dataValue)) {
-          errors.push(
-            `Linha ${index + 1}: a data deve pertencer ao mês ${month}/${year}.`
-          );
+          errors.push(`Linha ${index + 1}: data inválida ou ausente.`);
           return;
         }
 
@@ -207,6 +209,10 @@ const ExportButtons: FC<ExportButtonsProps> = ({
         )
       );
 
+      if (identity) {
+        await queryClient.invalidateQueries({ queryKey: tenantQueryRoot(identity), refetchType: 'all' });
+      }
+
       notify(`Importação concluída com ${parsedItems.length} registro(s).`, 'success');
       onImportCompleted?.();
     } catch (error) {
@@ -218,16 +224,6 @@ const ExportButtons: FC<ExportButtonsProps> = ({
   // Formata o amount.
   const formatValue = (value: unknown) => {
     return parseNumber(value);
-  };
-
-  // Verifica se a date pertence ao mês.
-  const dateMatchesMonth = (dateValue: string) => {
-    const parsed = parseDate(`${dateValue}T00:00:00`);
-    return (
-      !Number.isNaN(parsed.valueOf()) &&
-      parsed.month() + 1 === month &&
-      parsed.year() === year
-    );
   };
 
   return (
@@ -242,10 +238,10 @@ const ExportButtons: FC<ExportButtonsProps> = ({
       <Button type="button" variant="info" onClick={() => exportXLSX('day')} disabled={!selectedDate} leftIcon={<FileDownloadIcon />}>
         Exportar XLSX (Dia)
       </Button>
-      <Button type="button" variant="secondary" onClick={() => triggerImport('month')} leftIcon={<FileUploadIcon />}>
-        Importar XLSX (Mês)
+      <Button type="button" variant="secondary" onClick={() => triggerImport()} leftIcon={<FileUploadIcon />}>
+        Importar XLSX
       </Button>
-      <Button type="button" variant="secondary" onClick={() => triggerImport('day')} disabled={!selectedDate} leftIcon={<FileUploadIcon />}>
+      <Button type="button" variant="secondary" onClick={() => triggerImport()} disabled={!selectedDate} leftIcon={<FileUploadIcon />}>
         Importar XLSX (Dia)
       </Button>
       <input
@@ -253,7 +249,6 @@ const ExportButtons: FC<ExportButtonsProps> = ({
         type="file"
         accept=".xlsx,.xls"
         className="hidden"
-        date-mode="month"
         onChange={handleFileChange}
       />
     </Panel>

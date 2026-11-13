@@ -7,7 +7,7 @@
 - Seleciona mês/ano (`getDateArray`) e carrega as vendas via `useSales(..., { filter, autoConsolidate: false })`.
 - Filtro dinâmico por valor (`todas` | `positivas` | `negativas`), persistido via `useFilter`.
 - Exibe `SalesChart` e `SalesTable` com edição (`EditSaleForm`) e exclusão.
-- Exporta/importa vendas via `ExportButtons`; nomes de arquivo incluem slug da loja atual (relatório com escopo de loja).
+- Exporta/importa vendas via `ExportButtons`. A importação aceita vendas de qualquer mês/ano, independente do período selecionado na tela; a exportação permanece com escopo da seleção atual.
 
 ## Relações
 
