@@ -1,18 +1,19 @@
 # `src/pages/api/admin/company.ts`
 
-> Administração da própria empresa.
+> Administração dos dados da empresa atual.
 
 ## O que faz
 
-- `GET`: retorna a empresa do tenant atual.
-- `PATCH`: atualiza o nome da empresa (`name`, 2–120 caracteres).
+- `GET`: retorna empresa (`id`, `name`, endereço, telefone e CPF/CNPJ) do tenant atual.
+- `PATCH` (admin-only): atualiza dados completos de empresa (nome, telefone, CPF/CNPJ, endereço com logradouro, número, complemento, bairro, cidade, UF e CEP).
+- Valida CPF/CNPJ, telefone, UF e CEP.
 
 ## Relações
 
-- **Usa:** `requireAdminApi`, `src/database/adminRepository.ts`.
-- **Usado por:** `/admin`.
+- **Usa:** `requireAdminApi`, `adminRepository`, `normalizeCompanyProfile`, `invalidateCompanyNameCache`.
+- **Usado por:** `src/hooks/useAdmin.ts`.
 
 ## Notas
 
-- Admin gerencia somente a empresa à qual pertence.
-- Após `PATCH`, o frontend chama `AuthContext.refresh()` para refletir o novo nome na UI.
+- O nome é obrigatório; demais campos são opcionais.
+- Campos vazios são preservados como strings vazias.

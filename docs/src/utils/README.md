@@ -5,6 +5,7 @@
 | Arquivo | Resumo |
 | --- | --- |
 
+| [businessProfile.md](./businessProfile.md) | Normalização/validação de dados cadastrais de empresa e loja. |
 | [captalize.md](./captalize.md) | Capitalização de texto. |
 | [cart.md](./cart.md) | Resumo do carrinho (`getCartSummary`). |
 | [cleaner.md](./cleaner.md) | Limpeza de arquivos temporários do OCR. |

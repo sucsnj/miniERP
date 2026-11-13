@@ -29,6 +29,15 @@ $$;
 create table if not exists public.companies (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  phone text not null default '',
+  tax_id text not null default '' check (char_length(tax_id) <= 18),
+  address_street text not null default '',
+  address_number text not null default '',
+  address_complement text not null default '',
+  address_district text not null default '',
+  address_city text not null default '',
+  address_state char(2) not null default '',
+  address_zip text not null default '',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -37,6 +46,11 @@ create table if not exists public.stores (
   id uuid primary key default gen_random_uuid(),
   company_id uuid not null references public.companies (id) on delete cascade,
   name text not null,
+  phone text not null default '',
+  tax_id text not null default '' check (char_length(tax_id) <= 18),
+  address_street text not null default '',
+  address_number text not null default '',
+  address_district text not null default '',
   active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),

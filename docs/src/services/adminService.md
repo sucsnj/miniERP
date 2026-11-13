@@ -1,12 +1,12 @@
 # `src/services/adminService.ts`
 
-> Cliente HTTP via `fetch` para o módulo de administração do tenant (empresa, lojas, vendedores).
+> Cliente HTTP via `fetch` para o módulo de administração do tenant: empresa, lojas e vendedores.
 
 ## O que faz
 
-- Define interfaces e tipos públicos (`CompanySummary`, `StoreAdmin`, `MerchantAdmin`, `UpdateMerchantPatch`).
-- `fetchCompany` / `updateCompanyName`.
-- `fetchStores` / `createStore` / `updateStore`.
+- Define interfaces e tipos públicos (`CompanySummary`, `StoreAdmin`, `MerchantAdmin`, `UpdateMerchantPatch`, `CompanyProfileInput`, `StoreProfileInput`).
+- `fetchCompany` / `updateCompanyProfile`.
+- `fetchStores` / `createStore` / `updateStoreProfile` / `toggleStoreStatus`.
 - `fetchMerchants` / `createMerchant` / `updateMerchant`.
 - `parseResponse` propaga `Error` em respostas não OK com mensagens legíveis.
 
@@ -18,4 +18,5 @@
 ## Notas
 
 - Todos os métodos aguardam resposta OK e devolvem JSON tipado.
-- Não altera o banco diretamente; a API interna aplica a política de acesso por `AuthContext`.
+- Empresa e loja persistem endereço e documento no banco (`companies`/`stores`).
+- O formulário da loja atualiza status por endpoint de status (`statusOnly`).

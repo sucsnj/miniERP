@@ -10,13 +10,16 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
 import {
   fetchCompany,
-  updateCompanyName,
+  updateCompanyProfile,
   fetchStores,
   createStore,
-  updateStore,
+  updateStoreProfile,
+  toggleStoreStatus,
   fetchMerchants,
   createMerchant,
   updateMerchant,
+  type CompanyProfileInput,
+  type StoreProfileInput,
   type CompanySummary,
   type StoreAdmin,
   type MerchantAdmin,
@@ -75,36 +78,6 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
 
   usePendingTask('admin', initialLoading);
 
-  const [companyName, setCompanyName] = useState(
-    () => companyQuery.data?.name ?? ''
-  );
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setCompanyName(companyQuery.data?.name ?? '');
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [companyQuery.data?.name]);
-
-  const storeDraftsFromList = useCallback((list: StoreAdmin[]) =>
-    Object.fromEntries(list.map((store) => [store.id, store.name])), []);
-
-  const [storeDrafts, setStoreDrafts] = useState<Record<string, string>>(() =>
-    storeDraftsFromList(storesQuery.data ?? [])
-  );
-  useEffect(() => {
-    if (!storesQuery.data) return;
-    const timer = window.setTimeout(() => {
-      setStoreDrafts((drafts) => {
-        const next = { ...drafts };
-        for (const store of storesQuery.data) {
-          if (typeof next[store.id] !== 'string') next[store.id] = store.name;
-        }
-        return next;
-      });
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [storesQuery.data]);
-
   const [merchantDrafts, setMerchantDrafts] = useState<Record<string, MerchantAdmin>>(() =>
     Object.fromEntries((merchantsQuery.data ?? []).map((merchant) => [merchant.id, merchant]))
   );
@@ -133,8 +106,11 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
   }, [identity, queryClient]);
 
   const saveCompanyMutation = useMutation({
-    mutationFn: (name: string) => updateCompanyName(name),
-    onSuccess: () => {
+    mutationFn: (input: CompanyProfileInput) => updateCompanyProfile(input),
+    onSuccess: (body) => {
+      if (identity) {
+        queryClient.setQueryData(tenantKeys.adminCompany(identity), body.company);
+      }
       invalidateAdmin();
       void refresh();
       showToast('Empresa atualizada.', 'success');
@@ -145,7 +121,13 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
 
   const createStoreMutation = useMutation({
     mutationFn: (name: string) => createStore(name),
-    onSuccess: () => {
+    onSuccess: (body) => {
+      if (identity) {
+        queryClient.setQueryData<StoreAdmin[]>(
+          tenantKeys.adminStores(identity),
+          (current) => current ? [...current, body.store] : [body.store]
+        );
+      }
       invalidateAdmin();
       showToast('Loja criada.', 'success');
     },
@@ -153,21 +135,39 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
       showToast(error instanceof Error ? error.message : 'Erro ao criar loja.', 'error'),
   });
 
-  const updateStoreMutation = useMutation({
-    mutationFn: (input: { id: string; name?: string; active?: boolean }) => updateStore(input),
+  const saveStoreMutation = useMutation({
+    mutationFn: (input: StoreProfileInput & { id: string }) => updateStoreProfile(input),
     onMutate: async (input) => {
       if (!identity) return { identity, snapshot: [] as StoreAdmin[] | undefined };
       await queryClient.cancelQueries({ queryKey: tenantKeys.adminStores(identity) });
       const previous = queryClient.getQueryData<StoreAdmin[]>(tenantKeys.adminStores(identity));
       queryClient.setQueryData<StoreAdmin[]>(tenantKeys.adminStores(identity), (current) =>
         current?.map((store) =>
-          store.id === input.id
-            ? {
-                ...store,
-                name: input.name ?? store.name,
-                active: input.active ?? store.active,
-              }
-            : store
+          store.id === input.id ? { ...store, ...input } : store
+        )
+      );
+      return { identity, snapshot: previous };
+    },
+    onError: (_error, _input, context): void => {
+      if (!context?.identity) return;
+      queryClient.setQueryData<StoreAdmin[]>(tenantKeys.adminStores(context.identity), context.snapshot);
+      showToast('Erro ao atualizar loja.', 'error');
+    },
+    onSettled: () => {
+      invalidateAdmin();
+      void refresh();
+    },
+  });
+
+  const toggleStoreStatusMutation = useMutation({
+    mutationFn: (input: { id: string; active: boolean }) => toggleStoreStatus(input),
+    onMutate: async (input) => {
+      if (!identity) return { identity, snapshot: [] as StoreAdmin[] | undefined };
+      await queryClient.cancelQueries({ queryKey: tenantKeys.adminStores(identity) });
+      const previous = queryClient.getQueryData<StoreAdmin[]>(tenantKeys.adminStores(identity));
+      queryClient.setQueryData<StoreAdmin[]>(tenantKeys.adminStores(identity), (current) =>
+        current?.map((store) =>
+          store.id === input.id ? { ...store, active: input.active } : store
         )
       );
       return { identity, snapshot: previous };
@@ -239,10 +239,9 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
       showToast(error instanceof Error ? error.message : 'Erro ao redefinir senha.', 'error'),
   });
 
-  const saveCompany = useCallback(() => {
-    if (!identity) return;
-    saveCompanyMutation.mutate(companyName);
-  }, [companyName, identity, saveCompanyMutation]);
+  const saveCompany = useCallback((input: CompanyProfileInput) => {
+    saveCompanyMutation.mutate(input);
+  }, [saveCompanyMutation]);
 
   const createStoreDraft = useCallback(
     (name: string) => {
@@ -257,22 +256,17 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
   );
 
   const saveStoreDraft = useCallback(
-    (store: StoreAdmin) => {
-      const name = (storeDrafts[store.id] ?? store.name).trim();
-      if (!name) {
-        showToast('Informe o nome da loja.', 'error');
-        return;
-      }
-      updateStoreMutation.mutate({ id: store.id, name });
+    (input: StoreProfileInput & { id: string }) => {
+      saveStoreMutation.mutate(input);
     },
-    [storeDrafts, showToast, updateStoreMutation]
+    [saveStoreMutation]
   );
 
   const toggleStore = useCallback(
     (store: StoreAdmin) => {
-      updateStoreMutation.mutate({ id: store.id, active: !store.active });
+      toggleStoreStatusMutation.mutate({ id: store.id, active: !store.active });
     },
-    [updateStoreMutation]
+    [toggleStoreStatusMutation]
   );
 
   const toggleNewMerchantStore = useCallback((storeId: string, selected: boolean) => {
@@ -407,10 +401,6 @@ export const useAdmin = (showToast: (message: string, type?: 'success' | 'error'
     merchants: merchantsQuery.data ?? [],
     initialLoading,
     refreshing,
-    companyName,
-    setCompanyName,
-    storeDrafts,
-    setStoreDrafts,
     merchantDrafts,
     saveCompany,
     createStore: createStoreDraft,

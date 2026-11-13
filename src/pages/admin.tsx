@@ -9,9 +9,13 @@ import Button from '@/components/common/Button';
 import Dialog from '@/components/common/Dialog';
 import { validatePassword } from '../utils/password';
 import { useToast } from '../hooks/useToast';
-import { useAdmin } from '../hooks/useAdmin';
+import { useAdmin, type StoreAdmin } from '../hooks/useAdmin';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
+import {
+  normalizeCompanyProfile,
+  normalizeStoreProfile,
+} from '../utils/businessProfile';
 import { CARDS_GRID_STYLE } from '../utils/layout';
 
 const inputStyle = { padding: '6px 8px', width: '100%' };
@@ -21,12 +25,9 @@ export default function AdminPage() {
   const { showToast } = useToast();
   const {
     stores,
+    company,
     merchants,
     initialLoading,
-    companyName,
-    setCompanyName,
-    storeDrafts,
-    setStoreDrafts,
     merchantDrafts,
     saveCompany,
     createStore,
@@ -53,6 +54,35 @@ export default function AdminPage() {
     const body = await uploadAvatar(file, merchantId);
     updateMerchantAvatar(merchantId, body.avatarUrl);
     showToast('Foto do vendedor atualizada.', 'success');
+  };
+
+  const saveCompanyForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const parsed = normalizeCompanyProfile(Object.fromEntries(data.entries()));
+    if (!parsed.ok) {
+      showToast(parsed.message, 'error');
+      return;
+    }
+
+    const profilePayload = { ...parsed.value };
+    delete profilePayload.id;
+    saveCompany(profilePayload);
+  };
+
+  const saveStoreForm = (event: FormEvent<HTMLFormElement>, store: StoreAdmin) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const parsed = normalizeStoreProfile(Object.fromEntries(data.entries()));
+    if (!parsed.ok) {
+      showToast(parsed.message, 'error');
+      return;
+    }
+
+    const profilePayload = { ...parsed.value };
+    delete profilePayload.id;
+    delete profilePayload.active;
+    saveStore({ id: store.id, ...profilePayload });
   };
 
   const openResetPassword = (merchant: { id: string; name: string }) => {
@@ -98,13 +128,54 @@ export default function AdminPage() {
 
           {!initialLoading && (
             <div style={CARDS_GRID_STYLE}>
-              <Panel style={panelStyle}>
-                <PanelHeader title="Empresa" />
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input value={companyName} onChange={(event) => setCompanyName(event.target.value)} style={inputStyle} />
-                  <Button type="button" onClick={saveCompany}>Salvar</Button>
-                </div>
-              </Panel>
+              <form key={company?.id} onSubmit={saveCompanyForm}>
+                <Panel style={panelStyle}>
+                  <PanelHeader title="Empresa" />
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '6px' }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                      Nome *
+                      <input name="name" defaultValue={company?.name ?? ''} required autoComplete="organization" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                      Telefone
+                      <input name="phone" defaultValue={company?.phone ?? ''} autoComplete="tel" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                      CPF/CNPJ
+                      <input name="taxId" defaultValue={company?.taxId ?? ''} autoComplete="off" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                      Logradouro
+                      <input name="addressStreet" defaultValue={company?.addressStreet ?? ''} autoComplete="street-address" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      Número
+                      <input name="addressNumber" defaultValue={company?.addressNumber ?? ''} autoComplete="off" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      Complemento
+                      <input name="addressComplement" defaultValue={company?.addressComplement ?? ''} autoComplete="off" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      Bairro
+                      <input name="addressDistrict" defaultValue={company?.addressDistrict ?? ''} autoComplete="off" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      Cidade
+                      <input name="addressCity" defaultValue={company?.addressCity ?? ''} autoComplete="address-level2" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      UF
+                      <input name="addressState" defaultValue={company?.addressState ?? ''} maxLength={2} autoComplete="address-level1" style={inputStyle} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                      CEP
+                      <input name="addressZip" defaultValue={company?.addressZip ?? ''} maxLength={9} autoComplete="postal-code" style={inputStyle} />
+                    </label>
+                  </div>
+                  <Button type="submit" size="sm" style={{ alignSelf: 'flex-start' }}>Salvar</Button>
+                </Panel>
+              </form>
 
               <Panel style={panelStyle}>
                 <PanelHeader title="Lojas" />
@@ -118,17 +189,46 @@ export default function AdminPage() {
                   <Button type="button" onClick={() => { createStore(newStoreName); setNewStoreName(''); }} disabled={stores.length >= 2}>Criar loja</Button>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Máximo de 2 lojas por empresa.</p>
-                {stores.map((store) => (
-                  <div key={store.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto auto', gap: '6px', marginBottom: '4px' }}>
-                    <input
-                      value={storeDrafts[store.id] ?? store.name}
-                      onChange={(event) => setStoreDrafts((current) => ({ ...current, [store.id]: event.target.value }))}
-                      style={inputStyle}
-                    />
-                    <Button type="button" size="sm" onClick={() => saveStore(store)}>Salvar</Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(store)}>{store.active ? 'Desativar' : 'Ativar'}</Button>
-                  </div>
-                ))}
+                {stores.map((store) => {
+                  const activeLabel = store.active ? 'Desativar' : 'Ativar';
+                  return (
+                    <form key={`${store.id}-${store.active}`} onSubmit={(event) => saveStoreForm(event, store)}>
+                      <fieldset style={{ border: '1px solid var(--border)', padding: '8px', marginBottom: '6px' }}>
+                        <legend>Loja</legend>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '6px' }}>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                            Nome *
+                            <input name="name" defaultValue={store.name} required autoComplete="organization" style={inputStyle} />
+                          </label>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                            Telefone
+                            <input name="phone" defaultValue={store.phone} autoComplete="tel" style={inputStyle} />
+                          </label>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                            CPF/CNPJ
+                            <input name="taxId" defaultValue={store.taxId} autoComplete="off" style={inputStyle} />
+                          </label>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
+                            Logradouro
+                            <input name="addressStreet" defaultValue={store.addressStreet} autoComplete="street-address" style={inputStyle} />
+                          </label>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                            Número
+                            <input name="addressNumber" defaultValue={store.addressNumber} autoComplete="off" style={inputStyle} />
+                          </label>
+                          <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                            Bairro
+                            <input name="addressDistrict" defaultValue={store.addressDistrict} autoComplete="off" style={inputStyle} />
+                          </label>
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+                          <Button type="submit" size="sm">Salvar</Button>
+                          <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(store)}>{activeLabel}</Button>
+                        </div>
+                      </fieldset>
+                    </form>
+                  );
+                })}
               </Panel>
 
               <Panel style={panelStyle}>

@@ -6,17 +6,10 @@ import {
   normalizeIdentifier,
   normalizeName,
 } from '../utils/serverAuth';
+import type { CompanyProfile, StoreProfile } from '../utils/businessProfile';
 
-export interface CompanySummary {
-  id: string;
-  name: string;
-}
-
-export interface StoreAdmin {
-  id: string;
-  name: string;
-  active: boolean;
-}
+export type CompanySummary = Omit<CompanyProfile, 'id'> & { id: string };
+export type StoreAdmin = Omit<StoreProfile, 'id' | 'active'> & { id: string; active: boolean };
 
 export interface MerchantAdmin {
   id: string;
@@ -33,39 +26,80 @@ function oneError(message: string): Error {
   return new Error(message);
 }
 
+const mapCompany = (row: Record<string, unknown>): CompanySummary => ({
+  id: String(row.id),
+  name: String(row.name),
+  phone: String(row.phone ?? ''),
+  taxId: String(row.tax_id ?? ''),
+  addressStreet: String(row.address_street ?? ''),
+  addressNumber: String(row.address_number ?? ''),
+  addressComplement: String(row.address_complement ?? ''),
+  addressDistrict: String(row.address_district ?? ''),
+  addressCity: String(row.address_city ?? ''),
+  addressState: String(row.address_state ?? ''),
+  addressZip: String(row.address_zip ?? ''),
+});
+
+const mapStore = (row: Record<string, unknown>): StoreAdmin => ({
+  id: String(row.id),
+  name: String(row.name),
+  phone: String(row.phone ?? ''),
+  taxId: String(row.tax_id ?? ''),
+  addressStreet: String(row.address_street ?? ''),
+  addressNumber: String(row.address_number ?? ''),
+  addressDistrict: String(row.address_district ?? ''),
+  active: Boolean(row.active),
+});
+
+const companySelect = 'id, name, phone, tax_id, address_street, address_number, address_complement, address_district, address_city, address_state, address_zip';
+const storeSelect = 'id, name, phone, tax_id, address_street, address_number, address_district, active';
+
 export async function getCompany(ctx: AuthContext): Promise<CompanySummary> {
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('companies')
-    .select('id, name')
+    .select(companySelect)
     .eq('id', ctx.companyId)
     .single();
   if (error) throw oneError('Não foi possível carregar a empresa.');
-  return { id: String(data.id), name: String(data.name) };
+  return mapCompany(data as Record<string, unknown>);
 }
 
-export async function updateCompanyName(name: string, ctx: AuthContext): Promise<void> {
+export async function updateCompanyProfile(
+  input: CompanyProfile,
+  ctx: AuthContext
+): Promise<CompanySummary> {
   const client = getSupabaseServerClient();
-  const { error } = await client
+  const { data, error } = await client
     .from('companies')
-    .update({ name: normalizeName(name) })
-    .eq('id', ctx.companyId);
+    .update({
+      name: input.name,
+      phone: input.phone,
+      tax_id: input.taxId,
+      address_street: input.addressStreet,
+      address_number: input.addressNumber,
+      address_complement: input.addressComplement,
+      address_district: input.addressDistrict,
+      address_city: input.addressCity,
+      address_state: input.addressState,
+      address_zip: input.addressZip,
+    })
+    .eq('id', ctx.companyId)
+    .select(companySelect)
+    .single();
   if (error) throw oneError('Não foi possível atualizar a empresa.');
+  return mapCompany(data as Record<string, unknown>);
 }
 
 export async function listStores(ctx: AuthContext): Promise<StoreAdmin[]> {
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('stores')
-    .select('id, name, active')
+    .select(storeSelect)
     .eq('company_id', ctx.companyId)
     .order('created_at', { ascending: true });
   if (error) throw oneError('Não foi possível listar as lojas.');
-  return (data ?? []).map((store) => ({
-    id: String(store.id),
-    name: String(store.name),
-    active: Boolean(store.active),
-  }));
+  return (data ?? []).map((store) => mapStore(store as Record<string, unknown>));
 }
 
 export async function createStore(name: string, ctx: AuthContext): Promise<StoreAdmin> {
@@ -76,19 +110,47 @@ export async function createStore(name: string, ctx: AuthContext): Promise<Store
   const { data, error } = await client
     .from('stores')
     .insert({ company_id: ctx.companyId, name: normalizeName(name) })
-    .select('id, name, active')
+    .select(storeSelect)
     .single();
   if (error) {
     throw oneError(String(error.message).includes('at most 2 stores') || error.code === 'P0001'
       ? 'A empresa pode ter no máximo 2 lojas.'
       : 'Não foi possível criar a loja.');
   }
-  return { id: String(data.id), name: String(data.name), active: Boolean(data.active) };
+  return mapStore(data as Record<string, unknown>);
 }
 
-export async function updateStore(
+export async function updateStoreProfile(
   storeId: string,
-  input: { name?: string; active?: boolean },
+  input: StoreProfile,
+  ctx: AuthContext
+): Promise<StoreAdmin> {
+  const client = getSupabaseServerClient();
+  const stores = await listStores(ctx);
+  const store = stores.find((item) => item.id === storeId);
+  if (!store) throw oneError('Loja não encontrada.');
+
+  const { data, error } = await client
+    .from('stores')
+    .update({
+      name: input.name,
+      phone: input.phone,
+      tax_id: input.taxId,
+      address_street: input.addressStreet,
+      address_number: input.addressNumber,
+      address_district: input.addressDistrict,
+    })
+    .eq('id', storeId)
+    .eq('company_id', ctx.companyId)
+    .select(storeSelect)
+    .single();
+  if (error) throw oneError('Não foi possível atualizar a loja.');
+  return mapStore(data as Record<string, unknown>);
+}
+
+export async function updateStoreStatus(
+  storeId: string,
+  active: boolean,
   ctx: AuthContext
 ): Promise<void> {
   const client = getSupabaseServerClient();
@@ -96,21 +158,16 @@ export async function updateStore(
   const store = stores.find((item) => item.id === storeId);
   if (!store) throw oneError('Loja não encontrada.');
 
-  if (input.active === false) {
+  if (!active) {
     const activeStores = stores.filter((item) => item.active);
     if (activeStores.length <= 1 && store.active) {
       throw oneError('A empresa precisa manter ao menos uma loja ativa.');
     }
   }
 
-  const patch: Record<string, unknown> = {};
-  if (input.name !== undefined) patch.name = normalizeName(input.name);
-  if (input.active !== undefined) patch.active = input.active;
-  if (Object.keys(patch).length === 0) return;
-
   const { error } = await client
     .from('stores')
-    .update(patch)
+    .update({ active })
     .eq('id', storeId)
     .eq('company_id', ctx.companyId);
   if (error) throw oneError('Não foi possível atualizar a loja.');

@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Permite ao admin atualizar o nome da empresa; o `AuthContext` é reutilizado pela navegação após alteração.
-- Permite criar/editar/desativar até 2 lojas; impacta a sessão atual quando necessário.
+- Permite ao admin atualizar nome, endereço completo, telefone e CPF/CNPJ da empresa.
+- Permite criar/editar/desativar até 2 lojas; cada loja tem telefone, CPF/CNPJ, logradouro, número e bairro.
 - Redefine senha de vendedores via modal validável (confirmação + política mínima), sem `window.prompt`.
 - Cards responsivos no mesmo layout grid de `/profile`, com controles compactos de edição inline.
 - Foto de vendedores é escolhida do dispositivo via `AvatarPicker` (PNG, JPEG, GIF ou WebP, até 5 MB); não há campo de URL manual.

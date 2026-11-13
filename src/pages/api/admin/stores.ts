@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { requireAdminApi, isValidName, normalizeName } from '../../../utils/serverAuth';
-import { createStore, listStores, updateStore } from '../../../database/adminRepository';
+import { createStore, listStores, updateStoreProfile, updateStoreStatus } from '../../../database/adminRepository';
+import { normalizeStoreProfile } from '../../../utils/businessProfile';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireAdminApi(req, res);
@@ -33,30 +34,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'PATCH') {
     const storeId = String(req.body?.id ?? '');
-    const patch: { name?: string; active?: boolean } = {};
-
-    if (req.body?.name !== undefined) {
-      const name = normalizeName(req.body.name);
-      if (!isValidName(name)) {
-        return res.status(400).json({ error: 'A loja deve ter entre 2 e 120 caracteres.' });
-      }
-      patch.name = name;
+    if (!storeId) {
+      return res.status(400).json({ error: 'Informe a loja.' });
     }
 
-    if (req.body?.active !== undefined) {
-      if (typeof req.body.active !== 'boolean') {
+    if (req.body?.statusOnly === true) {
+      if (typeof req.body?.active !== 'boolean') {
         return res.status(400).json({ error: 'Status da loja deve ser booleano.' });
       }
-      patch.active = req.body.active;
+
+      try {
+        await updateStoreStatus(storeId, req.body.active, ctx);
+        return res.status(200).json({ ok: true });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Não foi possível atualizar a loja.';
+        return res.status(400).json({ error: message });
+      }
     }
 
-    if (!storeId || Object.keys(patch).length === 0) {
-      return res.status(400).json({ error: 'Informe a loja e a alteração desejada.' });
+    const parsed = normalizeStoreProfile({ ...(req.body ?? {}), id: storeId });
+    if (!parsed.ok) {
+      return res.status(400).json({ error: parsed.message });
     }
 
     try {
-      await updateStore(storeId, patch, ctx);
-      return res.status(200).json({ ok: true });
+      const store = await updateStoreProfile(storeId, parsed.value, ctx);
+      return res.status(200).json({ store });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Não foi possível atualizar a loja.';
       return res.status(400).json({ error: message });

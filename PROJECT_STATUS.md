@@ -28,7 +28,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 
 - **Fase 5 / deploy:** publicar na Vercel, configurar variáveis de ambiente, validar upload XLSX (`/tmp` ou Storage) e exercitar o fluxo completo em runtime.
 - **Auth/multiempresa/multi-loja:** validação runtime completa antes do rollout definitivo.
-- **Banco do navbar / PIX / auto consolidação / avatars:** aplicar `supabase/migrations/0016-add-user-avatar-url.sql`, `supabase/migrations/0017-add-pix-presets-to-company-settings.sql`, `supabase/migrations/0018-add-auto-consolidation-settings.sql` e `supabase/migrations/0019-create-avatars-storage-bucket.sql`.
+- **Banco do navbar / PIX / auto consolidação / avatars:** aplicar `supabase/migrations/0016-add-user-avatar-url.sql`, `supabase/migrations/0017-add-pix-presets-to-company-settings.sql`, `supabase/migrations/0018-add-auto-consolidation-settings.sql` e `supabase/migrations/0019-create-avatars-storage-bucket.sql`, `supabase/migrations/0020-add-company-store-profile-fields.sql`.
 
 ## Futuras / Melhorias sugeridas
 

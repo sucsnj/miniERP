@@ -1,19 +1,21 @@
 # `src/pages/api/admin/stores.ts`
 
-> Administração de lojas da empresa.
+> Administração das lojas da empresa atual.
 
 ## O que faz
 
-- `GET`: lista lojas ativas/inativas do tenant.
-- `POST`: cria loja (`name`); máximo de 2 por empresa (validação + trigger no banco).
-- `PATCH`: renomeia (`name`) ou ativa/desativa (`active`); a empresa precisa manter ao menos 1 loja ativa.
+- `GET`: lista lojas (`id`, `name`, telefone, CPF/CNPJ, `address_street`, `address_number`, `address_district`, `active`).
+- `POST`: cria loja (somente `name`).
+- `PATCH`: atualiza dados completos da loja ou status (`statusOnly`).
+- Valida CPF/CNPJ e telefone da loja.
 
 ## Relações
 
-- **Usa:** `requireAdminApi`, `src/database/adminRepository.ts`.
-- **Usado por:** `/admin`, seletor de loja.
+- **Usa:** `requireAdminApi`, `isValidName`, `normalizeName`, `adminRepository`, `normalizeStoreProfile`.
+- **Usado por:** `src/hooks/useAdmin.ts`.
 
 ## Notas
 
-- Após `POST`/`PATCH`, o frontend chama `AuthContext.refresh()` para manter loja/empresa sincronizadas.
-- Loja inexistente, desativada ou fora do tenant não aparece em listas e não pode ser selecionada/atualizada pelo cliente.
+- Máximo de 2 lojas por empresa.
+- Nome e status da loja seguem as regras: pelo menos 1 loja ativa.
+- Novos campos são opcionais e ficam vazios até preenchimento.

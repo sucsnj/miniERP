@@ -1,11 +1,25 @@
 export interface CompanySummary {
   id: string;
   name: string;
+  phone: string;
+  taxId: string;
+  addressStreet: string;
+  addressNumber: string;
+  addressComplement: string;
+  addressDistrict: string;
+  addressCity: string;
+  addressState: string;
+  addressZip: string;
 }
 
 export interface StoreAdmin {
   id: string;
   name: string;
+  phone: string;
+  taxId: string;
+  addressStreet: string;
+  addressNumber: string;
+  addressDistrict: string;
   active: boolean;
 }
 
@@ -29,7 +43,11 @@ export interface UpdateMerchantPatch {
   password?: string;
 }
 
-async function parseResponse<T>(response: Response): Promise<T> {
+export type CompanyProfileInput = Omit<CompanySummary, 'id'>;
+export type StoreProfileInput = Omit<StoreAdmin, 'id' | 'active'>;
+
+async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, init);
   const text = await response.text();
   const body = text ? JSON.parse(text) : {};
 
@@ -37,26 +55,21 @@ async function parseResponse<T>(response: Response): Promise<T> {
     const message =
       typeof body === 'object' && body !== null && 'error' in body
         ? String((body as { error?: unknown }).error)
-        : `HTTP ${response.status}`;
+        : 'Não foi possível concluir a operação.';
     throw new Error(message);
   }
 
   return body as T;
 }
 
-async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  const response = await fetch(input, init);
-  return parseResponse<T>(response);
-}
-
 export const fetchCompany = () =>
   fetchJson<{ company: CompanySummary }>('/api/admin/company');
 
-export const updateCompanyName = (name: string) =>
+export const updateCompanyProfile = (input: CompanyProfileInput) =>
   fetchJson<{ company: CompanySummary }>('/api/admin/company', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(input),
   });
 
 export const fetchStores = () =>
@@ -69,11 +82,18 @@ export const createStore = (name: string) =>
     body: JSON.stringify({ name }),
   });
 
-export const updateStore = (input: { id: string; name?: string; active?: boolean }) =>
-  fetchJson<{ ok: true }>('/api/admin/stores', {
+export const updateStoreProfile = (input: StoreProfileInput & { id: string }) =>
+  fetchJson<{ store: StoreAdmin }>('/api/admin/stores', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
+  });
+
+export const toggleStoreStatus = (input: { id: string; active: boolean }) =>
+  fetchJson<{ ok: true }>('/api/admin/stores', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...input, statusOnly: true }),
   });
 
 export const fetchMerchants = () =>
