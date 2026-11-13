@@ -1,0 +1,187 @@
+import Head from 'next/head';
+import { FormEvent, useRef, useState } from 'react';
+import PageShell from '@/components/common/PageShell';
+import PageHeader from '@/components/common/PageHeader';
+import Panel from '@/components/common/Panel';
+import PanelHeader from '@/components/common/PanelHeader';
+import Button from '@/components/common/Button';
+import RequireAdmin from '@/components/auth/RequireAdmin';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../hooks/useToast';
+import {
+  changeProfilePassword,
+  updateProfile,
+  uploadProfileAvatar,
+} from '../services/profileService';
+
+const ProfilePage = () => {
+  const { user, setUser } = useAuth();
+  const { showToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
+
+  const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user) return;
+
+    const data = new FormData(event.currentTarget);
+    setSavingProfile(true);
+    try {
+      const body = await updateProfile({
+        name: String(data.get('name') ?? '').trim(),
+        login: String(data.get('login') ?? '').toLowerCase().trim(),
+        email: String(data.get('email') ?? '').trim(),
+      });
+      if (body.user) setUser(body.user);
+      showToast('Perfil atualizado com sucesso.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar o perfil.', 'error');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const savePassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user) return;
+
+    if (newPassword !== confirmPassword) {
+      showToast('A confirmação da senha não confere.', 'error');
+      return;
+    }
+
+    setSavingPassword(true);
+    try {
+      const body = await changeProfilePassword({ currentPassword, newPassword });
+      if (body.user) setUser(body.user);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      showToast('Senha atualizada com sucesso.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar a senha.', 'error');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
+  const selectAvatar = () => fileInputRef.current?.click();
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setSavingAvatar(true);
+    try {
+      const body = await uploadProfileAvatar(file);
+      if (body.user) setUser(body.user);
+      showToast('Foto de perfil atualizada.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar a foto.', 'error');
+    } finally {
+      setSavingAvatar(false);
+    }
+  };
+
+  const avatarInitial = user?.name.trim().charAt(0).toUpperCase() || '?';
+
+  return (
+    <RequireAdmin>
+      <>
+        <Head>
+          <title>Perfil | MinErp</title>
+          <meta name="description" content="Perfil do administrador do sistema." />
+        </Head>
+        <PageShell>
+          <PageHeader title="Perfil" description="Dados e senha da conta de administrador." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+            <Panel style={{ padding: '12px' }}>
+              <PanelHeader title="Foto de perfil" />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={`Foto de ${user.name}`}
+                    width={96}
+                    height={96}
+                    style={{ width: 96, height: 96, borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span aria-hidden="true" style={{ width: 96, height: 96, borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'var(--primary)', color: '#fff', fontSize: '2rem', fontWeight: 700 }}>
+                    {avatarInitial}
+                  </span>
+                )}
+                <Button type="button" variant="outline" size="sm" onClick={selectAvatar} isLoading={savingAvatar}>
+                  {savingAvatar ? 'Enviando...' : 'Escolher foto'}
+                </Button>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>PNG, JPEG, GIF ou WebP, até 5 MB.</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/gif,image/webp"
+                  onChange={handleAvatarChange}
+                  hidden
+                />
+              </div>
+            </Panel>
+
+            <form key={user?.userId} onSubmit={saveProfile}>
+              <Panel style={{ padding: '12px' }}>
+                <PanelHeader title="Dados pessoais" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Nome *
+                    <input type="text" name="name" defaultValue={user?.name ?? ''} required autoComplete="name" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Apelido *
+                    <input type="text" name="login" defaultValue={user?.login ?? ''} pattern="[A-Za-z]{4,}" required autoComplete="username" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    E-mail *
+                    <input type="email" name="email" defaultValue={user?.email ?? ''} required autoComplete="email" style={{ padding: '8px' }} />
+                  </label>
+                  <Button type="submit" size="sm" disabled={savingProfile}>
+                    {savingProfile ? 'Salvando...' : 'Salvar dados'}
+                  </Button>
+                </div>
+              </Panel>
+            </form>
+
+            <form onSubmit={savePassword}>
+              <Panel style={{ padding: '12px' }}>
+                <PanelHeader title="Alterar senha" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Senha atual *
+                    <input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required autoComplete="current-password" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Nova senha *
+                    <input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required minLength={8} autoComplete="new-password" style={{ padding: '8px' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    Confirmar nova senha *
+                    <input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required autoComplete="new-password" style={{ padding: '8px' }} />
+                  </label>
+                  <Button type="submit" size="sm" variant="outline" disabled={savingPassword}>
+                    {savingPassword ? 'Salvando...' : 'Alterar senha'}
+                  </Button>
+                </div>
+              </Panel>
+            </form>
+          </div>
+        </PageShell>
+      </>
+    </RequireAdmin>
+  );
+};
+
+export default ProfilePage;

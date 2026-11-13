@@ -8,7 +8,7 @@
 - Sempre visível enquanto a sessão carrega; nesse intervalo mostra skeleton.
 - Seletor de loja à direita: admin vê todas as lojas ativas da empresa; merchant, apenas lojas autorizadas.
 - Avatar do usuário; sem `avatar_url`/erro de imagem, exibe a inicial do nome.
-- Ao clicar no nome/avatar, abre menu com identidade, `Configurações`, `Administração` (somente admin) e `Sair`.
+- Ao clicar no nome/avatar, abre menu com identidade, `Perfil` (somente admin), `Configurações`, `Administração` (somente admin) e `Sair`.
 - Botão de logout revoga a sessão atual.
 
 ## Relações

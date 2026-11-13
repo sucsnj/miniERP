@@ -13,6 +13,7 @@
 5.2. Para foto na navbar, aplique `supabase/migrations/0016-add-user-avatar-url.sql`; a coluna `users.avatar_url` é opcional e o frontend usa inicial do nome quando não há foto.
 5.3. Para salvar presets de PIX na empresa, aplique `supabase/migrations/0017-add-pix-presets-to-company-settings.sql`; a coluna `company_settings.pix_presets` guarda um JSON compartilhado por empresa.
 5.4. Para auto consolidação mensal configurável, aplique `supabase/migrations/0018-add-auto-consolidation-settings.sql`; `auto_consolidation_enabled` ativa/desativa e `auto_consolidation_day` define o dia (1–28) do mês seguinte.
+5.5. Para foto de perfil no perfil do administrador, aplique `supabase/migrations/0019-create-avatars-storage-bucket.sql`; o bucket público `avatars` aceita imagens de até 5 MB.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

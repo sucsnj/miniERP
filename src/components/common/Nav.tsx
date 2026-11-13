@@ -12,6 +12,7 @@ import TableChartIcon from '@mui/icons-material/TableChart';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -170,6 +171,12 @@ const Nav: React.FC = () => {
                     <span>{user.companyName} • {user.role === 'admin' ? 'Administrador' : 'Vendedor'}</span>
                   </div>
                   <hr className={styles.menuDivider} />
+                  {user.role === 'admin' && (
+                    <Link href="/profile" role="menuitem" className={styles.menuItem} prefetch onClick={() => setMenuOpen(false)}>
+                      <PersonIcon fontSize="small" />
+                      Perfil
+                    </Link>
+                  )}
                   <Link href="/settings" role="menuitem" className={styles.menuItem} prefetch onClick={() => setMenuOpen(false)}>
                     <SettingsIcon fontSize="small" />
                     Configurações
