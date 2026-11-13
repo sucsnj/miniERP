@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useRef, useState, type CSSProperties } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -67,6 +67,27 @@ const upsertPixPreset = (presets: PixPreset[], candidate: Omit<PixPreset, 'id' |
     },
     ...presets,
   ].slice(0, MAX_PIX_PRESETS);
+};
+
+const masonryStyle: CSSProperties = {
+  columnWidth: '260px',
+  columnGap: '12px',
+};
+
+const masonryCardStyle: CSSProperties = {
+  padding: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  width: '100%',
+  marginBottom: '12px',
+  breakInside: 'avoid',
+};
+
+const masonryFormStyle: CSSProperties = {
+  width: '100%',
+  marginBottom: '12px',
+  breakInside: 'avoid',
 };
 
 const formatPixPresetLabel = (preset: PixPreset) => (
@@ -210,8 +231,8 @@ const SettingsPage = () => {
       <Head><title>Configurações</title></Head>
       <PageShell>
         <PageHeader title="Configurações" description="Padrão da empresa; cada dispositivo pode usar um override local." />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
-          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={masonryStyle}>
+          <Panel style={masonryCardStyle}>
             <div>
               <PanelHeader title="Tema" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Padrão visual da empresa e override local.</p>
@@ -230,7 +251,7 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Panel style={masonryCardStyle}>
             <div>
               <PanelHeader title="Histórico recente" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Quantidade de vendas exibidas (0 a 8, em pares).</p>
@@ -253,7 +274,7 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Panel style={masonryCardStyle}>
             <div>
               <PanelHeader title="Fuso horário" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Padrão empresarial e override local.</p>
@@ -272,7 +293,7 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Panel style={masonryCardStyle}>
             <div>
               <PanelHeader title="Foco automático" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Foca o campo de venda periodicamente.</p>
@@ -308,7 +329,7 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Panel style={masonryCardStyle}>
             <div>
               <PanelHeader title="Auto consolidação" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Consolida automaticamente o mês anterior no dia escolhido do mês seguinte.</p>
@@ -336,8 +357,8 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          <form ref={pixFormRef} key={`${pixKey}-${pixName}-${pixBank}-${pixCity}`} onSubmit={saveCompanyPix} autoComplete="off">
-            <Panel style={{ padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <form ref={pixFormRef} key={`${pixKey}-${pixName}-${pixBank}-${pixCity}`} onSubmit={saveCompanyPix} autoComplete="off" style={masonryFormStyle}>
+            <Panel style={masonryCardStyle}>
               <div>
                 <PanelHeader title="PIX" />
                 <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Dados compartilhados pela empresa. Todos são obrigatórios para o QR Code.</p>

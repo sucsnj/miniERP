@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Exibe o padrão da empresa (`company_settings`) e overrides locais por dispositivo.
+- Exibe o padrão da empresa (`company_settings`) e overrides locais por dispositivo; cards da página usam layout masonry (colunas com altura independente).
 - Admin altera tema, fuso horário, histórico recente, foco automático/delay, auto consolidação e PIX da empresa.
 - Merchant visualiza os padrões da empresa e pode usar overrides locais (tema, fuso, recentes, foco/delay).
 - Auto consolidação é um padrão compartilhado da empresa: ativa/desativa e escolhe o dia (1–28) do mês seguinte; padrão é ativada no dia 1.
