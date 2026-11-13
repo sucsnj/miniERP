@@ -15,7 +15,7 @@ import {
 } from '../services/profileService';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
-import { CARDS_GRID_STYLE } from '../utils/layout';
+import styles from '../styles/profile.module.css';
 import { normalizeContactProfile } from '../utils/businessProfile';
 
 const ProfilePage = () => {
@@ -112,7 +112,7 @@ const ProfilePage = () => {
         </Head>
         <PageShell>
           <PageHeader title="Perfil" description="Dados e senha da conta de administrador." />
-          <div style={CARDS_GRID_STYLE}>
+          <div className={styles.grid}>
             <Panel style={{ padding: '12px' }}>
               <PanelHeader title="Foto de perfil" />
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>

@@ -4,6 +4,7 @@
 
 ## O que faz
 
+- Layout responsivo em grid com no máximo 3 colunas de cards.
 - Somente administradores acedem (`RequireAdmin`).
 - O card "Dados de contato" edita endereço completo e telefone do administrador.
 - Altera foto do usuário via upload de imagem no dispositivo; aceita PNG, JPEG, GIF e WebP de até 5 MB.
