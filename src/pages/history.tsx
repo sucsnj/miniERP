@@ -4,7 +4,7 @@ import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
 import { capitalize } from '../utils/captalize';
-import { getDateArray, formatMonthName } from '../utils/date';
+import { getDateArray, getLastDayOfMonth, formatMonthName } from '../utils/date';
 import { useToast } from '../hooks/useToast';
 import { useSales } from '../hooks/useSales';
 import { useFilter } from '../hooks/useFilter';
@@ -21,6 +21,11 @@ const History: React.FC = () => {
   // Período selecionado (mês e year), usado para carregar as vendas
   const [month, setMonth] = useState(getDateArray()[1]);
   const [year, setYear] = useState(getDateArray()[2]);
+  const [day, setDay] = useState(getDateArray()[0]);
+
+  const daysInMonth = getLastDayOfMonth(year, month);
+  const dayClamped = Math.min(day, daysInMonth);
+  const selectedDate = `${year}-${String(month).padStart(2, '0')}-${String(dayClamped).padStart(2, '0')}`;
 
   // Notificações (toast) exibidas na tela
   const { showToast } = useToast();
@@ -38,6 +43,28 @@ const History: React.FC = () => {
     handleDeleteSale,
   } = useSales(month, year, showToast, { filter, autoConsolidate: false });
 
+  const changeMonth = (value: string) => {
+    const nextMonth = Number(value);
+    if (!Number.isFinite(nextMonth)) return;
+    setMonth(nextMonth);
+    const nextLastDay = getLastDayOfMonth(year, nextMonth);
+    if (day > nextLastDay) setDay(nextLastDay);
+  };
+
+  const changeYear = (value: string) => {
+    const nextYear = value ? Number(value) : new Date().getFullYear();
+    if (!Number.isFinite(nextYear)) return;
+    setYear(nextYear);
+    const nextLastDay = getLastDayOfMonth(nextYear, month);
+    if (day > nextLastDay) setDay(nextLastDay);
+  };
+
+  const changeDay = (value: string) => {
+    const nextDay = Number(value);
+    if (!Number.isFinite(nextDay)) return;
+    setDay(Math.min(Math.max(1, nextDay), daysInMonth));
+  };
+
   return (
     <>
       <PageShell>
@@ -47,7 +74,7 @@ const History: React.FC = () => {
           <div className="page-actions">
             <label>
               Mês:
-              <select className="headerSelect" value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
+              <select className="headerSelect" value={month} onChange={(e) => changeMonth(e.target.value)}>
                 {Array.from({ length: 12 }, (_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {capitalize(formatMonthName(i + 1))}
@@ -56,12 +83,23 @@ const History: React.FC = () => {
               </select>
             </label>
             <label>
+              Dia:
+              <input
+                className="headerInput"
+                type="number"
+                min={1}
+                max={daysInMonth}
+                value={dayClamped}
+                onChange={(e) => changeDay(e.target.value)}
+              />
+            </label>
+            <label>
               Ano:
               <input
                 className="headerInput"
                 type="number"
                 value={year}
-                onChange={(e) => setYear(parseInt(e.target.value))}
+                onChange={(e) => changeYear(e.target.value)}
               />
             </label>
             {/* Botões de filtro por amount da venda */}
@@ -94,7 +132,7 @@ const History: React.FC = () => {
 
         <SalesTable sales={sales} onEditSale={handleEditSale} onDeleteSale={handleDeleteSale} />
         {/* Exportação e importação de vendas */}
-        <ExportButtons sales={sales} month={month} year={year} onMessage={showToast} />
+        <ExportButtons sales={sales} month={month} year={year} selectedDate={selectedDate} onMessage={showToast} />
       </PageShell>
     </>
   );
