@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Usa o período atual (`month`, `year`) e mantém a data selecionada (`selectedDate`) do formulário.
-- Carrega as vendas via `useSales(month, year, showToast)`.
+- O período é derivado da data selecionada no formulário (`selectedDate`) e usado em `useSales(month, year, showToast)`.
+- Ao alterar a data, "Resumo do dia" e "Total do Período" passam a refletir o mês/ano correspondente.
 - Calcula `recentSales` (últimas 4 vendas por data e id desc) e orquestra os componentes da tela.
 
 ## Relações

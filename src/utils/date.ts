@@ -87,8 +87,8 @@ export function toDateFromISO(value: string, timezone: string = getTimezone()): 
 }
 
 // Arrays de date/hora
-export function getDateArray(): [number, number, number] {
-  const d = now();
+export function getDateArray(value?: string): [number, number, number] {
+  const d = value ? parseDate(value) : now();
   return [d.date(), d.month() + 1, d.year()];
 }
 

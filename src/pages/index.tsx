@@ -17,13 +17,10 @@ const today = now().format('YYYY-MM-DD');
 // Orquestra os subcomponentes da tela usando os hooks useToast e useSales,
 // mantendo apenas o estado de filtro (mês/year) e da date selecionada.
 const Home: React.FC = () => {
-  // Período de today (mês/year no fuso do app), calculado uma única vez
-  const [, currentMonth, currentYear] = getDateArray();
-  // Período atual (mês e ano) usado para carregar as vendas
-  const month = currentMonth;
-  const year = currentYear;
   // Data selecionada no formulário de venda diária
   const [selectedDate, setSelectedDate] = useState(today);
+  // Período derivado da data selecionada (mês e ano)
+  const [, month, year] = getDateArray(selectedDate);
 
   // Notificações (toast) exibidas na página
   const { showToast } = useToast();

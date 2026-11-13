@@ -6,7 +6,7 @@
 
 - `now()` devolve o "agora" em Recife; `parseDate(value)` respeita offset existente e converte para o TZ.
 - Conversão/formatos: `toDate`, `toDateFromISO`, `toTimestamp`, `formatDateString`, `formatDateISO`, `formatMonthName`.
-- Comparações: `isAfter`, `isBefore`; arrays: `getDateArray`, `getTimeArray`, `getDateTimeArray`.
+- Comparações: `isAfter`, `isBefore`; arrays: `getDateArray(value?)` (sem argumento, usa a data atual), `getTimeArray`, `getDateTimeArray`.
 - Auxiliares: `getLastDayOfMonth`, `getCurrentYear`.
 
 ## Relações
