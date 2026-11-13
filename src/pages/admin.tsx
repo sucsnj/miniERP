@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, type CSSProperties } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import RequireAdmin from '@/components/auth/RequireAdmin';
@@ -12,9 +12,10 @@ import { useToast } from '../hooks/useToast';
 import { useAdmin } from '../hooks/useAdmin';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
-import { MASONRY_STYLE, MASONRY_CARD_STYLE } from '../utils/layout';
+import { CARDS_GRID_STYLE } from '../utils/layout';
 
 const inputStyle = { padding: '6px 8px', width: '100%' };
+const panelStyle: CSSProperties = { padding: '10px', display: 'flex', flexDirection: 'column', gap: '6px' };
 
 export default function AdminPage() {
   const { showToast } = useToast();
@@ -96,8 +97,8 @@ export default function AdminPage() {
           <PageHeader title="Administração" description="Empresa, lojas e vendedores." />
 
           {!initialLoading && (
-            <div style={MASONRY_STYLE}>
-              <Panel style={MASONRY_CARD_STYLE}>
+            <div style={CARDS_GRID_STYLE}>
+              <Panel style={panelStyle}>
                 <PanelHeader title="Empresa" />
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input value={companyName} onChange={(event) => setCompanyName(event.target.value)} style={inputStyle} />
@@ -105,7 +106,7 @@ export default function AdminPage() {
                 </div>
               </Panel>
 
-              <Panel style={MASONRY_CARD_STYLE}>
+              <Panel style={panelStyle}>
                 <PanelHeader title="Lojas" />
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
                   <input
@@ -130,7 +131,7 @@ export default function AdminPage() {
                 ))}
               </Panel>
 
-              <Panel style={MASONRY_CARD_STYLE}>
+              <Panel style={panelStyle}>
                 <PanelHeader title="Vendedores" />
                 <fieldset style={{ border: '1px solid var(--border)', padding: '8px', marginBottom: '8px' }}>
                   <legend>Novo vendedor</legend>

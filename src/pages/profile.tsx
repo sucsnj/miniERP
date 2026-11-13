@@ -14,6 +14,7 @@ import {
 } from '../services/profileService';
 import { uploadAvatar } from '../services/avatarService';
 import AvatarPicker from '@/components/common/AvatarPicker';
+import { CARDS_GRID_STYLE } from '../utils/layout';
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
@@ -85,7 +86,7 @@ const ProfilePage = () => {
         </Head>
         <PageShell>
           <PageHeader title="Perfil" description="Dados e senha da conta de administrador." />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+          <div style={CARDS_GRID_STYLE}>
             <Panel style={{ padding: '12px' }}>
               <PanelHeader title="Foto de perfil" />
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
