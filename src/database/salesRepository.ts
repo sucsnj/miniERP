@@ -253,6 +253,22 @@ export async function deleteMonthlySale(id: string, ctx: AuthContext): Promise<v
   if (error) throw error;
 }
 
+export async function listMissingMonthlyConsolidationMonths(
+  ctx: AuthContext
+): Promise<Array<{ month: number; year: number }>> {
+  const { data, error } = await sb().rpc('missing_monthly_consolidation_months', {
+    p_company_id: ctx.companyId,
+    p_store_id: ctx.storeId,
+  });
+
+  if (error) throw error;
+
+  return asArray(data).map((row) => row as Record<string, unknown>).map((row) => ({
+    month: toNumber(row.month),
+    year: toNumber(row.year),
+  })).filter((entry) => entry.month >= 1 && entry.month <= 12);
+}
+
 export async function consolidateMonthly(month: number, year: number, ctx: AuthContext): Promise<void> {
   const sales = await listDailySales(month, year, 'todas', ctx);
   const specialSales = sales.filter((sale) => sale.amount <= 0);

@@ -196,13 +196,16 @@ export async function listMerchants(ctx: AuthContext): Promise<MerchantAdmin[]> 
   if (error) throw oneError('Não foi possível listar os vendedores.');
 
   const ids = (users ?? []).map((user) => String(user.id));
-  const assignments = ids.length === 0
-    ? []
-    : (await client
-        .from('user_stores')
-        .select('user_id, store_id')
-        .in('user_id', ids)
-      ).data ?? [];
+  const assignmentsResult =
+    ids.length === 0
+      ? { data: [], error: null }
+      : await client
+          .from('user_stores')
+          .select('user_id, store_id')
+          .in('user_id', ids)
+          .order('store_id', { ascending: true });
+  if (assignmentsResult.error) throw oneError('Não foi possível listar as lojas dos vendedores.');
+  const assignments = assignmentsResult.data ?? [];
 
   const storeIdsByUser = new Map<string, string[]>();
   for (const assignment of assignments) {
@@ -229,11 +232,13 @@ async function validateStoreIds(storeIds: string[], ctx: AuthContext): Promise<s
   if (unique.length === 0) throw oneError('Selecione ao menos uma loja para o vendedor.');
 
   const stores = await listStores(ctx);
-  const validIds = new Set(stores.filter((store) => store.active).map((store) => store.id));
+  const activeStores = stores.filter((store) => store.active).map((store) => store.id);
+  const activeOrder = new Map(activeStores.map((id, index) => [id, index]));
+  const validIds = new Set(activeStores);
   for (const id of unique) {
     if (!validIds.has(id)) throw oneError('Uma das lojas selecionadas não está disponível.');
   }
-  return unique;
+  return unique.sort((a, b) => (activeOrder.get(a) ?? Number.MAX_SAFE_INTEGER) - (activeOrder.get(b) ?? Number.MAX_SAFE_INTEGER));
 }
 
 async function replaceStoreAssignments(userId: string, storeIds: string[], ctx: AuthContext): Promise<void> {
@@ -275,9 +280,13 @@ async function replaceStoreAssignments(userId: string, storeIds: string[], ctx: 
     if (insertError) throw insertError;
     insertedNew = true;
 
+    const nextLastStoreId = previousLastStoreId && unique.includes(previousLastStoreId)
+      ? previousLastStoreId
+      : unique[0];
+
     const { error: updateError } = await client
       .from('users')
-      .update({ last_store_id: unique[0] ?? null })
+      .update({ last_store_id: nextLastStoreId })
       .eq('id', userId)
       .eq('company_id', ctx.companyId)
       .eq('role', 'merchant');

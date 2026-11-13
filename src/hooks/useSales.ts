@@ -29,7 +29,7 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
 
   // Aplica os padrões quando a opção não é informada
-  const { autoConsolidationEnabled, autoConsolidationDay } = useSettings();
+  const { autoConsolidationEnabled, autoConsolidationDay, autoConsolidationMode } = useSettings();
   const { filter = 'positivas', autoConsolidate: autoConsolidateEnabled = true } = options;
   const identity = user ? identityFromUser(user) : null;
 
@@ -59,10 +59,10 @@ export const useSales = (month: number, year: number, showToast: ToastFn, option
     if (!query.isSuccess) return;
     if (!autoConsolidateEnabled || !autoConsolidationEnabled || user?.role !== 'admin' || !user.storeId) return;
 
-    void autoConsolidate(user.storeId, autoConsolidationDay).catch((error) => {
+    void autoConsolidate(user.storeId, autoConsolidationDay, autoConsolidationMode).catch((error) => {
       console.error('Erro ao consolidar mês em segundo plano:', error);
     });
-  }, [autoConsolidateEnabled, autoConsolidationEnabled, autoConsolidationDay, query.isSuccess, user?.role, user?.storeId]);
+  }, [autoConsolidateEnabled, autoConsolidationEnabled, autoConsolidationDay, autoConsolidationMode, query.isSuccess, user?.role, user?.storeId]);
 
   // Consolida o mês selecionado e informa o resultado
   const handleConsolidate = async () => {

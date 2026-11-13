@@ -46,27 +46,53 @@ const BRAZILIAN_STATES = new Set([
   'SP', 'SE', 'TO',
 ]);
 
-const normalizeRequiredString = (value: unknown, maxLength: number): string =>
-  String(value ?? '').trim().replace(/\s+/g, ' ').slice(0, maxLength);
+const normalizeText = (value: string, maxLength: number): string =>
+  value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
 
-const normalizeOptionalString = (value: unknown, maxLength: number): string =>
-  normalizeRequiredString(value, maxLength);
-
-const normalizePhone = (value: unknown): string => {
-  const raw = String(value ?? '').trim();
-  const digits = raw.replace(/\D/g, '');
-  if (!digits) return '';
-  return raw;
+const readStrictString = (
+  record: Record<string, unknown>,
+  key: string,
+  maxLength: number,
+  label: string,
+  { required = false }: { required?: boolean } = {},
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const raw = record[key];
+  if (raw === undefined || raw === null) {
+    return required
+      ? { ok: false, message: `${label} é obrigatório.` }
+      : { ok: true, value: '' };
+  }
+  if (typeof raw !== 'string') {
+    return { ok: false, message: `${label} deve ser uma string.` };
+  }
+  const value = normalizeText(raw, maxLength + 1);
+  if (required && !value) {
+    return { ok: false, message: `${label} é obrigatório.` };
+  }
+  if (value.length > maxLength) {
+    return { ok: false, message: `${label} é muito longo.` };
+  }
+  return { ok: true, value };
 };
 
+const normalizePhone = (value: string): string => value.trim();
 const isValidPhone = (value: string): boolean => {
   if (!value) return true;
   const digits = value.replace(/\D/g, '');
-  return /^\+?\d[\d\s().-]{8,22}$/.test(value) && [10, 11, 12, 13].includes(digits.length);
+  return /^\+?[\d\s().-]+$/.test(value) && [10, 11, 12, 13].includes(digits.length);
 };
 
-const normalizeTaxId = (value: unknown): string => String(value ?? '').replace(/\D/g, '');
+const normalizeOptionalPhone = (
+  record: Record<string, unknown>,
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const result = readStrictString(record, 'phone', 40, 'Telefone');
+  if (!result.ok) return result;
+  const phone = normalizePhone(result.value);
+  if (!isValidPhone(phone)) return { ok: false, message: 'Telefone inválido.' };
+  return { ok: true, value: phone };
+};
 
+const normalizeTaxId = (value: string): string => value.replace(/\D/g, '');
 const isValidTaxId = (value: string): boolean => {
   if (!value) return true;
   if (value.length === 11) return isValidCpf(value);
@@ -74,32 +100,100 @@ const isValidTaxId = (value: string): boolean => {
   return false;
 };
 
-const normalizeUf = (value: unknown): string =>
-  String(value ?? '').trim().replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 2);
+const normalizeOptionalTaxId = (
+  record: Record<string, unknown>,
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const result = readStrictString(record, 'taxId', 40, 'CPF/CNPJ');
+  if (!result.ok) return result;
+  const taxId = normalizeTaxId(result.value);
+  if (result.value && !isValidTaxId(taxId)) {
+    return { ok: false, message: 'CPF ou CNPJ inválido.' };
+  }
+  return { ok: true, value: taxId };
+};
 
-const normalizeZip = (value: unknown): string => {
-  const digits = String(value ?? '').replace(/\D/g, '');
+const normalizeUf = (value: string): string =>
+  value.trim().replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 2);
+
+const normalizeZip = (value: string): string => {
+  const digits = value.replace(/\D/g, '');
   return digits.length === 8 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits.slice(0, 9);
 };
 
 const isValidZip = (value: string): boolean => !value || /^\d{5}-\d{3}$/.test(value);
 
+const optionalState = (
+  record: Record<string, unknown>,
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const result = readStrictString(record, 'addressState', 2, 'UF');
+  if (!result.ok) return result;
+  const state = normalizeUf(result.value);
+  if (state && !BRAZILIAN_STATES.has(state)) {
+    return { ok: false, message: 'UF inválida.' };
+  }
+  return { ok: true, value: state };
+};
+
+const optionalZip = (
+  record: Record<string, unknown>,
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const result = readStrictString(record, 'addressZip', 9, 'CEP');
+  if (!result.ok) return result;
+  const zip = normalizeZip(result.value);
+  if (!isValidZip(zip)) return { ok: false, message: 'CEP inválido.' };
+  return { ok: true, value: zip };
+};
+
 const ok = <T>(value: T): ProfileValidationResult<T> => ({ ok: true, value });
 
-type ProfileValidationBaseResult =
-  | { ok: true; message: null }
-  | { ok: false; message: string };
+const requireName = (
+  record: Record<string, unknown>,
+): { ok: true; value: string } | { ok: false; message: string } => {
+  const result = readStrictString(record, 'name', 120, 'Nome', { required: true });
+  if (!result.ok) return result;
+  if (result.value.length < 2) return { ok: false, message: 'O nome deve ter entre 2 e 120 caracteres.' };
+  return result;
+};
 
-const validateProfile = (input: Record<string, unknown>): ProfileValidationBaseResult => {
-  const name = normalizeRequiredString(input.name, 200);
-  if (name.length < 2 || name.length > 120) return { ok: false, message: 'O nome deve ter entre 2 e 120 caracteres.' };
-  if (!isValidPhone(String(input.phone ?? ''))) {
-    return { ok: false, message: 'Telefone inválido.' };
-  }
-  if (!isValidTaxId(normalizeTaxId(input.taxId))) {
-    return { ok: false, message: 'CPF ou CNPJ inválido.' };
-  }
-  return { ok: true, message: null };
+const addressFields = (record: Record<string, unknown>, includeDetails: boolean) => {
+  const street = readStrictString(record, 'addressStreet', 160, 'Logradouro');
+  const number = readStrictString(record, 'addressNumber', 30, 'Número');
+  const district = readStrictString(record, 'addressDistrict', 120, 'Bairro');
+
+  if (!street.ok) return street;
+  if (!number.ok) return number;
+  if (!district.ok) return district;
+
+  const complement = includeDetails
+    ? readStrictString(record, 'addressComplement', 160, 'Complemento')
+    : { ok: true as const, value: '' };
+  const city = includeDetails
+    ? readStrictString(record, 'addressCity', 120, 'Cidade')
+    : { ok: true as const, value: '' };
+  const state = includeDetails
+    ? optionalState(record)
+    : { ok: true as const, value: '' };
+  const zip = includeDetails
+    ? optionalZip(record)
+    : { ok: true as const, value: '' };
+
+  if (!complement.ok) return complement;
+  if (!city.ok) return city;
+  if (!state.ok) return state;
+  if (!zip.ok) return zip;
+
+  return {
+    ok: true as const,
+    value: {
+      addressStreet: street.value,
+      addressNumber: number.value,
+      addressComplement: complement.value,
+      addressDistrict: district.value,
+      addressCity: city.value,
+      addressState: state.value,
+      addressZip: zip.value,
+    },
+  };
 };
 
 export function normalizeContactProfile(
@@ -110,76 +204,78 @@ export function normalizeContactProfile(
   }
 
   const record = input as Record<string, unknown>;
-  const phone = normalizePhone(record.phone);
-  const state = normalizeUf(record.addressState);
-  const zip = normalizeZip(record.addressZip);
+  const phone = normalizeOptionalPhone(record);
+  const address = addressFields(record, true);
 
-  if (!isValidPhone(phone)) {
-    return { ok: false, message: 'Telefone inválido.' };
-  }
-  if (state && !BRAZILIAN_STATES.has(state)) {
-    return { ok: false, message: 'UF inválida.' };
-  }
-  if (!isValidZip(zip)) {
-    return { ok: false, message: 'CEP inválido.' };
-  }
+  if (!phone.ok) return { ok: false, message: phone.message };
+  if (!address.ok) return { ok: false, message: address.message };
 
   return ok({
-    phone,
-    addressStreet: normalizeOptionalString(record.addressStreet, 160),
-    addressNumber: normalizeOptionalString(record.addressNumber, 30),
-    addressComplement: normalizeOptionalString(record.addressComplement, 160),
-    addressDistrict: normalizeOptionalString(record.addressDistrict, 120),
-    addressCity: normalizeOptionalString(record.addressCity, 120),
-    addressState: state,
-    addressZip: zip,
+    phone: phone.value,
+    ...address.value,
   });
 }
 
 export function normalizeCompanyProfile(
   input: Record<string, unknown>
 ): ProfileValidationResult<CompanyProfile> {
-  const result = validateProfile(input);
-  if (!result.ok) return { ok: false, message: result.message };
+  const record = input as Record<string, unknown>;
+  const name = requireName(record);
+  const phone = normalizeOptionalPhone(record);
+  const taxId = normalizeOptionalTaxId(record);
+  const address = addressFields(record, true);
 
-  const state = normalizeUf(input.addressState);
-  const zip = normalizeZip(input.addressZip);
-  if (state && !BRAZILIAN_STATES.has(state)) {
-    return { ok: false, message: 'UF inválida.' };
-  }
-  if (!isValidZip(zip)) {
-    return { ok: false, message: 'CEP inválido.' };
+  if (!name.ok) return { ok: false, message: name.message };
+  if (!phone.ok) return { ok: false, message: phone.message };
+  if (!taxId.ok) return { ok: false, message: taxId.message };
+  if (!address.ok) return { ok: false, message: address.message };
+
+  const id = record.id;
+  if (id !== undefined && typeof id !== 'string') {
+    return { ok: false, message: 'ID da empresa inválido.' };
   }
 
   return ok({
-    ...(input.id ? { id: String(input.id) } : {}),
-    name: normalizeRequiredString(input.name, 120),
-    phone: normalizePhone(input.phone),
-    taxId: normalizeTaxId(input.taxId),
-    addressStreet: normalizeOptionalString(input.addressStreet, 160),
-    addressNumber: normalizeOptionalString(input.addressNumber, 30),
-    addressComplement: normalizeOptionalString(input.addressComplement, 160),
-    addressDistrict: normalizeOptionalString(input.addressDistrict, 120),
-    addressCity: normalizeOptionalString(input.addressCity, 120),
-    addressState: state,
-    addressZip: zip,
+    ...(id ? { id } : {}),
+    name: name.value,
+    phone: phone.value,
+    taxId: taxId.value,
+    ...address.value,
   });
 }
 
 export function normalizeStoreProfile(
   input: Record<string, unknown>
 ): ProfileValidationResult<StoreProfile> {
-  const result = validateProfile(input);
-  if (!result.ok) return { ok: false, message: result.message };
+  const record = input as Record<string, unknown>;
+  const name = requireName(record);
+  const phone = normalizeOptionalPhone(record);
+  const taxId = normalizeOptionalTaxId(record);
+  const address = addressFields(record, false);
+
+  if (!name.ok) return { ok: false, message: name.message };
+  if (!phone.ok) return { ok: false, message: phone.message };
+  if (!taxId.ok) return { ok: false, message: taxId.message };
+  if (!address.ok) return { ok: false, message: address.message };
+
+  const id = record.id;
+  if (id !== undefined && typeof id !== 'string') {
+    return { ok: false, message: 'ID da loja inválido.' };
+  }
+
+  const active = record.active;
+  if (active !== undefined && typeof active !== 'boolean') {
+    return { ok: false, message: 'Status da loja inválido.' };
+  }
 
   return ok({
-    ...(input.id ? { id: String(input.id) } : {}),
-    name: normalizeRequiredString(input.name, 120),
-    phone: normalizePhone(input.phone),
-    taxId: normalizeTaxId(input.taxId),
-    addressStreet: normalizeOptionalString(input.addressStreet, 160),
-    addressNumber: normalizeOptionalString(input.addressNumber, 30),
-    addressDistrict: normalizeOptionalString(input.addressDistrict, 120),
-    ...(input.active !== undefined ? { active: Boolean(input.active) } : {}),
+    ...(id ? { id } : {}),
+    addressStreet: address.value.addressStreet,
+    addressNumber: address.value.addressNumber,
+    addressDistrict: address.value.addressDistrict,
+    phone: phone.value,
+    taxId: taxId.value,
+    name: name.value,
+    ...(active !== undefined ? { active } : {}),
   });
 }

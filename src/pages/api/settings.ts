@@ -48,6 +48,10 @@ function parsePatch(body: unknown): CompanySettingsPatch | null {
     if (!Number.isFinite(day) || day < 1 || day > 28) return null;
     patch.autoConsolidationDay = Math.floor(day);
   }
+  if (source.autoConsolidationMode !== undefined) {
+    if (source.autoConsolidationMode !== 'all-previous' && source.autoConsolidationMode !== 'previous-month') return null;
+    patch.autoConsolidationMode = source.autoConsolidationMode;
+  }
   if (source.pixKey !== undefined) patch.pixKey = String(source.pixKey);
   if (source.pixName !== undefined) patch.pixName = String(source.pixName);
   if (source.pixBank !== undefined) patch.pixBank = String(source.pixBank);

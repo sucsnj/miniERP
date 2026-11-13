@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- `parseNumber(value)` (default) converte `number`/`string` em `number`, tratando padrão BR (milhar `.`, decimal `,`); inválido → `NaN`.
-- `parseCurrency(value)` limpa a entrada monetária e retorna `number | null`.
+- `parseNumber(value)` (default) converte `number`/`string` em `number`, tratando estritamente o padrão BR com milhar `.` e decimal `,` (`1.234,56`) e o decimal internacional (`1234.56`); entradas com trailing garbage, `e/E` e `0x` são rejeitadas (`NaN`).
+- `parseCurrency(value)` usa as mesmas regras de parsing estrito e retorna `number | null`.
 - Desacoplados da validação: não emitem mensagens.
 
 ## Relações

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getMonthlyTotal, listMonthlySales, consolidateMonthly, deleteMonthlySale } from '../../database/salesRepository';
+import { getMonthlyTotal, listMonthlySales, consolidateMonthly, deleteMonthlySale, listMissingMonthlyConsolidationMonths } from '../../database/salesRepository';
 import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -7,7 +7,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!ctx) return;
 
   if (req.method === 'GET') {
-    const { month: monthParam, year: yearParam } = req.query;
+    const { month: monthParam, year: yearParam, action } = req.query;
+    if (action === 'missing') {
+      try {
+        const missing = await listMissingMonthlyConsolidationMonths(ctx);
+        res.status(200).json(missing);
+      } catch {
+        res.status(500).json({ error: 'Erro ao listar meses pendentes' });
+      }
+      return;
+    }
     if (monthParam && yearParam) {
       try {
         const total = await getMonthlyTotal(parseInt(monthParam as string), parseInt(yearParam as string), ctx);

@@ -152,6 +152,12 @@ export const registerSaleWithCreatedAt = async (
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ saleDate: date, amount, notes, createdAt, items: [] }),
   });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível registrar a venda importada: ${response.status} ${body}`);
+  }
+
   return response.json();
 };
 
@@ -161,7 +167,13 @@ export const fetchDailySales = async (
   filter: 'positivas' | 'negativas' | 'todas' = 'todas'
 ): Promise<DailySale[]> => {
   const response = await fetch(`/api/sales?month=${month}&year=${year}&filtro=${filter}`);
-  const date = await response.json();
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível carregar as vendas: ${response.status} ${body}`);
+  }
+
+  const text = await response.text();
+  const date = text ? JSON.parse(text) : [];
   return Array.isArray(date) ? date.map(mapDailySale) : [];
 };
 
@@ -186,7 +198,11 @@ export const updateSale = async (id: string | number, date: string, amount: numb
 
 export const fetchSaleItems = async (saleId: string | number): Promise<SaleItemData[]> => {
   const response = await fetch(`/api/sale-items?saleId=${saleId}`);
-  if (!response.ok) return [];
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível carregar os itens da venda: ${response.status} ${body}`);
+  }
+
   const date = await response.json();
   return Array.isArray(date) ? date.map(mapSaleItem) : [];
 };
@@ -206,8 +222,14 @@ export const deleteSale = async (id: string | number) => {
 
 export const fetchMonthlyTotal = async (month: number, year: number): Promise<MonthlySale | null> => {
   const response = await fetch(`/api/monthly-sales?month=${month}&year=${year}`);
-  const date = await response.json();
-  if (!date) return null;
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível carregar o total mensal: ${response.status} ${body}`);
+  }
+
+  const text = await response.text();
+  const date = text ? JSON.parse(text) : null;
+  if (!date || date.total === undefined) return null;
   return mapMonthlySale(date);
 };
 
@@ -262,18 +284,53 @@ export const consolidateMonthly = async (month: number, year: number, storeId?: 
 
 export const isConsolidated = async (month: number, year: number): Promise<boolean> => {
   const response = await fetch(`/api/monthly-sales?month=${month}&year=${year}`);
-  if (!response.ok) return false;
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Não foi possível verificar o mês consolidado: ${response.status} ${body}`);
+  }
+
   const text = await response.text();
   if (!text) return false;
   const date = JSON.parse(text);
   return !!date && date.total !== undefined;
 };
 
-export const autoConsolidate = async (storeId?: string, consolidationDay = 1) => {
+export const fetchMissingMonthlyConsolidationMonths = async (): Promise<Array<{ month: number; year: number }>> => {
+  const response = await fetch('/api/monthly-sales?action=missing');
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Não foi possível listar meses pendentes de consolidação: ${response.status} ${text}`);
+  }
+
+  const text = await response.text();
+  const date = text ? JSON.parse(text) : [];
+  if (!Array.isArray(date)) return [];
+
+  return date
+    .map((entry) => ({
+      month: Number(entry.month),
+      year: Number(entry.year),
+    }))
+    .filter((entry) => Number.isInteger(entry.month) && entry.month >= 1 && entry.month <= 12 && Number.isInteger(entry.year));
+};
+
+export const autoConsolidate = async (
+  storeId?: string,
+  consolidationDay = 1,
+  mode: 'all-previous' | 'previous-month' = 'all-previous',
+) => {
   const [day, month, initialYear] = getDateArray();
   const threshold = Math.min(28, Math.max(1, Math.floor(consolidationDay) || 1));
   if (!day || !month || !initialYear || day < threshold || !storeId) return;
   let year = initialYear;
+
+  if (mode === 'all-previous') {
+    const missingMonths = await fetchMissingMonthlyConsolidationMonths();
+    for (const missing of missingMonths) {
+      await consolidateMonthly(missing.month, missing.year, storeId);
+    }
+    return;
+  }
 
   let previousMonth = month - 1;
   if (month === 1) {

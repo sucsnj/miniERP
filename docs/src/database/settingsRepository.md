@@ -7,6 +7,8 @@
 - `getCompanySettings(ctx)`: busca/cria configuração da empresa (inclui presets PIX e auto consolidação).
 - `updateCompanySettings(patch, ctx)`: atualiza apenas campos informados e retorna o estado atual.
 - `normalizePixPresets`: valida/serializa presets (`id`, `label` opcional, `pixKey`, `pixName`, `pixBank`, `pixCity`), no máximo 20.
+- `upsertPixPreset`/`deletePixPreset` executam funções RPC (`upsert_pix_preset`/`delete_pix_preset`) para operação atômica sob lock.
+- `auto_consolidation_mode` é `all-previous` (padrão) ou `previous-month`, com constraint.
 
 ## Relações
 

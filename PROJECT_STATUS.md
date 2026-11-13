@@ -32,7 +32,8 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 `supabase/migrations/0020-add-company-store-profile-fields.sql`, 
 `supabase/migrations/0021-add-user-contact-fields.sql`, 
 `supabase/migrations/0022-add-atomic-pix-preset-functions.sql`, 
-`supabase/migrations/0023-add-deactivate-store-function.sql`.
+`supabase/migrations/0023-add-deactivate-store-function.sql`, 
+`supabase/migrations/0024-add-auto-consolidation-mode.sql`.
 
 ## Futuras / Melhorias sugeridas
 

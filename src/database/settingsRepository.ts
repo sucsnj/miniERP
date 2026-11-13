@@ -21,6 +21,7 @@ export interface CompanySettings {
   autoFocusSaleInputDelay: number;
   autoConsolidationEnabled: boolean;
   autoConsolidationDay: number;
+  autoConsolidationMode: 'all-previous' | 'previous-month';
   pixKey: string;
   pixName: string;
   pixBank: string;
@@ -71,6 +72,7 @@ export interface CompanySettingsPatch {
   autoFocusSaleInputDelay?: number;
   autoConsolidationEnabled?: boolean;
   autoConsolidationDay?: number;
+  autoConsolidationMode?: 'all-previous' | 'previous-month';
   pixKey?: string;
   pixName?: string;
   pixBank?: string;
@@ -93,6 +95,7 @@ function mapRow(row: Record<string, unknown>): CompanySettings {
     autoFocusSaleInputDelay: Number(row.auto_focus_sale_input_delay),
     autoConsolidationEnabled: Boolean(row.auto_consolidation_enabled),
     autoConsolidationDay: Number(row.auto_consolidation_day),
+    autoConsolidationMode: String(row.auto_consolidation_mode ?? 'all-previous') as 'all-previous' | 'previous-month',
     pixKey: String(row.pix_key ?? ''),
     pixName: String(row.pix_name ?? ''),
     pixBank: String(row.pix_bank ?? ''),
@@ -105,7 +108,7 @@ export async function getCompanySettings(ctx: AuthContext): Promise<CompanySetti
   const client = getSupabaseServerClient();
   const { data, error } = await client
     .from('company_settings')
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, pix_key, pix_name, pix_bank, pix_city, pix_presets')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .eq('company_id', ctx.companyId)
     .maybeSingle();
 
@@ -115,7 +118,7 @@ export async function getCompanySettings(ctx: AuthContext): Promise<CompanySetti
   const { data: created, error: insertError } = await client
     .from('company_settings')
     .insert({ company_id: ctx.companyId })
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, pix_key, pix_name, pix_bank, pix_city, pix_presets')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .single();
 
   if (insertError) throw new Error('Não foi possível criar as configurações da empresa.');
@@ -142,6 +145,12 @@ export async function updateCompanySettings(
     }
     row.auto_consolidation_day = day;
   }
+  if (patch.autoConsolidationMode !== undefined) {
+    if (!['all-previous', 'previous-month'].includes(patch.autoConsolidationMode)) {
+      throw new Error('Modo de auto consolidação inválido.');
+    }
+    row.auto_consolidation_mode = patch.autoConsolidationMode;
+  }
   if (patch.pixKey !== undefined) row.pix_key = patch.pixKey.trim();
   if (patch.pixName !== undefined) row.pix_name = patch.pixName.trim();
   if (patch.pixBank !== undefined) row.pix_bank = patch.pixBank.trim();
@@ -151,7 +160,7 @@ export async function updateCompanySettings(
     .from('company_settings')
     .update(row)
     .eq('company_id', ctx.companyId)
-    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, pix_key, pix_name, pix_bank, pix_city, pix_presets')
+    .select('theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, pix_key, pix_name, pix_bank, pix_city, pix_presets')
     .single();
 
   if (error) throw new Error('Não foi possível atualizar as configurações da empresa.');

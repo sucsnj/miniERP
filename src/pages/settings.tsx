@@ -185,6 +185,7 @@ const SettingsPage = () => {
   const companyAutoFocusSaleInputDelay = companySettings?.autoFocusSaleInputDelay ?? 60;
   const companyAutoConsolidationEnabled = companySettings?.autoConsolidationEnabled ?? true;
   const companyAutoConsolidationDay = companySettings?.autoConsolidationDay ?? 1;
+  const companyAutoConsolidationMode = companySettings?.autoConsolidationMode ?? 'all-previous';
 
   const adminOnlyControls = (label: string, description: string, children: React.ReactNode) => (
     <div>
@@ -310,6 +311,19 @@ const SettingsPage = () => {
                     <Button type="button" size="sm" disabled={savingCompany} variant={companyAutoConsolidationEnabled ? 'primary' : 'outline'} onClick={() => void patchCompany({ autoConsolidationEnabled: true })}>Ativada</Button>
                     <Button type="button" size="sm" disabled={savingCompany} variant={!companyAutoConsolidationEnabled ? 'primary' : 'outline'} onClick={() => void patchCompany({ autoConsolidationEnabled: false })}>Desativada</Button>
                   </div>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
+                    O que consolidar?
+                    <select
+                      value={companyAutoConsolidationMode}
+                      disabled={savingCompany || !companyAutoConsolidationEnabled}
+                      onChange={(event) => void patchCompany({ autoConsolidationMode: event.target.value as 'all-previous' | 'previous-month' })}
+                      style={{ padding: '6px', width: '260px', maxWidth: '100%' }}
+                    >
+                      <option value="all-previous">Consolidar todos os meses anteriores</option>
+                      <option value="previous-month">Consolidar somente o mês anterior</option>
+                    </select>
+                  </label>
+
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                     Dia do mês seguinte
                     <select

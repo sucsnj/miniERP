@@ -12,6 +12,7 @@
 - `listMerchants` / `createMerchant` / `updateMerchant`; vinculação N×N em `user_stores`.
 - `replaceStoreAssignments` compensa falhas com snapshot/restore de `user_stores` + `last_store_id` (não é atômico, mas restaura o vendedor em erro parcial).
 - Criação de vendedor compensa transação com exclusão do usuário se falhar o vínculo de lojas.
+- Assignments têm ordem determinística (`user_stores` por `store_id`); `last_store_id` é mantido quando a loja atual continua no conjunto, senão aponta para o primeiro `store_id` elegível.
 
 ## Relações
 

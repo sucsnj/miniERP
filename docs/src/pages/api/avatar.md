@@ -6,7 +6,8 @@
 
 - `POST` (admin-only): aceita JSON `{ dataUrl }` e `{ userId? }`; `userId` ausente usa o próprio admin.
 - Valida MIME type (`image/png`, `image/jpeg`, `image/gif`, `image/webp`) e conteúdo de até 5 MB.
-- Envia a imagem para o bucket público `avatars`, path `<companyId>/<targetUserId>/avatar-<timestamp>.<ext>`.
+- Envia a imagem para o bucket público `avatars`, path `<companyId>/<targetUserId>/avatar-<uuid>.<ext>`.
+- Após atualizar `users.avatar_url`, tenta limpar arquivos antigos do mesmo tenant/usuário, incluindo arquivos órfãos de uploads concorrentes.
 - Atualiza `users.avatar_url` com a URL pública; alvo deve pertencer ao mesmo tenant.
 - Remove o avatar anterior pertencente ao mesmo tenant/usuário quando possível.
 - Quando o alvo é o usuário da sessão, devolve o contexto atualizado (`user`).

@@ -340,11 +340,15 @@ export async function setCurrentStore(
   const store = authorizedStores.find((item) => item.id === storeId) ?? null;
   if (!store) return null;
 
-  const { error: sessionError } = await client
-    .from('sessions')
-    .update({ store_id: storeId })
-    .eq('user_id', ctx.userId)
-    .eq('id', ctx.sessionId);
+  const { data: user, error: loadError } = await client
+    .from('users')
+    .select('last_store_id')
+    .eq('id', ctx.userId)
+    .eq('company_id', ctx.companyId)
+    .maybeSingle();
+
+  if (loadError || !user) return null;
+  const previousLastStoreId = user.last_store_id ? String(user.last_store_id) : null;
 
   const { error: userError } = await client
     .from('users')
@@ -352,7 +356,27 @@ export async function setCurrentStore(
     .eq('id', ctx.userId)
     .eq('company_id', ctx.companyId);
 
-  if (sessionError || userError) return null;
+  if (userError) return null;
+
+  const { error: sessionError } = await client
+    .from('sessions')
+    .update({ store_id: storeId })
+    .eq('user_id', ctx.userId)
+    .eq('id', ctx.sessionId);
+
+  if (sessionError) {
+    const { error: rollbackError } = await client
+      .from('users')
+      .update({ last_store_id: previousLastStoreId })
+      .eq('id', ctx.userId)
+      .eq('company_id', ctx.companyId);
+
+    if (rollbackError) {
+      console.error('Falha ao reverter last_store_id após erro de sessão:', rollbackError);
+    }
+    return null;
+  }
+
   return store as StoreRecord;
 }
 

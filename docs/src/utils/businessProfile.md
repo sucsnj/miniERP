@@ -4,11 +4,11 @@
 
 ## O que faz
 
-- `normalizeCompanyProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número, complemento, bairro, cidade, UF e CEP.
-- `normalizeStoreProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número e bairro.
-- `normalizeContactProfile`: valida/normaliza telefone e endereço do usuário (logradouro, número, complemento, bairro, cidade, UF, CEP).
-- CEP é normalizado para `00000-000`; UF é uppercased e validada contra UFs brasileiras.
-- Telefone e CPF/CNPJ são normalizados/validados antes do persistir.
+- `normalizeCompanyProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número, complemento, bairro, cidade, UF e CEP; exige strings estritas (campos vazios permitidos; `null`/incorreto rejeitado).
+- `normalizeStoreProfile`: valida/normaliza `name`, telefone, CPF/CNPJ, logradouro, número e bairro; exige strings estritas (`null`/tipos incorretos rejeitados).
+- `normalizeContactProfile`: valida/normaliza telefone e endereço do usuário (logradouro, número, complemento, bairro, cidade, UF, CEP); exige strings estritas.
+- Telefone passa por lista de dígitos/length (10–13); CPF/CNPJ exigem 11/14 dígitos válidos; UF é uppercased e validada contra UFs brasileiras; CEP é normalizado para `00000-000`.
+- Nenhum campo aceita objetos/booleanos; apenas strings vazias são consideradas "limpar campo" explícito.
 
 ## Relações
 

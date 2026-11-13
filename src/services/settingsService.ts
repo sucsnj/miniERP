@@ -18,6 +18,7 @@ export interface CompanySettings {
   autoFocusSaleInputDelay: number;
   autoConsolidationEnabled: boolean;
   autoConsolidationDay: number;
+  autoConsolidationMode: 'all-previous' | 'previous-month';
   pixKey: string;
   pixName: string;
   pixBank: string;

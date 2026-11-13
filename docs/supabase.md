@@ -18,6 +18,7 @@
 5.7. Para dados de contato do administrador, aplique `supabase/migrations/0021-add-user-contact-fields.sql`.
 5.8. Para operações atômicas de presets PIX da empresa, aplique `supabase/migrations/0022-add-atomic-pix-preset-functions.sql`.
 5.9. Para desativação segura de loja e reassociação automática de vendedores, aplique `supabase/migrations/0023-add-deactivate-store-function.sql`.
+5.10. Para modo de auto consolidação e função `missing_monthly_consolidation_months`, aplique `supabase/migrations/0024-add-auto-consolidation-mode.sql`.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

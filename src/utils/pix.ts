@@ -6,6 +6,7 @@
  *  - cálculo de CRC16-CCITT (FALSE, polinômio 0x1021)
  *  - normalização de campos e validação de chaves PIX
  */
+import { parseCurrency } from './number';
 
 // ---------------------------------------------------------------------------
 // Tipos e Interfaces
@@ -63,7 +64,6 @@ const CRC_ID = '6304';
 
 const MAX_MERCHANT_NAME_LEN = 25;
 const MAX_MERCHANT_CITY_LEN = 15;
-const MAX_AMOUNT_LENGTH = 13;
 
 /**
  * Monta um campo TLV: "ID" + len(2 dígitos) + amount.
@@ -321,19 +321,11 @@ export function isValidCnpj(cnpj: string | number): boolean {
  * duas casas decimais ("15.50"), formato exigido pelo campo 54 do EMVCo.
  */
 export function amountToPayload(value: string | number | null | undefined): string | null {
-  const cleaned = String(value ?? '')
-    .replace(/[^\d,]/g, '')
-    .replace(',', '.');
-  if (!cleaned) return null;
+  const amount = parseCurrency(value);
+  if (amount == null || !Number.isFinite(amount) || amount <= 0) return null;
 
-  const [intPart, decPart = ''] = cleaned.split('.');
-  const digits = `${Number(intPart) || 0}${decPart.padEnd(2, '0').slice(0, 2)}`;
-  const numeric = Number(digits);
-
-  if (!Number.isFinite(numeric) || numeric <= 0) return null;
-
-  const formatted = `${Number(digits.slice(0, -2)) || 0}.${digits.slice(-2)}`;
-  if (Math.abs(Number(formatted)).toString().length > MAX_AMOUNT_LENGTH) return null;
+  const formatted = amount.toFixed(2);
+  if (!/^\d{1,10}\.\d{2}$/.test(formatted)) return null;
 
   return formatted;
 }

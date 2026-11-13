@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuthContext, requireAdminApi } from '../../utils/serverAuth';
 import { getSupabaseServerClient } from '../../database/supabase';
@@ -38,6 +39,31 @@ const removeOldAvatar = async (
   await client.storage.from(AVATAR_BUCKET).remove([path]);
 };
 
+const removeStaleAvatars = async (companyId: string, userId: string, keepPath: string): Promise<void> => {
+  const client = getSupabaseServerClient();
+  const folder = `${companyId}/${userId}`;
+  const { data, error } = await client.storage.from(AVATAR_BUCKET).list(folder, {
+    limit: 100,
+    sortBy: { column: 'created_at', order: 'asc' },
+  });
+
+  if (error) {
+    console.warn('Não foi possível listar avatares antigos:', error);
+    return;
+  }
+
+  const stalePaths = (data ?? [])
+    .map((entry) => entry.name)
+    .filter((name) => name.startsWith('avatar-'))
+    .map((name) => `${folder}/${name}`)
+    .filter((path) => path !== keepPath);
+
+  if (stalePaths.length > 0) {
+    const { error: removeError } = await client.storage.from(AVATAR_BUCKET).remove(stalePaths);
+    if (removeError) console.warn('Não foi possível limpar avatares antigos:', removeError);
+  }
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido.' });
@@ -71,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json({ error: 'Usuário não encontrado.' });
   }
 
-  const filePath = `${ctx.companyId}/${targetUserId}/avatar-${Date.now()}.${extensionFor(mimeType)}`;
+  const filePath = `${ctx.companyId}/${targetUserId}/avatar-${crypto.randomUUID()}.${extensionFor(mimeType)}`;
   const { error: uploadError } = await client.storage
     .from(AVATAR_BUCKET)
     .upload(filePath, file, {
@@ -100,6 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await removeOldAvatar(typeof target.avatar_url === 'string' ? target.avatar_url : null, ctx.companyId, targetUserId);
+    await removeStaleAvatars(ctx.companyId, targetUserId, filePath);
   } catch (cleanupError) {
     console.warn('Não foi possível remover o avatar anterior:', cleanupError);
   }

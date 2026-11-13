@@ -5,6 +5,7 @@
 ## O que faz
 
 - `buildPixPayload({ pixKey, merchantName, merchantCity, amount?, txid? })` monta o payload TLV + CRC16 e devolve `{ payload, fields }`.
+- `amountToPayload(value)` aceita apenas formatos canônicos (`1234.56`/`1234,56`), rejeita sinal negativo e retorna `null` fora delas.
 - `validatePixKey(value, forcedType?)` classifica/valida a chave (CPF, CNPJ, e-mail, telefone, aleatória).
 - Auxiliares: `emv`, `crc16`, `normalizeText`, `amountToPayload`, `isValidCpf`, `isValidCnpj`, `KEY_TYPES`.
 
