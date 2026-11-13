@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useState, type CSSProperties } from 'react';
+import { FormEvent, useRef, useState, type CSSProperties } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import RequireAdmin from '@/components/auth/RequireAdmin';
@@ -45,6 +45,9 @@ export default function AdminPage() {
     createMerchantBusy,
   } = useAdmin(showToast);
   const [newStoreName, setNewStoreName] = useState('');
+  const [selectedStoreId, setSelectedStoreId] = useState('');
+  const storeFormRef = useRef<HTMLFormElement | null>(null);
+  const selectedStore = stores.find((store) => store.id === selectedStoreId) ?? null;
   const [resetPasswordMerchant, setResetPasswordMerchant] = useState<{ id: string; name: string } | null>(null);
   const [resetPassword, setResetPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
@@ -54,6 +57,18 @@ export default function AdminPage() {
     const body = await uploadAvatar(file, merchantId);
     updateMerchantAvatar(merchantId, body.avatarUrl);
     showToast('Foto do vendedor atualizada.', 'success');
+  };
+
+  const clearStoreForm = () => {
+    const form = storeFormRef.current;
+    if (!form) return;
+
+    for (const fieldName of ['name', 'phone', 'taxId', 'addressStreet', 'addressNumber', 'addressDistrict'] as const) {
+      const field = form.elements.namedItem(fieldName);
+      if (field instanceof HTMLInputElement) {
+        field.value = '';
+      }
+    }
   };
 
   const saveCompanyForm = (event: FormEvent<HTMLFormElement>) => {
@@ -189,46 +204,57 @@ export default function AdminPage() {
                   <Button type="button" onClick={() => { createStore(newStoreName); setNewStoreName(''); }} disabled={stores.length >= 2}>Criar loja</Button>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Máximo de 2 lojas por empresa.</p>
-                {stores.map((store) => {
-                  const activeLabel = store.active ? 'Desativar' : 'Ativar';
-                  return (
-                    <form key={`${store.id}-${store.active}`} onSubmit={(event) => saveStoreForm(event, store)}>
+                {stores.length > 0 && (
+                  <select
+                    value={selectedStoreId}
+                    onChange={(event) => setSelectedStoreId(event.target.value)}
+                    style={inputStyle}
+                    aria-label="Loja"
+                  >
+                    <option value="">Selecionar loja...</option>
+                    {stores.map((store) => (
+                      <option key={store.id} value={store.id}>{store.name}</option>
+                    ))}
+                  </select>
+                )}
+                {selectedStore && (
+                  <form key={`${selectedStore.id}-${selectedStore.active}`} ref={storeFormRef} onSubmit={(event) => saveStoreForm(event, selectedStore)}>
                       <fieldset style={{ border: '1px solid var(--border)', padding: '8px', marginBottom: '6px' }}>
                         <legend>Loja</legend>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '6px' }}>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
                             Nome *
-                            <input name="name" defaultValue={store.name} required autoComplete="organization" style={inputStyle} />
+                            <input name="name" defaultValue={selectedStore.name} required autoComplete="organization" style={inputStyle} />
                           </label>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                             Telefone
-                            <input name="phone" defaultValue={store.phone} autoComplete="tel" style={inputStyle} />
+                            <input name="phone" defaultValue={selectedStore.phone} autoComplete="tel" style={inputStyle} />
                           </label>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                             CPF/CNPJ
-                            <input name="taxId" defaultValue={store.taxId} autoComplete="off" style={inputStyle} />
+                            <input name="taxId" defaultValue={selectedStore.taxId} autoComplete="off" style={inputStyle} />
                           </label>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', gridColumn: '1 / -1' }}>
                             Logradouro
-                            <input name="addressStreet" defaultValue={store.addressStreet} autoComplete="street-address" style={inputStyle} />
+                            <input name="addressStreet" defaultValue={selectedStore.addressStreet} autoComplete="street-address" style={inputStyle} />
                           </label>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                             Número
-                            <input name="addressNumber" defaultValue={store.addressNumber} autoComplete="off" style={inputStyle} />
+                            <input name="addressNumber" defaultValue={selectedStore.addressNumber} autoComplete="off" style={inputStyle} />
                           </label>
                           <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                             Bairro
-                            <input name="addressDistrict" defaultValue={store.addressDistrict} autoComplete="off" style={inputStyle} />
+                            <input name="addressDistrict" defaultValue={selectedStore.addressDistrict} autoComplete="off" style={inputStyle} />
                           </label>
                         </div>
                         <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
                           <Button type="submit" size="sm">Salvar</Button>
-                          <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(store)}>{activeLabel}</Button>
+                          <Button type="button" size="sm" variant="outline" onClick={clearStoreForm}>Limpar</Button>
+                          <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(selectedStore)}>{selectedStore.active ? 'Desativar' : 'Ativar'}</Button>
                         </div>
                       </fieldset>
-                    </form>
-                  );
-                })}
+                  </form>
+                )}
               </Panel>
 
               <Panel style={panelStyle}>
