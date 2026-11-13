@@ -75,9 +75,10 @@ export function RouteContent({ children }: { children: ReactNode }) {
 export function usePendingTask(key: string, pending: boolean): void {
   const context = useContext(RouteLoadingContext);
   const id = useId();
+  const register = context?.register;
 
   useEffect(() => {
-    if (!pending || !context) return undefined;
-    return context.register(`${key}:${id}`);
-  }, [context, id, key, pending]);
+    if (!pending || !register) return undefined;
+    return register(`${key}:${id}`);
+  }, [register, id, key, pending]);
 }

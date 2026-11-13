@@ -279,7 +279,16 @@ export default function AdminPage() {
                         <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
                           <Button type="submit" size="sm">Salvar</Button>
                           <Button type="button" size="sm" variant="outline" onClick={clearStoreForm}>Limpar</Button>
-                           <Button type="button" size="sm" variant="outline" onClick={() => requestStoreToggle(selectedStore)}>{selectedStore.active ? 'Desativar' : 'Ativar'}</Button>
+                           <Button
+                             type="button"
+                             size="sm"
+                             variant="outline"
+                             onClick={() => requestStoreToggle(selectedStore)}
+                             disabled={selectedStore.active && stores.filter((item) => item.active).length <= 1}
+                             title={selectedStore.active && stores.filter((item) => item.active).length <= 1 ? 'A empresa deve manter pelo menos uma loja ativa.' : undefined}
+                           >
+                             {selectedStore.active ? 'Desativar' : 'Ativar'}
+                           </Button>
                         </div>
                       </fieldset>
                   </form>

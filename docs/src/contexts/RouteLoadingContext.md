@@ -19,4 +19,5 @@
 ## Notas
 
 - Tarefas de interação do usuário (busca, OCR, modais e ações) e refetchs de dados já carregados mantiveram stale-while-revalidate: o conteúdo atual fica visível e o gate de rota não reabre.
+- `usePendingTask` depende de `context.register` (estável), não da identidade de `context`; evitando re-registros infinitos durante transições do gate.
 - O conteúdo permanece montado (`display:none`) para que hooks/effects carreguem e registrem/desregistrem corretamente.

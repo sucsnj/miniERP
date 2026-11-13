@@ -5,6 +5,7 @@
 ## O que faz
 
 - Permite ao admin atualizar nome, endereço completo, telefone e CPF/CNPJ da empresa.
+- O botão "Desativar" fica indisponível quando a empresa tem apenas uma loja ativa; a API também rejeita a operação.
 - Ao desativar uma loja, admin é avisado pela UI de que vendedores cuja única loja ativa for a alvo serão movidos automaticamente para a outra loja ativa.
 - Permite criar/editar/desativar até 2 lojas; cada loja tem telefone, CPF/CNPJ, logradouro, número e bairro.
 - O card de lojas usa um dropdown para escolher a loja; ao selecionar, os dados cadastrados preenchem o formulário. Há botão "Limpar" para esvaziar o formulário.

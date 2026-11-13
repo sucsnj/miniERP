@@ -2,7 +2,7 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **12/11/2026**
+Atualizado em: **13/11/2026**
 
 ## Resumo executivo
 
