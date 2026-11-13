@@ -47,10 +47,10 @@ const Agenda: React.FC<AgendaProps> = ({ accountsYear }) => {
                     <span className={styles.statusChip}>Atualização automática</span>
                 </div>
                 <div className={styles.agendaCard}>
-                    <h3>Total pendente por dueDate</h3>
+                    <h3>Total pendente por vencimento</h3>
                     <div className={styles.agendaList}>
                         {agenda.length === 0 ? (
-                            <p>Nenhum dueDate registrado neste mês.</p>
+                            <p>Nenhum valor registrado neste mês.</p>
                         ) : (
                             agenda.map((item) => (
                                 <div key={item.date} className={styles.agendaRow}>

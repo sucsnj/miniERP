@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState, useMemo } from 'react';
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -84,7 +84,35 @@ const SettingsPage = () => {
   const pixFormRef = useRef<HTMLFormElement | null>(null);
   const [selectedPixPresetId, setSelectedPixPresetId] = useState('');
 
+  const matchingPreset = useMemo(
+    () => pixPresets.find((preset) =>
+      preset.pixKey === pixKey
+      && preset.pixName === pixName
+      && preset.pixBank === pixBank
+      && preset.pixCity === pixCity
+    ) ?? null,
+    [pixPresets, pixKey, pixName, pixBank, pixCity]
+  );
+
+  const effectiveSelectedPreset = selectedPixPresetId
+    ? pixPresets.find((preset) => preset.id === selectedPixPresetId) ?? matchingPreset
+    : matchingPreset;
+  const effectiveSelectedPresetId = effectiveSelectedPreset?.id ?? '';
+  const [pixPresetLabel, setPixPresetLabel] = useState('');
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setPixPresetLabel(effectiveSelectedPreset?.label ?? '');
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [effectiveSelectedPreset?.id, effectiveSelectedPreset?.label]);
+
   const setPixField = (name: 'pixKey' | 'pixName' | 'pixBank' | 'pixCity' | 'pixPresetLabel', value: string) => {
+    if (name === 'pixPresetLabel') {
+      setPixPresetLabel(value);
+      return;
+    }
+
     const form = pixFormRef.current;
     const field = form?.elements.namedItem(name);
     if (field instanceof HTMLInputElement) {
@@ -153,7 +181,7 @@ const SettingsPage = () => {
   };
 
   const deletePixPresetById = async (presetId: string) => {
-    if (selectedPixPresetId === presetId) {
+    if (selectedPixPresetId === presetId || effectiveSelectedPresetId === presetId) {
       setSelectedPixPresetId('');
     }
 
@@ -352,7 +380,7 @@ const SettingsPage = () => {
                     Preenchimento rápido
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <select
-                        value={selectedPixPresetId}
+                        value={effectiveSelectedPresetId}
                         onChange={(event) => {
                           const presetId = event.target.value;
                           setSelectedPixPresetId(presetId);
@@ -373,10 +401,10 @@ const SettingsPage = () => {
                         variant="ghost"
                         iconOnly
                         leftIcon={<DeleteIcon fontSize="small" />}
-                        onClick={() => void deletePixPresetById(selectedPixPresetId)}
+                        onClick={() => void deletePixPresetById(effectiveSelectedPresetId)}
                         aria-label="Excluir preset selecionado"
                         title="Excluir preset selecionado"
-                        disabled={!selectedPixPresetId || savingCompany}
+                        disabled={!effectiveSelectedPresetId || savingCompany}
                       >
                         Excluir preset selecionado
                       </Button>
@@ -387,7 +415,7 @@ const SettingsPage = () => {
                   {isAdmin && (
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                       Apelido do preset
-                      <input type="text" name="pixPresetLabel" defaultValue="" placeholder="Ex.: Conta principal, loja 2..." autoComplete="off" style={{ padding: '6px', width: '100%' }} />
+                      <input type="text" name="pixPresetLabel" value={pixPresetLabel} onChange={(event) => setPixPresetLabel(event.target.value)} placeholder="Ex.: Conta principal, loja 2..." autoComplete="off" style={{ padding: '6px', width: '100%' }} />
                     </label>
                   )}
                   {[

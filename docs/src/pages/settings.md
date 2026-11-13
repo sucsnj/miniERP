@@ -13,6 +13,7 @@
 - Ao salvar um formulário PIX completo, a página guarda/atualiza um preset compartilhado (`pix_presets`) por endpoint atômico, sem sobrescrever presets de outro admin.
 - "Preenchimento rápido" usa um dropdown; ao lado dele há lixeira para excluir o preset selecionado. O preset selecionado é apenas preenchido no formulário e o PIX atual só muda ao clicar em Salvar PIX.
 - Na lista de presets, exibe apelido + chave; quando não há apelido, mostra apenas a chave.
+- Ao recarregar `/settings`, se o PIX vigente coincidir com um preset, a seleção e o campo "Apelido do preset" são restaurados; se não coincidir, o campo fica vazio.
 - Cada preset tem botão de lixeira para excluí-lo compartilhadamente da empresa.
 - "Limpar dados PIX" zera o PIX vigente e os campos do formulário explicitamente (inclui autofill do browser via `autoComplete="off"`), sem apagar presets.
 
