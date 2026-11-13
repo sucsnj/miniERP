@@ -103,11 +103,16 @@ const validateProfile = (input: Record<string, unknown>): ProfileValidationBaseR
 };
 
 export function normalizeContactProfile(
-  input: Record<string, unknown>
+  input: unknown
 ): ProfileValidationResult<ContactProfile> {
-  const phone = normalizePhone(input.phone);
-  const state = normalizeUf(input.addressState);
-  const zip = normalizeZip(input.addressZip);
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, message: 'Contato inválido.' };
+  }
+
+  const record = input as Record<string, unknown>;
+  const phone = normalizePhone(record.phone);
+  const state = normalizeUf(record.addressState);
+  const zip = normalizeZip(record.addressZip);
 
   if (!isValidPhone(phone)) {
     return { ok: false, message: 'Telefone inválido.' };
@@ -121,11 +126,11 @@ export function normalizeContactProfile(
 
   return ok({
     phone,
-    addressStreet: normalizeOptionalString(input.addressStreet, 160),
-    addressNumber: normalizeOptionalString(input.addressNumber, 30),
-    addressComplement: normalizeOptionalString(input.addressComplement, 160),
-    addressDistrict: normalizeOptionalString(input.addressDistrict, 120),
-    addressCity: normalizeOptionalString(input.addressCity, 120),
+    addressStreet: normalizeOptionalString(record.addressStreet, 160),
+    addressNumber: normalizeOptionalString(record.addressNumber, 30),
+    addressComplement: normalizeOptionalString(record.addressComplement, 160),
+    addressDistrict: normalizeOptionalString(record.addressDistrict, 120),
+    addressCity: normalizeOptionalString(record.addressCity, 120),
     addressState: state,
     addressZip: zip,
   });

@@ -85,6 +85,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/api/admin/stores.md](src/pages/api/admin/stores.md) - lojas da empresa (admin).
 - [src/pages/api/admin/merchants.md](src/pages/api/admin/merchants.md) - vendedores e lojas autorizadas (admin).
 - [src/pages/api/settings.md](src/pages/api/settings.md) - padrões da empresa e configurações compartilhadas.
+- [src/pages/api/settings/pix-presets.md](src/pages/api/settings/pix-presets.md) - presets PIX atômicos da empresa.
 - [src/pages/api/stores.md](src/pages/api/stores.md) - lojas autorizadas e troca de loja atual.
 - [src/pages/api/sales.md](src/pages/api/sales.md) - CRUD de vendas diárias.
 - [src/pages/api/sale-items.md](src/pages/api/sale-items.md) - itens de venda (carrinho).

@@ -6,6 +6,7 @@
 
 - `getCompany` / `updateCompanyProfile`.
 - `listStores` / `createStore` / `updateStoreProfile` / `updateStoreStatus`; máximo de 2 lojas e pelo menos 1 ativa.
+- Desativação de loja executa RPC `deactivate_store`: serializa, garante ao menos outra ativa e reassocia vendedores cuja única loja ativa for a desativada.
 - Empresa persiste telefone, CPF/CNPJ, logradouro, número, complemento, bairro, cidade, UF e CEP.
 - Loja persiste telefone, CPF/CNPJ, logradouro, número e bairro.
 - `listMerchants` / `createMerchant` / `updateMerchant`; vinculação N×N em `user_stores`.

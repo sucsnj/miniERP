@@ -6,12 +6,12 @@
 
 - `POST` (admin-only): valida sessão, senha atual, política da nova senha e confirmação indireta.
 - Atualiza o hash `scrypt` do usuário.
-- Revoga sessões anteriores e abre uma nova sessão para o dispositivo atual.
+- Revoga as outras sessões do usuário e mantém a sessão atual.
 - Retorna o contexto renovado (`{ user }`).
 
 ## Relações
 
-- **Usa:** `requireAdminApi`, `getAuthContext`, `createSession`, `revokeUserSessions`, `setSessionCookie`, `hashPassword`, `validatePassword`, `verifyPassword`, `users` (Supabase).
+- **Usa:** `requireAdminApi`, `getAuthContext`, `revokeUserSessions`, `hashPassword`, `validatePassword`, `verifyPassword`, `users` (Supabase).
 - **Usado por:** `src/services/profileService.ts`.
 
 ## Notas

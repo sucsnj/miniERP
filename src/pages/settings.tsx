@@ -42,38 +42,6 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const recentSalesOptions: RecentSalesCount[] = [0, 2, 4, 6, 8];
 
-const MAX_PIX_PRESETS = 20;
-
-const createPresetId = () =>
-  globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-const upsertPixPreset = (presets: PixPreset[], candidate: Omit<PixPreset, 'id' | 'label'> & { label: string }): PixPreset[] => {
-  const existingIndex = presets.findIndex((preset) => (
-    preset.pixKey === candidate.pixKey
-    && preset.pixName === candidate.pixName
-    && preset.pixBank === candidate.pixBank
-    && preset.pixCity === candidate.pixCity
-  ));
-
-  if (existingIndex >= 0) {
-    return presets.map((preset, index) => (
-      index === existingIndex ? { ...preset, label: candidate.label } : preset
-    ));
-  }
-
-  return [
-    {
-      id: createPresetId(),
-      label: candidate.label,
-      pixKey: candidate.pixKey,
-      pixName: candidate.pixName,
-      pixBank: candidate.pixBank,
-      pixCity: candidate.pixCity,
-    },
-    ...presets,
-  ].slice(0, MAX_PIX_PRESETS);
-};
-
 const formatPixPresetLabel = (preset: PixPreset) => (
   preset.label ? `${preset.label} · ${preset.pixKey}` : preset.pixKey
 );
@@ -108,6 +76,8 @@ const SettingsPage = () => {
     clearAutoFocusSaleInputDelay,
     patchCompanySettings,
     clearPixData,
+    upsertPixPreset,
+    deletePixPreset,
   } = settings;
 
   const [savingCompany, setSavingCompany] = useState(false);
@@ -141,14 +111,14 @@ const SettingsPage = () => {
 
   const patchCompany = async (patch: CompanySettingsPatch) => {
     setSavingCompany(true);
-    try {
-      await patchCompanySettings(patch);
+    const ok = await patchCompanySettings(patch);
+    if (ok) {
       showToast('Configuração da empresa atualizada.', 'success');
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao atualizar configuração.', 'error');
-    } finally {
-      setSavingCompany(false);
+    } else {
+      showToast('Erro ao atualizar configuração.', 'error');
     }
+    setSavingCompany(false);
+    return ok;
   };
 
   const saveCompanyPix = async (event: FormEvent<HTMLFormElement>) => {
@@ -164,25 +134,38 @@ const SettingsPage = () => {
     };
     const presetLabel = String(data.get('pixPresetLabel') ?? '').trim();
     const pixFormFilled = Object.values(pixValues).every(Boolean);
-    const nextPixPresets = pixFormFilled
-      ? upsertPixPreset(pixPresets, {
-        ...pixValues,
-        label: presetLabel,
-      })
-      : pixPresets;
 
-    await patchCompany({
-      ...pixValues,
-      ...(pixFormFilled ? { pixPresets: nextPixPresets } : {}),
-    });
+    const saved = await patchCompany(pixValues);
+    if (!saved) return;
+
+    if (pixFormFilled) {
+      const preset = {
+        id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        label: presetLabel,
+        ...pixValues,
+      };
+      try {
+        await upsertPixPreset(preset);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : 'Erro ao salvar o preset PIX.', 'error');
+      }
+    }
   };
 
-  const deletePixPreset = async (presetId: string) => {
-    const pixPresetsNext = pixPresets.filter((item) => item.id !== presetId);
+  const deletePixPresetById = async (presetId: string) => {
     if (selectedPixPresetId === presetId) {
       setSelectedPixPresetId('');
     }
-    await patchCompany({ pixPresets: pixPresetsNext });
+
+    setSavingCompany(true);
+    try {
+      await deletePixPreset(presetId);
+      showToast('Preset PIX removido.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao remover o preset PIX.', 'error');
+    } finally {
+      setSavingCompany(false);
+    }
   };
 
   const clearPix = async () => {
@@ -376,7 +359,7 @@ const SettingsPage = () => {
                         variant="ghost"
                         iconOnly
                         leftIcon={<DeleteIcon fontSize="small" />}
-                        onClick={() => void deletePixPreset(selectedPixPresetId)}
+                        onClick={() => void deletePixPresetById(selectedPixPresetId)}
                         aria-label="Excluir preset selecionado"
                         title="Excluir preset selecionado"
                         disabled={!selectedPixPresetId || savingCompany}

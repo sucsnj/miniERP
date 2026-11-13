@@ -16,6 +16,8 @@
 5.5. Para foto de perfil no perfil do administrador, aplique `supabase/migrations/0019-create-avatars-storage-bucket.sql`; o bucket público `avatars` aceita imagens de até 5 MB.
 5.6. Para dados cadastrais completos de empresa e loja, aplique `supabase/migrations/0020-add-company-store-profile-fields.sql`.
 5.7. Para dados de contato do administrador, aplique `supabase/migrations/0021-add-user-contact-fields.sql`.
+5.8. Para operações atômicas de presets PIX da empresa, aplique `supabase/migrations/0022-add-atomic-pix-preset-functions.sql`.
+5.9. Para desativação segura de loja e reassociação automática de vendedores, aplique `supabase/migrations/0023-add-deactivate-store-function.sql`.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

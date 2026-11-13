@@ -75,7 +75,6 @@ export interface CompanySettingsPatch {
   pixName?: string;
   pixBank?: string;
   pixCity?: string;
-  pixPresets?: PixPreset[];
 }
 
 function parsePixPresets(value: unknown): PixPreset[] {
@@ -147,11 +146,6 @@ export async function updateCompanySettings(
   if (patch.pixName !== undefined) row.pix_name = patch.pixName.trim();
   if (patch.pixBank !== undefined) row.pix_bank = patch.pixBank.trim();
   if (patch.pixCity !== undefined) row.pix_city = patch.pixCity.trim();
-  if (patch.pixPresets !== undefined) {
-    const presets = normalizePixPresets(patch.pixPresets);
-    if (!presets) throw new Error('Presets PIX inválidos.');
-    row.pix_presets = presets;
-  }
 
   const { data, error } = await client
     .from('company_settings')
@@ -162,4 +156,32 @@ export async function updateCompanySettings(
 
   if (error) throw new Error('Não foi possível atualizar as configurações da empresa.');
   return mapRow(data as Record<string, unknown>);
+}
+
+export async function upsertPixPreset(
+  preset: PixPreset,
+  ctx: AuthContext
+): Promise<CompanySettings> {
+  const client = getSupabaseServerClient();
+  const { error } = await client.rpc('upsert_pix_preset', {
+    p_company_id: ctx.companyId,
+    p_preset: preset,
+  });
+
+  if (error) throw new Error('Não foi possível salvar o preset PIX.');
+  return getCompanySettings(ctx);
+}
+
+export async function deletePixPreset(
+  presetId: string,
+  ctx: AuthContext
+): Promise<CompanySettings> {
+  const client = getSupabaseServerClient();
+  const { error } = await client.rpc('delete_pix_preset', {
+    p_company_id: ctx.companyId,
+    p_preset_id: presetId,
+  });
+
+  if (error) throw new Error('Não foi possível remover o preset PIX.');
+  return getCompanySettings(ctx);
 }

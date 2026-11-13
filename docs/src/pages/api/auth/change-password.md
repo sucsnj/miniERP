@@ -7,7 +7,7 @@
 - Valida sessão e senha atual.
 - Valida senha nova (8–128 caracteres, letras, número e especial seguro).
 - Atualiza hash no banco.
-- Revoga todas as sessões do usuário e abre uma nova sessão para o dispositivo atual.
+- Revoga todas as outras sessões do usuário e mantém a sessão atual pelo `exceptSessionId` de `revokeUserSessions`.
 
 ## Relações
 
@@ -16,4 +16,4 @@
 
 ## Notas
 
-- Revogação total via `revokeUserSessions`.
+- Revogação completa via `revokeUserSessions(userId, exceptSessionId)`.

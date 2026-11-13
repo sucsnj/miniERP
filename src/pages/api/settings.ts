@@ -3,7 +3,6 @@ import { requireAdminApi, requireApiAuth } from '../../utils/serverAuth';
 import {
   getCompanySettings,
   updateCompanySettings,
-  normalizePixPresets,
   type CompanySettingsPatch,
   type CompanyThemeMode,
   type RecentSalesCount,
@@ -53,11 +52,9 @@ function parsePatch(body: unknown): CompanySettingsPatch | null {
   if (source.pixName !== undefined) patch.pixName = String(source.pixName);
   if (source.pixBank !== undefined) patch.pixBank = String(source.pixBank);
   if (source.pixCity !== undefined) patch.pixCity = String(source.pixCity);
-  if (source.pixPresets !== undefined) {
-    const presets = normalizePixPresets(source.pixPresets);
-    if (!presets) return null;
-    patch.pixPresets = presets;
-  }
+
+  // Presets são alterados somente pelos endpoints atômicos /api/settings/pix-presets.
+  if (source.pixPresets !== undefined) return null;
 
   return patch;
 }

@@ -10,7 +10,7 @@
 - Merchant visualiza os padrões da empresa e pode usar overrides locais (tema, fuso, recentes, foco/delay).
 - Auto consolidação é um padrão compartilhado da empresa: ativa/desativa e escolhe o dia (1–28) do mês seguinte; padrão é ativada no dia 1.
 - PIX da empresa é compartilhado, editável apenas por admin; merchant pode gerar QR, mas não alterar dados PIX.
-- Ao salvar um formulário PIX completo, a página guarda/atualiza um preset compartilhado (`pix_presets`) para preenchimento rápido.
+- Ao salvar um formulário PIX completo, a página guarda/atualiza um preset compartilhado (`pix_presets`) por endpoint atômico, sem sobrescrever presets de outro admin.
 - "Preenchimento rápido" usa um dropdown; ao lado dele há lixeira para excluir o preset selecionado. O preset selecionado é apenas preenchido no formulário e o PIX atual só muda ao clicar em Salvar PIX.
 - Na lista de presets, exibe apelido + chave; quando não há apelido, mostra apenas a chave.
 - Cada preset tem botão de lixeira para excluí-lo compartilhadamente da empresa.

@@ -39,7 +39,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.body?.contact !== undefined) {
-    const parsed = normalizeContactProfile(req.body.contact as Record<string, unknown>);
+    if (
+      req.body?.name !== undefined ||
+      req.body?.login !== undefined ||
+      req.body?.email !== undefined
+    ) {
+      return res.status(400).json({ error: 'Envie dados pessoais ou contato em solicitações separadas.' });
+    }
+
+    const parsed = normalizeContactProfile(req.body.contact);
     if (!parsed.ok) {
       return res.status(400).json({ error: parsed.message });
     }

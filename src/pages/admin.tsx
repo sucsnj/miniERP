@@ -7,6 +7,7 @@ import Panel from '@/components/common/Panel';
 import PanelHeader from '@/components/common/PanelHeader';
 import Button from '@/components/common/Button';
 import Dialog from '@/components/common/Dialog';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { validatePassword } from '../utils/password';
 import { useToast } from '../hooks/useToast';
 import { useAdmin, type StoreAdmin } from '../hooks/useAdmin';
@@ -48,6 +49,7 @@ export default function AdminPage() {
   const [selectedStoreId, setSelectedStoreId] = useState('');
   const storeFormRef = useRef<HTMLFormElement | null>(null);
   const selectedStore = stores.find((store) => store.id === selectedStoreId) ?? null;
+  const [storeToDeactivate, setStoreToDeactivate] = useState<StoreAdmin | null>(null);
   const [resetPasswordMerchant, setResetPasswordMerchant] = useState<{ id: string; name: string } | null>(null);
   const [resetPassword, setResetPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
@@ -98,6 +100,33 @@ export default function AdminPage() {
     delete profilePayload.id;
     delete profilePayload.active;
     saveStore({ id: store.id, ...profilePayload });
+  };
+
+  const requestStoreToggle = (store: StoreAdmin) => {
+    if (!store.active) {
+      toggleStore(store);
+      return;
+    }
+
+    setStoreToDeactivate(store);
+  };
+
+  const storeDeactivationDetails = (store: StoreAdmin) => {
+    const activeStores = stores.filter((item) => item.active);
+    const replacement = activeStores.find((item) => item.id !== store.id) ?? null;
+    const activeStoreIds = new Set(activeStores.map((item) => item.id));
+    const affected = merchants.filter((merchant) => {
+      if (!merchant.active) return false;
+      const activeAssignments = merchant.storeIds.filter((storeId) => activeStoreIds.has(storeId));
+      return activeAssignments.length === 1 && activeAssignments[0] === store.id;
+    });
+    return { replacement, affected };
+  };
+
+  const confirmStoreDeactivation = () => {
+    if (!storeToDeactivate) return;
+    toggleStore(storeToDeactivate);
+    setStoreToDeactivate(null);
   };
 
   const openResetPassword = (merchant: { id: string; name: string }) => {
@@ -250,7 +279,7 @@ export default function AdminPage() {
                         <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
                           <Button type="submit" size="sm">Salvar</Button>
                           <Button type="button" size="sm" variant="outline" onClick={clearStoreForm}>Limpar</Button>
-                          <Button type="button" size="sm" variant="outline" onClick={() => toggleStore(selectedStore)}>{selectedStore.active ? 'Desativar' : 'Ativar'}</Button>
+                           <Button type="button" size="sm" variant="outline" onClick={() => requestStoreToggle(selectedStore)}>{selectedStore.active ? 'Desativar' : 'Ativar'}</Button>
                         </div>
                       </fieldset>
                   </form>
@@ -361,6 +390,40 @@ export default function AdminPage() {
               </div>
             </form>
           </Dialog>
+
+          {(() => {
+            if (!storeToDeactivate) return null;
+            const { replacement, affected } = storeDeactivationDetails(storeToDeactivate);
+            return (
+              <ConfirmDialog
+                open
+                title="Desativar loja?"
+                message={(
+                  <>
+                    {affected.length > 0 ? (
+                      <>
+                        {affected.length === 1
+                          ? `O vendedor ${affected[0].name}`
+                          : `Os vendedores ${affected.map((merchant) => merchant.name).join(', ')}`}
+                        {replacement ? (
+                          <> serão movidos automaticamente para a loja <strong>{replacement.name}</strong>.</>
+                        ) : (
+                          <> não podem ser movidos: não há outra loja ativa.</>
+                        )}
+                      </>
+                    ) : (
+                      'Nenhum vendedor com vínculo exclusivo com esta loja será afetado.'
+                    )}
+                  </>
+                )}
+                confirmText="Desativar loja"
+                cancelText="Cancelar"
+                danger
+                onConfirm={confirmStoreDeactivation}
+                onCancel={() => setStoreToDeactivate(null)}
+              />
+            );
+          })()}
         </PageShell>
       </>
     </RequireAdmin>

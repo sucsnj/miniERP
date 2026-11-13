@@ -25,7 +25,7 @@ export interface CompanySettings {
   pixPresets: PixPreset[];
 }
 
-export type CompanySettingsPatch = Partial<CompanySettings>;
+export type CompanySettingsPatch = Omit<Partial<CompanySettings>, 'pixPresets'>;
 
 async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, { credentials: 'same-origin', ...init });
@@ -55,3 +55,17 @@ export const patchCompanySettings = (patch: CompanySettingsPatch) =>
 
 export const clearPixData = () =>
   patchCompanySettings({ pixKey: '', pixName: '', pixBank: '', pixCity: '' });
+
+export const upsertPixPreset = (preset: PixPreset) =>
+  fetchJson<{ companySettings: CompanySettings }>('/api/settings/pix-presets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ preset }),
+  });
+
+export const deletePixPreset = (id: string) =>
+  fetchJson<{ companySettings: CompanySettings }>('/api/settings/pix-presets', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });

@@ -252,11 +252,12 @@ export async function revokeSession(req: NextApiRequest): Promise<void> {
     .eq('token_hash', hashSessionToken(token));
 }
 
-export async function revokeUserSessions(userId: string, exceptSessionId?: string): Promise<void> {
+export async function revokeUserSessions(userId: string, exceptSessionId?: string): Promise<boolean> {
   const client = getSupabaseServerClient();
   let query = client.from('sessions').delete().eq('user_id', userId);
   if (exceptSessionId) query = query.neq('id', exceptSessionId);
-  await query;
+  const { error } = await query;
+  return !error;
 }
 
 export async function getBootstrapUserContext(companyId: string, storeId: string, userId: string): Promise<AuthContext | null> {

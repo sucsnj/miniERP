@@ -154,23 +154,35 @@ export async function updateStoreStatus(
   ctx: AuthContext
 ): Promise<void> {
   const client = getSupabaseServerClient();
-  const stores = await listStores(ctx);
-  const store = stores.find((item) => item.id === storeId);
-  if (!store) throw oneError('Loja não encontrada.');
+  const { data: target, error: targetError } = await client
+    .from('stores')
+    .select('id')
+    .eq('id', storeId)
+    .eq('company_id', ctx.companyId)
+    .maybeSingle();
 
-  if (!active) {
-    const activeStores = stores.filter((item) => item.active);
-    if (activeStores.length <= 1 && store.active) {
-      throw oneError('A empresa precisa manter ao menos uma loja ativa.');
-    }
+  if (targetError || !target) throw oneError('Loja não encontrada.');
+
+  if (active) {
+    const { error } = await client
+      .from('stores')
+      .update({ active: true })
+      .eq('id', storeId)
+      .eq('company_id', ctx.companyId);
+    if (error) throw oneError('Não foi possível atualizar a loja.');
+    return;
   }
 
-  const { error } = await client
-    .from('stores')
-    .update({ active })
-    .eq('id', storeId)
-    .eq('company_id', ctx.companyId);
-  if (error) throw oneError('Não foi possível atualizar a loja.');
+  const { error } = await client.rpc('deactivate_store', {
+    p_company_id: ctx.companyId,
+    p_store_id: storeId,
+  });
+  if (error) {
+    const message = String(error.message ?? '');
+    throw oneError(message.includes('ao menos uma loja ativa')
+      ? 'A empresa precisa manter ao menos uma loja ativa.'
+      : 'Não foi possível atualizar a loja.');
+  }
 }
 
 export async function listMerchants(ctx: AuthContext): Promise<MerchantAdmin[]> {

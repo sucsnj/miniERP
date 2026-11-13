@@ -1911,6 +1911,165 @@ select jsonb_build_object(
 );
 $$;
 
+create or replace function public.upsert_pix_preset(p_company_id uuid, p_preset jsonb)
+returns jsonb
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_current jsonb;
+  v_existing_index integer;
+  v_new_presets jsonb;
+begin
+  insert into public.company_settings (company_id)
+  values (p_company_id)
+  on conflict (company_id) do nothing;
+
+  select pix_presets
+  into v_current
+  from public.company_settings
+  where company_id = p_company_id
+  for update;
+
+  if v_current is null or jsonb_typeof(v_current) <> 'array' then
+    v_current := '[]'::jsonb;
+  end if;
+
+  select t.idx
+  into v_existing_index
+  from jsonb_array_elements(v_current) with ordinality as t(preset, idx)
+  where t.preset->>'id' = p_preset->>'id'
+     or (
+       t.preset->>'pixKey' = p_preset->>'pixKey'
+       and t.preset->>'pixName' = p_preset->>'pixName'
+       and t.preset->>'pixBank' = p_preset->>'pixBank'
+       and t.preset->>'pixCity' = p_preset->>'pixCity'
+     )
+  limit 1;
+
+  if v_existing_index is not null then
+    v_new_presets := jsonb_set(v_current, array[(v_existing_index - 1)::text], p_preset, false);
+  else
+    v_new_presets := jsonb_build_array(p_preset) || v_current;
+  end if;
+
+  if v_existing_index is null and jsonb_array_length(v_new_presets) > 20 then
+    raise exception 'Limite de 20 presets atingido.';
+  end if;
+
+  update public.company_settings
+  set pix_presets = v_new_presets
+  where company_id = p_company_id;
+
+  return v_new_presets;
+end;
+$$;
+
+create or replace function public.delete_pix_preset(p_company_id uuid, p_preset_id text)
+returns jsonb
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_current jsonb;
+  v_new_presets jsonb;
+begin
+  select pix_presets
+  into v_current
+  from public.company_settings
+  where company_id = p_company_id
+  for update;
+
+  if v_current is null or jsonb_typeof(v_current) <> 'array' then
+    return '[]'::jsonb;
+  end if;
+
+  select coalesce(jsonb_agg(preset), '[]'::jsonb)
+  into v_new_presets
+  from jsonb_array_elements(v_current) as preset
+  where preset->>'id' <> p_preset_id;
+
+  update public.company_settings
+  set pix_presets = v_new_presets
+  where company_id = p_company_id;
+
+  return v_new_presets;
+end;
+$$;
+
+-- ----------------------------------------------------------------------------
+-- RPC: deactivation of a store
+-- ----------------------------------------------------------------------------
+create or replace function public.deactivate_store(p_company_id uuid, p_store_id uuid)
+returns void
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_replacement_id uuid;
+begin
+  perform pg_advisory_xact_lock(hashtext(p_company_id::text));
+
+  select id
+  into v_replacement_id
+  from public.stores
+  where company_id = p_company_id
+    and active
+    and id <> p_store_id
+  order by created_at, id
+  limit 1
+  for update;
+
+  if v_replacement_id is null then
+    raise exception 'A empresa precisa manter ao menos uma loja ativa.';
+  end if;
+
+  create temporary table if not exists pg_temp.deactivation_affected_merchants (
+    user_id uuid primary key
+  ) on commit drop;
+  truncate pg_temp.deactivation_affected_merchants;
+
+  with affected as (
+    select u.id
+    from public.users u
+    join public.user_stores us on us.user_id = u.id
+    join public.stores s on s.id = us.store_id
+    where u.company_id = p_company_id
+      and u.role = 'merchant'
+      and u.active
+      and s.active
+    group by u.id
+    having every(s.id = p_store_id)
+  )
+  insert into pg_temp.deactivation_affected_merchants (user_id)
+  select id from affected;
+
+  delete from public.user_stores us
+  using pg_temp.deactivation_affected_merchants affected
+  where us.user_id = affected.user_id
+    and us.store_id = p_store_id;
+
+  insert into public.user_stores (user_id, store_id)
+  select user_id, v_replacement_id
+  from pg_temp.deactivation_affected_merchants
+  on conflict (user_id, store_id) do nothing;
+
+  update public.sessions s
+  set store_id = v_replacement_id
+  where s.store_id = p_store_id;
+
+  update public.users u
+  set last_store_id = v_replacement_id
+  from pg_temp.deactivation_affected_merchants affected
+  where u.id = affected.user_id;
+
+  update public.stores
+  set active = false
+  where id = p_store_id
+    and company_id = p_company_id;
+end;
+$$;
+
 -- ----------------------------------------------------------------------------
 -- Security
 -- ----------------------------------------------------------------------------

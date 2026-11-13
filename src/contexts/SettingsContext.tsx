@@ -9,6 +9,8 @@ import {
   fetchCompanySettings,
   patchCompanySettings as patchCompanySettingsApi,
   clearPixData,
+  upsertPixPreset,
+  deletePixPreset,
 } from '../services/settingsService';
 import {
   readStoredNumber,
@@ -50,8 +52,10 @@ interface SettingsContextValue {
   clearAutoFocusSaleInput: () => void;
   setAutoFocusSaleInputDelay: (value: number) => void;
   clearAutoFocusSaleInputDelay: () => void;
-  patchCompanySettings: (patch: CompanySettingsPatch) => Promise<void>;
+  patchCompanySettings: (patch: CompanySettingsPatch) => Promise<boolean>;
   clearPixData: () => Promise<void>;
+  upsertPixPreset: (preset: PixPreset) => Promise<void>;
+  deletePixPreset: (id: string) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -218,8 +222,46 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   });
 
   const handlePatchCompanySettings = useCallback(async (patch: CompanySettingsPatch) => {
-    await patchCompanySettingsMutation.mutateAsync(patch);
+    try {
+      await patchCompanySettingsMutation.mutateAsync(patch);
+      return true;
+    } catch (error) {
+      console.error('Erro ao atualizar configurações:', error);
+      return false;
+    }
   }, [patchCompanySettingsMutation]);
+
+  const upsertPixPresetMutation = useMutation({
+    mutationFn: upsertPixPreset,
+    onSuccess: (body) => {
+      if (identity) {
+        queryClient.setQueryData(
+          tenantKeys.companySettings(identity),
+          { companySettings: body.companySettings }
+        );
+      }
+    },
+  });
+
+  const deletePixPresetMutation = useMutation({
+    mutationFn: deletePixPreset,
+    onSuccess: (body) => {
+      if (identity) {
+        queryClient.setQueryData(
+          tenantKeys.companySettings(identity),
+          { companySettings: body.companySettings }
+        );
+      }
+    },
+  });
+
+  const handleUpsertPixPreset = useCallback(async (preset: PixPreset) => {
+    await upsertPixPresetMutation.mutateAsync(preset);
+  }, [upsertPixPresetMutation]);
+
+  const handleDeletePixPreset = useCallback(async (id: string) => {
+    await deletePixPresetMutation.mutateAsync(id);
+  }, [deletePixPresetMutation]);
 
   const clearPix = useCallback(async () => {
     await clearPixData();
@@ -261,6 +303,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         clearAutoFocusSaleInputDelay,
         patchCompanySettings: handlePatchCompanySettings,
         clearPixData: clearPix,
+        upsertPixPreset: handleUpsertPixPreset,
+        deletePixPreset: handleDeletePixPreset,
       }}
     >
       {children}

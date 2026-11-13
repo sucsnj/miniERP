@@ -2,10 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { hashPassword, validatePassword, verifyPassword } from '../../../utils/password';
 import { getSupabaseServerClient } from '../../../database/supabase';
 import {
-  createSession,
   getAuthContext,
   revokeUserSessions,
-  setSessionCookie,
 } from '../../../utils/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -43,9 +41,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (updateError) return res.status(500).json({ error: 'Não foi possível atualizar a senha.' });
 
-  await revokeUserSessions(context.userId);
-  const token = await createSession(context.userId, context.storeId);
-  setSessionCookie(res, token);
+  const revoked = await revokeUserSessions(context.userId, context.sessionId);
+  if (!revoked) {
+    return res.status(500).json({
+      error: 'Senha alterada, mas não foi possível revogar as outras sessões.',
+    });
+  }
 
   return res.status(200).json({ ok: true });
 }

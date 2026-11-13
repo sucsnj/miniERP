@@ -7,6 +7,7 @@
 - Define tipos `RecentSalesCount`, `ThemeMode`, `PixPreset`, `CompanySettings` e `CompanySettingsPatch`.
 - `fetchCompanySettings()` (GET `/api/settings`).
 - `patchCompanySettings(patch)` (PATCH `/api/settings`).
+- `upsertPixPreset(preset)` / `deletePixPreset(id)` (endpoints atômicos `/api/settings/pix-presets`).
 - `clearPixData()` (patch dos 4 campos PIX vazios; presets permanecem).
 - `parseResponse`/`fetchJson` propaga `Error` em respostas não OK.
 

@@ -6,7 +6,7 @@
 
 - `GET`: lista lojas (`id`, `name`, telefone, CPF/CNPJ, `address_street`, `address_number`, `address_district`, `active`).
 - `POST`: cria loja (somente `name`).
-- `PATCH`: atualiza dados completos da loja ou status (`statusOnly`).
+- `PATCH`: atualiza dados completos da loja ou status; ao desativar, chama a função transacional `deactivate_store`.
 - Valida CPF/CNPJ e telefone da loja.
 
 ## Relações
