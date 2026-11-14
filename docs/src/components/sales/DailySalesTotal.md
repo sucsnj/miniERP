@@ -23,4 +23,5 @@ interface DailySalesTotalProps {
 
 ## Notas
 
+- Largura livre de `105%`, `transform: scale` e larguras mínimas fixas removidos: o card usa `width: 100%`, `min-width: 0` e grids com `minmax(0)` para não estourar viewports longos não móveis.
 - `canEdit` bloqueia vendas fora da janela editável; o `Delete` age sobre a maior `id` de `recentSales`.

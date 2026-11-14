@@ -651,6 +651,7 @@ h2 {
 .recent-sale-observacoes {
   max-height: 100px;
   overflow-y: auto;
+  overflow-wrap: anywhere;
 }
 
 .buttons-wrapper {
