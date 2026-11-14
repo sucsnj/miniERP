@@ -1,5 +1,6 @@
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 export type ThemeMode = 'system' | 'light' | 'dark';
+export type FieldScale = 1.2 | 1.5 | 2 | 2.5;
 
 export interface PixPreset {
   id: string;
@@ -19,6 +20,9 @@ export interface CompanySettings {
   autoConsolidationEnabled: boolean;
   autoConsolidationDay: number;
   autoConsolidationMode: 'all-previous' | 'previous-month';
+  fieldScaleDate: FieldScale;
+  fieldScaleValue: FieldScale;
+  fieldScaleObservations: FieldScale;
   pixKey: string;
   pixName: string;
   pixBank: string;

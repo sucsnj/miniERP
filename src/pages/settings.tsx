@@ -41,6 +41,12 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 ];
 
 const recentSalesOptions: RecentSalesCount[] = [0, 2, 4, 6, 8];
+const fieldScaleOptions = [
+  { value: 1.2, label: '1.2x' },
+  { value: 1.5, label: '1.5x' },
+  { value: 2, label: '2x' },
+  { value: 2.5, label: '2.5x' },
+] as const;
 
 const formatPixPresetLabel = (preset: PixPreset) => (
   preset.label ? `${preset.label} · ${preset.pixKey}` : preset.pixKey
@@ -214,6 +220,9 @@ const SettingsPage = () => {
   const companyAutoConsolidationEnabled = companySettings?.autoConsolidationEnabled ?? true;
   const companyAutoConsolidationDay = companySettings?.autoConsolidationDay ?? 1;
   const companyAutoConsolidationMode = companySettings?.autoConsolidationMode ?? 'all-previous';
+  const companyFieldScaleDate = companySettings?.fieldScaleDate ?? 1.2;
+  const companyFieldScaleValue = companySettings?.fieldScaleValue ?? 1.2;
+  const companyFieldScaleObservations = companySettings?.fieldScaleObservations ?? 1.2;
 
   const adminOnlyControls = (label: string, description: string, children: React.ReactNode) => (
     <div>
@@ -366,6 +375,34 @@ const SettingsPage = () => {
                     </select>
                   </label>
                 </>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel style={MASONRY_CARD_STYLE}>
+            <div>
+              <PanelHeader title="Ampliação dos campos" />
+              <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Amplia individualmente Data, Valor e Observações no registro de vendas.</p>
+              {adminOnlyControls('Padrão da empresa', `Atual: Data ${companyFieldScaleDate}x, Valor ${companyFieldScaleValue}x, Observações ${companyFieldScaleObservations}x`, (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {[
+                    { label: 'Data', field: 'fieldScaleDate', value: companyFieldScaleDate },
+                    { label: 'Valor', field: 'fieldScaleValue', value: companyFieldScaleValue },
+                    { label: 'Observações', field: 'fieldScaleObservations', value: companyFieldScaleObservations },
+                  ].map((item) => (
+                    <label key={item.field} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '8px', fontSize: '0.8rem' }}>
+                      {item.label}
+                      <select
+                        value={item.value}
+                        disabled={savingCompany}
+                        onChange={(event) => void patchCompany({ [item.field]: Number(event.target.value) } as CompanySettingsPatch)}
+                        style={{ padding: '6px', width: '96px', maxWidth: '100%' }}
+                      >
+                        {fieldScaleOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                      </select>
+                    </label>
+                  ))}
+                </div>
               ))}
             </div>
           </Panel>

@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Define tipos `RecentSalesCount`, `ThemeMode`, `PixPreset`, `CompanySettings` e `CompanySettingsPatch`.
+- Define tipos `RecentSalesCount`, `ThemeMode`, `FieldScale`, `PixPreset`, `CompanySettings` e `CompanySettingsPatch`.
 - `fetchCompanySettings()` (GET `/api/settings`).
 - `patchCompanySettings(patch)` (PATCH `/api/settings`).
 - `upsertPixPreset(preset)` / `deletePixPreset(id)` (endpoints atômicos `/api/settings/pix-presets`).

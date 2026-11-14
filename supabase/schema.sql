@@ -116,6 +116,12 @@ create table if not exists public.company_settings (
     check (auto_consolidation_day between 1 and 28),
   auto_consolidation_mode text not null default 'all-previous'
     check (auto_consolidation_mode in ('all-previous', 'previous-month')),
+  field_scale_date numeric(3,1) not null default 1.2
+    check (field_scale_date in (1.2, 1.5, 2.0, 2.5)),
+  field_scale_value numeric(3,1) not null default 1.2
+    check (field_scale_value in (1.2, 1.5, 2.0, 2.5)),
+  field_scale_observations numeric(3,1) not null default 1.2
+    check (field_scale_observations in (1.2, 1.5, 2.0, 2.5)),
   pix_key text not null default '',
   pix_name text not null default '',
   pix_bank text not null default '',

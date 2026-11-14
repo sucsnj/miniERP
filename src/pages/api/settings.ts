@@ -6,10 +6,12 @@ import {
   type CompanySettingsPatch,
   type CompanyThemeMode,
   type RecentSalesCount,
+  type FieldScale,
 } from '../../database/settingsRepository';
 
 const THEMES: CompanyThemeMode[] = ['system', 'light', 'dark'];
 const COUNTS: RecentSalesCount[] = [0, 2, 4, 6, 8];
+const FIELD_SCALES: FieldScale[] = [1.2, 1.5, 2, 2.5];
 
 function parsePatch(body: unknown): CompanySettingsPatch | null {
   if (!body || typeof body !== 'object') return null;
@@ -51,6 +53,13 @@ function parsePatch(body: unknown): CompanySettingsPatch | null {
   if (source.autoConsolidationMode !== undefined) {
     if (source.autoConsolidationMode !== 'all-previous' && source.autoConsolidationMode !== 'previous-month') return null;
     patch.autoConsolidationMode = source.autoConsolidationMode;
+  }
+  for (const field of ['fieldScaleDate', 'fieldScaleValue', 'fieldScaleObservations'] as const) {
+    if (source[field] !== undefined) {
+      const value = Number(source[field]);
+      if (!FIELD_SCALES.includes(value as FieldScale)) return null;
+      patch[field] = value as FieldScale;
+    }
   }
   if (source.pixKey !== undefined) patch.pixKey = String(source.pixKey);
   if (source.pixName !== undefined) patch.pixName = String(source.pixName);

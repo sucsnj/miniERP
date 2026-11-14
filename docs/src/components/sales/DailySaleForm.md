@@ -6,6 +6,7 @@
 
 - Campos data, valor (calculadora `+ − × ÷`), observações e botões Registrar/Limpar; botão do carrinho com badge.
 - Valor exibido com PIX clicável; renderiza os modais de seleção, carrinho e PIX.
+- Aplica ampliação compartilhada por empresa (`fieldScaleDate`, `fieldScaleValue`, `fieldScaleObservations`) exclusivamente aos campos Data, Valor e Observações via `zoom` CSS.
 - Toda a lógica de estado/validação/ações está em `useDailySaleForm`.
 
 ```ts

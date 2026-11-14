@@ -5,7 +5,8 @@
 ## O que faz
 
 - `GET`: retorna `company_settings` do tenant (cria default se ainda não existir).
-- PATCH (admin-only): atualiza tema, timezone, recentes, foco automático/delay, auto consolidação e PIX da empresa; valida enums/intervalos e rejeita patches com `pixPresets`.
+- PATCH (admin-only): atualiza tema, timezone, recentes, foco automático/delay, auto consolidação, ampliação dos campos e PIX da empresa; valida enums/intervalos e rejeita patches com `pixPresets`.
+- Ampliação aceita `fieldScaleDate`, `fieldScaleValue` e `fieldScaleObservations` com valores `1.2`, `1.5`, `2` ou `2.5`.
 - Auto consolidação aceita `autoConsolidationEnabled` (boolean), `autoConsolidationDay` (1–28) e `autoConsolidationMode` (`all-previous` ou `previous-month`).
 
 ## Relações

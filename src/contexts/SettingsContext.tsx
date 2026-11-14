@@ -6,6 +6,7 @@ import {
   type RecentSalesCount,
   type ThemeMode,
   type PixPreset,
+  type FieldScale,
   fetchCompanySettings,
   patchCompanySettings as patchCompanySettingsApi,
   clearPixData,
@@ -22,7 +23,7 @@ import { identityFromUser, tenantKeys } from '../utils/queryKeys';
 import { LIVE_TENANT_QUERY_OPTIONS } from '../utils/queryProfiles';
 import { useAuth } from './AuthContext';
 
-export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode, PixPreset };
+export type { CompanySettings, CompanySettingsPatch, RecentSalesCount, ThemeMode, PixPreset, FieldScale };
 
 interface SettingsContextValue {
   companySettings: CompanySettings | null;
@@ -39,6 +40,9 @@ interface SettingsContextValue {
   autoConsolidationEnabled: boolean;
   autoConsolidationDay: number;
   autoConsolidationMode: 'all-previous' | 'previous-month';
+  fieldScaleDate: FieldScale;
+  fieldScaleValue: FieldScale;
+  fieldScaleObservations: FieldScale;
   pixKey: string;
   pixName: string;
   pixBank: string;
@@ -73,6 +77,9 @@ const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   autoConsolidationEnabled: true,
   autoConsolidationDay: 1,
   autoConsolidationMode: 'all-previous',
+  fieldScaleDate: 1.2,
+  fieldScaleValue: 1.2,
+  fieldScaleObservations: 1.2,
   pixKey: '',
   pixName: '',
   pixBank: '',
@@ -289,6 +296,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         autoConsolidationEnabled: company.autoConsolidationEnabled,
         autoConsolidationDay: company.autoConsolidationDay,
         autoConsolidationMode: company.autoConsolidationMode,
+        fieldScaleDate: company.fieldScaleDate,
+        fieldScaleValue: company.fieldScaleValue,
+        fieldScaleObservations: company.fieldScaleObservations,
         pixKey: company.pixKey,
         pixName: company.pixName,
         pixBank: company.pixBank,

@@ -6,7 +6,8 @@
 
 - Exibe o padrão da empresa (`company_settings`) e overrides locais por dispositivo.
 - Cards usam layout masonry (colunas com altura independente, primitivas compartilhadas em `src/utils/layout.ts`).
-- Admin altera tema, fuso horário, histórico recente, foco automático/delay, auto consolidação e PIX da empresa.
+- Admin altera tema, fuso horário, histórico recente, foco automático/delay, auto consolidação, ampliação dos campos e PIX da empresa.
+- Ampliação dos campos é compartilhada por empresa (sem override local): Data, Valor e Observações podem ser ajustados individualmente em `1.2x`, `1.5x`, `2x` ou `2.5x`.
 - Merchant visualiza os padrões da empresa e pode usar overrides locais (tema, fuso, recentes, foco/delay).
 - Auto consolidação é um padrão compartilhado da empresa: ativa/desativa, escolhe o dia (1–28) do mês seguinte e o escopo (`all-previous` padrão: todos os meses anteriores com vendas, ou `previous-month`: somente o mês anterior).
 - PIX da empresa é compartilhado, editável apenas por admin; merchant pode gerar QR, mas não alterar dados PIX.

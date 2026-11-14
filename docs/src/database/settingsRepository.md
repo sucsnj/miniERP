@@ -9,6 +9,7 @@
 - `normalizePixPresets`: valida/serializa presets (`id`, `label` opcional, `pixKey`, `pixName`, `pixBank`, `pixCity`), no máximo 20.
 - `upsertPixPreset`/`deletePixPreset` executam funções RPC (`upsert_pix_preset`/`delete_pix_preset`) para operação atômica sob lock.
 - `auto_consolidation_mode` é `all-previous` (padrão) ou `previous-month`, com constraint.
+- `field_scale_date`, `field_scale_value` e `field_scale_observations` são `1.2`, `1.5`, `2.0` ou `2.5`, por padrão `1.2`.
 
 ## Relações
 
