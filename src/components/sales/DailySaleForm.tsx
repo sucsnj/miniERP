@@ -141,6 +141,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                   value={value}
                   onChange={handleValueChange}
                   autoFocus
+                  disabled={loading}
                   className="flex-grow-valor"
                   placeholder={'Valor'}
                   style={fieldScalesAvailable ? { zoom: fieldScaleValue } : undefined}
@@ -177,6 +178,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 value={observations}
                 ref={observationsTextareaRef}
                 onChange={(e) => setObservations(e.target.value)}
+                disabled={loading}
                 className="flex-grow-observacoes"
                 placeholder={'Observações...'}
                 style={fieldScalesAvailable ? { zoom: fieldScaleObservations } : undefined}

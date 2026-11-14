@@ -66,6 +66,7 @@ export const useDailySaleForm = ({
   const formRef = useRef<HTMLFormElement | null>(null);
   const prevCartValueRef = useRef<number>(0);
   const pendingSubmissionRef = useRef(false);
+  const focusAfterSubmissionRef = useRef(false);
   const submissionIdempotencyRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   // Estado e ações do carrinho (catálogo, seleção e gerenciamento), compartilhado
@@ -342,8 +343,7 @@ export const useDailySaleForm = ({
           'success'
         );
         submissionIdempotencyRef.current = null;
-        valueInputRef.current?.focus();
-        valueInputRef.current?.select();
+        focusAfterSubmissionRef.current = true;
         if (onSaleAdded) {
           onSaleAdded();
         }
@@ -378,6 +378,18 @@ export const useDailySaleForm = ({
 
   // Mantém o foco e a visibilidade do campo de venda conforme configuração
   useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput, focusIntervalMs: autoFocusSaleInputDelay * 1000 });
+
+  useEffect(() => {
+    if (loading || !focusAfterSubmissionRef.current) return;
+
+    focusAfterSubmissionRef.current = false;
+    const animationFrame = window.requestAnimationFrame(() => {
+      valueInputRef.current?.focus();
+      valueInputRef.current?.select();
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [loading]);
 
   // Adiciona um operador matemático ao campo de amount
   const addOperator = (operator: string) => {
