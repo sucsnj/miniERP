@@ -12,6 +12,7 @@
 - Redefine senha de vendedores via modal validável (confirmação + política mínima), sem `window.prompt`.
 - Cards responsivos no mesmo layout grid de `/profile`, com controles compactos de edição inline.
 - Foto de vendedores é escolhida do dispositivo via `AvatarPicker` (PNG, JPEG, GIF ou WebP, até 5 MB); não há campo de URL manual.
+- Os campos de novo vendedor usam `autoComplete="off"`/`new-password` para iniciar vazios, sem preenchimento automático pelo navegador.
 - Permite criar/editar vendedores, loja(s) autorizada(s), ativar/inativar, redefinir senha e escolher foto.
 
 ## Relações
