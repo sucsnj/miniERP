@@ -20,7 +20,7 @@
 5.9. Para desativação segura de loja e reassociação automática de vendedores, aplique `supabase/migrations/0023-add-deactivate-store-function.sql`.
 5.10. Para modo de auto consolidação e função `missing_monthly_consolidation_months`, aplique `supabase/migrations/0024-add-auto-consolidation-mode.sql`.
 5.11. Para permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`, aplique `supabase/migrations/0025-multiple-company-bootstraps.sql`.
-5.12. Para ampliação visual dos campos de registro (`Data`, `Valor` e `Observações`), aplique `supabase/migrations/0026-add-sale-field-scales.sql`; as colunas `field_scale_date`, `field_scale_value` e `field_scale_observations` compartilham a ampliação da empresa (`1.2`, `1.5`, `2.0` ou `2.5`).
+5.12. Para ampliação visual dos campos de registro (`Data`, `Valor` e `Observações`), aplique `supabase/migrations/0026-add-sale-field-scales.sql`; as colunas `field_scale_date`, `field_scale_value` e `field_scale_observations` compartilham a ampliação da empresa (`1.0`, `1.2`, `1.5`, `2.0` ou `2.5`; padrão `1.0`).
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente

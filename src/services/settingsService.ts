@@ -1,6 +1,6 @@
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 export type ThemeMode = 'system' | 'light' | 'dark';
-export type FieldScale = 1.2 | 1.5 | 2 | 2.5;
+export type FieldScale = 1 | 1.2 | 1.5 | 2 | 2.5;
 
 export interface PixPreset {
   id: string;
@@ -48,11 +48,16 @@ async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> 
   return body as T;
 }
 
+export interface CompanySettingsResponse {
+  companySettings: CompanySettings;
+  fieldScalesAvailable?: boolean;
+}
+
 export const fetchCompanySettings = () =>
-  fetchJson<{ companySettings: CompanySettings }>('/api/settings');
+  fetchJson<CompanySettingsResponse>('/api/settings');
 
 export const patchCompanySettings = (patch: CompanySettingsPatch) =>
-  fetchJson<{ companySettings: CompanySettings }>('/api/settings', {
+  fetchJson<CompanySettingsResponse>('/api/settings', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(patch),

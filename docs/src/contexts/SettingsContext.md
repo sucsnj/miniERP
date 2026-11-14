@@ -9,7 +9,7 @@
 - Precedência: `localStorage` válido → `company_settings` → default do app.
 - Mantém dados PIX da empresa (`pixKey`, `pixName`, `pixBank`, `pixCity`) e presets compartilhados (`pixPresets`); não há override local.
 - Mantém auto consolidação (`autoConsolidationEnabled`, `autoConsolidationDay`) como padrão compartilhado da empresa (sem override local).
-- Mantém ampliação compartilhada (`fieldScaleDate`, `fieldScaleValue`, `fieldScaleObservations`) como padrão da empresa (sem override local).
+- Mantém ampliação compartilhada (`fieldScaleDate`, `fieldScaleValue`, `fieldScaleObservations`, `fieldScalesAvailable`) como padrão da empresa (sem override local).
 - `patchCompanySettings` atualiza `company_settings` via TanStack Query mutation; `clearPixData()` limpa o PIX vigente, mas preserva presets; `upsertPixPreset()`/`deletePixPreset()` usam mutations atômicas.
 - Carrega `company_settings` em segundo plano (stale-while-revalidate), não bloqueia o carregamento da rota.
 - Persiste overrides locais, cache de `timezoneCompany` e cookie `timezone` efetivo.

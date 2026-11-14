@@ -42,6 +42,7 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
 
 const recentSalesOptions: RecentSalesCount[] = [0, 2, 4, 6, 8];
 const fieldScaleOptions = [
+  { value: 1, label: '1x' },
   { value: 1.2, label: '1.2x' },
   { value: 1.5, label: '1.5x' },
   { value: 2, label: '2x' },
@@ -65,6 +66,7 @@ const SettingsPage = () => {
     autoFocusSaleInput,
     autoFocusSaleInputOverride,
     autoFocusSaleInputDelay,
+    fieldScalesAvailable,
     pixKey,
     pixName,
     pixBank,
@@ -220,9 +222,9 @@ const SettingsPage = () => {
   const companyAutoConsolidationEnabled = companySettings?.autoConsolidationEnabled ?? true;
   const companyAutoConsolidationDay = companySettings?.autoConsolidationDay ?? 1;
   const companyAutoConsolidationMode = companySettings?.autoConsolidationMode ?? 'all-previous';
-  const companyFieldScaleDate = companySettings?.fieldScaleDate ?? 1.2;
-  const companyFieldScaleValue = companySettings?.fieldScaleValue ?? 1.2;
-  const companyFieldScaleObservations = companySettings?.fieldScaleObservations ?? 1.2;
+  const companyFieldScaleDate = companySettings?.fieldScaleDate ?? 1;
+  const companyFieldScaleValue = companySettings?.fieldScaleValue ?? 1;
+  const companyFieldScaleObservations = companySettings?.fieldScaleObservations ?? 1;
 
   const adminOnlyControls = (label: string, description: string, children: React.ReactNode) => (
     <div>
@@ -383,7 +385,12 @@ const SettingsPage = () => {
             <div>
               <PanelHeader title="Ampliação dos campos" />
               <p style={{ margin: '0 0 8px', fontSize: '0.8rem' }}>Amplia individualmente Data, Valor e Observações no registro de vendas.</p>
-              {adminOnlyControls('Padrão da empresa', `Atual: Data ${companyFieldScaleDate}x, Valor ${companyFieldScaleValue}x, Observações ${companyFieldScaleObservations}x`, (
+              {isAdmin && !fieldScalesAvailable && <p role="alert" style={{ color: 'var(--danger)', fontSize: '0.8rem' }}>Ampliação indisponível: aplique <code>supabase/migrations/0026-add-sale-field-scales.sql</code>.</p>}
+              {adminOnlyControls(
+                'Padrão da empresa',
+                fieldScalesAvailable
+                  ? `Atual: Data ${companyFieldScaleDate}x, Valor ${companyFieldScaleValue}x, Observações ${companyFieldScaleObservations}x`
+                  : 'Ampliação indisponível até aplicar a migration 0026.',
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {[
                     { label: 'Data', field: 'fieldScaleDate', value: companyFieldScaleDate },
@@ -394,7 +401,7 @@ const SettingsPage = () => {
                       {item.label}
                       <select
                         value={item.value}
-                        disabled={savingCompany}
+                        disabled={savingCompany || !fieldScalesAvailable}
                         onChange={(event) => void patchCompany({ [item.field]: Number(event.target.value) } as CompanySettingsPatch)}
                         style={{ padding: '6px', width: '96px', maxWidth: '100%' }}
                       >
@@ -403,7 +410,7 @@ const SettingsPage = () => {
                     </label>
                   ))}
                 </div>
-              ))}
+              )}
             </div>
           </Panel>
 

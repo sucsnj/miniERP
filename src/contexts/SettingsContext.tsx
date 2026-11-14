@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type CompanySettings,
   type CompanySettingsPatch,
+  type CompanySettingsResponse,
   type RecentSalesCount,
   type ThemeMode,
   type PixPreset,
@@ -43,6 +44,7 @@ interface SettingsContextValue {
   fieldScaleDate: FieldScale;
   fieldScaleValue: FieldScale;
   fieldScaleObservations: FieldScale;
+  fieldScalesAvailable: boolean;
   pixKey: string;
   pixName: string;
   pixBank: string;
@@ -77,9 +79,9 @@ const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   autoConsolidationEnabled: true,
   autoConsolidationDay: 1,
   autoConsolidationMode: 'all-previous',
-  fieldScaleDate: 1.2,
-  fieldScaleValue: 1.2,
-  fieldScaleObservations: 1.2,
+  fieldScaleDate: 1,
+  fieldScaleValue: 1,
+  fieldScaleObservations: 1,
   pixKey: '',
   pixName: '',
   pixBank: '',
@@ -126,6 +128,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   });
 
   const companySettings = settingsQuery.data?.companySettings ?? null;
+  const fieldScalesAvailable = settingsQuery.data?.fieldScalesAvailable ?? false;
   const company = companySettings ?? DEFAULT_COMPANY_SETTINGS;
 
   const [themeModeOverride, setThemeModeOverride] = useState<ThemeMode | null>(null);
@@ -224,7 +227,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       if (identity) {
         queryClient.setQueryData(
           tenantKeys.companySettings(identity),
-          { companySettings: body.companySettings }
+          {
+            companySettings: body.companySettings,
+            fieldScalesAvailable: body.fieldScalesAvailable ?? false,
+          }
         );
       }
     },
@@ -244,9 +250,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     mutationFn: upsertPixPreset,
     onSuccess: (body) => {
       if (identity) {
+        const previous = queryClient.getQueryData<CompanySettingsResponse>(tenantKeys.companySettings(identity));
         queryClient.setQueryData(
           tenantKeys.companySettings(identity),
-          { companySettings: body.companySettings }
+          {
+            companySettings: body.companySettings,
+            fieldScalesAvailable: previous?.fieldScalesAvailable ?? false,
+          }
         );
       }
     },
@@ -256,9 +266,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     mutationFn: deletePixPreset,
     onSuccess: (body) => {
       if (identity) {
+        const previous = queryClient.getQueryData<CompanySettingsResponse>(tenantKeys.companySettings(identity));
         queryClient.setQueryData(
           tenantKeys.companySettings(identity),
-          { companySettings: body.companySettings }
+          {
+            companySettings: body.companySettings,
+            fieldScalesAvailable: previous?.fieldScalesAvailable ?? false,
+          }
         );
       }
     },
@@ -299,6 +313,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         fieldScaleDate: company.fieldScaleDate,
         fieldScaleValue: company.fieldScaleValue,
         fieldScaleObservations: company.fieldScaleObservations,
+        fieldScalesAvailable,
         pixKey: company.pixKey,
         pixName: company.pixName,
         pixBank: company.pixBank,

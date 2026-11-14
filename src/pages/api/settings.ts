@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { requireAdminApi, requireApiAuth } from '../../utils/serverAuth';
 import {
-  getCompanySettings,
-  updateCompanySettings,
+  inspectCompanySettings,
+  updateCompanySettingsWithDiagnostics,
   type CompanySettingsPatch,
   type CompanyThemeMode,
   type RecentSalesCount,
@@ -11,7 +11,7 @@ import {
 
 const THEMES: CompanyThemeMode[] = ['system', 'light', 'dark'];
 const COUNTS: RecentSalesCount[] = [0, 2, 4, 6, 8];
-const FIELD_SCALES: FieldScale[] = [1.2, 1.5, 2, 2.5];
+const FIELD_SCALES: FieldScale[] = [1, 1.2, 1.5, 2, 2.5];
 
 function parsePatch(body: unknown): CompanySettingsPatch | null {
   if (!body || typeof body !== 'object') return null;
@@ -78,8 +78,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!ctx) return;
 
     try {
-      const companySettings = await getCompanySettings(ctx);
-      return res.status(200).json({ companySettings });
+      const { companySettings, fieldScalesAvailable } = await inspectCompanySettings(ctx);
+      return res.status(200).json({ companySettings, fieldScalesAvailable });
     } catch (error) {
       console.error('Erro ao buscar configurações:', error);
       return res.status(500).json({ error: 'Não foi possível carregar as configurações.' });
@@ -96,8 +96,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const companySettings = await updateCompanySettings(patch, ctx);
-      return res.status(200).json({ companySettings });
+      const { companySettings, fieldScalesAvailable } = await updateCompanySettingsWithDiagnostics(patch, ctx);
+      return res.status(200).json({ companySettings, fieldScalesAvailable });
     } catch (error) {
       console.error('Erro ao atualizar configurações:', error);
       return res.status(500).json({ error: 'Não foi possível atualizar as configurações.' });

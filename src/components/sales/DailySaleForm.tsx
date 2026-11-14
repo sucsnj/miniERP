@@ -69,7 +69,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     handleClearCart,
     totalCartCount,
   } = useDailySaleForm({ selectedDate, onSaleAdded });
-  const { pixKey, pixName, pixBank, fieldScaleDate, fieldScaleValue, fieldScaleObservations } = useSettings();
+  const { pixKey, pixName, pixBank, fieldScaleDate, fieldScaleValue, fieldScaleObservations, fieldScalesAvailable } = useSettings();
 
   return (
     <>
@@ -84,7 +84,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 value={selectedDate}
                 onChange={(e) => onDateChange(e.target.value)}
                 className={`${styles.dateInput} flex-grow-data`}
-                style={{ zoom: fieldScaleDate }}
+                style={fieldScalesAvailable ? { zoom: fieldScaleDate } : undefined}
               />
             </label>
             <div className={`${styles.mathButtons}`}>
@@ -143,7 +143,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                   autoFocus
                   className="flex-grow-valor"
                   placeholder={'Valor'}
-                  style={{ zoom: fieldScaleValue }}
+                  style={fieldScalesAvailable ? { zoom: fieldScaleValue } : undefined}
                 />
                 <Button
                   type="button"
@@ -179,7 +179,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 onChange={(e) => setObservations(e.target.value)}
                 className="flex-grow-observacoes"
                 placeholder={'Observações...'}
-                style={{ zoom: fieldScaleObservations }}
+                style={fieldScalesAvailable ? { zoom: fieldScaleObservations } : undefined}
               />
             </label>
             <div className="buttons-wrapper">
