@@ -5,7 +5,7 @@
 ## O que faz
 
 - Define interfaces: `DailySale`, `SaleItemData`, `SaleItemInput`, `MonthlySale`.
-- Vendas diárias: `registerSale`, `registerSaleWithCreatedAt`, `fetchDailySales`, `updateSale`, `deleteSale`.
+- Vendas diárias: `registerSale`, `registerSaleWithCreatedAt`, `fetchDailySales`, `updateSale`, `deleteSale`. `registerSale` aceita `idempotencyKey` opcional para registro idempotente.
 - Itens de venda: `fetchSaleItems`.
 - Mensais: `fetchMonthlyTotal`, `fetchAllMonthly`, `consolidateMonthly`, `isConsolidated`, `autoConsolidate`, `deleteMonthly`, além da listagem interna de meses pendentes (`action=missing`).
 - `createMissingMonthlyConsolidationMonths()` é chamado por `autoConsolidate` em modo `all-previous`.

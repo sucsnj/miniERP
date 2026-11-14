@@ -65,6 +65,8 @@ export const useDailySaleForm = ({
   const observationsTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const prevCartValueRef = useRef<number>(0);
+  const pendingSubmissionRef = useRef(false);
+  const submissionIdempotencyRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   // Estado e ações do carrinho (catálogo, seleção e gerenciamento), compartilhado
   // com o formulário de edição através do hook useCart
@@ -89,6 +91,11 @@ export const useDailySaleForm = ({
     totalCartCount,
     totalCartValue,
   } = useCart(showToast);
+  const draftRef = useRef({ value, observations, cartItems });
+
+  useEffect(() => {
+    draftRef.current = { value, observations, cartItems };
+  }, [value, observations, cartItems]);
 
   // Aplica/limpa o somatório do campo de amount a partir da expressão digitada
   const calculateValue = (input: string) => {
@@ -236,6 +243,8 @@ export const useDailySaleForm = ({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (pendingSubmissionRef.current) return;
+
     try {
       // Validar date e amount antes de enviar (contrato ADR 0002)
       const dateCheck = validateDate(selectedDate);
@@ -275,39 +284,94 @@ export const useDailySaleForm = ({
         return;
       }
 
-      // Registra a venda
-      await createSaleMutation.mutateAsync({
+      // Criar a chave de idempotência estável para tentativas da mesma venda.
+      const fingerprint = JSON.stringify({
         date: selectedDate,
         amount: valueFromInput,
         notes: observations,
         items: cartItems,
       });
+      const previousIdempotency = submissionIdempotencyRef.current;
+      const idempotencyKey = previousIdempotency?.fingerprint === fingerprint
+        ? previousIdempotency.key
+        : crypto.randomUUID();
+      submissionIdempotencyRef.current = { fingerprint, key: idempotencyKey };
 
-      if (formRef.current) {
-        const top =
-          formRef.current.getBoundingClientRect().top + window.scrollY - 80;
+      const previousDraft = {
+        value,
+        observations,
+        cartItems,
+        calculatedValue,
+        isValueInvalid,
+        prevCartValue: prevCartValueRef.current,
+      };
 
-        window.scrollTo({
-          top,
-          behavior: 'smooth',
-        });
-      }
+      pendingSubmissionRef.current = true;
+      const mutationPromise = createSaleMutation.mutateAsync({
+        date: selectedDate,
+        amount: valueFromInput,
+        notes: observations,
+        items: cartItems,
+        idempotencyKey,
+      });
 
-      showToast(
-        `Venda registrada com sucesso: R$ ${valueFromInput.toFixed(2)}`,
-        'success'
-      );
+      // Manter uma chave apenas do início para o fim da operação.
       setValue('');
       setObservations('');
       setCalculatedValue(0);
+      setIsValueInvalid(false);
       setCartItems([]);
       prevCartValueRef.current = 0;
-      valueInputRef.current?.focus();
-      valueInputRef.current?.select();
-      if (onSaleAdded) {
-        onSaleAdded();
+      draftRef.current = { value: '', observations: '', cartItems: [] };
+
+      try {
+        await mutationPromise;
+
+        if (formRef.current) {
+          const top =
+            formRef.current.getBoundingClientRect().top + window.scrollY - 80;
+
+          window.scrollTo({
+            top,
+            behavior: 'smooth',
+          });
+        }
+
+        showToast(
+          `Venda registrada com sucesso: R$ ${valueFromInput.toFixed(2)}`,
+          'success'
+        );
+        submissionIdempotencyRef.current = null;
+        valueInputRef.current?.focus();
+        valueInputRef.current?.select();
+        if (onSaleAdded) {
+          onSaleAdded();
+        }
+      } catch {
+        // Restaurar somente se a pessoa não digitou nada novo depois do envio otimista.
+        if (
+          draftRef.current.value === '' &&
+          draftRef.current.observations === '' &&
+          draftRef.current.cartItems.length === 0
+        ) {
+          setValue(previousDraft.value);
+          setObservations(previousDraft.observations);
+          setCartItems(previousDraft.cartItems);
+          setCalculatedValue(previousDraft.calculatedValue);
+          setIsValueInvalid(previousDraft.isValueInvalid);
+          prevCartValueRef.current = previousDraft.prevCartValue;
+          draftRef.current = {
+            value: previousDraft.value,
+            observations: previousDraft.observations,
+            cartItems: previousDraft.cartItems,
+          };
+        }
+        showToast('Erro ao registrar venda.', 'error');
+      } finally {
+        pendingSubmissionRef.current = false;
       }
     } catch {
+      pendingSubmissionRef.current = false;
       showToast('Erro ao registrar venda.', 'error');
     }
   };

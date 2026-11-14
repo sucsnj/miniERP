@@ -8,6 +8,8 @@
 - Integra carrinho via `useCart(showToast)`, sincroniza total do carrinho com campo (adiciona/remove `"+valor_carrinho"`).
 - Handlers: `handleKeyDown` (filtro de teclas), `handleValueChange` (sanitiza e preserva cursor), `handlePixClick` (valida e gera payload EMVCo; exige `pixKey`, `pixName`, `pixBank` e `pixCity` em `useSettings`; cria PIX com valor livre quando não há valor avaliável no campo de venda (vazio, zero ou expressão incompleta)), `handleSubmit` (valida, registra via `useCreateSale`, limpa/foca), `handleClear`, `addOperator(op)`.
 - Expoe `isValueInvalid` para indicar expressao invalida.
+- Bloqueia envio enquanto uma submissão está em andamento e limpa o formulário imediatamente; em falha, restaura os dados somente se o usuário não digitou nada novo.
+- Envia `idempotencyKey` estável por tentativa do mesmo rascunho na criação de venda; falha desconhecida seguida de retry não registra a venda duas vezes.
 - Efeitos: ESC limpa formulário (ignorado enquanto `useFocusTrap` marca `body.modal-open`), auto-foco/visibilidade do input via `useAutoFocus` e atualizações por carrinho.
 
 ## Relacoes

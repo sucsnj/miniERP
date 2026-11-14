@@ -137,6 +137,7 @@ interface CreateSaleInput {
   notes?: string;
   items: SaleItemInput[];
   createdAt?: string;
+  idempotencyKey?: string;
 }
 
 interface UpdateSaleInput {
@@ -159,7 +160,7 @@ export function useCreateSale() {
 
   return useMutation({
     mutationFn: (input: CreateSaleInput) =>
-      registerSale(input.date, input.amount, input.notes, input.items),
+      registerSale(input.date, input.amount, input.notes, input.items, input.idempotencyKey),
     onMutate: async (input) => {
       if (!tenantId) return { tenantId, snapshots: [] as Array<[readonly unknown[], DailySale[] | undefined]>, affectedMonths: [] as Array<{ month: number; year: number }> };
       await queryClient.cancelQueries({ predicate: salesDailyPredicate(tenantId) });

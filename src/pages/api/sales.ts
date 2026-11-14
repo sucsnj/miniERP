@@ -67,13 +67,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const notes = body.notes ?? body.notes;
     const createdAt = body.createdAt ?? body.createdAt;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
+    const idempotencyKey = body.idempotencyKey === undefined
+      ? null
+      : String(body.idempotencyKey).trim();
+    const validIdempotencyKey = idempotencyKey === null
+      || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey);
 
      try {
       const timezone = req.cookies?.timezone || 'America/Recife';
       const validDate = toDate(date, timezone);
       const validValue = typeof amount === 'number' ? amount : parseCurrency(String(amount));
-      if (!validDate || validValue == null) {
-        return res.status(400).json({ error: 'Dados inválidos: data ou valor inválidos' });
+      if (!validDate || validValue == null || !validIdempotencyKey) {
+        return res.status(400).json({ error: 'Dados inválidos: data, valor ou idempotencyKey inválidos' });
       }
 
       const id = await createSale({
@@ -81,6 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         amount: validValue,
         notes: notes ?? null,
         createdAt: createdAt ?? null,
+        idempotencyKey,
         items: items.map(normalizeItem),
       }, ctx);
 

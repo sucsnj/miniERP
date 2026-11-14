@@ -165,6 +165,7 @@ export async function createSale(input: {
   amount: number;
   notes?: string | null;
   createdAt?: string | null;
+  idempotencyKey?: string | null;
   items?: SaleItemInput[];
 }, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb().rpc('create_sale', {
@@ -185,6 +186,7 @@ export async function createSale(input: {
       internalCode: item.internalCode ?? null,
       reference: item.reference ?? null,
     })),
+    p_idempotency_key: input.idempotencyKey ?? null,
   });
   if (error) throw error;
   return String(data);

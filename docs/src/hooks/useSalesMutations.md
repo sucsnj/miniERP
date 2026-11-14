@@ -4,10 +4,11 @@
 
 ## O que faz
 
-- `useCreateSale`: mutation de registro; faz optimistic insert nas listas `sales/daily` da loja atual e re-consolida automaticamente se o mês da venda já estava consolidado.
+- `useCreateSale`: mutation de registro; envia `idempotencyKey` quando fornecida para impedir duplicatas em retries e faz optimistic insert nas listas `sales/daily` da loja atual e re-consolida automaticamente se o mês da venda já estava consolidado.
 - `useUpdateSale`: mutation de edição; atualiza o item no cache e re-consolida o/os meses afetados se já estavam consolidados (meses antigo e novo).
 - `useDeleteSale`: mutation de exclusão; remove o item e re-consolida o mês da venda se já estava consolidado.
 - Falha em `!response.ok` da API de vendas é propagada como `Error` para permitir rollback.
+- `CreateSaleInput` aceita `createdAt` (importações) e `idempotencyKey` (registro normal, UUID); a RPC devolve a venda existente em retry com a mesma chave.
 - Snapshots respeitam tenant (`companyId`/`storeId`); nunca vazam para outra empresa/loja.
 
 ## Relações

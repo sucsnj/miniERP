@@ -122,7 +122,8 @@ export const registerSale = async (
   date: string,
   amount: number,
   notes?: string,
-  items?: SaleItemInput[]
+  items?: SaleItemInput[],
+  idempotencyKey?: string,
 ) => {
   const response = await fetch('/api/sales', {
     method: 'POST',
@@ -132,6 +133,7 @@ export const registerSale = async (
       amount,
       notes,
       items: (items ?? []).map(toSaleItemPayload),
+      idempotencyKey,
     }),
   });
   if (!response.ok) {

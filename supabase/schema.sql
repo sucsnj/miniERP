@@ -280,8 +280,13 @@ create table if not exists public.sales (
   amount numeric(14, 2) not null,
   notes text,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  idempotency_key uuid
 );
+
+create unique index if not exists sales_company_store_idempotency_key_idx
+  on public.sales (company_id, store_id, idempotency_key)
+  where idempotency_key is not null;
 
 create table if not exists public.sale_items (
   id uuid primary key default gen_random_uuid(),
@@ -725,7 +730,8 @@ create or replace function public.create_sale(
   p_amount numeric,
   p_notes text default null,
   p_created_at timestamptz default null,
-  p_items jsonb default '[]'::jsonb
+  p_items jsonb default '[]'::jsonb,
+  p_idempotency_key uuid default null
 )
 returns uuid
 language plpgsql
@@ -755,16 +761,45 @@ begin
     raise exception 'Store not found for company: %', p_store_id;
   end if;
 
-  insert into public.sales (company_id, store_id, sale_date, amount, notes, created_at)
-  values (
-    p_company_id,
-    p_store_id,
-    p_sale_date,
-    p_amount,
-    nullif(trim(coalesce(p_notes, '')), ''),
-    coalesce(p_created_at, now())
-  )
-  returning id into v_sale_id;
+  if p_idempotency_key is not null then
+    select id
+      into v_sale_id
+      from public.sales
+      where company_id = p_company_id
+        and store_id = p_store_id
+        and idempotency_key = p_idempotency_key;
+
+    if found then
+      return v_sale_id;
+    end if;
+  end if;
+
+  begin
+    insert into public.sales (company_id, store_id, sale_date, amount, notes, created_at, idempotency_key)
+    values (
+      p_company_id,
+      p_store_id,
+      p_sale_date,
+      p_amount,
+      nullif(trim(coalesce(p_notes, '')), ''),
+      coalesce(p_created_at, now()),
+      p_idempotency_key
+    )
+    returning id into v_sale_id;
+  exception
+    when unique_violation then
+      if p_idempotency_key is null then
+        raise;
+      end if;
+      select id
+        into v_sale_id
+        from public.sales
+        where company_id = p_company_id
+          and store_id = p_store_id
+          and idempotency_key = p_idempotency_key;
+
+      return v_sale_id;
+  end;
 
   for v_item in
     select * from jsonb_array_elements(coalesce(p_items, '[]'::jsonb))
