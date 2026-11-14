@@ -5,7 +5,7 @@
 ## O que faz
 
 - Total/quantidade/ticket médio do período e (se `selectedDay`) total, vendas e média do dia.
-- Lista "Últimas 4 vendas" (`recentSales`) com Editar/Excluir quando `canEdit(data)`; senão mostra "Bloqueado".
+- Lista "Últimas 4 vendas" (`recentSales`) com Editar/Excluir quando `canEdit(data)`; senão mostra "Bloqueado". O botão Excluir não exibe ícone.
 - Atalho `Delete` exclui a venda mais recente; renderiza `children` no card do formulário.
 
 ```ts

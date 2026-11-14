@@ -5,7 +5,6 @@ import { formatCurrency } from '../../utils/formatter';
 import { formatDateString, parseDate } from '../../utils/date';
 import { canEdit } from '../../utils/edit';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useShortcuts } from '../../utils/shortcuts';
 import Button from '@/components/common/Button';
 import styles from '../../styles/dailySalesTotal.module.css';
@@ -135,7 +134,6 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                                 variant="danger"
                                 size="sm"
                                 onClick={() => onDeleteSale(sale.id)}
-                                leftIcon={<DeleteIcon />}
                               >
                                 Excluir
                               </Button>
