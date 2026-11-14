@@ -77,13 +77,16 @@
           border-radius: 8px;
           width: auto;
           min-width: unset;
-          transition: color 0.2s ease, background-color 0.2s ease;
+          transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
           color: #3ed955ff;
         }
 
-        .saleFormFields button.cartIconButton:hover {
+        .saleFormFields button.cartIconButton:hover,
+        .saleFormFields button.cartIconButton:focus-visible {
           color: var(--accent);
           background-color: var(--surface-soft, rgba(255, 255, 255, 0.08));
+          transform: translateY(-50%) scale(1.12);
+          outline: none;
         }
 
         .cartIcon {

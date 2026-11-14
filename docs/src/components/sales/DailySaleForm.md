@@ -25,5 +25,6 @@ interface DailySaleFormProps {
 
 ## Notas
 
+- Ícone do carrinho mantém o alinhamento vertical no hover/focus e apenas muda a cor e aumenta levemente (`scale`).
 - `CartItem` foi movido para `src/types/sale.ts` (compartilhado com `useCart`/modais).
 - `<style jsx>` permanece no componente (migração para CSS Modules prevista na Fase 2 do ADR 0007); `EditSaleForm` não depende mais dessas classes.
