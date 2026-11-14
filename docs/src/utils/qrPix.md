@@ -11,4 +11,4 @@
 ## Relações
 
 - **Usa:** `qrcode`.
-- **Usado por:** `PixModal` e `pixActions` (`./pixActions.md`).
+- **Usado por:** `PixModal`, `pixActions` (`./pixActions.md`) e `pixPrintPdf` (`./pixPrintPdf.md`).

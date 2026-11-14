@@ -24,7 +24,8 @@
 | [layout.md](./layout.md) | Estilos inline compartilhados de layout masonry. |
 | [number.md](./number.md) | Parsing de números e moeda. |
 | [pix.md](./pix.md) | Payload PIX EMVCo e validação de chaves. |
-| [pixActions.md](./pixActions.md) | Baixar PNG e imprimir folha do PIX. |
+| [pixActions.md](./pixActions.md) | Baixar PNG do QR Code. |
+| [pixPrintPdf.md](./pixPrintPdf.md) | Gerar PDF de impressão do PIX. |
 | [productPrice.md](./productPrice.md) | Preço de venda e margem do catálogo. |
 | [productUnits.md](./productUnits.md) | Regras das unidades de medida do produto. |
 | [qrPix.md](./qrPix.md) | Renderização e exportação do QR Code. |

@@ -5,7 +5,7 @@
 ## O que faz
 
 - Renderiza o QR em `<canvas>` (`renderQr`) e o pulsa ao abrir; exibe nome, banco, valor (ou "Aberto") e chave.
-- Ações: copiar payload, baixar PNG e imprimir folha; ESC/overlay fecham.
+- Ações: copiar payload, baixar PNG e gerar PDF de impressão; ESC/overlay fecham.
 
 ```ts
 interface PixModalProps {
@@ -17,10 +17,10 @@ interface PixModalProps {
 
 ## Relações
 
-- **Usa:** `renderQr`/`pulseQr`/`QR_SIZE` (`src/utils/qrPix.ts`), `downloadQrPng`/`printPixSheet` (`src/utils/pixActions.ts`), `showToast` (`src/utils/toast.ts`), `copyToClipboard` (`src/utils/clipboard.ts`), `useFocusTrap`.
+- **Usa:** `renderQr`/`pulseQr`/`QR_SIZE` (`src/utils/qrPix.ts`), `downloadQrPng` (`src/utils/pixActions.ts`), `printPixSheet`/`PixPrintData` (`src/utils/pixPrintPdf.ts`), `showToast` (`src/utils/toast.ts`), `copyToClipboard` (`src/utils/clipboard.ts`), `useFocusTrap`.
 - **Usado por:** [DailySaleForm](../sales/DailySaleForm.md).
 
 ## Notas
 
 - `createPortal` no `document.body`; retorna `null` se fechado ou em SSR.
-- Os utilitários PIX sem JSX vivem em `src/utils/` (`pix.ts`, `qrPix.ts`, `pixActions.ts`).
+- Os utilitários PIX sem JSX vivem em `src/utils/` (`pix.ts`, `qrPix.ts`, `pixActions.ts`, `pixPrintPdf.ts`).

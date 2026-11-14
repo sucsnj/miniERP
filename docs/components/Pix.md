@@ -1,8 +1,8 @@
 # Componentes de PIX
 
-Documenta o fluxo de pagamento via PIX: `ActionPix`, `FloatingPixWindow`, `FormPix`, `ModalPix`, `QrPix` e o gerador de payload em `src/utils/pix.ts`.
+Documenta o fluxo de pagamento via PIX: `pixActions`, `pixPrintPdf`, `FloatingPixWindow`, `FormPix`, `ModalPix`, `QrPix` e o gerador de payload em `src/utils/pix.ts`.
 
-> Observação: apesar de `ActionPix`, `FormPix` e `QrPix` residirem em `src/components/`, são módulos utilitários (sem JSX exportado). Apenas `FloatingPixWindow` e `ModalPix` são componentes React.
+> Observação: apesar de `pixActions`, `pixPrintPdf`, `FormPix` e `QrPix` residirem em `src/utils/`, são módulos utilitários (sem JSX exportado). Apenas `FloatingPixWindow` e `ModalPix` são componentes React.
 
 ---
 
@@ -91,38 +91,31 @@ export function pulseQr(target: HTMLElement | null): void;
 
 ---
 
-## `src/components/ActionPix.tsx`
+## `src/utils/pixActions.ts` (download) e `src/utils/pixPrintPdf.ts` (impressão)
 
 ### Descrição
 
-Ações utilitárias do painel PIX: toast próprio, copiar "Copia e Cola", baixar PNG de alta resolução e imprimir a folha do PIX.
+Ações utilitárias do painel PIX: copiar "Copia e Cola", baixar PNG de alta resolução e gerar PDF de impressão do PIX.
 
 ### Assinatura
 
 ```ts
-export type ToastType = 'success' | 'error';
-
-export interface PrintSheetData {
+export async function downloadQrPng(payload: string): Promise<void>;
+export interface PixPrintData {
   payload: string;
   name: string;
   bank: string;
   amount: string | null;
   key: string;
 }
-
-export function showToast(message: string, type?: ToastType): void;                        // 2600ms
-export async function copyToClipboard(text: string, onSuccess?: () => void, onError?: (e: unknown) => void): Promise<void>;
-export async function downloadQrPng(payload: string): Promise<void>;
-export async function printPixSheet(data: PrintSheetData): Promise<void>;
+export async function printPixSheet(data: PixPrintData): Promise<void>;
 ```
 
 ### Observações
 
-- `showToast` cria/remove toast DOM no `#toast-root` (classes Tailwind + `toast-enter`/`toast-leave`).
 - `copyToClipboard` usa `navigator.clipboard` em contexto seguro; senão fallback com `textarea` + `document.execCommand('copy')`.
 - `downloadQrPng` gera PNG via `generateHighResPng` e dispara download `pix-qrcode-YYYY-MM-DD.png`.
-- `printPixSheet` desenha o QR no canvas `#print-canvas` (250×250, `errorCorrectionLevel: 'M'`), preenche `#print-*` e chama `window.print()` com `body.printing`.
-- `formatBRL` (privada) formata `"15.00"` → `"R$ 15,00"`.
+- `printPixSheet` gera dinamicamente um PDF 148 × 210 mm com QR Code, dados do PIX, PIX Copia e Cola, valor e data/hora (`America/Recife`); abre em nova janela com `autoPrint` e baixa o PDF em fallback de bloqueio de pop-up.
 
 ---
 
@@ -251,7 +244,7 @@ export const state: FormState;   // estado global do formulário
 1. `FormPix` captura chave/valor/nome/banco e valida a chave (`validatePixKey`).
 2. `buildPixPayload` (`utils/pix.ts`) gera o payload EMVCo com CRC16.
 3. `ModalPix` / `FloatingPixWindow` renderizam o QR via `QrPix.renderQr`.
-4. Ações: `ActionPix.copyToClipboard` (Copia e Cola), `downloadQrPng` (PNG), `printPixSheet` (impressão).
+4. Ações: `clipboard.copyToClipboard` (Copia e Cola), `pixActions.downloadQrPng` (PNG), `pixPrintPdf.printPixSheet` (PDF/impressão).
 
 ## Integração
 

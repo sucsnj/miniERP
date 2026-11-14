@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { renderQr, pulseQr, QR_SIZE } from '@/utils/qrPix';
-import { downloadQrPng, printPixSheet, type PrintSheetData } from '@/utils/pixActions';
+import { downloadQrPng } from '@/utils/pixActions';
+import { printPixSheet, type PixPrintData } from '@/utils/pixPrintPdf';
 import { showToast } from '@/utils/toast';
 import { copyToClipboard } from '@/utils/clipboard';
 import { useFocusTrap } from '../../utils/focus';
@@ -80,14 +81,19 @@ const ModalPixContent: React.FC<PixModalProps> = ({
   };
 
   const handlePrint = async () => {
-    const date: PrintSheetData = {
+    const data: PixPrintData = {
       payload,
       name: merchantName,
       bank: merchantBank,
       amount,
       key: pixKey,
     };
-    await printPixSheet(date);
+
+    try {
+      await printPixSheet(data);
+    } catch {
+      showToast('Erro ao gerar PDF para impressão.', 'error');
+    }
   };
 
   if (!isOpen || typeof document === 'undefined') return null;
