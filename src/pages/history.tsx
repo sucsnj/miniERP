@@ -3,8 +3,7 @@ import SalesTable from '../components/sales/SalesTable';
 import SalesChart from '../components/sales/SalesChart';
 import ExportButtons from '../components/sales/ExportButtons';
 import EditSaleForm from '../components/sales/EditSaleForm';
-import { capitalize } from '../utils/captalize';
-import { getDateArray, getLastDayOfMonth, formatMonthName } from '../utils/date';
+import { getDateArray, parseDate } from '../utils/date';
 import { useToast } from '../hooks/useToast';
 import { useSales } from '../hooks/useSales';
 import { useFilter } from '../hooks/useFilter';
@@ -18,14 +17,16 @@ import Button from '@/components/common/Button';
 // Lista as vendas do período com filtro (todas/positivas/negativas), permitindo
 // editar e excluir. Usa os hooks useToast, useSales e useFilter.
 const History: React.FC = () => {
-  // Período selecionado (mês e year), usado para carregar as vendas
-  const [month, setMonth] = useState(getDateArray()[1]);
-  const [year, setYear] = useState(getDateArray()[2]);
-  const [day, setDay] = useState(getDateArray()[0]);
+  const createTodayDate = () => {
+    const [todayDay, todayMonth, todayYear] = getDateArray();
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${todayYear}-${pad(todayMonth)}-${pad(todayDay)}`;
+  };
 
-  const daysInMonth = getLastDayOfMonth(year, month);
-  const dayClamped = Math.min(day, daysInMonth);
-  const selectedDate = `${year}-${String(month).padStart(2, '0')}-${String(dayClamped).padStart(2, '0')}`;
+  const [selectedDate, setSelectedDate] = useState(createTodayDate);
+  const parsedDate = parseDate(selectedDate);
+  const month = parsedDate.month() + 1;
+  const year = parsedDate.year();
 
   // Notificações (toast) exibidas na tela
   const { showToast } = useToast();
@@ -43,26 +44,11 @@ const History: React.FC = () => {
     handleDeleteSale,
   } = useSales(month, year, showToast, { filter, autoConsolidate: false });
 
-  const changeMonth = (value: string) => {
-    const nextMonth = Number(value);
-    if (!Number.isFinite(nextMonth)) return;
-    setMonth(nextMonth);
-    const nextLastDay = getLastDayOfMonth(year, nextMonth);
-    if (day > nextLastDay) setDay(nextLastDay);
-  };
-
-  const changeYear = (value: string) => {
-    const nextYear = value ? Number(value) : new Date().getFullYear();
-    if (!Number.isFinite(nextYear)) return;
-    setYear(nextYear);
-    const nextLastDay = getLastDayOfMonth(nextYear, month);
-    if (day > nextLastDay) setDay(nextLastDay);
-  };
-
-  const changeDay = (value: string) => {
-    const nextDay = Number(value);
-    if (!Number.isFinite(nextDay)) return;
-    setDay(Math.min(Math.max(1, nextDay), daysInMonth));
+  const changeSelectedDate = (value: string) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
+    const parsed = parseDate(value);
+    if (!parsed.isValid() || parsed.format('YYYY-MM-DD') !== value) return;
+    setSelectedDate(value);
   };
 
   return (
@@ -73,33 +59,12 @@ const History: React.FC = () => {
         <Panel>
           <div className="page-actions">
             <label>
-              Mês:
-              <select className="headerSelect" value={month} onChange={(e) => changeMonth(e.target.value)}>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {capitalize(formatMonthName(i + 1))}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Dia:
+              Data:
               <input
                 className="headerInput"
-                type="number"
-                min={1}
-                max={daysInMonth}
-                value={dayClamped}
-                onChange={(e) => changeDay(e.target.value)}
-              />
-            </label>
-            <label>
-              Ano:
-              <input
-                className="headerInput"
-                type="number"
-                value={year}
-                onChange={(e) => changeYear(e.target.value)}
+                type="date"
+                value={selectedDate}
+                onChange={(e) => changeSelectedDate(e.target.value)}
               />
             </label>
             {/* Botões de filtro por amount da venda */}

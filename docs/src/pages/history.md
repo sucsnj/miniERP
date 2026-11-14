@@ -4,8 +4,7 @@
 
 ## O que faz
 
-- Seleciona mês, dia e ano e carrega as vendas via `useSales(..., { filter, autoConsolidate: false })`.
-- Limita o dia ao máximo válido do mês/ano selecionado e passa `selectedDate` para exportação/importação diária.
+- Seleciona a data (`type="date"`) e carrega as vendas por mês/ano derivado via `useSales(..., { filter, autoConsolidate: false })`.
 - Filtro dinâmico por valor (`todas` | `positivas` | `negativas`), persistido via `useFilter`.
 - Exibe `SalesChart` e `SalesTable` com edição (`EditSaleForm`) e exclusão.
 - Exporta/importa vendas via `ExportButtons`. A importação aceita vendas de qualquer mês/ano, independente do período selecionado na tela; a exportação permanece com escopo da seleção atual.
