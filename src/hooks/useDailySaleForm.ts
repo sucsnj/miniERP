@@ -173,8 +173,10 @@ export const useDailySaleForm = ({
     prevCartValueRef.current = totalCartValue;
   }, [totalCartValue]);
 
-  // Apaga tudo ao pressionar ESC no teclado
+  // Apaga tudo ao pressionar ESC no teclado, exceto quando um modal está ativo.
   useShortcuts(['Escape'], () => {
+    if (document.body.classList.contains('modal-open')) return;
+
     setCalculatedValue(0);
     setIsValueInvalid(false);
     setValue('');
