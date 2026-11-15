@@ -69,18 +69,25 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
           <InlineAccountField fieldId="document" label="Documento" value={selectedAccount.document} canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('document')} required />
           <div className={styles.accountField}>
             <span className={styles.accountFieldLabel}>Status</span>
-            <select
-              className={`${styles.accountStatusSelect} ${selectedAccount.status === 'Pago' ? styles.statusPago : styles.statusPendente}`}
-              value={selectedAccount.status}
-              disabled={!canEdit || statusBusy}
-              onMouseDown={() => setActiveFieldId(null)}
-              onFocusCapture={() => setActiveFieldId(null)}
-              onChange={(event) => void changeStatus(event.target.value as AccountDetails['status'])}
-              aria-label="Status da conta"
+            <span
+              className={`${styles.status} ${selectedAccount.status === 'Pago' ? styles.pago : styles.pendente}`}
+              data-observacoes={selectedAccount.bankNotes?.trim() || 'Banco / Observações'}
+              tabIndex={0}
+              aria-label={`Status: ${selectedAccount.status}. Observações: ${selectedAccount.bankNotes?.trim() || 'Banco / Observações'}`}
             >
-              <option value="Pendente">Pendente</option>
-              <option value="Pago">Pago</option>
-            </select>
+              <select
+                className={styles.accountStatusSelect}
+                value={selectedAccount.status}
+                disabled={!canEdit || statusBusy}
+                onMouseDown={() => setActiveFieldId(null)}
+                onFocusCapture={() => setActiveFieldId(null)}
+                onChange={(event) => void changeStatus(event.target.value as AccountDetails['status'])}
+                aria-label="Status da conta"
+              >
+                <option value="Pendente">Pendente</option>
+                <option value="Pago">Pago</option>
+              </select>
+            </span>
           </div>
           <InlineAccountField fieldId="bankNotes" label="Banco / Observações" value={selectedAccount.bankNotes ?? ''} displayValue={selectedAccount.bankNotes || 'Sem observações'} inputType="textarea" rows={4} canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('bankNotes')} />
         </div>

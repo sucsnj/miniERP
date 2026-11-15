@@ -6,15 +6,12 @@ import { formatCurrency } from '../../utils/formatter';
 import styles from '../../styles/payables.module.css';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 
 interface PayablesLastTenProps {
   latestAccounts: AccountDetails[];
   handleView: (account: AccountDetails) => void;
   handleDelete: (id: string) => void;
-  handleEdit: (account: AccountDetails) => void;
   canWrite?: boolean;
 }
 
@@ -22,7 +19,6 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
   latestAccounts,
   handleView,
   handleDelete,
-  handleEdit,
   canWrite = true,
 }) => {
 
@@ -49,23 +45,28 @@ const PayablesLastTen: React.FC<PayablesLastTenProps> = ({
         </thead>
         <tbody>
           {latestAccounts.map((account) => (
-            <tr key={account.id}>
+            <tr
+              key={account.id}
+              className={styles.clickableRow}
+              tabIndex={0}
+              role="button"
+              aria-label={`Abrir detalhes de ${account.supplierName}`}
+              onClick={() => handleView(account)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  handleView(account);
+                }
+              }}
+            >
               <td>{formatDateString(account.dueDate, 'DD/MM/YYYY')}</td>
               <td>{account.supplierName}</td>
               <td>R$ {formatCurrency(account.amount, 2)}</td>
-              <td className={styles.actionsCell}>
-                <Button type="button" variant="info" size="sm" onClick={() => handleView(account)} leftIcon={<VisibilityIcon />}>
-                  Ver
-                </Button>
+              <td className={styles.actionsCell} onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
                 {canWrite && (
-                  <>
-                    <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
-                      Excluir
-                    </Button>
-                    <Button type="button" variant="info" size="sm" onClick={() => handleEdit(account)} leftIcon={<EditIcon />}>
-                      Editar
-                    </Button>
-                  </>
+                  <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
+                    Excluir
+                  </Button>
                 )}
               </td>
             </tr>

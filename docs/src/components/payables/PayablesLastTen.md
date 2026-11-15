@@ -4,22 +4,22 @@
 
 ## O que faz
 
-- Colunas Vencimento, Distribuidora, Valor e Ações (Ver, Excluir, Editar).
-- Exclusão passa por [ConfirmDialog](../common/ConfirmDialog.md); estado vazio tratado.
+- Colunas Vencimento, Distribuidora e Valor; a linha inteira é clicável/accessível por teclado (`Enter`/`Espaço`), abrindo os detalhes.
+- Coluna Ações mantém apenas "Excluir" (via [ConfirmDialog](../common/ConfirmDialog.md)).
+- Estado vazio tratado.
 
 ```ts
 interface PayablesLastTenProps {
   latestAccounts: AccountDetails[];
   handleView: (account: AccountDetails) => void;
-  handleDelete: (id: number) => void;
-  handleEdit: (account: AccountDetails) => void;
+  handleDelete: (id: string) => void;
 }
 ```
 
 ## Relações
 
 - **Usa:** [ConfirmDialog](../common/ConfirmDialog.md), `AccountDetails`, `formatCurrency` (`src/utils/formatter.tsx`), `formatDateString` (`src/utils/date.ts`), `payables.module.css`.
-- **Usado por:** `../../pages/payables.md`.
+- **Usado por:** [`../pages/payables.md`](../../pages/payables.md).
 
 ## Notas
 

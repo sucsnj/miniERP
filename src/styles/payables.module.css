@@ -303,6 +303,16 @@ textarea.accountInlineControl {
   color: var(--foreground);
 }
 
+.status > .accountStatusSelect {
+  width: 96px;
+  min-height: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
 .statusPendente {
   color: var(--danger);
 }
@@ -470,6 +480,19 @@ textarea.accountFieldControl {
   font-weight: 600;
 }
 
+.clickableRow {
+  cursor: pointer;
+}
+
+.clickableRow:hover {
+  background: var(--surface-soft);
+}
+
+.clickableRow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
 .actionsCell {
   display: flex;
   flex-wrap: wrap;
@@ -489,50 +512,11 @@ textarea.accountFieldControl {
   opacity: 0.95;
 }
 
-.detailTable button:nth-of-type(1) {
-  background: var(--accent);
-}
-
-.detailTable button:nth-of-type(2) {
-  background: var(--danger);
-}
-
-.payButton {
-  background: var(--success);
-}
-
-.saveButton {
-  background-color: var(--accent);
-  color: var(--foreground);
-}
-
-.cancelButton {
-  background-color: var(--danger);
-  color: var(--foreground);
-}
-
-.closeButton {
-  background-color: var(--muted);
-  color: var(--foreground);
-}
-
-.viewButton {
-  background-color: var(--success);
-  color: var(--foreground);
-}
-
-.editButton {
-  background-color: var(--accent);
-  color: var(--foreground);
-}
-
-.deleteButton {
-  background-color: var(--danger);
-  color: var(--foreground);
-}
-
 .status {
+  position: relative;
   display: inline-flex;
+  justify-self: start;
+  width: fit-content;
   align-items: center;
   justify-content: center;
   border-radius: 999px;

@@ -15,6 +15,7 @@ import Summary from '@/components/summary/Summary';
 import PayablesHeader from '@/components/payables/PayablesHeader';
 import PayablesFilterPanel from '@/components/payables/PayablesFilterPanel';
 import PayablesAccountModal from '@/components/payables/PayablesAccountModal';
+import PayablesPaymentModal from '@/components/payables/PayablesPaymentModal';
 import parseNumber from '../utils/number';
 import PayablesLastTen from '@/components/payables/PayablesLastTen';
 import PayablesModals from '@/components/payables/PayablesModals';
@@ -71,6 +72,8 @@ const Payables: React.FC = () => {
   const xmlInputRef = useRef<HTMLInputElement | null>(null);
 
   const [accountFormOpen, setAccountFormOpen] = useState(false);
+  const [payModalOpen, setPayModalOpen] = useState(false);
+  const [paymentNotes, setPaymentNotes] = useState('');
 
   const handleDueDateFromChange = (value: string) => {
     setDueDateFromFilter(value);
@@ -259,6 +262,28 @@ const Payables: React.FC = () => {
     }
   };
 
+  const openPaymentModal = (account: AccountDetails) => {
+    setSelectedAccount(account);
+    setPaymentNotes(account.bankNotes ?? '');
+    setPayModalOpen(true);
+  };
+
+  const confirmPayment = async () => {
+    if (!selectedAccount) return;
+
+    try {
+      const updated = { ...selectedAccount, bankNotes: paymentNotes.trim() };
+      await updateAccountMutation.mutateAsync(updated);
+      await payAccountMutation.mutateAsync({ id: selectedAccount.id });
+      setSelectedAccount({ ...updated, status: 'Pago' });
+      showToast('Conta paga com sucesso.', 'success');
+      setPayModalOpen(false);
+      setSelectedAccount(null);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao pagar conta.', 'error');
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       await deleteAccountMutation.mutateAsync({ id });
@@ -345,9 +370,8 @@ const Payables: React.FC = () => {
             filteredAccounts={filteredAccounts}
             handleView={handleView}
             handleDelete={handleDelete}
-            handleEdit={handleView}
             canWrite={isAdmin}
-            handleStartPayment={(account) => void changeAccountStatus(account, 'Pago')}
+            handleStartPayment={openPaymentModal}
             onClearFilters={() => {
               setDistributorFilter('');
               setStatusFilter('Todos');
@@ -376,7 +400,6 @@ const Payables: React.FC = () => {
             latestAccounts={latestAccounts}
             handleView={handleView}
             handleDelete={handleDelete}
-            handleEdit={handleView}
             canWrite={isAdmin}
           />
         </section>
@@ -419,8 +442,20 @@ const Payables: React.FC = () => {
         documentInputRef={documentInputRef}
       />
 
+      <PayablesPaymentModal
+        account={selectedAccount}
+        isOpen={payModalOpen}
+        notes={paymentNotes}
+        setNotes={setPaymentNotes}
+        onClose={() => {
+          setPayModalOpen(false);
+          setSelectedAccount(null);
+        }}
+        onConfirm={confirmPayment}
+      />
+
       <PayablesModals
-        selectedAccount={selectedAccount}
+        selectedAccount={payModalOpen ? null : selectedAccount}
         onCloseSelectedAccount={() => setSelectedAccount(null)}
         onUpdateField={updateAccountField}
         onStatusChange={changeAccountStatus}

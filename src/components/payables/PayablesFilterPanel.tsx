@@ -6,7 +6,6 @@ import { formatCurrency } from '../../utils/formatter';
 import styles from '../../styles/payables.module.css';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import Button from '@/components/common/Button';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -27,7 +26,6 @@ interface PayablesFilterPanelProps {
   filteredAccounts: AccountDetails[];
   handleView: (account: AccountDetails) => void;
   handleDelete: (id: string) => void;
-  handleEdit: (account: AccountDetails) => void;
   canWrite?: boolean;
   handleStartPayment: (account: AccountDetails) => void;
   onClearFilters: () => void;
@@ -130,7 +128,20 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
           </thead>
           <tbody>
             {filteredAccounts.map((account) => (
-              <tr key={account.id}>
+              <tr
+                key={account.id}
+                className={styles.clickableRow}
+                tabIndex={0}
+                role="button"
+                aria-label={`Abrir detalhes de ${account.supplierName}`}
+                onClick={() => handleView(account)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleView(account);
+                  }
+                }}
+              >
                 <td>{account.supplierName}</td>
                 <td>R$ {formatCurrency(account.amount, 2)}</td>
                 <td>{formatDateString(account.dueDate, 'DD/MM/YYYY')}</td>
@@ -152,10 +163,7 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
                     </span>
                   </span>
                 </td>
-                <td className={styles.actionsCell}>
-                  <Button type="button" variant="info" size="sm" onClick={() => handleView(account)} leftIcon={<VisibilityIcon />}>
-                    Ver
-                  </Button>
+                <td className={styles.actionsCell} onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
                   {canWrite && (
                     <Button type="button" variant="danger" size="sm" onClick={() => openConfirm(account.id)} leftIcon={<DeleteIcon />}>
                       Excluir

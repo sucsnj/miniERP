@@ -20,8 +20,7 @@ declare const styles: {
   readonly "anoInput": string;
   readonly "backupButton": string;
   readonly "backupButtonGlobal": string;
-  readonly "cancelButton": string;
-  readonly "closeButton": string;
+  readonly "clickableRow": string;
   readonly "compactTable": string;
   readonly "contasActions": string;
   readonly "contasFilterPanel": string;
@@ -30,11 +29,9 @@ declare const styles: {
   readonly "contasPage": string;
   readonly "contasPanel": string;
   readonly "customTooltip": string;
-  readonly "deleteButton": string;
   readonly "detailPanel": string;
   readonly "detailTable": string;
   readonly "detailTableWrapper": string;
-  readonly "editButton": string;
   readonly "emptyRow": string;
   readonly "filterBar": string;
   readonly "filterChipActions": string;
@@ -46,16 +43,13 @@ declare const styles: {
   readonly "observacoesCell": string;
   readonly "pago": string;
   readonly "panelHeader": string;
-  readonly "payButton": string;
   readonly "pendente": string;
-  readonly "saveButton": string;
   readonly "secondary": string;
   readonly "status": string;
   readonly "statusChip": string;
   readonly "statusPago": string;
   readonly "statusPendente": string;
   readonly "statusSelect": string;
-  readonly "viewButton": string;
 };
 export = styles;
 

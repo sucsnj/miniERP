@@ -164,6 +164,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/components/payables/PayablesAccountModal.md](src/components/payables/PayablesAccountModal.md) - modal "Nova Conta" para criar uma conta.
 - [src/components/payables/PayablesFilterPanel.md](src/components/payables/PayablesFilterPanel.md) - painel de filtros.
 - [src/components/payables/PayablesLastTen.md](src/components/payables/PayablesLastTen.md) - últimas 10 contas.
+- [src/components/payables/PayablesPaymentModal.md](src/components/payables/PayablesPaymentModal.md) - modal para editar observações e confirmar pagamento.
 - [src/components/payables/PayablesModals.md](src/components/payables/PayablesModals.md) - modais de contas.
 - [src/components/payables/PayablesHeader.md](src/components/payables/PayablesHeader.md) - cabeçalho do módulo.
 - [src/components/payables/Agenda.md](src/components/payables/Agenda.md) - agenda de contas pendentes, próximas contas e leitura por OCR.

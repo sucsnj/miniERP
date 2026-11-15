@@ -5,7 +5,8 @@
 ## O que faz
 
 - Filtros por distribuidora, intervalo de vencimento e status; botão "Limpar filtros" no cabeçalho, ao lado do chip "Filtro".
-- Tabela do período com ações Ver, Excluir (via [ConfirmDialog](../common/ConfirmDialog.md)) e Pagar (só pendentes).
+- Tabela do período com a linha clicável/accessível por teclado (abre detalhes) e ações Excluir (via [ConfirmDialog](../common/ConfirmDialog.md)) e Pagar (só pendentes).
+- O botão "Ver" foi removido; a célula de ações não propaga o clique/tecla para a linha.
 - Tooltip de observações no status via `<style jsx>` (`data-observacoes`).
 
 ## Relações
@@ -15,4 +16,4 @@
 
 ## Notas
 
-- `handleEdit` está na interface de props mas não é usado (dead prop).
+- `handleEdit` foi removido da interface de props.
