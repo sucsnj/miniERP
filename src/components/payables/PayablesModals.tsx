@@ -70,10 +70,11 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
           <div className={styles.accountField}>
             <span className={styles.accountFieldLabel}>Status</span>
             <span
-              className={`${styles.status} ${selectedAccount.status === 'Pago' ? styles.pago : styles.pendente}`}
-              data-observacoes={selectedAccount.bankNotes?.trim() || 'Banco / Observações'}
+              className={`${styles.statusTooltip} ${selectedAccount.status === 'Pago' ? styles.pago : styles.pendente}`}
+              title={selectedAccount.bankNotes?.trim() || selectedAccount.status}
+              data-observacoes={selectedAccount.bankNotes?.trim() || selectedAccount.status}
               tabIndex={0}
-              aria-label={`Status: ${selectedAccount.status}. Observações: ${selectedAccount.bankNotes?.trim() || 'Banco / Observações'}`}
+              aria-label={`Status: ${selectedAccount.status}. Observações: ${selectedAccount.bankNotes?.trim() || selectedAccount.status}`}
             >
               <select
                 className={styles.accountStatusSelect}
@@ -83,6 +84,7 @@ const PayablesModals: React.FC<PayablesModalsProps> = ({
                 onFocusCapture={() => setActiveFieldId(null)}
                 onChange={(event) => void changeStatus(event.target.value as AccountDetails['status'])}
                 aria-label="Status da conta"
+                title={selectedAccount.bankNotes?.trim() || selectedAccount.status}
               >
                 <option value="Pendente">Pendente</option>
                 <option value="Pago">Pago</option>

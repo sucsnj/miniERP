@@ -50,6 +50,7 @@ declare const styles: {
   readonly "statusPago": string;
   readonly "statusPendente": string;
   readonly "statusSelect": string;
+  readonly "statusTooltip": string;
 };
 export = styles;
 

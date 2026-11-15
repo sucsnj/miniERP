@@ -7,7 +7,7 @@
 - **Detalhes**: abre no padrão dos modais de carrinho/PIX e mostra Distribuidora, Valor, Vencimento, Documento, Status e Banco/Observações.
 - O modal controla um único campo ativo; ao clicar em outro campo, a edição anterior é cancelada automaticamente.
 - Confirmação de um campo salva imediatamente (`onUpdateField`) e o pai atualiza o objeto `selectedAccount`.
-- Status é um dropdown; `hover`/`focus` no status exibe as observações da conta (ou o próprio label "Banco / Observações" quando vazio). Escolher outro valor executa `onStatusChange`, tratando a conta como paga/pendente.
+- Status é um dropdown; `hover`/`focus` no status exibe as observações da conta (ou `Pago`/`Pendente` quando vazio). Escolher outro valor executa `onStatusChange`, tratando a conta como paga/pendente.
 - O botão de pagar/cancelar não fica mais no rodapé; o rodapé mantém apenas "Fechar".
 
 ## Relações

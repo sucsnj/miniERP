@@ -147,8 +147,11 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
                 <td>{formatDateString(account.dueDate, 'DD/MM/YYYY')}</td>
                 <td>{account.document}</td>
                 <td>
-                  <span className={`${styles.status} ${styles[account.status === 'Pago' ? 'pago' : 'pendente']} status`}
-                    date-notes={account.bankNotes || 'Sem observações'}>
+                  <span
+                    className={`${styles.status} ${styles[account.status === 'Pago' ? 'pago' : 'pendente']} status`}
+                    data-observacoes={account.bankNotes?.trim() || account.status}
+                    tabIndex={0}
+                  >
                     <span className="text-responsive">
                       {account.status}
                     </span>
