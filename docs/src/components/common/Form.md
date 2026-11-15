@@ -15,4 +15,4 @@
 
 ## Notas
 
-- Baseado em `.contasForm`.
+- Fonte única para formulários com `grid`/`gap`; o antigo `.contasForm` foi substituído por uso direto do `Form` comum.

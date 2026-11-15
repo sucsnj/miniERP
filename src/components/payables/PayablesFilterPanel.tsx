@@ -63,7 +63,12 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
     <div className={styles.contasFilterPanel}>
       <div className={styles.panelHeader}>
         <h2>Detalhe</h2>
-        <span className={styles.statusChip}>Filtro</span>
+        <div className={styles.filterChipActions}>
+          <span className={styles.statusChip}>Filtro</span>
+          <Button type="button" variant="outline" size="sm" onClick={onClearFilters} leftIcon={<ClearAllIcon />} aria-label="Limpar filtros" title="Limpar filtros">
+            Limpar filtros
+          </Button>
+        </div>
       </div>
 
       <div className={styles.detailTableWrapper}>
@@ -108,11 +113,6 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
                 <option value="Pago">Pago</option>
               </select>
             </label>
-          </div>
-          <div className={styles.filterActions}>
-            <Button type="button" variant="outline" size="sm" onClick={onClearFilters} leftIcon={<ClearAllIcon />}>
-              Limpar filtros
-            </Button>
           </div>
         </div>
 

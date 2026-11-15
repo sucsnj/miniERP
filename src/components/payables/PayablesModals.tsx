@@ -1,260 +1,91 @@
-import React from 'react';
-import { useRef } from 'react';
+import React, { useState } from 'react';
 import styles from '../../styles/payables.module.css';
-import { AccountDetails } from '../../services/payablesService';
+import type { AccountDetails } from '../../services/payablesService';
 import { formatCurrency } from '../../utils/formatter';
-import { useShortcuts } from '../../utils/shortcuts';
-import { useFocusTrap } from '../../utils/focus';
+import { formatDateString } from '../../utils/date';
+import AppModalShell from '@/components/common/AppModalShell';
 import Button from '@/components/common/Button';
+import InlineAccountField from './InlineAccountField';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
+export type EditableAccountField = 'supplierName' | 'amount' | 'dueDate' | 'document' | 'bankNotes';
 
 interface PayablesModalsProps {
   selectedAccount: AccountDetails | null;
-  editingAccount: AccountDetails | null;
-  distributor: string;
-  setDistributor: (value: string) => void;
-  amount: string;
-  setAmount: (value: string) => void;
-  dueDate: string;
-  setDueDate: (value: string) => void;
-  document: string;
-  setDocument: (value: string) => void;
-  bankNotes: string;
-  setBankNotes: (value: string) => void;
-  payModalOpen: boolean;
-  paymentNotes: string;
-  setPaymentNotes: (value: string) => void;
   onCloseSelectedAccount: () => void;
-  onEdit: (account: AccountDetails) => void;
-  onCancelEdit: () => void;
-  onStartPayment: (account: AccountDetails) => void;
-  onConfirmPayment: () => void;
-  onClosePayModal: () => void;
-  onCancelPayment: (id: string) => void;
-  onSave: (event: React.FormEvent<HTMLButtonElement>) => void;
+  onUpdateField: (account: AccountDetails, field: EditableAccountField, value: string) => Promise<boolean>;
+  onStatusChange: (account: AccountDetails, status: AccountDetails['status']) => Promise<boolean>;
   canWrite?: boolean;
 }
 
 const PayablesModals: React.FC<PayablesModalsProps> = ({
   selectedAccount,
-  editingAccount,
-  distributor,
-  setDistributor,
-  amount,
-  setAmount,
-  dueDate,
-  setDueDate,
-  document,
-  setDocument,
-  bankNotes,
-  setBankNotes,
-  payModalOpen,
-  paymentNotes,
-  setPaymentNotes,
   onCloseSelectedAccount,
-  onSave,
-  onEdit,
-  onCancelEdit,
-  onStartPayment,
-  onConfirmPayment,
-  onClosePayModal,
-  onCancelPayment,
+  onUpdateField,
+  onStatusChange,
   canWrite = true,
 }) => {
+  const [statusBusy, setStatusBusy] = useState(false);
+  const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  // Adiciona classe modal-open ao body quando a modal estiver aberta
-  useFocusTrap(modalRef, Boolean(selectedAccount || payModalOpen));
-
-  // Fecha o modal ao pressionar esc
-  useShortcuts(['Escape'], () => {
-    // Se o modal de edição estiver aberto, fecha
-    if (editingAccount) {
-      onCancelEdit();
-      return;
-    }
-
-    // Se o modal mainBarcode estiver aberto, fecha
-    if (selectedAccount) {
-      onCloseSelectedAccount();
-      return;
-    }
-  });
-
-  const onClose = () => {
+  const closeDetails = () => {
+    setStatusBusy(false);
+    setActiveFieldId(null);
     onCloseSelectedAccount();
-    onCancelEdit();
   };
 
-  return (
-    <>
-      {selectedAccount ? (
-        <div className={styles.modalOverlay} onClick={onClose}>
-          <div
-            ref={modalRef}
-            tabIndex={-1} // Permite foco na div do modal
-            className={styles.modalContent}
-            onClick={(event) => event.stopPropagation()}>
-            <h2>
-              Detalhes da conta
-              {editingAccount?.id === selectedAccount.id ? (
-                canWrite && (
-                  <>
-                    <Button type="button" variant="success" size="sm" onClick={(event) => onSave(event)}>
-                      Salvar
-                    </Button>
-                    <Button type="button" variant="outline" size="sm" onClick={onCancelEdit}>
-                      Cancelar
-                    </Button>
-                  </>
-                )
-              ) : (
-                canWrite && (
-                  <Button type="button" variant="info" size="sm" onClick={() => onEdit(selectedAccount)}>
-                    Editar
-                  </Button>
-                )
-              )}
-            </h2>
+  const updateField = (field: EditableAccountField) => (value: string) =>
+    selectedAccount ? onUpdateField(selectedAccount, field, value) : Promise.resolve(false);
 
-            <div className={styles.modalRow}>
-              <strong>Distribuidora:</strong>
-              {editingAccount?.id === selectedAccount.id ? (
-                <input
-                  className={styles.modalEdit}
-                  value={distributor}
-                  onChange={(e) => setDistributor(e.target.value)}
-                />
-              ) : (
-                <span>{selectedAccount.supplierName}</span>
-              )}
-            </div>
-            <div className={styles.modalRow}>
-              <strong>Valor:</strong>
-              {editingAccount?.id === selectedAccount.id ? (
-                <input
-                  className={styles.modalEdit}
-                  type="number"
-                  step="0.01"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              ) : (
-                <span>R$ {formatCurrency(selectedAccount.amount, 2)}</span>
-              )}
-            </div>
-            <div className={styles.modalRow}>
-              <strong>Vencimento:</strong>
-              {editingAccount?.id === selectedAccount.id ? (
-                <input
-                  className={styles.modalEdit}
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              ) : (
-                <span>{selectedAccount.dueDate}</span>
-              )}
-            </div>
-            <div className={styles.modalRow}>
-              <strong>Documento:</strong>
-              {editingAccount?.id === selectedAccount.id ? (
-                <input
-                  className={styles.modalEdit}
-                  type="text"
-                  value={document}
-                  onChange={(e) => setDocument(e.target.value)}
-                />
-              ) : (
-                <span>{selectedAccount.document}</span>
-              )}
-            </div>
-            <div className={styles.modalRow}>
-              <strong>Status:</strong>
-              <span className={`${styles.status} ${styles[selectedAccount.status === 'Pago' ? 'pago' : 'pendente']}`}>{selectedAccount.status}</span>
-            </div>
-            <div className={styles.modalRow}>
-              <strong>Banco / Observações:</strong>
-              {editingAccount?.id === selectedAccount.id ? (
-                <textarea
-                  className={styles.modalEdit}
-                  rows={4}
-                  value={bankNotes}
-                  onChange={(e) => setBankNotes(e.target.value)}
-                />
-              ) : (
-                <span>{selectedAccount.bankNotes || 'Sem observações'}</span>
-              )}
-            </div>
-            <div className={styles.modalActions}>
-              {canWrite && (
-                selectedAccount.status === 'Pendente' ? (
-                  <Button
-                    type="button"
-                    variant="success"
-                    size="sm"
-                    onClick={() => onStartPayment(selectedAccount)}
-                  >
-                    Pagar conta
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="warning"
-                    size="sm"
-                    onClick={() => {
-                      onCancelPayment(selectedAccount.id);
-                      onCancelEdit();
-                    }}
-                  >
-                    Cancelar pagamento
-                  </Button>
-                )
-              )}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  onCloseSelectedAccount();
-                  onCancelEdit();
-                }}
-              >
-                Fechar
-              </Button>
-            </div>
+  const changeStatus = async (status: AccountDetails['status']) => {
+    if (!selectedAccount || status === selectedAccount.status || !canWrite) return;
+
+    setStatusBusy(true);
+    await onStatusChange(selectedAccount, status);
+    setStatusBusy(false);
+  };
+
+  const canEdit = canWrite && Boolean(selectedAccount);
+
+  return (
+    <AppModalShell
+      isOpen={Boolean(selectedAccount)}
+      onClose={closeDetails}
+      title="Detalhes da conta"
+      titleId="payables-detail-modal-title"
+      icon={<VisibilityIcon />}
+      closeAriaLabel="Fechar detalhes da conta"
+      footerRight={(
+        <Button type="button" variant="outline" size="sm" onClick={closeDetails}>
+          Fechar
+        </Button>
+      )}
+    >
+      {selectedAccount ? (
+        <div className={styles.accountDetails}>
+          <InlineAccountField fieldId="supplierName" label="Distribuidora" value={selectedAccount.supplierName} canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('supplierName')} required />
+          <InlineAccountField fieldId="amount" label="Valor" value={selectedAccount.amount.toFixed(2)} displayValue={`R$ ${formatCurrency(selectedAccount.amount, 2)}`} inputType="number" canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('amount')} required />
+          <InlineAccountField fieldId="dueDate" label="Vencimento" value={selectedAccount.dueDate} displayValue={formatDateString(selectedAccount.dueDate, 'DD/MM/YYYY')} inputType="date" canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('dueDate')} required />
+          <InlineAccountField fieldId="document" label="Documento" value={selectedAccount.document} canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('document')} required />
+          <div className={styles.accountField}>
+            <span className={styles.accountFieldLabel}>Status</span>
+            <select
+              className={`${styles.accountStatusSelect} ${selectedAccount.status === 'Pago' ? styles.statusPago : styles.statusPendente}`}
+              value={selectedAccount.status}
+              disabled={!canEdit || statusBusy}
+              onMouseDown={() => setActiveFieldId(null)}
+              onFocusCapture={() => setActiveFieldId(null)}
+              onChange={(event) => void changeStatus(event.target.value as AccountDetails['status'])}
+              aria-label="Status da conta"
+            >
+              <option value="Pendente">Pendente</option>
+              <option value="Pago">Pago</option>
+            </select>
           </div>
+          <InlineAccountField fieldId="bankNotes" label="Banco / Observações" value={selectedAccount.bankNotes ?? ''} displayValue={selectedAccount.bankNotes || 'Sem observações'} inputType="textarea" rows={4} canWrite={canEdit} activeFieldId={activeFieldId} onActiveFieldChange={setActiveFieldId} onSave={updateField('bankNotes')} />
         </div>
       ) : null}
-
-      {payModalOpen && (
-        <div className={styles.modalOverlay} onClick={onClosePayModal}>
-          <div
-            ref={modalRef}
-            tabIndex={-1}
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}>
-            <h2>Observações do pagamento</h2>
-            <textarea
-              className={styles.modalEdit}
-              rows={5}
-              value={paymentNotes}
-              autoFocus
-              onChange={(e) => setPaymentNotes(e.target.value)}
-              placeholder="Digite observações..."
-            />
-            <div className={styles.modalActions}>
-              <Button type="button" variant="success" onClick={onConfirmPayment}>
-                Confirmar pagamento
-              </Button>
-              <Button type="button" variant="outline" onClick={onClosePayModal}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </AppModalShell>
   );
 };
 

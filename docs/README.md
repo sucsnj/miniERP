@@ -159,7 +159,9 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Contas a Pagar (`src/components/payables/`)
 
-- [src/components/payables/PayablesForm.md](src/components/payables/PayablesForm.md) - formulário de contas.
+- [src/components/payables/AccountField.md](src/components/payables/AccountField.md) - campo compartilhado para leitura/edição controlada.
+- [src/components/payables/InlineAccountField.md](src/components/payables/InlineAccountField.md) - campo individual inline com confirmar/cancelar.
+- [src/components/payables/PayablesAccountModal.md](src/components/payables/PayablesAccountModal.md) - modal "Nova Conta" para criar uma conta.
 - [src/components/payables/PayablesFilterPanel.md](src/components/payables/PayablesFilterPanel.md) - painel de filtros.
 - [src/components/payables/PayablesLastTen.md](src/components/payables/PayablesLastTen.md) - últimas 10 contas.
 - [src/components/payables/PayablesModals.md](src/components/payables/PayablesModals.md) - modais de contas.
@@ -202,6 +204,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/components/common/Toast.md](src/components/common/Toast.md) - componente de notificação.
 - [src/components/common/Toaster.md](src/components/common/Toaster.md) - host global do toast (ADR 0003).
 - [src/components/common/ConfirmDialog.md](src/components/common/ConfirmDialog.md) - modal de confirmação.
+- [src/components/common/AppModalShell.md](src/components/common/AppModalShell.md) - casca compartilhada de modais (overlay, header, body e footer).
 - [src/components/common/PageShell.md](src/components/common/PageShell.md) - casca padrão de página.
 - [src/components/common/PageHeader.md](src/components/common/PageHeader.md) - cabeçalho padrão de página.
 - [src/components/common/PageGrid.md](src/components/common/PageGrid.md) - grid padrão de página.

@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Filtros por distribuidora, intervalo de vencimento e status; botão "Limpar filtros".
+- Filtros por distribuidora, intervalo de vencimento e status; botão "Limpar filtros" no cabeçalho, ao lado do chip "Filtro".
 - Tabela do período com ações Ver, Excluir (via [ConfirmDialog](../common/ConfirmDialog.md)) e Pagar (só pendentes).
 - Tooltip de observações no status via `<style jsx>` (`data-observacoes`).
 

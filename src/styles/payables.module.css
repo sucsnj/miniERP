@@ -132,33 +132,6 @@
   align-items: center;
 }
 
-.modalEdit {
-  flex: 1;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface-strong);
-  color: var(--foreground);
-  padding: 12px 14px;
-  outline: none;
-}
-
-.filterActions button {
-  width: 97%;
-  margin-top: 40px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-
-  display: inline-flex;
-  /* ativa flexbox */
-  align-items: center;
-  /* centraliza verticalmente */
-  justify-content: center;
-  /* centraliza horizontalmente */
-  gap: 8px;
-  /* espaço entre ícone e texto */
-}
-
 .lastTenPanel {
   margin-top: 24px;
 }
@@ -176,59 +149,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
-}
-
-/* detalhes de contas */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  width: min(560px, calc(100% - 32px));
-  max-height: 80vh;
-  /* limita a altura ao viewport */
-  overflow-y: auto;
-  /* ativa a rolagem vertical */
-  background: var(--surface-strong);
-  color: var(--foreground);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: var(--shadow);
-}
-
-.modalRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 14px;
-}
-
-.modalRow strong {
-  min-width: 200px;
-  color: var(--muted);
-}
-
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 18px;
-}
-
-.modalActions button {
-  padding: 12px 18px;
-  border-radius: 12px;
-  border: none;
-  background: var(--accent);
-  color: var(--text-on-accent);
-  cursor: pointer;
 }
 
 .contasPanel {
@@ -288,6 +208,160 @@
   font-size: 1.4rem;
 }
 
+.filterChipActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accountActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.accountFormFields {
+  width: 100%;
+  gap: 0;
+}
+
+.accountField {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.55fr) minmax(0, 1.45fr);
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.accountField:last-child {
+  border-bottom: none;
+}
+
+.accountFieldLabel,
+.accountFieldValue {
+  overflow-wrap: anywhere;
+}
+
+.accountFieldLabel,
+.accountField>span:first-child {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.accountInlineControlWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.accountInlineControl {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--foreground);
+  padding: 9px 10px;
+}
+
+textarea.accountInlineControl {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.accountDetails {
+  display: grid;
+  width: 100%;
+  gap: 0;
+}
+
+.accountInlineCancel {
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid var(--border) !important;
+}
+
+.accountInlineCancel:hover,
+.accountInlineCancel:focus-visible {
+  background: #f3f4f6 !important;
+  color: #000 !important;
+}
+
+.accountStatusSelect {
+  justify-self: start;
+  width: 112px;
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--foreground);
+}
+
+.statusPendente {
+  color: var(--danger);
+}
+
+.statusPago {
+  color: var(--success);
+}
+
+.accountFieldControl,
+.accountFieldValue {
+  width: 100%;
+  min-width: 0;
+}
+
+.accountFieldControl {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--foreground);
+  padding: 9px 10px;
+}
+
+textarea.accountFieldControl {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.accountFieldValue {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: left;
+}
+
+.accountFieldValue:hover,
+.accountFieldValue:focus-visible {
+  border-color: var(--border);
+  background: var(--surface-soft);
+}
+
+.accountFieldValueDisabled {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--foreground);
+  text-align: left;
+}
+
+.accountPaymentNotes {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+}
+
 .statusChip {
   padding: 8px 12px;
   border-radius: 999px;
@@ -299,13 +373,6 @@
   word-break: break-word;
   max-width: 100%;
 }
-
-.contasForm {
-  display: grid;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
 
 .contasPage label {
   display: flex;
@@ -661,28 +728,6 @@
     font-size: 0.8rem;
   }
 
-  .modalContent {
-    width: calc(100% - 16px);
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .modalRow {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .modalActions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .modalActions button {
-    width: 100%;
-    padding: 12px;
-    font-size: 0.9rem;
-  }
-
   .statusChip,
   .status {
     font-size: 0.75rem;
@@ -721,8 +766,7 @@
   }
 
   .formActions button,
-  .contasActions button,
-  .modalActions button {
+  .contasActions button {
     padding: 6px 8px;
     font-size: 0.75rem;
   }

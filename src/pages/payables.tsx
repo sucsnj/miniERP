@@ -14,7 +14,7 @@ import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
 import PayablesHeader from '@/components/payables/PayablesHeader';
 import PayablesFilterPanel from '@/components/payables/PayablesFilterPanel';
-import PayablesForm from '@/components/payables/PayablesForm';
+import PayablesAccountModal from '@/components/payables/PayablesAccountModal';
 import parseNumber from '../utils/number';
 import PayablesLastTen from '@/components/payables/PayablesLastTen';
 import PayablesModals from '@/components/payables/PayablesModals';
@@ -26,6 +26,9 @@ import { useShortcuts } from '../utils/shortcuts';
 import { getDateArray, toTimestamp, now } from '../utils/date';
 import { validateRequired, validateCurrency } from '../utils/validation';
 import { useAuth } from '../contexts/AuthContext';
+import Button from '@/components/common/Button';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 
 const today = now().format('YYYY-MM-DD');
 
@@ -50,7 +53,6 @@ const Payables: React.FC = () => {
   const [dueDate, setDueDate] = useState(today);
   const [documentNumber, setDocumentNumber] = useState('');
   const [bankNotes, setBankNotes] = useState('');
-  const [editingAccount, setEditingAccount] = useState<AccountDetails | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetails | null>(null);
   const [distributorFilter, setDistributorFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<'Todos' | 'Pendente' | 'Pago'>('Todos');
@@ -68,8 +70,7 @@ const Payables: React.FC = () => {
   const documentInputRef = useRef<HTMLInputElement | null>(null);
   const xmlInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [payModalOpen, setPayModalOpen] = useState(false);
-  const [paymentNotes, setPaymentNotes] = useState('');
+  const [accountFormOpen, setAccountFormOpen] = useState(false);
 
   const handleDueDateFromChange = (value: string) => {
     setDueDateFromFilter(value);
@@ -107,10 +108,18 @@ const Payables: React.FC = () => {
     setDueDate(today);
     setDocumentNumber('');
     setBankNotes('');
-    setEditingAccount(null);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const clearFormFields = () => {
+    setDistributor('');
+    setAmount('');
+    setDueDate(today);
+    setDocumentNumber('');
+    setBankNotes('');
+    distributorInputRef.current?.focus();
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Validações de campos obrigatórios e formato (contrato ADR 0002)
@@ -156,47 +165,99 @@ const Payables: React.FC = () => {
     }
 
     try {
-      if (editingAccount) {
-        await updateAccountMutation.mutateAsync({
-          id: editingAccount.id,
-          supplierName: distributor,
-          amount: numericAmount,
-          dueDate,
-          document: documentNumber,
-          bankNotes,
-        });
-        showToast('Conta atualizada com sucesso.', 'success');
-      } else {
-        await createAccountMutation.mutateAsync({
-          supplierName: distributor,
-          amount: numericAmount,
-          dueDate,
-          document: documentNumber,
-          bankNotes,
-        });
-        showToast('Conta registrada com sucesso.', 'success');
-      }
+      await createAccountMutation.mutateAsync({
+        supplierName: distributor,
+        amount: numericAmount,
+        dueDate,
+        document: documentNumber,
+        bankNotes,
+      });
+      showToast('Conta registrada com sucesso.', 'success');
 
       resetForm();
+      setAccountFormOpen(false);
       await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao salvar a conta.', 'error');
     }
   };
 
-  const handleEdit = (account: AccountDetails) => {
-    setEditingAccount(account);
-    setDistributor(account.supplierName);
-    setAmount(account.amount.toFixed(2));
-    setDueDate(account.dueDate);
-    setDocumentNumber(account.document);
-    setBankNotes(account.bankNotes ?? '');
-    distributorInputRef.current?.focus();
+  const handleCancelEdit = () => {
+    resetForm();
+    setAccountFormOpen(false);
   };
 
-  const handleCancelEdit = () => resetForm();
+  const openNewAccount = () => {
+    resetForm();
+    setAccountFormOpen(true);
+  };
 
   const handleView = (account: AccountDetails) => setSelectedAccount(account);
+
+  const updateAccountField = async (
+    account: AccountDetails,
+    field: 'supplierName' | 'amount' | 'dueDate' | 'document' | 'bankNotes',
+    value: string
+  ): Promise<boolean> => {
+    const supplierName = field === 'supplierName' ? value.trim() : account.supplierName;
+    const document = field === 'document' ? value.trim() : account.document;
+    const dueDateField = field === 'dueDate' ? value : account.dueDate;
+    let amountValue = account.amount;
+
+    if (field === 'amount') {
+      const parsedAmount = parseNumber(value);
+      if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
+        showToast('Valor deve ser um número maior que zero.', 'error');
+        return false;
+      }
+      amountValue = parsedAmount;
+    }
+
+    if (!supplierName || !document || !dueDateField) {
+      showToast('Campo obrigatório.', 'error');
+      return false;
+    }
+
+    try {
+      const updated = {
+        ...account,
+        supplierName,
+        amount: amountValue,
+        dueDate: dueDateField,
+        document,
+        bankNotes: field === 'bankNotes' ? value.trim() : (account.bankNotes ?? ''),
+      };
+
+      await updateAccountMutation.mutateAsync(updated);
+      setSelectedAccount(updated);
+      showToast('Conta atualizada com sucesso.', 'success');
+      return true;
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar a conta.', 'error');
+      return false;
+    }
+  };
+
+  const changeAccountStatus = async (
+    account: AccountDetails,
+    status: AccountDetails['status']
+  ): Promise<boolean> => {
+    try {
+      if (status === 'Pago') {
+        await payAccountMutation.mutateAsync({ id: account.id });
+        setSelectedAccount({ ...account, status: 'Pago' });
+        showToast('Conta paga com sucesso.', 'success');
+      } else {
+        await cancelPaymentMutation.mutateAsync({ id: account.id });
+        setSelectedAccount({ ...account, status: 'Pendente' });
+        showToast('Pagamento cancelado e conta voltou a Pendente.', 'success');
+      }
+      return true;
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar o status da conta.', 'error');
+      return false;
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -205,39 +266,6 @@ const Payables: React.FC = () => {
       setSelectedAccount((current) => (current?.id === String(id) ? null : current));
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao excluir a conta.', 'error');
-    }
-  };
-
-  const handleConfirmPayment = async () => {
-    if (!selectedAccount) return;
-
-    try {
-      await updateAccountMutation.mutateAsync({
-        id: selectedAccount.id,
-        supplierName: selectedAccount.supplierName,
-        amount: selectedAccount.amount,
-        dueDate: selectedAccount.dueDate,
-        document: selectedAccount.document,
-        bankNotes: paymentNotes,
-      });
-
-      await payAccountMutation.mutateAsync({ id: selectedAccount.id });
-
-      showToast('Conta paga com sucesso.', 'success');
-      setPayModalOpen(false);
-      setSelectedAccount(null);
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao pagar conta.', 'error');
-    }
-  };
-
-  const handleCancelPayment = async (id: string) => {
-    try {
-      await cancelPaymentMutation.mutateAsync({ id });
-      showToast('Pagamento cancelado e conta voltou a Pendente.', 'success');
-      setSelectedAccount(null);
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao cancelar o pagamento.', 'error');
     }
   };
 
@@ -293,6 +321,8 @@ const Payables: React.FC = () => {
 
   // Limpa formulário de registro de conta ao pressionar esc
   useShortcuts(['Escape'], () => {
+    if (typeof document !== 'undefined' && document.body.classList.contains('modal-open')) return;
+
     resetForm();
   });
 
@@ -315,13 +345,9 @@ const Payables: React.FC = () => {
             filteredAccounts={filteredAccounts}
             handleView={handleView}
             handleDelete={handleDelete}
-            handleEdit={handleEdit}
+            handleEdit={handleView}
             canWrite={isAdmin}
-            handleStartPayment={(account) => {
-              setSelectedAccount(account);
-              setPaymentNotes(account.bankNotes || '');
-              setPayModalOpen(true);
-            }}
+            handleStartPayment={(account) => void changeAccountStatus(account, 'Pago')}
             onClearFilters={() => {
               setDistributorFilter('');
               setStatusFilter('Todos');
@@ -335,35 +361,22 @@ const Payables: React.FC = () => {
             }}
           />
 
-          {isAdmin && (
-            <PayablesForm
-            distributor={distributor}
-            setDistributor={setDistributor}
-            amount={amount}
-            setAmount={setAmount}
-            dueDate={dueDate}
-            setDueDate={setDueDate}
-            document={documentNumber}
-            setDocument={setDocumentNumber}
-            bankNotes={bankNotes}
-            setBankNotes={setBankNotes}
-            editingAccount={editingAccount}
-            onSubmit={handleSubmit}
-            onReset={resetForm}
-            onImportXML={handleImportXml}
-            onCancelEdit={handleCancelEdit}
-            distributorInputRef={distributorInputRef}
-            amountInputRef={amountInputRef}
-            dataInputRef={dataInputRef}
-            documentInputRef={documentInputRef}
-            />
-          )}
+          {isAdmin ? (
+            <div className={styles.accountActions}>
+              <Button type="button" variant="success" size="sm" onClick={openNewAccount} leftIcon={<NoteAddIcon />}>
+                Nova Conta
+              </Button>
+              <Button type="button" variant="info" size="sm" onClick={handleImportXml} leftIcon={<ImportExportIcon />}>
+                Importar XML
+              </Button>
+            </div>
+          ) : null}
 
           <PayablesLastTen
             latestAccounts={latestAccounts}
             handleView={handleView}
             handleDelete={handleDelete}
-            handleEdit={handleEdit}
+            handleEdit={handleView}
             canWrite={isAdmin}
           />
         </section>
@@ -385,9 +398,9 @@ const Payables: React.FC = () => {
         aria-label="Arquivo XML da nota fiscal"
       />
 
-      <PayablesModals
-        selectedAccount={selectedAccount}
-        editingAccount={editingAccount}
+      <PayablesAccountModal
+        isOpen={accountFormOpen}
+        onClose={handleCancelEdit}
         distributor={distributor}
         setDistributor={setDistributor}
         amount={amount}
@@ -398,25 +411,19 @@ const Payables: React.FC = () => {
         setDocument={setDocumentNumber}
         bankNotes={bankNotes}
         setBankNotes={setBankNotes}
-        payModalOpen={payModalOpen}
-        paymentNotes={paymentNotes}
-        setPaymentNotes={setPaymentNotes}
+        onSubmit={handleSubmit}
+        onReset={clearFormFields}
+        distributorInputRef={distributorInputRef}
+        amountInputRef={amountInputRef}
+        dataInputRef={dataInputRef}
+        documentInputRef={documentInputRef}
+      />
+
+      <PayablesModals
+        selectedAccount={selectedAccount}
         onCloseSelectedAccount={() => setSelectedAccount(null)}
-        onSave={handleSubmit}
-        onEdit={handleEdit}
-        onCancelEdit={handleCancelEdit}
-        onStartPayment={(account) => {
-          setSelectedAccount(account);
-          setPaymentNotes(account.bankNotes || '');
-          setPayModalOpen(true);
-        }}
-        onConfirmPayment={() => {
-          handleConfirmPayment();
-          handleCancelEdit();
-          setSelectedAccount(null);
-        }}
-        onClosePayModal={() => setPayModalOpen(false)}
-        onCancelPayment={handleCancelPayment}
+        onUpdateField={updateAccountField}
+        onStatusChange={changeAccountStatus}
         canWrite={isAdmin}
       />
     </PageShell>

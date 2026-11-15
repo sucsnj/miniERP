@@ -18,7 +18,7 @@ interface CartModalShellProps {
 
 ## Relações
 
-- **Usa:** `useFocusTrap` (`src/utils/focus.tsx`), `useEscClose` (`src/hooks/useEscClose.ts`), `formatCurrency`, `CartSummary` (`src/utils/cart.ts`).
+- **Usa:** [AppModalShell](../common/AppModalShell.md), `formatCurrency`, `CartSummary` (`src/utils/cart.ts`).
 - **Usado por:** [CartModal](./CartModal.md), [SelectItemsModal](./SelectItemsModal.md).
 
 ## Notas

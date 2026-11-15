@@ -1,4 +1,17 @@
 declare const styles: {
+  readonly "accountActions": string;
+  readonly "accountDetails": string;
+  readonly "accountField": string;
+  readonly "accountFieldControl": string;
+  readonly "accountFieldLabel": string;
+  readonly "accountFieldValue": string;
+  readonly "accountFieldValueDisabled": string;
+  readonly "accountFormFields": string;
+  readonly "accountInlineCancel": string;
+  readonly "accountInlineControl": string;
+  readonly "accountInlineControlWrap": string;
+  readonly "accountPaymentNotes": string;
+  readonly "accountStatusSelect": string;
   readonly "actionsCell": string;
   readonly "agendaCard": string;
   readonly "agendaList": string;
@@ -12,7 +25,6 @@ declare const styles: {
   readonly "compactTable": string;
   readonly "contasActions": string;
   readonly "contasFilterPanel": string;
-  readonly "contasForm": string;
   readonly "contasGrid": string;
   readonly "contasHeader": string;
   readonly "contasPage": string;
@@ -24,18 +36,13 @@ declare const styles: {
   readonly "detailTableWrapper": string;
   readonly "editButton": string;
   readonly "emptyRow": string;
-  readonly "filterActions": string;
   readonly "filterBar": string;
+  readonly "filterChipActions": string;
   readonly "formActions": string;
   readonly "formRow": string;
   readonly "hoverEllipsis": string;
   readonly "lastTenPanel": string;
   readonly "mesSelect": string;
-  readonly "modalActions": string;
-  readonly "modalContent": string;
-  readonly "modalEdit": string;
-  readonly "modalOverlay": string;
-  readonly "modalRow": string;
   readonly "observacoesCell": string;
   readonly "pago": string;
   readonly "panelHeader": string;
@@ -45,6 +52,8 @@ declare const styles: {
   readonly "secondary": string;
   readonly "status": string;
   readonly "statusChip": string;
+  readonly "statusPago": string;
+  readonly "statusPendente": string;
   readonly "statusSelect": string;
   readonly "viewButton": string;
 };
