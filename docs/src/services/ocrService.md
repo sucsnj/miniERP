@@ -10,7 +10,8 @@
 
 ## Relações
 
-- Usa `Tesseract.createWorker('eng')` de forma lazy; `next.config.ts` mantém `tesseract.js` em `serverExternalPackages` para não quebrar o worker no build da Vercel.
+- Usa `Tesseract.createWorker('eng', 1, options)` com `@tesseract.js-data/eng` (`4.0.0_best_int`) versionado em `node_modules`; não depende de CDN nem de `eng.traineddata` na raiz. Override local via `OCR_LANG_PATH`.
+- `next.config.ts` mantém `tesseract.js` em `serverExternalPackages` e inclui `tesseract.js`, `tesseract.js-core` e `@tesseract.js-data/eng` no tracing do `/api/ocr` para não quebrar o worker na Vercel.
 - **Usa:** `tesseract.js`, `sharp`, `src/services/boletoBarcode.ts`.
 - **Usado por:** [`src/services/pdfService.ts`](./pdfService.md) e [`src/pages/api/ocr.ts`](../pages/api/ocr.md).
 

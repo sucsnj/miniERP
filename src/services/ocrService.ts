@@ -1,9 +1,26 @@
 import Tesseract from 'tesseract.js';
 import sharp from 'sharp';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { extractDigitableLineFromText } from './boletoBarcode';
 
 const WHITELIST = '0123456789. ';
 const MAX_IMAGE_DIMENSION = 2200;
+
+const getWorkerOptions = () => {
+  const packagePath = path.join(
+    process.cwd(),
+    'node_modules',
+    '@tesseract.js-data',
+    'eng',
+    '4.0.0_best_int'
+  );
+  const langPath = process.env.OCR_LANG_PATH || packagePath;
+
+  return existsSync(langPath)
+    ? { langPath, cacheMethod: 'none' as const }
+    : {};
+};
 
 const imageVariants = async (source: Buffer): Promise<Buffer[]> => {
   const metadata = await sharp(source).metadata();
@@ -30,7 +47,7 @@ const imageVariants = async (source: Buffer): Promise<Buffer[]> => {
 };
 
 export const readDigitableLine = async (source: Buffer): Promise<string | null> => {
-  const worker = await Tesseract.createWorker('eng');
+  const worker = await Tesseract.createWorker('eng', 1, getWorkerOptions());
 
   try {
     await worker.setParameters({
