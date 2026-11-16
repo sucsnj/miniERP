@@ -27,7 +27,7 @@ O OCR de boletos foi removido pela migração ADR 0012 por depender de `pdf2pic`
 
 - OCR local funciona em desenvolvimento e em deploy serverless sem binários de sistema.
 - `@tesseract.js-data/eng` (`4.0.0_best_int`) é dependência do projeto; `eng.traineddata` raiz, se existir, não é necessário na Vercel.
-- `/api/ocr` inclui explicitamente `tesseract.js`, `tesseract.js-core` e `@tesseract.js-data/eng` nos arquivos rastreados; bundling/tracing parcial quebrava o worker (`Cannot find module '..'`) em PDFs renderizados com baixa qualidade.
+- `/api/ocr` inclui explicitamente `tesseract.js`, `tesseract.js-core`, `@tesseract.js-data/eng` e as dependências estáticas do worker (`bmp-js`, `node-fetch`, `is-url`, `regenerator-runtime`, `wasm-feature-detect`, `zlibjs`, `whatwg-url`/`tr46`/`webidl-conversions`, `idb-keyval`); bundling/tracing parcial quebrava o worker na Vercel.
 - Custo computacional continua alto em PDFs scanned; por isso o limite de 2 páginas.
 - Resultados ficam limitados ao browser atual; limpar dados do site ou outro navegador não herda histórico.
 - A privacidade é melhor: o servidor não retém PDFs/imagens; o browser só guarda a linha ou erro do OCR.
