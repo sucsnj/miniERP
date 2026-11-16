@@ -31,6 +31,8 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   setUser: (user: AuthUser | null) => void;
+  sessionExpired: boolean;
+  clearSessionExpired: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -45,7 +47,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const refreshingRef = useRef(false);
+  const userRef = useRef<AuthUser | null>(null);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const refresh = useCallback(async () => {
     if (refreshingRef.current) return;
@@ -59,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'x-session-heartbeat': '1' },
       });
       if (!response.ok) {
+        if (userRef.current) setSessionExpired(true);
         setUser(null);
         return;
       }
@@ -144,18 +153,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ identifier, password }),
     });
     const body = await parseJson<{ user: AuthUser }>(response);
+    setSessionExpired(false);
     setUser(body.user);
     await router.push('/');
   }, [router]);
 
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    setSessionExpired(false);
     setUser(null);
     await router.push('/login');
   }, [router]);
 
+  const clearSessionExpired = useCallback(() => setSessionExpired(false), []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refresh, setUser }}>
+    <AuthContext.Provider       value={{ user, loading, login, logout, refresh, setUser, sessionExpired, clearSessionExpired }}>
       {children}
     </AuthContext.Provider>
   );

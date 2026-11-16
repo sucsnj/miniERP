@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, loading, login, refresh } = useAuth();
+  const { user, loading, login, refresh, sessionExpired, clearSessionExpired } = useAuth();
   const [mode, setMode] = useState<'login' | 'bootstrap'>('login');
   const [available, setAvailable] = useState<boolean | null>(null);
   const [identifier, setIdentifier] = useState('');
@@ -82,6 +82,31 @@ export default function LoginPage() {
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'var(--background)' }}>
         <section style={{ width: '100%', maxWidth: '520px', padding: '24px', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'var(--surface-strong)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <h1 style={{ margin: 0, fontSize: '1.35rem' }}>MinErp</h1>
+          {sessionExpired && (
+            <div
+              role="status"
+              aria-live="polite"
+              style={{
+                position: 'fixed',
+                top: '24px',
+                right: '24px',
+                zIndex: 10000,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                width: 'min(360px, calc(100vw - 48px))',
+                padding: '16px',
+                border: '1px solid var(--warning)',
+                borderRadius: 'var(--radius-lg)',
+                background: 'var(--surface-strong)',
+                boxShadow: '0 18px 48px rgba(0, 0, 0, 0.28)',
+              }}
+            >
+              <strong>Sessão expirada</strong>
+              <span style={{ color: 'var(--muted)' }}>Sua sessão expirou. Entre novamente para continuar usando o MinErp.</span>
+              <Button type="button" size="sm" variant="outline" onClick={clearSessionExpired}>Entendi</Button>
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button type="button" size="sm" variant={mode === 'login' ? 'primary' : 'outline'} onClick={() => setMode('login')}>Entrar</Button>
             {available !== false && (

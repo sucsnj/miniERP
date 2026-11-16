@@ -7,6 +7,8 @@
 - Carrega `/api/auth/me` com `cache: 'no-store'` e header `x-session-heartbeat: 1`; a resposta usa `Cache-Control: no-store`.
 - Programa a validação para o deadline (`sessionExpiresAt`/`sessionAbsoluteExpiresAt`); também verifica a sessão a cada 30s e no retorno da aba (`focus`/`visibility`).
 - `refresh()` tem trava contra chamadas concorrentes; em 401 limpa `user`, permitindo que `AuthGate` redirecione para `/login`.
+- Em 401 após uma sessão carregada, expõe `sessionExpired = true`; manual logout limpa esse flag.
+- Expõe `sessionExpired` e `clearSessionExpired` para a UI no `/login`.
 - Quando faltarem no máximo 24h para a expiração efetiva (rolling ou absoluta), exibe um toast intermitente de aviso.
 - Expõe `user`, `loading`, `login(identifier, password)`, `logout()`, `refresh()` e `setUser`.
 - Login aceita `login` ou `email` e redireciona para `/`.
