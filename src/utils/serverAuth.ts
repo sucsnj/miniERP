@@ -234,8 +234,9 @@ export async function getAuthContext(req: NextApiRequest, res?: NextApiResponse)
     return null;
   }
 
+  const isActivityHeartbeat = req.headers['x-session-heartbeat'] === '1';
   let effectiveExpiresAt = rollingExpiresAt;
-  if (isCurrent) {
+  if (isCurrent && !isActivityHeartbeat) {
     if (rollingExpiresAt - now <= SESSION_RENEW_AFTER_SECONDS * 1000) {
       const nextExpiresAt = Math.min(now + SESSION_INACTIVITY_SECONDS * 1000, absoluteExpiresAt);
       if (nextExpiresAt > rollingExpiresAt) {

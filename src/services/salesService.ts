@@ -297,6 +297,9 @@ export const isConsolidated = async (month: number, year: number): Promise<boole
   return !!date && date.total !== undefined;
 };
 
+const isUnauthorizedError = (error: unknown) =>
+  error instanceof Error && /\b401\b/.test(error.message);
+
 export const fetchMissingMonthlyConsolidationMonths = async (): Promise<Array<{ month: number; year: number }>> => {
   const response = await fetch('/api/monthly-sales?action=missing');
   if (!response.ok) {
@@ -326,31 +329,36 @@ export const autoConsolidate = async (
   if (!day || !month || !initialYear || day < threshold || !storeId) return;
   let year = initialYear;
 
-  if (mode === 'all-previous') {
-    const missingMonths = await fetchMissingMonthlyConsolidationMonths();
-    for (const missing of missingMonths) {
-      await consolidateMonthly(missing.month, missing.year, storeId);
+  try {
+    if (mode === 'all-previous') {
+      const missingMonths = await fetchMissingMonthlyConsolidationMonths();
+      for (const missing of missingMonths) {
+        await consolidateMonthly(missing.month, missing.year, storeId);
+      }
+      return;
     }
-    return;
-  }
 
-  let previousMonth = month - 1;
-  if (month === 1) {
-    year = year - 1;
-    previousMonth = 12;
-  }
+    let previousMonth = month - 1;
+    if (month === 1) {
+      year = year - 1;
+      previousMonth = 12;
+    }
 
-  if (isConsolidationChecked(storeId, previousMonth, year)) {
-    return;
-  }
+    if (isConsolidationChecked(storeId, previousMonth, year)) {
+      return;
+    }
 
-  const alreadyConsolidated = await isConsolidated(previousMonth, year);
-  if (alreadyConsolidated) {
-    markConsolidationChecked(storeId, previousMonth, year);
-    return;
-  }
+    const alreadyConsolidated = await isConsolidated(previousMonth, year);
+    if (alreadyConsolidated) {
+      markConsolidationChecked(storeId, previousMonth, year);
+      return;
+    }
 
-  await consolidateMonthly(previousMonth, year, storeId);
+    await consolidateMonthly(previousMonth, year, storeId);
+  } catch (error) {
+    if (isUnauthorizedError(error)) return;
+    throw error;
+  }
 };
 
 export const deleteMonthly = async (id: string | number) => {

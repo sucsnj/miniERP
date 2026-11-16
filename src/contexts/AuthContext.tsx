@@ -52,7 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     refreshingRef.current = true;
     try {
-      const response = await fetch('/api/auth/me', { method: 'GET', credentials: 'same-origin' });
+      const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { 'x-session-heartbeat': '1' },
+      });
       if (!response.ok) {
         setUser(null);
         return;
@@ -71,6 +76,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const id = window.setTimeout(() => void refresh(), 0);
     return () => window.clearTimeout(id);
   }, [refresh]);
+
+  useEffect(() => {
+    if (!user?.sessionExpiresAt || !user.sessionAbsoluteExpiresAt) return;
+
+    const deadline = Math.min(
+      new Date(user.sessionExpiresAt).getTime(),
+      new Date(user.sessionAbsoluteExpiresAt).getTime(),
+    );
+    if (Number.isNaN(deadline)) return;
+
+    // Valida no instante do deadline, em vez de esperar o intervalo de poll (30s).
+    const id = window.setTimeout(() => {
+      void refresh();
+    }, Math.max(0, deadline - Date.now()));
+
+    return () => window.clearTimeout(id);
+  }, [user?.sessionExpiresAt, user?.sessionAbsoluteExpiresAt, refresh]);
 
   useEffect(() => {
     if (!user?.sessionExpiresAt || !user.sessionAbsoluteExpiresAt) return;

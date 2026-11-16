@@ -4,7 +4,8 @@
 
 ## O que faz
 
-- Carrega `/api/auth/me` no mount e verifica a sessão a cada 30s enquanto autenticado; também verifica no retorno da aba (`focus`/`visibility`).
+- Carrega `/api/auth/me` com `cache: 'no-store'` e header `x-session-heartbeat: 1`; a resposta usa `Cache-Control: no-store`.
+- Programa a validação para o deadline (`sessionExpiresAt`/`sessionAbsoluteExpiresAt`); também verifica a sessão a cada 30s e no retorno da aba (`focus`/`visibility`).
 - `refresh()` tem trava contra chamadas concorrentes; em 401 limpa `user`, permitindo que `AuthGate` redirecione para `/login`.
 - Quando faltarem no máximo 24h para a expiração efetiva (rolling ou absoluta), exibe um toast intermitente de aviso.
 - Expõe `user`, `loading`, `login(identifier, password)`, `logout()`, `refresh()` e `setUser`.
