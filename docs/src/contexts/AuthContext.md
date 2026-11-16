@@ -4,7 +4,8 @@
 
 ## O que faz
 
-- Carrega `/api/auth/me` no mount.
+- Carrega `/api/auth/me` no mount e verifica sessão a cada 30s quando autenticado; também verifica no retorno da aba (`focus`/`visibility`).
+- `refresh()` tem trava contra chamadas concorrentes; em 401 limpa `user`, permitindo que `AuthGate` redirecione para `/login`.
 - Expõe `user`, `loading`, `login(identifier, password)`, `logout()`, `refresh()` e `setUser`.
 - Login aceita `login` ou `email` e redireciona para `/`.
 - Logout chama `/api/auth/logout` e redireciona para `/login`.
