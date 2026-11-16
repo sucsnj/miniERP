@@ -59,7 +59,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
 | Produtos / estoque | `docs/src/pages/products.md`, `docs/src/database/productsDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/products/*.md`, `docs/src/services/productsService.md` |
 | Perfil / autenticação admin | `docs/src/pages/profile.md`, `docs/src/pages/api/auth/profile.md`, `docs/src/pages/api/auth/profile/password.md`, `docs/src/pages/api/avatar.md`, `docs/src/services/profileService.md`, `docs/src/services/avatarService.md` |
-| Autenticação / bootstrap | `docs/src/pages/login.md`, `docs/src/pages/api/auth/bootstrap.md`, `docs/src/contexts/AuthContext.md`, `docs/adr/0013-autenticacao-multiempresa-multiloja.md`, `docs/adr/0015-multiplos-admins-por-bootstrap.md` |
+| Autenticação / bootstrap | `docs/src/pages/login.md`, `docs/src/pages/api/auth/bootstrap.md`, `docs/src/contexts/AuthContext.md`, `docs/adr/0013-autenticacao-multiempresa-multiloja.md`, `docs/adr/0015-multiplos-admins-por-bootstrap.md`, `docs/adr/0016-sessao-sliding-e-rotacao.md` |
 | Cadastros auxiliares | `docs/src/pages/registration.md`, `docs/src/components/catalog/*.md`, `docs/adr/0008-modais-de-catalogo-e-confirmacao-compartilhada.md` |
 | PIX / pagamento | `docs/src/components/pix/PixModal.md`, `docs/src/utils/pix.md` |
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |

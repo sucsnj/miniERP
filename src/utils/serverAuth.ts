@@ -18,6 +18,8 @@ export interface AuthContext {
   storeId: string;
   storeName: string;
   sessionId: string;
+  sessionExpiresAt: string;
+  sessionAbsoluteExpiresAt: string;
   contact: ContactProfile;
 }
 
@@ -47,7 +49,11 @@ interface StoreRecord {
   name: string;
 }
 
-const SESSION_MAX_AGE_SECONDS = 2 * 24 * 60 * 60;
+const SESSION_INACTIVITY_SECONDS = 14 * 24 * 60 * 60;
+const SESSION_ABSOLUTE_SECONDS = 30 * 24 * 60 * 60;
+const SESSION_RENEW_AFTER_SECONDS = 7 * 24 * 60 * 60;
+const SESSION_ROTATION_SECONDS = 2 * 24 * 60 * 60;
+const SESSION_ROTATION_GRACE_SECONDS = 60;
 const SESSION_COOKIE = 'minierp_session';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const IDENTIFIER_PATTERN = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$|^[a-z]{4,}$/;
@@ -102,7 +108,7 @@ export function setSessionCookie(res: NextApiResponse, token: string): void {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   res.setHeader(
     'Set-Cookie',
-    `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; HttpOnly; SameSite=Lax${secure}`
+    `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${SESSION_ABSOLUTE_SECONDS}; HttpOnly; SameSite=Lax${secure}`
   );
 }
 
@@ -180,34 +186,93 @@ async function pickStore(user: UserRecord, stores: StoreRecord[]): Promise<Store
 export async function createSession(userId: string, storeId: string): Promise<string> {
   const client = getSupabaseServerClient();
   const token = crypto.randomBytes(32).toString('base64url');
-  const expiresAt = new Date(Date.now() + SESSION_MAX_AGE_SECONDS * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + SESSION_INACTIVITY_SECONDS * 1000).toISOString();
 
   const { error } = await client.from('sessions').insert({
     user_id: userId,
     store_id: storeId,
     token_hash: hashSessionToken(token),
     expires_at: expiresAt,
+    last_rotated_at: new Date().toISOString(),
   });
 
   if (error) throw new Error('Could not create session.');
   return token;
 }
 
-export async function getAuthContext(req: NextApiRequest): Promise<AuthContext | null> {
+export async function getAuthContext(req: NextApiRequest, res?: NextApiResponse): Promise<AuthContext | null> {
   const token = parseSessionCookie(req);
   if (!token) return null;
 
   const client = getSupabaseServerClient();
+  const tokenHash = hashSessionToken(token);
   const { data: session, error } = await client
     .from('sessions')
-    .select(`id, store_id, expires_at, revoked_at, users!inner(${USER_PUBLIC_PROFILE_SELECT})`)
-    .eq('token_hash', hashSessionToken(token))
+    .select(`id, store_id, expires_at, created_at, revoked_at, token_hash, previous_token_hash, previous_token_expires_at, last_rotated_at, users!inner(${USER_PUBLIC_PROFILE_SELECT})`)
+    .or(`token_hash.eq.${tokenHash},previous_token_hash.eq.${tokenHash}`)
     .maybeSingle();
 
-  if (error || !session || session.revoked_at) return null;
-  if (new Date(session.expires_at as string).getTime() <= Date.now()) {
+  if (error || !session) return null;
+
+  const isCurrent = typeof session.token_hash === 'string' && session.token_hash === tokenHash;
+  const previousExpiresAt = session.previous_token_expires_at
+    ? new Date(session.previous_token_expires_at as string).getTime()
+    : Number.NaN;
+  if (!isCurrent && (Number.isNaN(previousExpiresAt) || previousExpiresAt <= Date.now())) {
     await client.from('sessions').delete().eq('id', session.id);
     return null;
+  }
+  if (session.revoked_at) return null;
+
+  const now = Date.now();
+  const createdAt = new Date(session.created_at as string).getTime();
+  const rollingExpiresAt = new Date(session.expires_at as string).getTime();
+  const absoluteExpiresAt = createdAt + SESSION_ABSOLUTE_SECONDS * 1000;
+
+  if (Number.isNaN(createdAt) || Number.isNaN(rollingExpiresAt) || rollingExpiresAt <= now || absoluteExpiresAt <= now) {
+    await client.from('sessions').delete().eq('id', session.id);
+    return null;
+  }
+
+  const isActivityHeartbeat = req.headers['x-session-heartbeat'] === '1';
+  let effectiveExpiresAt = rollingExpiresAt;
+  if (isCurrent && !isActivityHeartbeat) {
+    if (rollingExpiresAt - now <= SESSION_RENEW_AFTER_SECONDS * 1000) {
+      const nextExpiresAt = Math.min(now + SESSION_INACTIVITY_SECONDS * 1000, absoluteExpiresAt);
+      if (nextExpiresAt > rollingExpiresAt) {
+        const { error: renewalError } = await client
+          .from('sessions')
+          .update({ expires_at: new Date(nextExpiresAt).toISOString() })
+          .eq('id', session.id);
+        if (renewalError) {
+          console.error('Erro ao renovar a sessão:', renewalError);
+        } else {
+          effectiveExpiresAt = nextExpiresAt;
+        }
+      }
+    }
+
+    const lastRotatedAt = new Date(session.last_rotated_at as string ?? session.created_at as string).getTime();
+    const rotationDue = Number.isNaN(lastRotatedAt) || now - lastRotatedAt >= SESSION_ROTATION_SECONDS * 1000;
+    if (res && rotationDue) {
+      const nextToken = crypto.randomBytes(32).toString('base64url');
+      const { error: rotationError } = await client
+        .from('sessions')
+        .update({
+          token_hash: hashSessionToken(nextToken),
+          previous_token_hash: tokenHash,
+          previous_token_expires_at: new Date(now + SESSION_ROTATION_GRACE_SECONDS * 1000).toISOString(),
+          last_rotated_at: new Date(now).toISOString(),
+        })
+        .eq('id', session.id)
+        .eq('token_hash', tokenHash);
+
+      if (rotationError) {
+        console.error('Erro ao rotacionar a sessão:', rotationError);
+      } else {
+        setSessionCookie(res, nextToken);
+      }
+    }
   }
 
   const userData = session.users as unknown;
@@ -237,6 +302,8 @@ export async function getAuthContext(req: NextApiRequest): Promise<AuthContext |
     storeId: preferredStore.id,
     storeName: preferredStore.name,
     sessionId: String(session.id),
+    sessionExpiresAt: new Date(effectiveExpiresAt).toISOString(),
+    sessionAbsoluteExpiresAt: new Date(absoluteExpiresAt).toISOString(),
     contact: userContact(user),
   };
 }
@@ -291,6 +358,8 @@ export async function getBootstrapUserContext(companyId: string, storeId: string
     storeId: store.id as string,
     storeName: store.name as string,
     sessionId: '',
+    sessionExpiresAt: '',
+    sessionAbsoluteExpiresAt: '',
     contact: userContact(user as UserRecord),
   };
 }

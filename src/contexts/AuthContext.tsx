@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import { showToast } from '../utils/toast';
 import type { ContactProfile } from '../utils/businessProfile';
 
 export type AuthRole = 'admin' | 'merchant';
@@ -16,8 +17,12 @@ export interface AuthUser {
   storeId: string;
   storeName: string;
   sessionId: string;
+  sessionExpiresAt: string;
+  sessionAbsoluteExpiresAt: string;
   contact: ContactProfile;
 }
+
+const SESSION_WARNING_LEAD_MS = 24 * 60 * 60 * 1000;
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -26,6 +31,8 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   setUser: (user: AuthUser | null) => void;
+  sessionExpired: boolean;
+  clearSessionExpired: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,15 +47,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const refreshingRef = useRef(false);
+  const userRef = useRef<AuthUser | null>(null);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const refresh = useCallback(async () => {
     if (refreshingRef.current) return;
 
     refreshingRef.current = true;
     try {
-      const response = await fetch('/api/auth/me', { method: 'GET', credentials: 'same-origin' });
+      const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { 'x-session-heartbeat': '1' },
+      });
       if (!response.ok) {
+        if (userRef.current) setSessionExpired(true);
         setUser(null);
         return;
       }
@@ -66,6 +85,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const id = window.setTimeout(() => void refresh(), 0);
     return () => window.clearTimeout(id);
   }, [refresh]);
+
+  useEffect(() => {
+    if (!user?.sessionExpiresAt || !user.sessionAbsoluteExpiresAt) return;
+
+    const deadline = Math.min(
+      new Date(user.sessionExpiresAt).getTime(),
+      new Date(user.sessionAbsoluteExpiresAt).getTime(),
+    );
+    if (Number.isNaN(deadline)) return;
+
+    // Valida no instante do deadline, em vez de esperar o intervalo de poll (30s).
+    const id = window.setTimeout(() => {
+      void refresh();
+    }, Math.max(0, deadline - Date.now()));
+
+    return () => window.clearTimeout(id);
+  }, [user?.sessionExpiresAt, user?.sessionAbsoluteExpiresAt, refresh]);
+
+  useEffect(() => {
+    if (!user?.sessionExpiresAt || !user.sessionAbsoluteExpiresAt) return;
+
+    const deadline = Math.min(
+      new Date(user.sessionExpiresAt).getTime(),
+      new Date(user.sessionAbsoluteExpiresAt).getTime(),
+    );
+    const timeLeft = deadline - Date.now();
+    if (Number.isNaN(deadline) || timeLeft > SESSION_WARNING_LEAD_MS || timeLeft <= 0) return;
+
+    const notify = () => {
+      const hours = Math.max(1, Math.ceil((deadline - Date.now()) / (60 * 60 * 1000)));
+      showToast(`Sua sessão expira em menos de 24 horas (${hours}h). Salve o que estiver pendente.`, 'info', 15000);
+    };
+
+    notify();
+    const id = window.setInterval(notify, 45_000);
+
+    return () => window.clearInterval(id);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -96,18 +153,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ identifier, password }),
     });
     const body = await parseJson<{ user: AuthUser }>(response);
+    setSessionExpired(false);
     setUser(body.user);
     await router.push('/');
   }, [router]);
 
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    setSessionExpired(false);
     setUser(null);
     await router.push('/login');
   }, [router]);
 
+  const clearSessionExpired = useCallback(() => setSessionExpired(false), []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refresh, setUser }}>
+    <AuthContext.Provider       value={{ user, loading, login, logout, refresh, setUser, sessionExpired, clearSessionExpired }}>
       {children}
     </AuthContext.Provider>
   );

@@ -42,7 +42,7 @@ A autenticação por e-mail não será usada neste momento por limitações do p
    - `HttpOnly`.
    - `Secure` em produção.
    - `SameSite=Lax`.
-   - Duração de **2 dias** (48 horas).
+    - Duração de **2 dias** (48 horas). **Alterado:** a partir do ADR 0016, a sessão é sliding de 14 dias com teto absoluto de 30 dias e rotação de token.
    - Cookie contém apenas um token aleatório de 256 bits.
    - A tabela `sessions` guarda somente o hash do token (`token_hash`).
    - Logout revoga a sessão.

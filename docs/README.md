@@ -44,9 +44,10 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0010-sistema-de-botoes-com-variantes.md](adr/0010-sistema-de-botoes-com-variantes.md) - ADR:
 - [adr/0011-integracao-carrinho-estoque.md](adr/0011-integracao-carrinho-estoque.md) - ADR: integração do carrinho com estoque (devolução explícita, quantidade inteira, estoque negativo configurável, backend-first). botões com variantes funcionais, tamanhos, carregamento e `iconOnly`.
 - [adr/0012-migracao-sqlite-para-supabase.md](adr/0012-migracao-sqlite-para-supabase.md) - ADR: migração do SQLite local para Supabase/Postgres (schema public, UUID, RPC, nomenclatura inglesa ponta a ponta).
-- [adr/0013-autenticacao-multiempresa-multiloja.md](adr/0013-autenticacao-multiempresa-multiloja.md) - ADR: autenticação própria, sessão de 48h, papéis admin/merchant e isolamento multiempresa/multi-loja.
+- [adr/0013-autenticacao-multiempresa-multiloja.md](adr/0013-autenticacao-multiempresa-multiloja.md) - ADR: autenticação própria, papéis admin/merchant e isolamento multiempresa/multi-loja.
 - [adr/0014-ocr-local-e-indexeddb.md](adr/0014-ocr-local-e-indexeddb.md) - ADR: OCR local de boletos, IndexedDB para histórico e sem preencher contas automaticamente.
 - [adr/0015-multiplos-admins-por-bootstrap.md](adr/0015-multiplos-admins-por-bootstrap.md) - ADR: permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`.
+- [adr/0016-sessao-sliding-e-rotacao.md](adr/0016-sessao-sliding-e-rotacao.md) - ADR: sessão sliding (14 dias) com limite absoluto (30 dias) e rotação de token.
 
 ## Páginas do Frontend
 
@@ -77,7 +78,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ### Financeiro
 
 - [src/pages/api/auth/bootstrap.md](src/pages/api/auth/bootstrap.md) - bootstrap autenticado de empresa/loja/settings/admin.
-- [src/pages/api/auth/login.md](src/pages/api/auth/login.md) - login por login/e-mail com sessão de 48h.
+- [src/pages/api/auth/login.md](src/pages/api/auth/login.md) - login por login/e-mail com sessão sliding (14 dias; teto absoluto de 30 dias) e rotação.
 - [src/pages/api/auth/logout.md](src/pages/api/auth/logout.md) - logout e revogação de sessão.
 - [src/pages/api/auth/me.md](src/pages/api/auth/me.md) - contexto da sessão atual.
 - [src/pages/api/auth/change-password.md](src/pages/api/auth/change-password.md) - troca de senha e revogação de sessões.

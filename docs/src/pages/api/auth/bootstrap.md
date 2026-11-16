@@ -5,7 +5,7 @@
 ## O que faz
 
 - `GET`: informa `{ available: true }` quando `PIN_MASTER` está configurado.
-- `POST`: valida `PIN_MASTER`, política de login/senha, cria empresa/loja/settings/admin/seed atomicamente via RPC `bootstrap_company_admin` e abre sessão de 2 dias.
+- `POST`: valida `PIN_MASTER`, política de login/senha, cria empresa/loja/settings/admin/seed atomicamente via RPC `bootstrap_company_admin` e abre sessão de 14 dias (sliding; teto absoluto de 30 dias).
 
 ## Relações
 

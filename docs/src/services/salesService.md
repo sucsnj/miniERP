@@ -23,4 +23,5 @@
 
 - Registradores/edição/exclusão de vendas falham com `Error` se `!response.ok`.
 - `fetchDailySales`, `fetchSaleItems`, `fetchMonthlyTotal` e `registerSaleWithCreatedAt` também lançam erro em `!response.ok`.
+- `autoConsolidate` trata `401` silenciosamente (retorna sem lançar) para evitar ruído quando a sessão expira em segundo plano.
 - `missing_monthly_consolidation_months` normaliza e retorna `{ month, year }` filtrados por tenant/loja.
