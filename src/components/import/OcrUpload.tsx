@@ -11,7 +11,7 @@ import {
 import styles from '../../styles/ocrUpload.module.css';
 
 const MAX_FILES = 10;
-const MAX_FILE_SIZE = 8 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
 interface OcrUploadResponseItem {
   id: string;
@@ -64,34 +64,51 @@ export default function OcrUpload() {
     if (files.length === 0) return;
 
     if (files.length > MAX_FILES || files.some((file) => file.size > MAX_FILE_SIZE)) {
-      showToast(`Envie até ${MAX_FILES} arquivos e cada arquivo com no máximo 8 MB.`, 'error');
+      showToast(`Envie até ${MAX_FILES} arquivos e cada arquivo com no máximo 4 MB.`, 'error');
       return;
     }
 
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append('files', file);
-    }
-
     setLoading(true);
-    showToast('Processando OCR...', 'info', null);
+    showToast(`Processando OCR... 0/${files.length}`, 'info', null);
+
+    const results: OcrUploadResponseItem[] = [];
 
     try {
-      const response = await fetch('/api/ocr', {
-        method: 'POST',
-        body: formData,
-      });
-      const body = await response.json() as unknown;
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('files', file);
 
-      if (!response.ok || !Array.isArray(body)) {
-        const message = body && typeof body === 'object' && 'error' in body
-          ? String((body as { error?: unknown }).error)
-          : 'Erro ao processar OCR.';
-        showToast(message, 'error');
-        return;
+        const response = await fetch('/api/ocr', {
+          method: 'POST',
+          body: formData,
+        });
+        const contentType = response.headers.get('content-type') ?? '';
+        const bodyText = await response.text();
+        let body: unknown = [];
+
+        if (bodyText && contentType.includes('application/json')) {
+          try {
+            body = JSON.parse(bodyText) as unknown;
+          } catch {
+            body = [];
+          }
+        }
+
+        if (!response.ok || !Array.isArray(body)) {
+          const vercelMessage = contentType.includes('text/plain') && response.status === 413
+            ? 'Arquivo muito grande para o servidor (limite de 4,5 MB). Escolha um arquivo menor.'
+            : body && typeof body === 'object' && 'error' in body
+              ? String((body as { error?: unknown }).error)
+              : `Erro ao processar ${file.name}.`;
+          results.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, arquivo: file.name, erro: vercelMessage });
+        } else {
+          results.push(...(body as OcrUploadResponseItem[]));
+        }
+
+        showToast(`Processando OCR... ${results.length}/${files.length}`, 'info', null);
       }
 
-      const batch = (body as OcrUploadResponseItem[]).map(toHistoryItem);
+      const batch = results.map(toHistoryItem);
       const nextItems = [...batch, ...items].slice(0, 60);
       await saveOcrHistory(batch);
       setItems(nextItems);

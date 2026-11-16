@@ -4,7 +4,8 @@
 
 ## O que faz
 
-- `POST /api/ocr` (admin-only) com `multipart/form-data`, campo `files` (até 10, até 8 MB por arquivo).
+- `POST /api/ocr` (admin-only) com `multipart/form-data`, campo `files` (até 10 arquivos por endpoint, até 8 MB por arquivo).
+- Na Vercel, a aplicação envia um arquivo por request no cliente; limite prático: 4,5 MB por request (a interface usa 4 MB por arquivo).
 - Tipos aceitos: PDF, PNG, JPEG, WebP.
 - Detecta magic bytes/MIME; rejeita arquivo inválido sem processá-lo.
 - Retorna um array `{ id, arquivo, linhaDigitavel?, erro? }`; um arquivo inválido não interrompe o lote.
