@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const notify = () => {
       const hours = Math.max(1, Math.ceil((deadline - Date.now()) / (60 * 60 * 1000)));
-      showToast(`Sua sessão expira em menos de 24 horas (${hours}h). Salve o que estiver pendente.`, 'info', 5000);
+      showToast(`Sua sessão expira em menos de 24 horas (${hours}h). Salve o que estiver pendente.`, 'info', 15000);
     };
 
     notify();
