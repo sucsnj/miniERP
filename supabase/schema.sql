@@ -96,9 +96,12 @@ create table if not exists public.sessions (
   user_id uuid not null references public.users (id) on delete cascade,
   token_hash text not null unique,
   store_id uuid references public.stores (id) on delete set null,
-  expires_at timestamptz not null,
-  revoked_at timestamptz,
-  created_at timestamptz not null default now()
+    expires_at timestamptz not null,
+    revoked_at timestamptz,
+    created_at timestamptz not null default now(),
+    previous_token_hash text,
+    previous_token_expires_at timestamptz,
+    last_rotated_at timestamptz
 );
 
 create table if not exists public.company_settings (
@@ -411,6 +414,7 @@ create index if not exists users_company_id_idx on public.users (company_id);
 create index if not exists users_login_idx on public.users (login);
 create index if not exists users_email_idx on public.users (email);
 create index if not exists sessions_token_hash_idx on public.sessions (token_hash);
+create index if not exists sessions_previous_token_hash_idx on public.sessions (previous_token_hash) where previous_token_hash is not null;
 create index if not exists sessions_user_id_expires_at_idx on public.sessions (user_id, expires_at desc);
 create index if not exists sales_company_id_store_id_sale_date_idx
   on public.sales (company_id, store_id, sale_date desc);

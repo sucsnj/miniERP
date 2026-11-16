@@ -6,6 +6,7 @@ import {
   normalizeIdentifier,
   normalizeName,
   requireAdminApi,
+  revokeUserSessions,
 } from '../../../utils/serverAuth';
 import { validateLogin, validatePassword } from '../../../utils/password';
 import { createMerchant, listMerchants, updateMerchant } from '../../../database/adminRepository';
@@ -110,6 +111,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       await updateMerchant(merchantId, input, ctx);
+      if (input.password !== undefined || input.active === false || input.storeIds !== undefined || input.login !== undefined) {
+        await revokeUserSessions(merchantId);
+      }
       return res.status(200).json({ ok: true });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Não foi possível atualizar o vendedor.';

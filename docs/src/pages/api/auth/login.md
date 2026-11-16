@@ -9,7 +9,7 @@
 - Busca usuário por `login` ou `email`.
 - Verifica senha com `scrypt`; exige usuário ativo.
 - Escolhe loja: `last_store_id`, primeira ativa da empresa (admin) ou primeira loja autorizada (merchant).
-- Cria sessão opaca de 48h e cookie `minierp_session`.
+- Cria sessão opaca de 14 dias (sliding; teto absoluto de 30 dias) e cookie `minierp_session`.
 
 ## Relações
 

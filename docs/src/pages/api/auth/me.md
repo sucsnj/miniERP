@@ -4,7 +4,8 @@
 
 ## O que faz
 
-- `GET`: devolve `{ user }` com contexto da sessão autenticada.
+- `GET`: devolve `{ user }` com contexto da sessão autenticada, incluindo `sessionExpiresAt` e `sessionAbsoluteExpiresAt`.
+- Renova a janela de inatividade e, quando necessário, rotaciona o cookie/hash da sessão.
 - Sem sessão válida, devolve `401`.
 
 ## Relações

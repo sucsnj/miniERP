@@ -22,6 +22,7 @@
 5.11. Para permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`, aplique `supabase/migrations/0025-multiple-company-bootstraps.sql`.
 5.12. Para ampliação visual dos campos de registro (`Data`, `Valor` e `Observações`), aplique `supabase/migrations/0026-add-sale-field-scales.sql`; as colunas `field_scale_date`, `field_scale_value` e `field_scale_observations` compartilham a ampliação da empresa (`1.0`, `1.2`, `1.5`, `2.0` ou `2.5`; padrão `1.0`).
 5.13. Para idempotência/retry seguro do registro de vendas, aplique `supabase/migrations/0027-add-sale-idempotency.sql`; adiciona `sales.idempotency_key`, índice único parcial por loja e novo parâmetro opcional em `create_sale`.
+5.14. Para reforço de sessões (rolling 14 dias, limite absoluto 30 dias e rotação de hash com grace period), aplique `supabase/migrations/0028-add-session-rotation.sql`; adiciona `previous_token_hash`, `previous_token_expires_at` e `last_rotated_at` em `sessions`.
 6. Confira em **Database → Functions** as RPCs listadas abaixo.
 
 ## Variáveis de ambiente
