@@ -26,6 +26,7 @@ O OCR de boletos foi removido pela migração ADR 0012 por depender de `pdf2pic`
 ## Consequências
 
 - OCR local funciona em desenvolvimento e em deploy serverless sem binários de sistema.
+- `tesseract.js` é marcado como `serverExternalPackages` no Next.js; bundling da rota quebrava o worker (`Cannot find module '..'`) em PDFs renderizados com baixa qualidade.
 - Custo computacional continua alto em PDFs scanned; por isso o limite de 2 páginas.
 - Resultados ficam limitados ao browser atual; limpar dados do site ou outro navegador não herda histórico.
 - A privacidade é melhor: o servidor não retém PDFs/imagens; o browser só guarda a linha ou erro do OCR.

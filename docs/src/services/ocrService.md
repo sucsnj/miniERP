@@ -10,6 +10,7 @@
 
 ## Relações
 
+- Usa `Tesseract.createWorker('eng')` de forma lazy; `next.config.ts` mantém `tesseract.js` em `serverExternalPackages` para não quebrar o worker no build da Vercel.
 - **Usa:** `tesseract.js`, `sharp`, `src/services/boletoBarcode.ts`.
 - **Usado por:** [`src/services/pdfService.ts`](./pdfService.md) e [`src/pages/api/ocr.ts`](../pages/api/ocr.md).
 
