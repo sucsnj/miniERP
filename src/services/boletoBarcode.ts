@@ -24,16 +24,17 @@ export const normalizeDigitableLine = (value: string): string | null => {
 };
 
 export const extractDigitableLineFromText = (value: string): string | null => {
-  const compact = value.replace(/\s+/g, ' ');
+  // Tesseract pode inserir espaços/pontos em posições inesperadas; para a mesma
+  // linha da linha digitável, o prefixo gráfico é irrelevante.
+  for (const line of value.split(/\r?\n/)) {
+    const digits = line.replace(/\D/g, '');
 
-  // Linha formatada ou não, capturamos candidatos plausíveis e validamos.
-  const candidates = compact.match(
-    /\d{5}[\s\.\-]?\d{5}[\s\.\-]?\d{5}[\s\.\-]?\d{6}[\s\.\-]?\d{5}[\s\.\-]?\d{6}[\s\.\-]?\d[\s\.\-]?\d{14}/g,
-  ) ?? [];
+    if (digits.length < 47) continue;
 
-  for (const candidate of candidates.reverse()) {
-    const normalized = normalizeDigitableLine(candidate);
-    if (normalized) return normalized;
+    for (let start = digits.length - 47; start >= 0; start -= 1) {
+      const normalized = normalizeDigitableLine(digits.slice(start, start + 47));
+      if (normalized) return normalized;
+    }
   }
 
   return null;

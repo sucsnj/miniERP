@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- `normalizeDigitableLine(value)` (47/48 dígitos) e `extractDigitableLineFromText(value)`.
+- `normalizeDigitableLine(value)` (47/48 dígitos) e `extractDigitableLineFromText(value)`; o extractor lê a saída do OCR linha a linha e aceita separadores em posições inesperadas, procurando a última janela de 47/48 dígitos (ignorando prefixos gráficos).
 - Ao extrair de OCR, aceita a sequência 47/48 pelo formato da linha bancária; a leitura é manual/copy-to-use, não usada para transações.
 
 ## Relações
