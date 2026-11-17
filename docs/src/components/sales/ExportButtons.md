@@ -4,8 +4,8 @@
 
 ## O que faz
 
-- Exporta XLSX por mês ou dia (`xlsx` importado dinamicamente), com slug da loja atual no nome do arquivo.
-- Importa `.xlsx`/`.xls` normalizando headers (`data`/`valor`/`observacoes`/`criado_em`), suporta datas Excel/ISO/BR (`DD/MM/AAAA`) e datas de qualquer mês/ano, não dependendo da seleção de `/history`.
+- Exporta XLSX por mês ou dia (`xlsx` importado dinamicamente), com slug da loja atual no nome do arquivo e headers de banco (`id`, `sale_date`, `amount`, `notes`, `created_at`).
+- Importa `.xlsx`/`.xls` esperando os headers atuais do banco (`sale_date`, `amount`, `notes?`, `created_at?`), suporta datas Excel/ISO/BR (`DD/MM/AAAA`) e datas de qualquer mês/ano, não dependendo da seleção de `/history`.
 - Notifica por `onMessage`; invalida tenant-scoped queries e chama `onImportCompleted` ao concluir.
 
 ```ts

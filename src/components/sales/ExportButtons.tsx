@@ -86,7 +86,14 @@ const ExportButtons: FC<ExportButtonsProps> = ({
 
     try { // Importa, cria a planilha, adiciona ao workbook, escreve o workbook e cria um blob.
       const XLSX = await import('xlsx');
-      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const exportRows = dataToExport.map((sale) => ({
+        id: sale.id,
+        sale_date: sale.date,
+        amount: sale.amount,
+        notes: sale.notes ?? null,
+        created_at: sale.createdAt,
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(exportRows);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
       const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -154,25 +161,11 @@ const ExportButtons: FC<ExportButtonsProps> = ({
           normalizedRow[normalizeHeader(key)] = row[key];
         });
 
-        const dataValue = parseDateCell(
-          normalizedRow['data'] ||
-          normalizedRow['date'] ||
-          normalizedRow['dia'] ||
-          ''
-        ) ?? '';
+        const dataValue = parseDateCell(normalizedRow['sale_date'] ?? '') ?? '';
 
-        const amountValue =
-          normalizedRow['valor'] || normalizedRow['value'] || normalizedRow['amount'];
-        const notesValue =
-          normalizedRow['observacoes'] ||
-          normalizedRow['observações'] ||
-          normalizedRow['obs'] ||
-          '';
-
-        const createdAtValue =
-          normalizedRow['criado_em'] ||
-          normalizedRow['created_at'] ||
-          '';
+        const amountValue = normalizedRow['amount'];
+        const notesValue = normalizedRow['notes'] ?? '';
+        const createdAtValue = normalizedRow['created_at'] ?? '';
 
         if (!dataValue) {
           errors.push(`Linha ${index + 1}: data inválida ou ausente.`);
