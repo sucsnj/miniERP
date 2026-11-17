@@ -27,21 +27,47 @@ export function insertKey(expression: string, key: string): string {
   if (!VALID_KEY_REGEX.test(key)) return expression
   if (expression.length >= EXPRESSION_LIMIT) return expression
 
-  const last = expression.at(-1) ?? ''
-  const isOperator = OPERATOR_REGEX.test(key)
-  const isUnaryMinus =
-    key === '-' && (expression === '' || last === '(' || OPERATOR_REGEX.test(last))
+  if (expression === ',' || expression === '.') {
+    return key === '.' || key === ','
+      ? '0.'
+      : `0.${key}`
+  }
 
-  // Operadores binários substituem o operador anterior; o menos unário é anexado.
-  if (isOperator && OPERATOR_REGEX.test(last) && !isUnaryMinus) {
+  const last = expression.at(-1) ?? ''
+  const isSeparator = key === ',' || key === '.'
+
+  if (expression === '') {
+    if (NUMBER_REGEX.test(key) || key === '(' || key === '-') return `${expression}${key}`
+    if (isSeparator) return '0.'
+    return expression
+  }
+
+  if (last === '(' && (NUMBER_REGEX.test(key) || key === '-')) {
+    return `${expression}${key}`
+  }
+
+  if (last === '(') {
+    if (NUMBER_REGEX.test(key)) return `${expression}${key}`
+    if (isSeparator) return `${expression}0.`
+    return expression
+  }
+
+  const isSkippableSubstitution = /^[+\-*/)]$/.test(last) && /^[+\-*/)]$/.test(key)
+  const isUnaryMinus = key === '-' && last === '('
+
+  if (isSkippableSubstitution && !isUnaryMinus) {
+    if (key === ')') {
+      const { open, close } = countParentheses(expression)
+      if (close >= open) return expression
+    }
+
     return `${expression.slice(0, -1)}${key}`
   }
 
-  const isSeparator = key === ',' || key === '.'
-
   if (isSeparator) {
     const chunk = currentDigits(expression)
-    if (chunk === '' || chunk.includes('.') || chunk.includes(',')) return expression
+    if (chunk.includes('.') || chunk.includes(',')) return expression
+    if (chunk === '') return `${expression}0.`
     return `${expression}.`
   }
 
@@ -130,16 +156,36 @@ function tokenize(expression: string): Token[] | null {
   return tokens
 }
 
+function closeMissingParentheses(expression: string): string {
+  let balance = 0
+
+  for (const char of expression) {
+    if (char === '(') balance += 1
+    if (char === ')') balance -= 1
+  }
+
+  return balance > 0 ? `${expression}${')'.repeat(balance)}` : expression
+}
+
+function trimIncompleteExpression(expression: string): string {
+  let trimmed = expression
+
+  while (trimmed.length > 0 && (OPERATOR_REGEX.test(trimmed.at(-1) ?? '') || trimmed.at(-1) === '(')) {
+    trimmed = trimmed.slice(0, -1)
+  }
+
+  return trimmed
+}
+
 export function calculate(expression: string): number | null {
   const complete = expression.trim()
   if (isEmpty(complete)) return null
 
   // Um sinal final não invalida a expressão: mostra o cálculo parcial possível.
-  const withoutTrailingOperators = complete.replace(/[+\-*/]+$/, '')
+  const withoutTrailingOperators = trimIncompleteExpression(complete)
   if (isEmpty(withoutTrailingOperators)) return null
 
-  // Multiplicação implícita também é aceita em expressões já montadas/coladas.
-  const normalized = withoutTrailingOperators
+  const normalized = closeMissingParentheses(withoutTrailingOperators)
     .replace(/(\d)\(/g, '$1*(')
     .replace(/\)(\d)/g, ')*$1')
     .replace(/\)\(/g, ')*(')
