@@ -23,69 +23,129 @@ function currentDigits(expression: string): string {
   return /[0-9.,]*$/.exec(expression)?.[0] ?? ''
 }
 
+type InputState =
+  | 'start'
+  | 'afterOperator'
+  | 'afterOpen'
+  | 'afterNumber'
+  | 'afterClose'
+  | 'afterSeparator'
+
+type KeyType = 'digit' | 'operator' | 'separator' | 'open' | 'close' | 'other'
+
+function keyTypeOf(key: string): KeyType {
+  if (NUMBER_REGEX.test(key)) return 'digit'
+  if (key === '-') return 'operator'
+  if (OPERATOR_REGEX.test(key)) return 'operator'
+  if (key === '.' || key === ',') return 'separator'
+  if (key === '(') return 'open'
+  if (key === ')') return 'close'
+  return 'other'
+}
+
+function stateOf(expression: string): InputState {
+  const last = expression.at(-1) ?? ''
+
+  if (!expression) return 'start'
+  if (last === '.') return 'afterSeparator'
+  if (last === '(') return 'afterOpen'
+  if (last === ')') return 'afterClose'
+  if (OPERATOR_REGEX.test(last)) return 'afterOperator'
+  return 'afterNumber'
+}
+
+const SUBSTITUTION_KEYS = /^[+\-*/)]$/
+
+function canReplaceWithCloseParenthesis(expression: string): boolean {
+  const { open, close } = countParentheses(expression)
+  return close < open
+}
+
+function replaceLastToken(expression: string, key: string): string {
+  return `${expression.slice(0, -1)}${key}`
+}
+
+function applySubstitution(expression: string, key: string): string {
+  const last = expression.at(-1) ?? ''
+
+  if (!SUBSTITUTION_KEYS.test(last) || !SUBSTITUTION_KEYS.test(key)) {
+    return expression
+  }
+
+  if (key === ')' && !canReplaceWithCloseParenthesis(expression)) {
+    return expression
+  }
+
+  return replaceLastToken(expression, key)
+}
+
+function applyOpenParenthesis(expression: string, state: InputState): string {
+  if (state === 'afterNumber' || state === 'afterClose' || state === 'afterOperator' || state === 'start') {
+    if (state === 'afterNumber' || state === 'afterClose') return `${expression}*(`
+    return `${expression}(`
+  }
+
+  return expression
+}
+
 export function insertKey(expression: string, key: string): string {
   if (!VALID_KEY_REGEX.test(key)) return expression
   if (expression.length >= EXPRESSION_LIMIT) return expression
 
+  const normalizedKey = key === ',' ? '.' : key
+  const keyType = keyTypeOf(normalizedKey)
+
   if (expression === ',' || expression === '.') {
-    return key === '.' || key === ','
-      ? '0.'
-      : `0.${key}`
+    return keyType === 'separator' ? '0.' : `0.${normalizedKey}`
   }
 
-  const last = expression.at(-1) ?? ''
-  const isSeparator = key === ',' || key === '.'
+  const state = stateOf(expression)
 
-  if (expression === '') {
-    if (NUMBER_REGEX.test(key) || key === '(' || key === '-') return `${expression}${key}`
-    if (isSeparator) return '0.'
-    return expression
+  switch (state) {
+    case 'start':
+      if (keyType === 'digit') return `${expression}${normalizedKey}`
+      if (keyType === 'operator' && normalizedKey === '-') return normalizedKey
+      if (keyType === 'open') return `${expression}${normalizedKey}`
+      if (keyType === 'separator') return '0.'
+      return expression
+
+    case 'afterOpen':
+      if (keyType === 'digit' || (keyType === 'operator' && normalizedKey === '-')) return `${expression}${normalizedKey}`
+      if (keyType === 'separator') return `${expression}0.`
+      return expression
+
+    case 'afterSeparator':
+      if (keyType === 'digit') return `${expression}${normalizedKey}`
+      return expression
+
+    case 'afterOperator':
+      if (keyType === 'digit') return `${expression}${normalizedKey}`
+      if (keyType === 'separator') return `${expression}0.`
+      if (keyType === 'open') return `${expression}${normalizedKey}`
+      if (keyType === 'operator' || keyType === 'close') return applySubstitution(expression, normalizedKey)
+      return expression
+
+    case 'afterNumber':
+      if (keyType === 'digit') return `${expression}${normalizedKey}`
+      if (keyType === 'separator' && !currentDigits(expression).includes('.')) return `${expression}.`
+      if (keyType === 'operator') return `${expression}${normalizedKey}`
+      if (keyType === 'close') {
+        const { open, close } = countParentheses(expression)
+        if (close < open) return `${expression})`
+        return expression
+      }
+      if (keyType === 'open') return applyOpenParenthesis(expression, state)
+      return expression
+
+    case 'afterClose':
+      if (keyType === 'digit') return `${expression}*${normalizedKey}`
+      if (keyType === 'open') return `${expression}*(`
+      if (keyType === 'operator' || keyType === 'close') return applySubstitution(expression, normalizedKey)
+      return expression
+
+    default:
+      return expression
   }
-
-  if (last === '(' && (NUMBER_REGEX.test(key) || key === '-')) {
-    return `${expression}${key}`
-  }
-
-  if (last === '(') {
-    if (NUMBER_REGEX.test(key)) return `${expression}${key}`
-    if (isSeparator) return `${expression}0.`
-    return expression
-  }
-
-  const isSkippableSubstitution = /^[+\-*/)]$/.test(last) && /^[+\-*/)]$/.test(key)
-  const isUnaryMinus = key === '-' && last === '('
-
-  if (isSkippableSubstitution && !isUnaryMinus) {
-    if (key === ')') {
-      const { open, close } = countParentheses(expression)
-      if (close >= open) return expression
-    }
-
-    return `${expression.slice(0, -1)}${key}`
-  }
-
-  if (isSeparator) {
-    const chunk = currentDigits(expression)
-    if (chunk.includes('.') || chunk.includes(',')) return expression
-    if (chunk === '') return `${expression}0.`
-    return `${expression}.`
-  }
-
-  if (key === ')') {
-    if (OPERATOR_REGEX.test(last) || last === '(') return expression
-    const { open, close } = countParentheses(expression)
-    if (close >= open) return expression
-  }
-
-  if (key === '(' && (NUMBER_REGEX.test(last) || last === ')')) {
-    return `${expression}*${key}`
-  }
-
-  if (NUMBER_REGEX.test(key) && last === ')') {
-    return `${expression}*${key}`
-  }
-
-  return `${expression}${key}`
 }
 
 export function deleteKey(expression: string): string {
@@ -127,10 +187,7 @@ function tokenize(expression: string): Token[] | null {
       continue
     }
 
-    if (
-      char === '-' &&
-      (lastType === null || lastType === 'operator' || lastType === 'open' || lastType === 'unary')
-    ) {
+    if (char === '-' && (lastType === null || lastType === 'open')) {
       tokens.push({ type: 'unary' })
       lastType = 'unary'
       index += 1
