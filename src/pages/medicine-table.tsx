@@ -3,10 +3,10 @@ import { useToast } from '../hooks/useToast';
 import { useAuth } from '../contexts/AuthContext';
 import { usePendingTask } from '../contexts/RouteLoadingContext';
 import contasStyles from '../styles/payables.module.css';
-import {
-  TableRow,
+import type {
+  MedicineTableRow,
   TableSearchHistoryItem,
-} from '../services/medicineTableService';
+} from '../services/medicineTableStore';
 import { useMedicineTable } from '../hooks/useMedicineTable';
 import { useShortcuts } from '../utils/shortcuts';
 import { parseDate } from '../utils/date';
@@ -21,7 +21,7 @@ const Tabela: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState('');
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<TableRow[]>([]);
+  const [results, setResults] = useState<MedicineTableRow[]>([]);
   const [source, setSource] = useState<'history' | 'table' | ''>('');
 
   const { showToast } = useToast();
@@ -62,9 +62,7 @@ const Tabela: React.FC = () => {
     if (!file) return;
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      await upload.mutateAsync(formData);
+      await upload.mutateAsync(file);
       setFileName(file.name);
       setResults([]);
       setSource('');

@@ -48,6 +48,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0014-ocr-local-e-indexeddb.md](adr/0014-ocr-local-e-indexeddb.md) - ADR: OCR local de boletos, IndexedDB para histórico e sem preencher contas automaticamente.
 - [adr/0015-multiplos-admins-por-bootstrap.md](adr/0015-multiplos-admins-por-bootstrap.md) - ADR: permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`.
 - [adr/0016-sessao-sliding-e-rotacao.md](adr/0016-sessao-sliding-e-rotacao.md) - ADR: sessão sliding (14 dias) com limite absoluto (30 dias) e rotação de token.
+- [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR rejeitada: persistência da tabela de medicamentos no Supabase (substituída por ADR 0018).
+- [adr/0018-tabela-medicamentos-localstorage-indexeddb.md](adr/0018-tabela-medicamentos-localstorage-indexeddb.md) - ADR: tabela de medicamentos local-first em IndexedDB.
 
 ## Páginas do Frontend
 
@@ -60,6 +62,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/payables.md](src/pages/payables.md) - contas a pagar: filtros, importação de XML e pagamentos.
 - [src/pages/history.md](src/pages/history.md) - histórico de vendas, listagem e busca.
 - [src/pages/summary.md](src/pages/summary.md) - resumo mensal de vendas e totais consolidados.
+- [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR: persistência da tabela de medicamentos no Supabase (substitui filesystem local/Vercel).
 - [src/pages/medicine-table.md](src/pages/medicine-table.md) - upload e consulta da tabela de medicamentos.
 - [src/pages/settings.md](src/pages/settings.md) - configurações do aplicativo.
 - [src/pages/login.md](src/pages/login.md) - login com `login` ou `email`.
@@ -110,8 +113,9 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 
 ### Importação e OCR
 
+- [src/services/medicineTableStore.md](src/services/medicineTableStore.md) - snapshot/histórico da tabela de medicamentos no IndexedDB.
+- [src/utils/medicineTableSearch.md](src/utils/medicineTableSearch.md) - normalização e busca local na tabela.
 - [src/pages/api/ocr.md](src/pages/api/ocr.md) - upload e processamento OCR.
-- [src/pages/api/medicine-table.md](src/pages/api/medicine-table.md) - upload, busca com cache e histórico da tabela de medicamentos.
 - [src/pages/api/payables/import.md](src/pages/api/payables/import.md) - importação de contas via XML.
 
 ## Serviços
@@ -127,7 +131,6 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/services/ocrService.md](src/services/ocrService.md) - OCR e leitura da linha digitável.
 - [src/services/pdfService.md](src/services/pdfService.md) - extração/renderização de PDF para OCR.
 - [src/services/productsService.md](src/services/productsService.md) - API cliente de produtos/catálogo.
-- [src/services/medicineTableService.md](src/services/medicineTableService.md) - API cliente da tabela de medicamentos (upload, busca, histórico, status).
 - [src/services/salesService.md](src/services/salesService.md) - API cliente de vendas diárias.
 
 ## Banco de Dados

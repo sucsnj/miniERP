@@ -25,4 +25,4 @@ interface CategoriaOptions {
 
 ## Observações
 
-- Convenção: tipos de domínio coesos ficam nos services (ex.: `NotaDetalhe` em `invoicesService.ts`, `TabelaRow` em `medicineTableService.ts`); `src/types/` guarda apenas o que é compartilhado entre camadas distintas.
+- Convenção: tipos de domínio coesos ficam nos services (ex.: `NotaDetalhe` em `invoicesService.ts`, `MedicineTableRow` em `medicineTableStore.ts`); `src/types/` guarda apenas o que é compartilhado entre camadas distintas.
