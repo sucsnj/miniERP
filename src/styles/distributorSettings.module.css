@@ -1,11 +1,3 @@
-.root {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-wrap: anywhere;
-}
-
 .details {
   min-width: 0;
   display: flex;

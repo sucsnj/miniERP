@@ -5,10 +5,11 @@ import Button from '@/components/common/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import type { DistributorConfig } from '../../services/adminService';
-import { fetchDistributors, replaceDistributors } from '../../services/adminService';
 import { useToast } from '../../hooks/useToast';
 import styles from '../../styles/distributorSettings.module.css';
+import type { DistributorConfig } from '../../services/adminService';
+import { fetchDistributors, replaceDistributors } from '../../services/adminService';
+import { MASONRY_CARD_STYLE } from '../../utils/layout';
 
 const newId = () => crypto.randomUUID();
 
@@ -205,11 +206,11 @@ export default function DistributorSettings() {
   };
 
   if (loading) {
-    return <Panel style={{ padding: '10px' }}><p style={{ margin: 0 }}>Carregando distribuidoras…</p></Panel>;
+    return <Panel style={MASONRY_CARD_STYLE}><p style={{ margin: 0 }}>Carregando distribuidoras…</p></Panel>;
   }
 
   return (
-    <Panel className={styles.root} style={{ boxShadow: 'none', border: 'none', padding: 0, margin: 0 }}>
+    <Panel style={MASONRY_CARD_STYLE}>
       <PanelHeader title="Distribuidoras da importação XML" chip={<Button type="button" size="sm" leftIcon={<AddIcon />} onClick={startNew}>Nova</Button>} />
       <p style={{ margin: '0 0 8px', fontSize: '0.8rem', color: 'var(--muted)' }}>
         Cadastro usado na importação de notas. Cada distribuidora pode ter múltiplas regras.

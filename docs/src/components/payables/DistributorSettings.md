@@ -11,6 +11,7 @@
 
 ## Relações
 
+- Visual idêntico aos demais cards de configuração (mesmo `Panel` e `MASONRY_CARD_STYLE`).
 - Lista de distribuidoras via dropdown; formulário de regras fica abaixo em uma coluna única.
 - **Usado por:** [settings](../../pages/settings.md).
 - **Usa:** [adminService](../../services/adminService.md).

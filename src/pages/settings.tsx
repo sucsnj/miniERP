@@ -382,11 +382,7 @@ const SettingsPage = () => {
             </div>
           </Panel>
 
-          {isAdmin && (
-            <div style={MASONRY_CARD_STYLE}>
-              <DistributorSettings />
-            </div>
-          )}
+          {isAdmin && <DistributorSettings />}
 
           <Panel style={MASONRY_CARD_STYLE}>
             <div>
