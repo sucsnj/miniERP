@@ -122,6 +122,17 @@ const snapshotSales = (queryClient: ReturnType<typeof useQueryClient>, tenantId:
   return queryClient.getQueriesData<DailySale[]>({ predicate: salesDailyPredicate(tenantId) });
 };
 
+const replaceOptimisticSale = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  tenantId: { companyId: string; storeId: string },
+  optimisticId: string,
+  realId: string,
+) => {
+  queryClient.setQueriesData<DailySale[]>({ predicate: salesDailyPredicate(tenantId) }, (current) =>
+    current?.map((sale) => sale.operationId === optimisticId ? { ...sale, id: realId } : sale)
+  );
+};
+
 const restoreSales = (
   queryClient: ReturnType<typeof useQueryClient>,
   snapshots: Array<[readonly unknown[], DailySale[] | undefined]>,
@@ -162,18 +173,27 @@ export function useCreateSale() {
     mutationFn: (input: CreateSaleInput) =>
       registerSale(input.date, input.amount, input.notes, input.items, input.idempotencyKey),
     onMutate: async (input) => {
-      if (!tenantId) return { tenantId, snapshots: [] as Array<[readonly unknown[], DailySale[] | undefined]>, affectedMonths: [] as Array<{ month: number; year: number }> };
+      if (!tenantId) return { tenantId, snapshots: [] as Array<[readonly unknown[], DailySale[] | undefined]>, affectedMonths: [] as Array<{ month: number; year: number }>, optimisticId: null };
       await queryClient.cancelQueries({ predicate: salesDailyPredicate(tenantId) });
       const snapshots = snapshotSales(queryClient, tenantId);
       const affectedMonths = findAffectedMonths(input.date, snapshots);
+      const optimisticId = `optimistic-${input.idempotencyKey ?? crypto.randomUUID()}`;
       insertIntoSalesCache(queryClient, tenantId, {
-        id: `optimistic-${Date.now()}`,
+        id: optimisticId,
         date: input.date,
         amount: input.amount,
         notes: input.notes,
         createdAt: input.createdAt ?? new Date().toISOString(),
+        operationId: optimisticId,
       });
-      return { tenantId, snapshots, affectedMonths };
+      return { tenantId, snapshots, affectedMonths, optimisticId };
+    },
+    onSuccess: (data, _input, context) => {
+      if (!context?.tenantId || !context.optimisticId) return;
+      const realId = typeof data?.id === 'string' ? data.id : String(data?.id ?? '');
+      if (realId && realId !== 'undefined' && realId !== 'null') {
+        replaceOptimisticSale(queryClient, context.tenantId, context.optimisticId, realId);
+      }
     },
     onError: (_error, _input, context) => {
       if (!context?.tenantId) return;

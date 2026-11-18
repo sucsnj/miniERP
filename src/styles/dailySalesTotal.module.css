@@ -88,29 +88,19 @@
           animation: saleHighlight 5s ease-out forwards;
         }
 
-        .historyItemDeleting,
-        .historyItemDeleting:hover {
-          background: rgba(255, 255, 255, 0.18);
-          border-color: rgba(255, 255, 255, 0.18);
-          filter: grayscale(1) brightness(0.45);
-          transform: none;
-          pointer-events: none;
-          animation: saleDelete 2s ease-in forwards;
-        }
-
         @keyframes saleHighlight {
           0% {
-            background: #ffffff;
-            border-color: #ffffff;
-            color: #111827;
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.55), 0 14px 32px rgba(0, 0, 0, 0.32);
+            background: var(--accent);
+            border-color: var(--accent-strong);
+            color: var(--text-on-accent);
+            box-shadow: 0 0 0 4px var(--accent-strong), 0 14px 32px rgba(0, 0, 0, 0.32);
             transform: translateY(-4px) scale(1.03);
           }
           25% {
-            background: rgba(255, 255, 255, 0.72);
-            border-color: rgba(255, 255, 255, 0.85);
-            color: #1f2937;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3), 0 8px 22px rgba(0, 0, 0, 0.24);
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--foreground);
+            box-shadow: 0 0 0 2px var(--accent-strong), 0 8px 22px rgba(0, 0, 0, 0.24);
             transform: translateY(-2px) scale(1.015);
           }
           100% {
@@ -135,8 +125,17 @@
           }
           100% {
             opacity: 0;
+            visibility: hidden;
             filter: grayscale(1) brightness(0.2);
             transform: scale(0.82);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .historyItemNew,
+          .historyItemDeleting {
+            animation-duration: 0.01ms;
+            animation-iteration-count: 1;
           }
         }
 
@@ -185,6 +184,16 @@
           transform: translateY(-2px);
           background: rgba(255, 255, 255, 0.25);
           border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .historyItemDeleting,
+        .historyItemDeleting:hover {
+          background: rgba(255, 255, 255, 0.18);
+          border-color: rgba(255, 255, 255, 0.18);
+          filter: grayscale(1) brightness(0.45);
+          transform: none;
+          pointer-events: none;
+          animation: saleDelete 2s ease-in forwards;
         }
 
         .summaryCard:hover {

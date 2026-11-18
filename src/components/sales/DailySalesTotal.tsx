@@ -32,13 +32,15 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   const dailyCount = dailySales.length;
   const dailyAverage = dailyCount > 0 ? dailyTotal / dailyCount : 0;
   const [newSaleIds, setNewSaleIds] = useState<string[]>([]);
-  const [deletingSaleIds, setDeletingSaleIds] = useState<string[]>([]);
+  const [deletingSales, setDeletingSales] = useState<DailySale[]>([]);
   const previousSaleIdsRef = useRef<string[] | null>(null);
-  const highlightTimeoutIdsRef = useRef<number[]>([]);
-  const deleteTimeoutIdsRef = useRef<number[]>([]);
+  const highlightTimeoutIdsRef = useRef(new Set<number>());
+  const deleteTimeoutIdsRef = useRef(new Set<number>());
+
+  const getSaleKey = (sale: DailySale) => sale.operationId ?? sale.id;
 
   useEffect(() => {
-    const saleIds = recentSales.map((sale) => sale.id);
+    const saleIds = recentSales.map(getSaleKey);
     const previousIds = previousSaleIdsRef.current;
 
     if (previousIds === null) {
@@ -46,7 +48,10 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
       return;
     }
 
-    const addedIds = saleIds.filter((id) => id.startsWith('optimistic-') && !previousIds.includes(id));
+    const addedIds = recentSales
+      .filter((sale) => sale.operationId?.startsWith('optimistic-'))
+      .map(getSaleKey)
+      .filter((id) => !previousIds.includes(id));
     previousSaleIdsRef.current = saleIds;
 
     if (addedIds.length === 0) return;
@@ -54,8 +59,9 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
     setNewSaleIds((current) => [...new Set([...current, ...addedIds])]);
     const timeoutId = window.setTimeout(() => {
       setNewSaleIds((current) => current.filter((id) => !addedIds.includes(id)));
-    }, 5000);
-    highlightTimeoutIdsRef.current.push(timeoutId);
+      highlightTimeoutIdsRef.current.delete(timeoutId);
+    }, 4000);
+    highlightTimeoutIdsRef.current.add(timeoutId);
   }, [recentSales]);
 
   useEffect(() => {
@@ -65,19 +71,27 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
     return () => {
       highlightTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
       deleteTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      highlightTimeouts.clear();
+      deleteTimeouts.clear();
     };
   }, []);
 
   const requestDeleteSale = (id: string) => {
-    setDeletingSaleIds((current) => current.includes(id) ? current : [...current, id]);
+    const sale = recentSales.find((item) => item.id === id);
+    if (!sale) return;
+
+    const deletingSale = { ...sale, operationId: sale.operationId ?? `deleting-${sale.id}` };
+    setDeletingSales((current) => current.some((item) => getSaleKey(item) === getSaleKey(deletingSale))
+      ? current
+      : [...current, deletingSale]);
+    onDeleteSale?.(id);
 
     const timeoutId = window.setTimeout(() => {
-      onDeleteSale?.(id);
-      setDeletingSaleIds((current) => current.filter((entry) => entry !== id));
-      deleteTimeoutIdsRef.current = deleteTimeoutIdsRef.current.filter((entry) => entry !== timeoutId);
+      setDeletingSales((current) => current.filter((item) => getSaleKey(item) !== getSaleKey(deletingSale)));
+      deleteTimeoutIdsRef.current.delete(timeoutId);
     }, 1000);
 
-    deleteTimeoutIdsRef.current.push(timeoutId);
+    deleteTimeoutIdsRef.current.add(timeoutId);
   };
 
   // Deleta a última venda do histórico de vendas
@@ -91,6 +105,10 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
       }
     }
   });
+
+  const recentSalesKeys = new Set(recentSales.map(getSaleKey));
+  const deletingKeys = new Set(deletingSales.map(getSaleKey));
+  const visibleRecentSales = [...recentSales, ...deletingSales.filter((sale) => !recentSalesKeys.has(getSaleKey(sale)))];
 
   return (
     <div className={`${styles.dailySalesTotal}`}>
@@ -140,18 +158,22 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
             ) : null}
           </div>
 
-          {recentSales.length > 0 ? (
+          {visibleRecentSales.length > 0 ? (
             <div className={`${styles.historyCard}`}>
               <span className={`${styles.summaryCardTitle}`}>Últimas {recentSalesCount} vendas</span>
 
               <div className={`${styles.recentSalesGrid}`}>
-                {[...recentSales]
+                {[...visibleRecentSales]
                   .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
-                  .map((sale) => (
+                  .map((sale) => {
+                    const saleKey = getSaleKey(sale);
+                    const isNew = newSaleIds.includes(saleKey);
+                    const isDeleting = deletingKeys.has(saleKey);
+
+                    return (
                     <div
-                      key={sale.id}
-                      className={`${styles.historyItem}${newSaleIds.includes(sale.id) ? ` ${styles.historyItemNew}` : ''}${deletingSaleIds.includes(sale.id) ? ` ${styles.historyItemDeleting}` : ''}`}
-                      aria-hidden={deletingSaleIds.includes(sale.id) ? 'true' : undefined}
+                      key={saleKey}
+                      className={`${styles.historyItem}${isNew ? ` ${styles.historyItemNew}` : ''}${isDeleting ? ` ${styles.historyItemDeleting}` : ''}`}
                     >
                       <div>
                         <strong>{parseDate(sale.createdAt).format('HH:mm:ss')}</strong>
@@ -175,6 +197,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                                 size="sm"
                                 onClick={() => onEditSale(sale)}
                                 leftIcon={<EditIcon />}
+                                disabled={isDeleting}
                               >
                                 Editar
                               </Button>
@@ -186,6 +209,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                                 variant="danger"
                                 size="sm"
                                 onClick={() => requestDeleteSale(sale.id)}
+                                disabled={isDeleting}
                               >
                                 Excluir
                               </Button>
@@ -196,7 +220,8 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
               </div>
             </div>
           ) : null}

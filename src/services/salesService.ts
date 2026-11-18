@@ -11,6 +11,7 @@ export interface DailySale {
   amount: number;
   notes?: string;
   createdAt: string;
+  operationId?: string;
 }
 
 export interface SaleItemData {

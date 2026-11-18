@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- `useCreateSale`: mutation de registro; envia `idempotencyKey` quando fornecida para impedir duplicatas em retries e faz optimistic insert nas listas `sales/daily` da loja atual e re-consolida automaticamente se o mês da venda já estava consolidado.
+- `useCreateSale`: mutation de registro; envia `idempotencyKey` quando fornecida para impedir duplicatas em retries, faz optimistic insert nas listas `sales/daily` da loja atual com `operationId: optimistic-*` e substitui esse marcador pelo ID real devolvido pela API no `onSuccess`. Depois re-consolida automaticamente se o mês da venda já estava consolidado.
 - `useUpdateSale`: mutation de edição; atualiza o item no cache e re-consolida o/os meses afetados se já estavam consolidados (meses antigo e novo).
 - `useDeleteSale`: mutation de exclusão; remove o item e re-consolida o mês da venda se já estava consolidado.
 - Falha em `!response.ok` da API de vendas é propagada como `Error` para permitir rollback.
@@ -21,4 +21,5 @@
 - Antes de re-consolidar, o hook mostra toast informativo de que o mês será re-consolidado.
 - Ao concluir, o cache `auto-consolidation:*` é invalidado para evitar stale pós-edição.
 - Optimistic ops mantêm a lista visível durante a operação; rollback restaura o snapshot em erro de API.
+- O `operationId` no item otimista permanece estável quando a API devolve o ID definitivo, evitando remount/reinício de animações após o sucesso do registro.
 - Invalidação é granular por tenant; não recarrega a página inteira.
