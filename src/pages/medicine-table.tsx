@@ -5,8 +5,13 @@ import { usePendingTask } from '../contexts/RouteLoadingContext';
 import contasStyles from '../styles/payables.module.css';
 import type {
   MedicineTableRow,
+  MedicineTableUf,
   TableSearchHistoryItem,
 } from '../services/medicineTableStore';
+import {
+  getMedicineTableUfConfig,
+  MEDICINE_TABLE_UF_OPTIONS,
+} from '../utils/medicineTableSearch';
 import { useMedicineTable } from '../hooks/useMedicineTable';
 import { useShortcuts } from '../utils/shortcuts';
 import { parseDate } from '../utils/date';
@@ -38,7 +43,10 @@ const Tabela: React.FC = () => {
     search,
     upload,
     clearHistory,
+    uf,
+    changeUf,
   } = useMedicineTable();
+  const ufConfig = getMedicineTableUfConfig(uf);
   const tabelaLoaded = status.loaded;
   const rowCount = status.rowCount;
   const loading = search.isPending;
@@ -71,6 +79,22 @@ const Tabela: React.FC = () => {
       console.error(error);
       setFileName('');
       showToast(error instanceof Error ? error.message : 'Erro ao carregar a planilha.', 'error');
+    }
+  };
+
+  const handleUfChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nextUf = event.target.value as MedicineTableUf;
+
+    try {
+      await changeUf.mutateAsync(nextUf);
+      setResults([]);
+      setSource('');
+      showToast(`UF de referência alterada para ${getMedicineTableUfConfig(nextUf).label}.`, 'success');
+    } catch (error) {
+      console.error(error);
+      setResults([]);
+      setSource('');
+      showToast(error instanceof Error ? error.message : 'Erro ao alterar a UF de referência.', 'error');
     }
   };
 
@@ -128,6 +152,21 @@ const Tabela: React.FC = () => {
       <Panel className={styles.uploadPanel}>
         <div className={`${styles.panelRow}`}>
           <div className={`${styles.uploadHelp}`}>
+            <div className={`${styles.ufField}`}>
+              <label className={`${styles.ufLabel}`} htmlFor="medicine-table-uf">UF de referência</label>
+              <select
+                id="medicine-table-uf"
+                className={`${styles.ufSelect}`}
+                value={uf}
+                disabled={!isAdmin || uploading || changeUf.isPending}
+                onChange={(event) => void handleUfChange(event)}
+              >
+                {MEDICINE_TABLE_UF_OPTIONS.map((option) => (
+                  <option key={option.code} value={option.code}>{option.label}</option>
+                ))}
+              </select>
+              <span className={`${styles.ufHint}`}>Preços: {ufConfig.pfLabel} / {ufConfig.pmcLabel}</span>
+            </div>
             {isAdmin && (
               <Button type="button" variant="primary" className={`${styles.uploadButton}`} onClick={() => fileInputRef.current?.click()} isLoading={uploading}>
                 {uploading ? 'Carregando...' : 'Enviar nova planilha'}
@@ -195,8 +234,8 @@ const Tabela: React.FC = () => {
                     <th>Produto</th>
                     <th>Apresentação</th>
                     <th>Classe terapêutica</th>
-                    <th>PF 20,5%</th>
-                    <th>PMC 20,5%</th>
+                    <th>{ufConfig.pfLabel}</th>
+                    <th>{ufConfig.pmcLabel}</th>
                   </tr>
                 </thead>
                 <tbody>

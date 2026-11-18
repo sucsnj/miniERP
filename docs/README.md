@@ -49,6 +49,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0015-multiplos-admins-por-bootstrap.md](adr/0015-multiplos-admins-por-bootstrap.md) - ADR: permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`.
 - [adr/0016-sessao-sliding-e-rotacao.md](adr/0016-sessao-sliding-e-rotacao.md) - ADR: sessão sliding (14 dias) com limite absoluto (30 dias) e rotação de token.
 - [adr/0019-distribuidoras-configuraveis-regras-xml.md](adr/0019-distribuidoras-configuraveis-regras-xml.md) - ADR: distribuidoras e regras da importação XML configuráveis por empresa.
+- [adr/0020-tabela-medicamentos-planilha-cmed-uf.md](adr/0020-tabela-medicamentos-planilha-cmed-uf.md) - ADR: planilha CMED (compatibilidade pt-BR), aba relevante e UF de referência na tabela de medicamentos.
 - [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR rejeitada: persistência da tabela de medicamentos no Supabase (substituída por ADR 0018).
 - [adr/0018-tabela-medicamentos-localstorage-indexeddb.md](adr/0018-tabela-medicamentos-localstorage-indexeddb.md) - ADR: tabela de medicamentos local-first em IndexedDB.
 

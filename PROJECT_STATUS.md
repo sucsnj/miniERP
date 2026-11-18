@@ -2,7 +2,7 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **17/11/2026**
+Atualizado em: **18/11/2026**
 
 ## Resumo executivo
 
@@ -21,6 +21,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | `node scripts/check-docs.mjs` | espelho e links consistentes |
 | `node scripts/check-encoding.mjs` | sem mojibake/BOM |
 | Persistência | Supabase |
+| Tabela de medicamentos | planilha CMED com cabeçalhos pt-BR, aba relevante detectada e UF PE em cache (ADR 0020) |
 | Offline/PWA | não implementado |
 | Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
 

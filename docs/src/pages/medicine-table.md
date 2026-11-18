@@ -1,14 +1,13 @@
 # `src/pages/medicine-table.tsx`
 
-> Tabela de Medicamentos (`/medicine-table`): upload de planilha, busca local e histórico no IndexedDB.
+> Tabela de Medicamentos (`/medicine-table`): UF de referência, upload, busca e histórico no IndexedDB.
 
 ## O que faz
 
-- Não faz nenhuma requisição para buscar/status/histórico; o snapshot é carregado do IndexedDB no mount.
-- Faz upload XLS/XLSX no cliente, normaliza colunas/valores, grava no IndexedDB e limpa histórico antigo.
-- Busca por termo com scoring local; consultas já feitas ficam em histórico local (60 itens / 30 dias) para retorno instantâneo (`source: 'history'`).
-- Escape limpa o input de busca.
-- Sem persistência no Supabase; cada dispositivo/navegador possui seu próprio snapshot.
+- Dropdown "UF de referência" (somente PE) é escolhido antes do upload; a seleção fica em cache e os cabeçalhos PF/PMC da tabela acompanham a UF.
+- Upload XLS/XLSX no cliente: detecta a aba com a estrutura CMED (pt-BR), ignora as outras e grava o snapshot normalizado.
+- Busca local com scoring; consultas repetidas vêm do histórico (60 itens / 30 dias, `source: 'history'`).
+- Escape limpa o input; somente admins enviam planilha e limpam histórico.
 
 ## Relações
 
@@ -17,5 +16,6 @@
 
 ## Notas
 
-- A UI diz "Últimas 100 buscas", mas o armazenamento limita a 60 itens (mesmo padrão do OCR). Corrigir o texto para 60 se necessário.
-- Após limpar dados do site, é preciso enviar a planilha novamente.
+- A UI diz "Últimas 100 buscas", mas o cache guarda 60 (mesmo padrão do OCR).
+- Trocar a UF recalcula os preços do snapshot em cache; snapshots antigos exigem reenvio da planilha.
+- Limpar dados do site exige enviar a planilha novamente.

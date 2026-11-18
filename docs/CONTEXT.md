@@ -65,7 +65,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | Carrinho de compras | `docs/src/components/cart/CartModal.md`, `docs/src/hooks/useCart.md` |
 | Formulários de venda (dia/item) | `docs/src/components/sales/DailySaleForm.md`, `docs/src/components/products/ItemForm.md`, `docs/src/components/sales/EditSaleForm.md` |
 | OCR / importação | `docs/src/pages/api/ocr.md`, `docs/src/services/ocrService.md`, `docs/src/services/pdfService.md`, `docs/src/services/boletoBarcode.md`, `docs/src/services/ocrHistoryRepository.md`, `docs/src/components/import/OcrUpload.md`, `docs/adr/0014-ocr-local-e-indexeddb.md` |
-| Tabela de medicamentos | `docs/src/pages/medicine-table.md`, `docs/src/services/medicineTableStore.md`, `docs/src/utils/medicineTableSearch.md`, `docs/adr/0018-tabela-medicamentos-localstorage-indexeddb.md` |
+| Tabela de medicamentos | `docs/src/pages/medicine-table.md`, `docs/src/services/medicineTableStore.md`, `docs/src/utils/medicineTableSearch.md`, `docs/adr/0018-tabela-medicamentos-localstorage-indexeddb.md`, `docs/adr/0020-tabela-medicamentos-planilha-cmed-uf.md` |
 | Notas fiscais | `docs/src/pages/api/invoices.md`, `docs/src/database/notasDb.md` |
 | Backup | `docs/src/pages/api/backup.md`, `docs/src/pages/api/contas/backup.md` |
 | Componente/hook/util específico | navegar em `docs/src/` pelo mesmo caminho do arquivo em `src/` |

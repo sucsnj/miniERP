@@ -1,20 +1,18 @@
 # `src/services/medicineTableStore.ts`
 
-> Persistência local da tabela de medicamentos em IndexedDB.
+> Persistência local da tabela de medicamentos e da UF de referência em IndexedDB.
 
 ## O que faz
 
-- `loadMedicineTableSnapshot()`: retorna o snapshot atual (linhas normalizadas).
-- `saveMedicineTableSnapshot(rows)`: grava snapshot `current` e limpa histórico antigo.
-- `listMedicineTableHistory()`: histórico de buscas (até 60, máx. 30 dias), com resultados.
-- `saveMedicineTableHistory(item)`: registra busca limitada pela política.
-- `clearMedicineTableHistory()`: limpa histórico.
+- `loadMedicineTableSnapshot()` / `saveMedicineTableSnapshot(rows)`: snapshot com `rowCount`, `updatedAt` e linhas; cada linha pode incluir `priceColumns` (todas as colunas `pf*`/`pmc*` normalizadas).
+- `loadMedicineTableUf()` / `saveMedicineTableUf(uf)`: guardam a UF escolhida na store do snapshot (chave `settings:uf`); padrão `PE`.
+- Histórico de buscas: até 60 itens/30 dias; `clearMedicineTableHistory()` limpa.
 
 ## Relações
 
-- **Usado por:** [useMedicineTable](../hooks/useMedicineTable.md) e [utils](../utils/medicineTableSearch.md).
+- **Usado por:** [useMedicineTable](../hooks/useMedicineTable.md) e [medicineTableSearch](../utils/medicineTableSearch.md).
 
 ## Notas
 
-- Armazena dados da planilha localmente; tolera tabelas grandes que App `localStorage` não sustentaria.
-- Não há persistência no Supabase; cada dispositivo mantém seu snapshot.
+- `saveMedicineTableSnapshot` limpa o histórico: resultados ficam inválidos quando a planilha ou a UF muda.
+- Sem Supabase: cada navegador/dispositivo mantém seu próprio snapshot e UF.

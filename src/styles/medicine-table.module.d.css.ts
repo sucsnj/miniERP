@@ -18,6 +18,10 @@ declare const styles: {
   readonly "secondary": string;
   readonly "tableContainer": string;
   readonly "tableWrapper": string;
+  readonly "ufField": string;
+  readonly "ufHint": string;
+  readonly "ufLabel": string;
+  readonly "ufSelect": string;
   readonly "uploadButton": string;
   readonly "uploadHelp": string;
   readonly "uploadPanel": string;

@@ -3,8 +3,12 @@ const DB_VERSION = 1;
 const SNAPSHOT_STORE = 'snapshot';
 const HISTORY_STORE = 'history';
 const SNAPSHOT_KEY = 'current';
+const UF_KEY = 'settings:uf';
 const MAX_HISTORY_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_HISTORY_ENTRIES = 60;
+
+export type MedicineTableUf = 'PE';
+export const DEFAULT_MEDICINE_TABLE_UF: MedicineTableUf = 'PE';
 
 export interface MedicineTableRow {
   substance: string;
@@ -15,6 +19,7 @@ export interface MedicineTableRow {
   therapeuticClass: string;
   pf205: string;
   pmc205: string;
+  priceColumns?: Record<string, string>;
 }
 
 export interface MedicineTableSnapshot {
@@ -153,6 +158,30 @@ export const clearMedicineTableHistory = async (): Promise<void> => {
   try {
     const transaction = database.transaction(HISTORY_STORE, 'readwrite');
     transaction.objectStore(HISTORY_STORE).clear();
+    await transactionComplete(transaction);
+  } finally {
+    database.close();
+  }
+};
+
+export const loadMedicineTableUf = async (): Promise<MedicineTableUf | null> => {
+  const database = await openDatabase();
+
+  try {
+    const transaction = database.transaction(SNAPSHOT_STORE, 'readonly');
+    const stored = await requestAsPromise(transaction.objectStore(SNAPSHOT_STORE).get(UF_KEY)) as { key: string; value: string } | null;
+    return stored?.value === 'PE' ? stored.value : null;
+  } finally {
+    database.close();
+  }
+};
+
+export const saveMedicineTableUf = async (uf: MedicineTableUf): Promise<void> => {
+  const database = await openDatabase();
+
+  try {
+    const transaction = database.transaction(SNAPSHOT_STORE, 'readwrite');
+    transaction.objectStore(SNAPSHOT_STORE).put({ key: UF_KEY, value: uf });
     await transactionComplete(transaction);
   } finally {
     database.close();

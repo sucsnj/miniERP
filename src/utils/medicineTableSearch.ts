@@ -1,4 +1,8 @@
-import type { MedicineTableRow } from '../services/medicineTableStore';
+import {
+  DEFAULT_MEDICINE_TABLE_UF,
+  type MedicineTableRow,
+  type MedicineTableUf,
+} from '../services/medicineTableStore';
 
 export const normalizeText = (value: string) =>
   value
@@ -18,6 +22,57 @@ export const normalizeHeader = (header: string) =>
     .replace(/[^a-z0-9]/gi, '')
     .toLowerCase();
 
+interface MedicineTableUfConfig {
+  code: MedicineTableUf;
+  label: string;
+  pfColumn: string;
+  pmcColumn: string;
+  pfLabel: string;
+  pmcLabel: string;
+}
+
+export const MEDICINE_TABLE_UF_OPTIONS: MedicineTableUfConfig[] = [
+  {
+    code: 'PE',
+    label: 'Pernambuco',
+    pfColumn: 'pf205',
+    pmcColumn: 'pmc205',
+    pfLabel: 'PF 20,5 %',
+    pmcLabel: 'PMC 20,5 %',
+  },
+];
+
+export const getMedicineTableUfConfig = (uf: MedicineTableUf): MedicineTableUfConfig =>
+  MEDICINE_TABLE_UF_OPTIONS.find((option) => option.code === uf) ?? MEDICINE_TABLE_UF_OPTIONS[0];
+
+const readText = (row: Record<string, unknown>, keys: string[]): string => {
+  for (const key of keys) {
+    const value = row[key];
+    if (value !== undefined && value !== null && String(value).trim()) {
+      return String(value).trim();
+    }
+  }
+  return '';
+};
+
+const SUBSTANCE_HEADERS = ['substancia', 'substancia1', 'substance', 'substance1'];
+const EAN_HEADERS = ['ean1', 'ean'];
+const PRODUCT_HEADERS = ['produto', 'product'];
+
+export const hasMedicineTableHeaders = (headers: string[], uf: MedicineTableUf): boolean => {
+  const normalized = new Set(headers.map(normalizeHeader));
+  const config = getMedicineTableUfConfig(uf);
+  const hasAny = (candidates: string[]) => candidates.some((candidate) => normalized.has(candidate));
+
+  return (
+    hasAny(SUBSTANCE_HEADERS) &&
+    hasAny(EAN_HEADERS) &&
+    hasAny(PRODUCT_HEADERS) &&
+    normalized.has(config.pfColumn) &&
+    normalized.has(config.pmcColumn)
+  );
+};
+
 const parseNumberValue = (value: unknown) => {
   if (value === null || value === undefined) {
     return null;
@@ -33,8 +88,13 @@ const parseNumberValue = (value: unknown) => {
   return Number.isNaN(number) ? null : number;
 };
 
-export const normalizeRows = (rows: Record<string, unknown>[]): MedicineTableRow[] =>
-  rows
+export const normalizeRows = (
+  rows: Record<string, unknown>[],
+  uf: MedicineTableUf = DEFAULT_MEDICINE_TABLE_UF
+): MedicineTableRow[] => {
+  const config = getMedicineTableUfConfig(uf);
+
+  return rows
     .map((rawRow) => {
       const row: Record<string, unknown> = {};
 
@@ -42,25 +102,40 @@ export const normalizeRows = (rows: Record<string, unknown>[]): MedicineTableRow
         row[normalizeHeader(key)] = value;
       });
 
-      const pfValue = parseNumberValue(
-        row.pf205 ?? row['pf205'] ?? row['pf205%'] ?? row['pf205percent'] ?? row['pf20_5'] ?? row['pf20,5'] ?? ''
-      );
-      const pmcValue = parseNumberValue(
-        row.pmc205 ?? row['pmc205'] ?? row['pmc205%'] ?? row['pmc20,5'] ?? ''
-      );
+      const priceColumns: Record<string, string> = {};
+      Object.entries(row).forEach(([key, value]) => {
+        if (!key.startsWith('pf') && !key.startsWith('pmc')) return;
+        const parsed = parseNumberValue(value);
+        priceColumns[key] = parsed !== null ? String(parsed) : String(value ?? '').trim();
+      });
 
       return {
-        substance: String(row.substance || row.substance1 || row['substância'] || '').trim(),
-        laboratory: String(row.laboratory || '').trim(),
-        ean: String(row.ean1 || row.ean || '').trim(),
-        product: String(row.product || '').trim(),
-        presentation: String(row.presentation || '').trim(),
-        therapeuticClass: String(row.classeterapeutica || row['classe terapeutica'] || '').trim(),
-        pf205: pfValue !== null ? String(pfValue).trim() : String(row.pf205 ?? row['pf205'] ?? row['pf205%'] ?? row['pf205percent'] ?? row['pf20_5'] ?? row['pf20,5'] ?? '').trim(),
-        pmc205: pmcValue !== null ? String(pmcValue).trim() : String(row.pmc205 ?? row['pmc205'] ?? row['pmc205%'] ?? row['pmc20,5'] ?? '').trim(),
+        substance: readText(row, SUBSTANCE_HEADERS),
+        laboratory: readText(row, ['laboratorio', 'laboratory']),
+        ean: readText(row, EAN_HEADERS),
+        product: readText(row, PRODUCT_HEADERS),
+        presentation: readText(row, ['apresentacao', 'presentation']),
+        therapeuticClass: readText(row, ['classeterapeutica', 'therapeuticclass']),
+        pf205: priceColumns[config.pfColumn] ?? '',
+        pmc205: priceColumns[config.pmcColumn] ?? '',
+        priceColumns,
       };
     })
     .filter((row) => row.substance || row.product || row.ean);
+};
+
+export const applyMedicineTableUf = (
+  rows: MedicineTableRow[],
+  uf: MedicineTableUf
+): MedicineTableRow[] => {
+  const config = getMedicineTableUfConfig(uf);
+
+  return rows.map((row) => ({
+    ...row,
+    pf205: row.priceColumns?.[config.pfColumn] ?? row.pf205,
+    pmc205: row.priceColumns?.[config.pmcColumn] ?? row.pmc205,
+  }));
+};
 
 export const searchMedicineTableRows = (
   query: string,
