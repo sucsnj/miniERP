@@ -211,7 +211,7 @@ export default function DistributorSettings() {
 
   return (
     <Panel style={MASONRY_CARD_STYLE}>
-      <PanelHeader title="Distribuidoras da importação XML" chip={<Button type="button" size="sm" leftIcon={<AddIcon />} onClick={startNew}>Nova</Button>} />
+      <PanelHeader title="Distribuidoras da importação XML" chip={<Button type="button" size="sm" leftIcon={<AddIcon />} onClick={startNew} style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>Nova</Button>} />
       <p style={{ margin: '0 0 8px', fontSize: '0.8rem', color: 'var(--muted)' }}>
         Cadastro usado na importação de notas. Cada distribuidora pode ter múltiplas regras.
       </p>
@@ -224,10 +224,10 @@ export default function DistributorSettings() {
             const item = distributors.find((entry) => entry.id === event.target.value);
             if (item) selectDistributor(item);
           }}
-          disabled={saving}
+          disabled={saving || distributors.length === 0}
           style={{ padding: '6px', width: '100%' }}
         >
-          <option value="">Selecionar distribuidora…</option>
+          {distributors.length === 0 ? <option value="">Sem distribuidoras</option> : <option value="">Selecionar distribuidora…</option>}
           {distributors.map((item) => (
             <option key={item.id} value={item.id}>{item.name} ({item.rules.length} regra{item.rules.length === 1 ? '' : 's'})</option>
           ))}

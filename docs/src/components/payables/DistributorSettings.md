@@ -12,7 +12,7 @@
 ## Relações
 
 - Visual idêntico aos demais cards de configuração (mesmo `Panel` e `MASONRY_CARD_STYLE`).
-- Lista de distribuidoras via dropdown; formulário de regras fica abaixo em uma coluna única.
+- Lista de distribuidoras via dropdown; quando não existe nenhuma cadastrada, o dropdown fica desabilitado e exibe "Sem distribuidoras".
 - **Usado por:** [settings](../../pages/settings.md).
 - **Usa:** [adminService](../../services/adminService.md).
 
