@@ -45,6 +45,19 @@ export interface UpdateMerchantPatch {
 
 export type CompanyProfileInput = Omit<CompanySummary, 'id'>;
 export type StoreProfileInput = Omit<StoreAdmin, 'id' | 'active'>;
+export interface DistributorConfig {
+  id: string;
+  name: string;
+  aliases: string[];
+  enabled: boolean;
+  rules: {
+    id: string;
+    name: string;
+    type: 'amount_adjustment' | 'name_override';
+    value: number | string;
+    enabled: boolean;
+  }[];
+}
 
 async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, init);
@@ -64,6 +77,16 @@ async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> 
 
 export const fetchCompany = () =>
   fetchJson<{ company: CompanySummary }>('/api/admin/company');
+
+export const fetchDistributors = () =>
+  fetchJson<{ distributors: DistributorConfig[] }>('/api/admin/distributors');
+
+export const replaceDistributors = (distributors: DistributorConfig[]) =>
+  fetchJson<{ distributors: DistributorConfig[] }>('/api/admin/distributors', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ distributors }),
+  });
 
 export const updateCompanyProfile = (input: CompanyProfileInput) =>
   fetchJson<{ company: CompanySummary }>('/api/admin/company', {

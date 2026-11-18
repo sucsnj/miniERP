@@ -6,7 +6,8 @@
 
 - Exibe o padrão da empresa (`company_settings`) e overrides locais por dispositivo.
 - Cards usam layout masonry (colunas com altura independente, primitivas compartilhadas em `src/utils/layout.ts`).
-- Admin altera tema, fuso horário, histórico recente, foco automático/delay, auto consolidação, ampliação dos campos e PIX da empresa.
+- Admin altera tema, fuso horário, histórico recente, foco automático/delay, auto consolidação, ampliação dos campos, PIX e distribuidoras (admin-only).
+- Card "Distribuidoras da importação XML": lista distribuidoras, aliases para `emit.xNome`, cria/edita/excluir distribuidoras. Cada item aceita múltiplas regras tipadas (`amount_adjustment` ou `name_override`); sem seed.
 - Ampliação dos campos é compartilhada por empresa (sem override local): Data, Valor e Observações podem ser ajustados individualmente em `1x` (padrão), `1.2x`, `1.5x`, `2x` ou `2.5x`.
 - Se a migration `0026` ainda não tiver sido aplicada, a seção mostra alerta de indisponibilidade e os selects ficam desabilitados.
 - Merchant visualiza os padrões da empresa e pode usar overrides locais (tema, fuso, recentes, foco/delay).
@@ -21,7 +22,7 @@
 
 ## Relações
 
-- **Usa:** `src/contexts/SettingsContext.tsx`, `src/services/settingsService.ts`, `src/contexts/ThemeContext.tsx`, `src/contexts/AuthContext.tsx`, componentes comuns de layout.
+- **Usa:** `src/contexts/SettingsContext.tsx`, `src/services/settingsService.ts`, `src/contexts/ThemeContext.tsx`, `src/contexts/AuthContext.tsx`, `DistributorSettings`, componentes comuns de layout.
 - **Acessada por:** link de configurações na [Nav](../components/common/Nav.md).
 
 ## Notas

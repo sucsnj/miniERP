@@ -48,6 +48,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0014-ocr-local-e-indexeddb.md](adr/0014-ocr-local-e-indexeddb.md) - ADR: OCR local de boletos, IndexedDB para histórico e sem preencher contas automaticamente.
 - [adr/0015-multiplos-admins-por-bootstrap.md](adr/0015-multiplos-admins-por-bootstrap.md) - ADR: permitir múltiplos admins de empresas distintas via bootstrap autenticado com `PIN_MASTER`.
 - [adr/0016-sessao-sliding-e-rotacao.md](adr/0016-sessao-sliding-e-rotacao.md) - ADR: sessão sliding (14 dias) com limite absoluto (30 dias) e rotação de token.
+- [adr/0019-distribuidoras-configuraveis-regras-xml.md](adr/0019-distribuidoras-configuraveis-regras-xml.md) - ADR: distribuidoras e regras da importação XML configuráveis por empresa.
 - [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR rejeitada: persistência da tabela de medicamentos no Supabase (substituída por ADR 0018).
 - [adr/0018-tabela-medicamentos-localstorage-indexeddb.md](adr/0018-tabela-medicamentos-localstorage-indexeddb.md) - ADR: tabela de medicamentos local-first em IndexedDB.
 
@@ -64,6 +65,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/pages/summary.md](src/pages/summary.md) - resumo mensal de vendas e totais consolidados.
 - [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR: persistência da tabela de medicamentos no Supabase (substitui filesystem local/Vercel).
 - [src/pages/medicine-table.md](src/pages/medicine-table.md) - upload e consulta da tabela de medicamentos.
+- [src/pages/api/admin/distributors.md](src/pages/api/admin/distributors.md) - configuração de distribuidoras da empresa.
 - [src/pages/settings.md](src/pages/settings.md) - configurações do aplicativo.
 - [src/pages/login.md](src/pages/login.md) - login com `login` ou `email`.
 - [src/pages/setup.md](src/pages/setup.md) - bootstrap do primeiro admin via `PIN_MASTER`.
@@ -114,6 +116,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 ### Importação e OCR
 
 - [src/services/medicineTableStore.md](src/services/medicineTableStore.md) - snapshot/histórico da tabela de medicamentos no IndexedDB.
+- [src/utils/distributors.md](src/utils/distributors.md) - normalização, busca e aplicação das distribuidoras/regras da importação.
 - [src/utils/medicineTableSearch.md](src/utils/medicineTableSearch.md) - normalização e busca local na tabela.
 - [src/pages/api/ocr.md](src/pages/api/ocr.md) - upload e processamento OCR.
 - [src/pages/api/payables/import.md](src/pages/api/payables/import.md) - importação de contas via XML.
@@ -125,6 +128,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/services/adminService.md](src/services/adminService.md) - API cliente de administração (empresa, lojas, vendedores).
 - [src/services/settingsService.md](src/services/settingsService.md) - API cliente de configurações do tenant.
 - [src/services/payablesService.md](src/services/payablesService.md) - API cliente de contas a pagar.
+- [src/services/payablesImport.md](src/services/payablesImport.md) - pipeline de importação de XML com distribuidoras/regras.
 - [src/services/invoicesService.md](src/services/invoicesService.md) - API cliente de notas fiscais.
 - [src/services/boletoBarcode.md](src/services/boletoBarcode.md) - normalização e validação de linha digitável (47/48 dígitos).
 - [src/services/ocrHistoryRepository.md](src/services/ocrHistoryRepository.md) - histórico do OCR no IndexedDB (5 dias).
@@ -166,6 +170,8 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [src/components/payables/AccountField.md](src/components/payables/AccountField.md) - campo compartilhado para leitura/edição controlada.
 - [src/components/payables/InlineAccountField.md](src/components/payables/InlineAccountField.md) - campo individual inline com confirmar/cancelar.
 - [src/components/payables/PayablesAccountModal.md](src/components/payables/PayablesAccountModal.md) - modal "Nova Conta" para criar uma conta.
+- [src/components/payables/DistributorSettings.md](src/components/payables/DistributorSettings.md) - card de Configurações para distribuidoras e regras.
+- [src/components/payables/MissingDistributorModal.md](src/components/payables/MissingDistributorModal.md) - modal aberto quando o emitente não é encontrado na importação.
 - [src/components/payables/PayablesFilterPanel.md](src/components/payables/PayablesFilterPanel.md) - painel de filtros.
 - [src/components/payables/PayablesLastTen.md](src/components/payables/PayablesLastTen.md) - últimas 10 contas.
 - [src/components/payables/PayablesPaymentModal.md](src/components/payables/PayablesPaymentModal.md) - modal para editar observações e confirmar pagamento.

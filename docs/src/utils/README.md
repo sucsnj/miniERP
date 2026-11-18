@@ -11,6 +11,7 @@
 
 | [companyCache.md](./companyCache.md) | Cache em memória da razão social da empresa (TTL 10 min). |
 | [clipboard.md](./clipboard.md) | Cópia para a área de transferência com fallback. |
+| [distributors.md](./distributors.md) | Normalização, busca e aplicação das distribuidoras/regras da importação. |
 | [date.md](./date.md) | Datas/horas em `America/Recife` (`dayjs`). |
 | [download.md](./download.md) | Download de Data URL no navegador. |
 | [env.md](./env.md) | Validação das variáveis de ambiente do servidor Supabase. |

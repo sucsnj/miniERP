@@ -20,6 +20,7 @@ import {
   MASONRY_CARD_STYLE,
   MASONRY_FORM_STYLE,
 } from '../utils/layout';
+import DistributorSettings from '@/components/payables/DistributorSettings';
 
 const timezoneOptions = [
   { value: 'America/Recife', label: 'Recife (UTC-03)' },
@@ -380,6 +381,12 @@ const SettingsPage = () => {
               ))}
             </div>
           </Panel>
+
+          {isAdmin && (
+            <div style={MASONRY_CARD_STYLE}>
+              <DistributorSettings />
+            </div>
+          )}
 
           <Panel style={MASONRY_CARD_STYLE}>
             <div>

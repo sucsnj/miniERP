@@ -56,7 +56,7 @@ Banco oficial: Supabase/Postgres (schema public, UUID, nomes em inglês, RPCs). 
 | Arquitetura geral / fluxo de dados | `docs/DOCS.md` |
 | Dashboard / vendas do dia | `docs/src/pages/index.md`, `docs/src/pages/api/sales.md`, `docs/src/pages/api/sale-items.md`, `docs/src/services/salesService.md` |
 | Histórico / relatórios | `docs/src/pages/history.md`, `docs/src/pages/summary.md`, `docs/src/pages/api/monthly-sales.md` |
-| Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/src/pages/api/contas/backup.md` |
+| Contas a pagar | `docs/src/pages/payables.md`, `docs/src/database/contasDb.md`, `docs/src/services/payablesService.md`, `docs/src/pages/api/payables.md`, `docs/src/pages/api/payables/import.md`, `docs/services/payablesImport.md`, `docs/adr/0019-distribuidoras-configuraveis-regras-xml.md` |
 | Produtos / estoque | `docs/src/pages/products.md`, `docs/src/database/productsDb.md`, `docs/src/pages/api/products.md`, `docs/src/pages/api/products/*.md`, `docs/src/services/productsService.md` |
 | Perfil / autenticação admin | `docs/src/pages/profile.md`, `docs/src/pages/api/auth/profile.md`, `docs/src/pages/api/auth/profile/password.md`, `docs/src/pages/api/avatar.md`, `docs/src/services/profileService.md`, `docs/src/services/avatarService.md` |
 | Autenticação / bootstrap | `docs/src/pages/login.md`, `docs/src/pages/api/auth/bootstrap.md`, `docs/src/contexts/AuthContext.md`, `docs/adr/0013-autenticacao-multiempresa-multiloja.md`, `docs/adr/0015-multiplos-admins-por-bootstrap.md`, `docs/adr/0016-sessao-sliding-e-rotacao.md` |

@@ -8,6 +8,7 @@
 - `fetchCompany` / `updateCompanyProfile`.
 - `fetchStores` / `createStore` / `updateStoreProfile` / `toggleStoreStatus`.
 - `fetchMerchants` / `createMerchant` / `updateMerchant`.
+- `fetchDistributors()` / `replaceDistributors(distributors)` — lista completa da configuração da empresa.
 - `parseResponse` propaga `Error` em respostas não OK com mensagens legíveis.
 
 ## Relações

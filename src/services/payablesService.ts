@@ -27,6 +27,24 @@ interface ImportXmlResponse {
   }>;
 }
 
+export interface DistributorConfig {
+  id: string;
+  name: string;
+  aliases: string[];
+  enabled: boolean;
+  rules: { id: string; name: string; type: 'amount_adjustment' | 'name_override'; value: number | string; enabled: boolean }[];
+}
+
+export interface ImportXmlConflictResponse {
+  code: 'DISTRIBUTOR_NOT_FOUND';
+  xmlDistributorName: string;
+  availableDistributors: DistributorConfig[];
+}
+
+export type ImportPayablesXmlResponse =
+  | ({ sucesso: true } & ImportXmlResponse)
+  | ({ sucesso: false } & ImportXmlConflictResponse);
+
 async function parseResponse<T>(response: Response): Promise<T> {
   const text = await response.text();
   const body = text ? JSON.parse(text) : {};
@@ -78,6 +96,37 @@ export const importAccountsFromXml = async (xml: string) => {
     body: JSON.stringify({ xml }),
   });
   return parseResponse<ImportXmlResponse>(response);
+};
+
+export const importPayablesXml = async (
+  xml: string,
+  override: { distributorId?: string; newDistributorName?: string; newDistributorAliases?: string[] } = {},
+): Promise<ImportPayablesXmlResponse> => {
+  const response = await fetch('/api/payables/import', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ xml, ...override }),
+  });
+  const text = await response.text();
+  const body = text ? JSON.parse(text) as Record<string, unknown> : {};
+
+  if (response.status === 409) {
+    return {
+      sucesso: false,
+      code: 'DISTRIBUTOR_NOT_FOUND',
+      xmlDistributorName: String(body.xmlDistributorName ?? ''),
+      availableDistributors: Array.isArray(body.availableDistributors)
+        ? body.availableDistributors as DistributorConfig[]
+        : [],
+    };
+  }
+
+  if (!response.ok) {
+    const message = 'error' in body ? String(body.error) : 'Não foi possível importar XML.';
+    throw new Error(message);
+  }
+
+  return body as unknown as ImportPayablesXmlResponse;
 };
 
 export const fetchAccounts = async (year: number, month?: number): Promise<AccountDetails[]> => {

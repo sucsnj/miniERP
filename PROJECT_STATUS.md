@@ -34,7 +34,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 `supabase/migrations/0022-add-atomic-pix-preset-functions.sql`, 
 `supabase/migrations/0023-add-deactivate-store-function.sql`, 
 `supabase/migrations/0024-add-auto-consolidation-mode.sql`, 
-`supabase/migrations/0025-multiple-company-bootstraps.sql`, `supabase/migrations/0026-add-sale-field-scales.sql`, `supabase/migrations/0027-add-sale-idempotency.sql`, `supabase/migrations/0028-add-session-rotation.sql`.
+`supabase/migrations/0025-multiple-company-bootstraps.sql`, `supabase/migrations/0026-add-sale-field-scales.sql`, `supabase/migrations/0027-add-sale-idempotency.sql`, `supabase/migrations/0028-add-session-rotation.sql`, `supabase/migrations/0030-add-company-settings-distributors.sql`.
 
 - **Tabela de medicamentos:** migrada para local-first (IndexedDB); não requer SQL nem API na Vercel. A limpeza de dados do site exige contato-upload novamente da planilha.
 

@@ -7,8 +7,12 @@ import {
   useDeleteAccount,
   usePayAccount,
   useCancelPayment,
-  useImportAccountsFromXml,
 } from '../hooks/usePayablesMutations';
+import {
+  importPayablesXml,
+  type DistributorConfig,
+} from '../services/payablesService';
+import MissingDistributorModal from '@/components/payables/MissingDistributorModal';
 import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
@@ -48,7 +52,7 @@ const Payables: React.FC = () => {
   const deleteAccountMutation = useDeleteAccount();
   const payAccountMutation = usePayAccount();
   const cancelPaymentMutation = useCancelPayment();
-  const importAccountsFromXmlMutation = useImportAccountsFromXml();
+  const [missingDistributor, setMissingDistributor] = useState<{ xml: string; emitterName: string; availableDistributors: DistributorConfig[] } | null>(null);
   const [distributor, setDistributor] = useState('');
   const [amount, setAmount] = useState('');
   const [dueDate, setDueDate] = useState(today);
@@ -299,27 +303,40 @@ const Payables: React.FC = () => {
     xmlInputRef.current?.click();
   };
 
+  const handleImportPayload = async (xml: string) => {
+    try {
+      const result = await importPayablesXml(xml);
+
+      if (!result.sucesso) {
+        if ('code' in result && result.code === 'DISTRIBUTOR_NOT_FOUND') {
+          setMissingDistributor({
+            xml,
+            emitterName: result.xmlDistributorName,
+            availableDistributors: result.availableDistributors,
+          });
+          return;
+        }
+
+        showToast('Importação falhou. Nenhuma conta foi inserida.', 'error');
+        return;
+      }
+
+      showToast(`Importação concluída: ${result.registros?.length ?? 0} registros inseridos`, 'success');
+      await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao importar XML', 'error');
+      console.error(error);
+    }
+  };
+
   const handleImportXmlFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     const file = files?.[0];
     event.target.value = '';
     if (!file) return;
 
-    try {
-      const text = await file.text();
-      const result = await importAccountsFromXmlMutation.mutateAsync({ xml: text });
-
-      if (result.sucesso) {
-        showToast(`Importação concluída: ${result.registros?.length ?? 0} registros inseridos`, 'success');
-        // Atualiza imediatamente a UI
-        await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
-      } else {
-        showToast(`Erro: ${result.error || 'Falha ao importar XML'}`, 'error');
-      }
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao importar XML', 'error');
-      console.error(error);
-    }
+    const text = await file.text();
+    await handleImportPayload(text);
   };
 
   const filteredAccounts = useMemo(() => {
@@ -441,6 +458,21 @@ const Payables: React.FC = () => {
         dataInputRef={dataInputRef}
         documentInputRef={documentInputRef}
       />
+
+      {missingDistributor && (
+        <MissingDistributorModal
+          xml={missingDistributor.xml}
+          emitterName={missingDistributor.emitterName}
+          availableDistributors={missingDistributor.availableDistributors}
+          onClose={() => setMissingDistributor(null)}
+          onImported={(recordsCount) => {
+            setMissingDistributor(null);
+            if (recordsCount > 0) {
+              void Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+            }
+          }}
+        />
+      )}
 
       <PayablesPaymentModal
         account={selectedAccount}

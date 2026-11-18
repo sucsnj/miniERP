@@ -1,13 +1,15 @@
 import { getSupabaseServerClient } from './supabase';
 import type { AuthContext } from '../utils/serverAuth';
+import { normalizeDistributorConfig, type DistributorConfig } from '../utils/distributors';
 
 export type CompanyThemeMode = 'system' | 'light' | 'dark';
 export type RecentSalesCount = 0 | 2 | 4 | 6 | 8;
 export type FieldScale = 1 | 1.2 | 1.5 | 2 | 2.5;
+export type DistributorSettings = DistributorConfig;
 const FIELD_SCALES: FieldScale[] = [1, 1.2, 1.5, 2, 2.5];
 
-const FIELD_SCALE_SELECT = 'theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, field_scale_date, field_scale_value, field_scale_observations, pix_key, pix_name, pix_bank, pix_city, pix_presets';
-const LEGACY_SELECT = 'theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, pix_key, pix_name, pix_bank, pix_city, pix_presets';
+const DISTRIBUTOR_CONFIG_SELECT = 'theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, field_scale_date, field_scale_value, field_scale_observations, pix_key, pix_name, pix_bank, pix_city, pix_presets, distributor_config';
+const LEGACY_DISTRIBUTOR_CONFIG_SELECT = 'theme_mode, timezone, recent_sales_count, auto_focus_sale_input, auto_focus_sale_input_delay, auto_consolidation_enabled, auto_consolidation_day, auto_consolidation_mode, field_scale_date, field_scale_value, field_scale_observations, pix_key, pix_name, pix_bank, pix_city, pix_presets';
 
 export interface PixPreset {
   id: string;
@@ -35,6 +37,7 @@ export interface CompanySettings {
   pixBank: string;
   pixCity: string;
   pixPresets: PixPreset[];
+  distributorConfig: DistributorConfig[];
 }
 
 export const MAX_PIX_PRESETS = 20;
@@ -97,6 +100,20 @@ function parsePixPresets(value: unknown): PixPreset[] {
   return normalizePixPresets(raw) ?? [];
 }
 
+function parseDistributorConfig(value: unknown): DistributorConfig[] {
+  const raw = (() => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value) as unknown;
+      } catch {
+        return [];
+      }
+    }
+    return value;
+  })();
+  return normalizeDistributorConfig(raw) ?? [];
+}
+
 export interface CompanySettingsReadResult {
   companySettings: CompanySettings;
   fieldScalesAvailable: boolean;
@@ -118,7 +135,7 @@ function mapFieldScale(value: unknown): FieldScale {
   return FIELD_SCALES.includes(numeric as FieldScale) ? numeric as FieldScale : 1;
 }
 
-function mapRow(row: Record<string, unknown>, fieldScalesAvailable = true): CompanySettings {
+function mapRow(row: Record<string, unknown>, fieldScalesAvailable = true, distributorConfigAvailable = true): CompanySettings {
   return {
     themeMode: row.theme_mode as CompanyThemeMode,
     timezone: String(row.timezone),
@@ -136,6 +153,7 @@ function mapRow(row: Record<string, unknown>, fieldScalesAvailable = true): Comp
     pixBank: String(row.pix_bank ?? ''),
     pixCity: String(row.pix_city ?? ''),
     pixPresets: parsePixPresets(row.pix_presets),
+    distributorConfig: distributorConfigAvailable ? parseDistributorConfig(row.distributor_config) : [],
   };
 }
 
@@ -156,42 +174,61 @@ async function runSettingsQuery(
   return client.from('company_settings').update(row ?? {}).eq('company_id', ctx.companyId).select(select).single();
 }
 
-async function createCompanySettingsRow(
+function isMissingBundleColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const details = error as { code?: unknown; message?: unknown; details?: unknown; hint?: unknown };
+  const serialized = [details.code, details.message, details.details, details.hint]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  return isMissingFieldScaleColumnError(error)
+    || ((serialized.includes('42703') || serialized.includes('pgrst204')) && serialized.includes('distributor_config'));
+}
+
+async function readCompanySettingsRow(
   ctx: AuthContext,
-  select: string
-): Promise<{ data: Record<string, unknown> | null; error: unknown }> {
-  const { data, error } = await runSettingsQuery(ctx, select, 'insert', { company_id: ctx.companyId });
-  return { data: data as unknown as Record<string, unknown> | null, error };
+  mode: 'select' | 'insert' | 'update',
+  row?: Record<string, unknown>
+) {
+  const full = await runSettingsQuery(ctx, DISTRIBUTOR_CONFIG_SELECT, mode, row);
+
+  if (!full.error) {
+    return { data: full.data, scalesAvailable: true, distributorConfigAvailable: true, error: null };
+  }
+
+  if (isMissingBundleColumnError(full.error)) {
+    const legacy = await runSettingsQuery(ctx, LEGACY_DISTRIBUTOR_CONFIG_SELECT, mode, row);
+    if (!legacy.error) {
+      return { data: legacy.data, scalesAvailable: false, distributorConfigAvailable: false, error: null };
+    }
+  }
+
+  return { data: null, scalesAvailable: true, distributorConfigAvailable: true, error: full.error };
 }
 
 export async function inspectCompanySettings(ctx: AuthContext): Promise<CompanySettingsReadResult> {
-  const initial = await runSettingsQuery(ctx, FIELD_SCALE_SELECT, 'select');
+  const initial = await readCompanySettingsRow(ctx, 'select');
 
-  if (!initial.error) {
-    if (initial.data) {
-      return { companySettings: mapRow(initial.data as unknown as Record<string, unknown>), fieldScalesAvailable: true };
-    }
-
-    const created = await createCompanySettingsRow(ctx, FIELD_SCALE_SELECT);
-    if (!created.error) {
-      return { companySettings: mapRow(created.data as unknown as Record<string, unknown>), fieldScalesAvailable: true };
-    }
-    if (!isMissingFieldScaleColumnError(created.error)) {
-      throw new Error('Não foi possível criar as configurações da empresa.');
-    }
-  } else if (!isMissingFieldScaleColumnError(initial.error)) {
+  if (initial.error) {
     throw new Error('Não foi possível carregar as configurações da empresa.');
   }
 
-  const legacy = await runSettingsQuery(ctx, LEGACY_SELECT, 'select');
-  if (legacy.error) throw new Error('Não foi possível carregar as configurações da empresa.');
-  if (legacy.data) {
-    return { companySettings: mapRow(legacy.data as unknown as Record<string, unknown>, false), fieldScalesAvailable: false };
+  if (initial.data) {
+    return {
+      companySettings: mapRow(initial.data as unknown as Record<string, unknown>, initial.scalesAvailable, initial.distributorConfigAvailable),
+      fieldScalesAvailable: initial.scalesAvailable,
+    };
   }
 
-  const created = await createCompanySettingsRow(ctx, LEGACY_SELECT);
-  if (created.error) throw new Error('Não foi possível criar as configurações da empresa.');
-  return { companySettings: mapRow(created.data as unknown as Record<string, unknown>, false), fieldScalesAvailable: false };
+  const created = await readCompanySettingsRow(ctx, 'insert', { company_id: ctx.companyId });
+  if (created.error || !created.data) {
+    throw new Error('Não foi possível criar as configurações da empresa.');
+  }
+
+  return {
+    companySettings: mapRow(created.data as unknown as Record<string, unknown>, created.scalesAvailable, created.distributorConfigAvailable),
+    fieldScalesAvailable: created.scalesAvailable,
+  };
 }
 
 export async function getCompanySettings(ctx: AuthContext): Promise<CompanySettings> {
@@ -239,34 +276,24 @@ export async function updateCompanySettingsWithDiagnostics(
   if (patch.pixBank !== undefined) row.pix_bank = patch.pixBank.trim();
   if (patch.pixCity !== undefined) row.pix_city = patch.pixCity.trim();
 
-  const hasScalePatch = ['fieldScaleDate', 'fieldScaleValue', 'fieldScaleObservations']
-    .some((field) => patch[field as 'fieldScaleDate' | 'fieldScaleValue' | 'fieldScaleObservations'] !== undefined);
-  const updated = await runSettingsQuery(ctx, FIELD_SCALE_SELECT, 'update', row);
+  const updated = await readCompanySettingsRow(ctx, 'update', row);
 
-  if (!updated.error) {
-    return {
-      companySettings: mapRow(updated.data as unknown as Record<string, unknown>),
-      fieldScalesAvailable: true,
-    };
-  }
-
-  if (!isMissingFieldScaleColumnError(updated.error)) {
+  if (updated.error) {
+    const hasScalePatch = ['fieldScaleDate', 'fieldScaleValue', 'fieldScaleObservations']
+      .some((field) => patch[field as 'fieldScaleDate' | 'fieldScaleValue' | 'fieldScaleObservations'] !== undefined);
+    if (hasScalePatch && isMissingFieldScaleColumnError(updated.error)) {
+      throw new Error('A ampliação dos campos requer a migration 0026-add-sale-field-scales.sql.');
+    }
     throw new Error('Não foi possível atualizar as configurações da empresa.');
   }
 
-  if (hasScalePatch) {
-    throw new Error('A ampliação dos campos requer a migration 0026-add-sale-field-scales.sql.');
+  if (!updated.data) {
+    throw new Error('Não foi possível atualizar as configurações da empresa.');
   }
 
-  const legacyUpdate = { ...row };
-  delete legacyUpdate.field_scale_date;
-  delete legacyUpdate.field_scale_value;
-  delete legacyUpdate.field_scale_observations;
-  const legacy = await runSettingsQuery(ctx, LEGACY_SELECT, 'update', legacyUpdate);
-  if (legacy.error) throw new Error('Não foi possível atualizar as configurações da empresa.');
   return {
-    companySettings: mapRow(legacy.data as unknown as Record<string, unknown>, false),
-    fieldScalesAvailable: false,
+    companySettings: mapRow(updated.data as unknown as Record<string, unknown>, updated.scalesAvailable, updated.distributorConfigAvailable),
+    fieldScalesAvailable: updated.scalesAvailable,
   };
 }
 
@@ -276,6 +303,26 @@ export async function updateCompanySettings(
 ): Promise<CompanySettings> {
   const result = await updateCompanySettingsWithDiagnostics(patch, ctx);
   return result.companySettings;
+}
+
+export async function updateDistributorConfig(
+  config: DistributorConfig[],
+  ctx: AuthContext
+): Promise<CompanySettings> {
+  const client = getSupabaseServerClient();
+  const normalized = normalizeDistributorConfig(config);
+
+  if (!normalized) {
+    throw new Error('Configuração de distribuidoras inválida.');
+  }
+
+  const { error } = await client
+    .from('company_settings')
+    .update({ distributor_config: normalized, updated_by: ctx.userId })
+    .eq('company_id', ctx.companyId);
+
+  if (error) throw new Error('Não foi possível atualizar a configuração de distribuidoras.');
+  return getCompanySettings(ctx);
 }
 
 export async function upsertPixPreset(

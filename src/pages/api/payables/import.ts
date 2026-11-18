@@ -1,45 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { listAllPayables, createPayable } from '../../../database/payablesRepository';
-import { listAllInvoices, createInvoice } from '../../../database/payablesRepository';
-import parseNumber, { parseCurrency } from '../../../utils/number';
-import { toDate } from '../../../utils/date';
-import { parseStringPromise } from 'xml2js';
 import { requireAdminApi } from '../../../utils/serverAuth';
+import { processPayablesXml, type PayablesImportOverride } from '../../../services/payablesImport';
 
-// Nomes de distribuidoras válidos
-const validNames = [
-  'acripel', 'cimed', 'profarma', 'g1', 'nova',
-  'unilever', 'aujo', 'f&f', 'nds', 'mbca', 'plena', 'total', 'pro'
-];
+const parseOverride = (body: unknown): PayablesImportOverride => {
+  const source = body && typeof body === 'object' ? (body as Record<string, unknown>) : {};
+  const override: PayablesImportOverride = {};
+  const distributorId = String(source.distributorId ?? '').trim();
+  const newDistributorName = String(source.newDistributorName ?? '').trim();
+  const aliases = Array.isArray(source.newDistributorAliases)
+    ? source.newDistributorAliases.map((value) => String(value ?? '').trim()).filter(Boolean)
+    : undefined;
 
-// Funções auxiliares para formatar e normalizar dados
-const formatDistributor = (name: string) => {
-  const lower = name.toLowerCase();
-  if (lower.includes('f&f')) return 'FF';
-  const foundName = validNames.find(n => lower.includes(n));
-  if (foundName) {
-    return foundName.charAt(0).toUpperCase() + foundName.slice(1);
-  }
-  return lower.charAt(0).toUpperCase() + lower.slice(1);
+  if (distributorId) override.distributorId = distributorId;
+  if (newDistributorName) override.newDistributorName = newDistributorName;
+  if (aliases && aliases.length > 0) override.newDistributorAliases = aliases;
+
+  return override;
 };
 
-// Funções auxiliares para ajustar valores por supplierName
-const adjustAmountByDistributor = (name: string, amount: number) => {
-  if (name.toLowerCase() === 'cimed') return amount + 3.99;
-  if (name.toLowerCase() === 'pro') return amount + 1.39;
-  if (name.toLowerCase() === 'profarma') return amount + 1.39;
-  return amount;
-};
-
-// Funções auxiliares para normalizar documentos
-const normalizeDocument = (document: string) => {
-  return document.replace(/[A-Z]/gi, (letter) => {
-    const code = letter.toUpperCase().charCodeAt(0) - 64; // A=1
-    return code.toString();
-  });
-};
-
-// Função mainBarcode do endpoint
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const ctx = await requireAdminApi(req, res);
   if (!ctx) return;
@@ -49,87 +27,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { xml } = req.body;
+    const body = req.body && typeof req.body === 'object' ? req.body as Record<string, unknown> : {};
+    const xml = String(body.xml ?? '');
     if (!xml) {
       return res.status(400).json({ error: 'Arquivo XML não fornecido' });
     }
 
-    const parsed = await parseStringPromise(xml, { explicitArray: true });
+    const result = await processPayablesXml(
+      xml,
+      ctx,
+      req.cookies?.timezone ?? 'America/Recife',
+      parseOverride(body)
+    );
 
-    // Caminho correto dentro do XML
-    const infNFe = parsed.nfeProc.NFe[0].infNFe[0];
-    const rawDistributorName = infNFe.emit[0].xNome[0];
-    const invoiceNumber = infNFe.ide[0].nNF[0];
-    const duplicates = infNFe.cobr?.[0]?.dup ?? []; // caso não exista duplicatas, retorna []
-    // const duplicateItems = infNFe.cobr[0].dup;
-
-    const issueDate = infNFe.ide[0].dhEmi[0]; // emissão
-    // const vPag = infNFe.cobr[0].fat[0].vOrig[0]; // total
-    const invoiceTotal = infNFe.total[0].ICMSTot[0].vNF[0]; // total
-    const accessKey = parsed.nfeProc.protNFe[0].infProt[0].chNFe[0]; // chave
-
-    let distributor = formatDistributor(rawDistributorName);
-    const documentBase = normalizeDocument(invoiceNumber);
-
-    const records: { supplierName: string; amount: number; dueDate: string; document: string }[] = [];
-
-    for (let i = 0; i < duplicates.length; i++) {
-      let amount = parseNumber(duplicates[i].vDup[0]);
-      let dueDate = duplicates[i].dVenc[0];
-
-      // valida e normaliza valores e datas
-      const validatedAmount = parseCurrency(String(duplicates[i].vDup[0])) ?? amount;
-      const validatedDueDate = toDate(dueDate, req.cookies?.timezone || 'America/Recife');
-
-      amount = adjustAmountByDistributor(distributor, validatedAmount);
-      dueDate = validatedDueDate ? validatedDueDate.toISOString().split('T')[0] : dueDate;
-      const documentNumber = `${documentBase}${i + 1}`;
-
-      // se for supplierName for igual a 'Distribuidora de medicamentos ltda', muda para 'Mbca'
-      if (distributor.toLowerCase() === 'distribuidora de medicamentos ltda') {
-        distributor = 'Mbca';
-      }
-
-      const allAccounts = await listAllPayables(ctx);
-      // se já existir uma conta com a mesma supplierName e document, pule para a próxima
-      const duplicateAccount = allAccounts.find(c => c.supplierName === distributor && c.document === documentNumber);
-      if (duplicateAccount) {
-        continue; // pula pra proxima duplicata
-      }
-
-      await createPayable({ supplierName: distributor, amount, dueDate, document: documentNumber }, ctx);
-
-      records.push({ supplierName: distributor, amount: amount, dueDate: dueDate, document: documentNumber });
+    if ('code' in result && result.code) {
+      return res.status(409).json({ sucesso: false, ...result });
     }
 
-    // flag para saber se alguma nota foi inserida
-    let invoiceInserted = false;
-
-    // se já existir uma nota com a mesma chave
-    const allInvoices = await listAllInvoices(ctx);
-    const existingInvoice = allInvoices.find(n => n.accessKey === accessKey);
-
-    if (existingInvoice) {
-      if (records.length > 0) {
-        // houve duplicatas novas
-        return res.status(200).json({ sucesso: true, registros: records });
-      } else {
-        // nenhuma duplicata nova e nota já exists
-        return res.status(400).json({ error: 'Nota e duplicata(s) já existentes' });
-      }
-    } else {
-      // adiciona nota
-      await createInvoice({ supplierName: distributor, accessKey, issueDate, amount: invoiceTotal }, ctx);
-      invoiceInserted = true;
+    if ('error' in result && result.error) {
+      return res.status(400).json({ error: result.error });
     }
 
-    // se chegou aqui, ou inseriu nota ou duplicatas
-    if (invoiceInserted || records.length > 0) {
-      return res.status(200).json({ sucesso: true, registros: records });
-    } else {
-      return res.status(400).json({ error: 'Nada foi inserido' });
-    }
-
+    return res.status(200).json(result);
   } catch (error) {
     console.error('Erro ao importar XML:', error);
     return res.status(500).json({ error: 'Erro interno ao processar XML' });
