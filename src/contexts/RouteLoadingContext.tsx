@@ -72,6 +72,12 @@ export function RouteContent({ children }: { children: ReactNode }) {
   );
 }
 
+export function useRouteLoading(): RouteLoadingContextValue {
+  const context = useContext(RouteLoadingContext);
+  if (!context) throw new Error('useRouteLoading deve ser usado dentro de RouteLoadingProvider.');
+  return context;
+}
+
 export function usePendingTask(key: string, pending: boolean): void {
   const context = useContext(RouteLoadingContext);
   const id = useId();

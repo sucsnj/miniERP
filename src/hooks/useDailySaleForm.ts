@@ -22,8 +22,10 @@ import { buildPixPayload } from '../utils/pix';
 import { calculateResult, sanitizeExpression, insertKey } from '@/lib/calc/calculator';
 import { useCart } from './useCart';
 import { useToast } from './useToast';
+import { useRouter } from 'next/router';
 import { useAutoFocus } from './useAutoFocus';
 import { useSettings } from '../contexts/SettingsContext';
+import { useRouteLoading } from '../contexts/RouteLoadingContext';
 import { useCreateSale } from './useSalesMutations';
 
 // Teclas de navegação/edição sempre permitidas no campo de amount
@@ -49,6 +51,8 @@ export const useDailySaleForm = ({
 }: UseDailySaleFormProps) => {
   const { showToast } = useToast();
   const { autoFocusSaleInput, autoFocusSaleInputDelay, pixKey, pixName, pixBank, pixCity } = useSettings();
+  const { pathname } = useRouter();
+  const { pendingCount } = useRouteLoading();
 
   const [value, setValue] = useState('');
   const [observations, setObservations] = useState('');
@@ -375,6 +379,24 @@ export const useDailySaleForm = ({
       showToast('Erro ao registrar venda.', 'error');
     }
   };
+
+  // Garante o foco no campo de registro sempre que a rota `/` terminar de carregar completamente.
+  useEffect(() => {
+    if (pathname !== '/' || pendingCount > 0 || loading) return undefined;
+
+    let animationFrame = 0;
+    let nestedFrame = 0;
+    animationFrame = window.requestAnimationFrame(() => {
+      nestedFrame = window.requestAnimationFrame(() => {
+        valueInputRef.current?.focus();
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.cancelAnimationFrame(nestedFrame);
+    };
+  }, [pathname, pendingCount, loading]);
 
   // Mantém o foco e a visibilidade do campo de venda conforme configuração
   useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput, focusIntervalMs: autoFocusSaleInputDelay * 1000 });

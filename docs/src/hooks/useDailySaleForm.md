@@ -9,13 +9,14 @@
 - Handlers: `handleKeyDown` (filtro de teclas), `handleValueChange` (sanitiza e preserva cursor), `handlePixClick` (valida e gera payload EMVCo; exige `pixKey`, `pixName`, `pixBank` e `pixCity` em `useSettings`; cria PIX com valor livre quando não há valor avaliável no campo de venda (vazio, zero ou expressão incompleta)), `handleSubmit` (valida, registra via `useCreateSale`, limpa/foca), `handleClear`, `addOperator(op)`.
 - Expoe `isValueInvalid` para indicar expressao invalida.
 - Ao concluir o registro com sucesso, volta o foco automaticamente para o campo Valor (habilitado de novo) e seleciona seu conteúdo.
+- Sempre que a rota `/` termina de carregar completamente (`pendingCount === 0`), o foco vai para o campo Valor; este comportamento é estrutural e não depende da configuração `autoFocusSaleInput`.
 - Bloqueia envio enquanto uma submissão está em andamento e limpa o formulário imediatamente; em falha, restaura os dados somente se o usuário não digitou nada novo.
 - Envia `idempotencyKey` estável por tentativa do mesmo rascunho na criação de venda; falha desconhecida seguida de retry não registra a venda duas vezes.
 - Efeitos: ESC limpa formulário (ignorado enquanto `useFocusTrap` marca `body.modal-open`), auto-foco/visibilidade do input via `useAutoFocus` e atualizações por carrinho.
 
 ## Relacoes
 
-- **Usa:** `useCreateSale` (`src/hooks/useSalesMutations.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`, `useAutoFocus`, `useSettings`.
+- **Usa:** `useCreateSale` (`src/hooks/useSalesMutations.ts`), `useShortcuts` (`src/utils/shortcuts.ts`), `validateRequired/validateCurrency/validateDate` (`src/utils/validation.ts`), `highlightField` (`src/utils/forms.ts`), `parseCurrency` (`src/utils/number.ts`), `buildPixPayload` (`src/utils/pix.ts`), `src/lib/calc/calculator.ts`, `useCart`, `useToast`, `useAutoFocus`, `useSettings`, `useRouteLoading`.
 - **Usado por:** `src/components/sales/DailySaleForm.tsx` (apresentacional).
 
 ## Notas

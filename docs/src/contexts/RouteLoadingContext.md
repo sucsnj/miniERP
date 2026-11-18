@@ -8,6 +8,7 @@
 - `RouteContent` oculta somente a área de conteúdo (`AuthGate` + página) e escolhe o layout do `PageSkeleton` pelo `pathname`: dashboard, table, settings, form ou standard.
 - `/login` e `/setup` permanecem visíveis; nas demais rotas o conteúdo só aparece quando todas as tarefas iniciais terminarem.
 - Configurações de empresa e auto-consolidação de vendas rodam em segundo plano; não entram no gate da rota.
+- `useRouteLoading()` expõe `pendingCount` e `register` para consumidores internos que precisam reagir à conclusão do gate.
 - `usePendingTask(key, pending)` registra uma tarefa enquanto `pending` for `true`.
 - Depois da primeira carga, ações/refresh não entram no gate; dados existentes permanecem visíveis.
 
