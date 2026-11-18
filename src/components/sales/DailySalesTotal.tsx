@@ -1,5 +1,5 @@
 import { useAuth } from '../../contexts/AuthContext';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { DailySale } from '../../services/salesService';
 import { formatCurrency } from '../../utils/formatter';
 import { formatDateString, parseDate } from '../../utils/date';
@@ -31,6 +31,54 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   const dailyTotal = dailySales.reduce((sum, sale) => sum + sale.amount, 0);
   const dailyCount = dailySales.length;
   const dailyAverage = dailyCount > 0 ? dailyTotal / dailyCount : 0;
+  const [newSaleIds, setNewSaleIds] = useState<string[]>([]);
+  const [deletingSaleIds, setDeletingSaleIds] = useState<string[]>([]);
+  const previousSaleIdsRef = useRef<string[] | null>(null);
+  const highlightTimeoutIdsRef = useRef<number[]>([]);
+  const deleteTimeoutIdsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    const saleIds = recentSales.map((sale) => sale.id);
+    const previousIds = previousSaleIdsRef.current;
+
+    if (previousIds === null) {
+      previousSaleIdsRef.current = saleIds;
+      return;
+    }
+
+    const addedIds = saleIds.filter((id) => id.startsWith('optimistic-') && !previousIds.includes(id));
+    previousSaleIdsRef.current = saleIds;
+
+    if (addedIds.length === 0) return;
+
+    setNewSaleIds((current) => [...new Set([...current, ...addedIds])]);
+    const timeoutId = window.setTimeout(() => {
+      setNewSaleIds((current) => current.filter((id) => !addedIds.includes(id)));
+    }, 5000);
+    highlightTimeoutIdsRef.current.push(timeoutId);
+  }, [recentSales]);
+
+  useEffect(() => {
+    const highlightTimeouts = highlightTimeoutIdsRef.current;
+    const deleteTimeouts = deleteTimeoutIdsRef.current;
+
+    return () => {
+      highlightTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      deleteTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    };
+  }, []);
+
+  const requestDeleteSale = (id: string) => {
+    setDeletingSaleIds((current) => current.includes(id) ? current : [...current, id]);
+
+    const timeoutId = window.setTimeout(() => {
+      onDeleteSale?.(id);
+      setDeletingSaleIds((current) => current.filter((entry) => entry !== id));
+      deleteTimeoutIdsRef.current = deleteTimeoutIdsRef.current.filter((entry) => entry !== timeoutId);
+    }, 1000);
+
+    deleteTimeoutIdsRef.current.push(timeoutId);
+  };
 
   // Deleta a última venda do histórico de vendas
   useShortcuts(['Delete'], () => {
@@ -39,7 +87,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
         .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
 
       if (latestSale) {
-        onDeleteSale(latestSale.id);
+        requestDeleteSale(latestSale.id);
       }
     }
   });
@@ -100,7 +148,11 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                 {[...recentSales]
                   .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
                   .map((sale) => (
-                    <div key={sale.id} className={`${styles.historyItem}`}>
+                    <div
+                      key={sale.id}
+                      className={`${styles.historyItem}${newSaleIds.includes(sale.id) ? ` ${styles.historyItemNew}` : ''}${deletingSaleIds.includes(sale.id) ? ` ${styles.historyItemDeleting}` : ''}`}
+                      aria-hidden={deletingSaleIds.includes(sale.id) ? 'true' : undefined}
+                    >
                       <div>
                         <strong>{parseDate(sale.createdAt).format('HH:mm:ss')}</strong>
 
@@ -133,7 +185,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                                 type="button"
                                 variant="danger"
                                 size="sm"
-                                onClick={() => onDeleteSale(sale.id)}
+                                onClick={() => requestDeleteSale(sale.id)}
                               >
                                 Excluir
                               </Button>

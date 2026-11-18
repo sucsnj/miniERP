@@ -4,9 +4,13 @@ declare const styles: {
   readonly "formCard": string;
   readonly "historyCard": string;
   readonly "historyItem": string;
+  readonly "historyItemDeleting": string;
+  readonly "historyItemNew": string;
   readonly "historyValues": string;
   readonly "recentSaleActions": string;
   readonly "recentSalesGrid": string;
+  readonly "saleDelete": string;
+  readonly "saleHighlight": string;
   readonly "summaryCard": string;
   readonly "summaryCardTitle": string;
   readonly "summaryGrid": string;
