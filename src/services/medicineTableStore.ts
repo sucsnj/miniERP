@@ -5,7 +5,7 @@ const HISTORY_STORE = 'history';
 const SNAPSHOT_KEY = 'current';
 const UF_KEY = 'settings:uf';
 const MAX_HISTORY_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-const MAX_HISTORY_ENTRIES = 60;
+const MAX_HISTORY_ENTRIES = 20;
 
 export type MedicineTableUf = 'PE';
 export const DEFAULT_MEDICINE_TABLE_UF: MedicineTableUf = 'PE';

@@ -12,7 +12,7 @@ A persistência no Supabase (ADR 0017) adicionou SQL, RPCs e latência ao servid
 2. Upload/normalização/busca acontecem no cliente; nenhuma chamada `/api/medicine-table`.
 3. Cada dispositivo/navegador possui seu snapshot; não há regra/sincronização entre usuários/lojas.
 4. Após limpar dados do site, a planilha precisa ser enviada novamente.
-5. Histórico local limitado a 60 registros/30 dias; snapshot não tem limite artificial necessário para planilhas comuns.
+5. Histórico local limitado a 20 registros/30 dias; snapshot não tem limite artificial necessário para planilhas comuns.
 6. Rota `/medicine-table` pode ficar estática/cache placeholder; sem endpoint ou estado de dados do servidor.
 
 ## Consequências

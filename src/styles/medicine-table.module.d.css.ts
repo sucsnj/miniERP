@@ -1,4 +1,5 @@
 declare const styles: {
+  readonly "clearHistoryButton": string;
   readonly "emptyState": string;
   readonly "historyItem": string;
   readonly "historyList": string;

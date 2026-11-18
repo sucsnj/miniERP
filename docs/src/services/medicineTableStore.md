@@ -6,7 +6,7 @@
 
 - `loadMedicineTableSnapshot()` / `saveMedicineTableSnapshot(rows)`: snapshot com `rowCount`, `updatedAt` e linhas; cada linha pode incluir `priceColumns` (todas as colunas `pf*`/`pmc*` normalizadas).
 - `loadMedicineTableUf()` / `saveMedicineTableUf(uf)`: guardam a UF escolhida na store do snapshot (chave `settings:uf`); padrão `PE`.
-- Histórico de buscas: até 60 itens/30 dias; `clearMedicineTableHistory()` limpa.
+- Histórico de buscas: até 20 itens/30 dias; `clearMedicineTableHistory()` limpa.
 
 ## Relações
 

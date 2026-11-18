@@ -263,10 +263,10 @@ const Tabela: React.FC = () => {
           <div className={contasStyles.panelHeader}>
             <div>
               <h2>Histórico de pesquisas</h2>
-              <p>Últimas 100 buscas gravadas no cache.</p>
+              <p>Últimas 20 buscas gravadas no cache.</p>
             </div>
             {isAdmin && (
-              <Button type="button" variant="outline" onClick={handleClearHistory}>
+              <Button type="button" variant="outline" className={styles.clearHistoryButton} onClick={handleClearHistory}>
                 Limpar histórico
               </Button>
             )}
