@@ -33,6 +33,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   const dailyAverage = dailyCount > 0 ? dailyTotal / dailyCount : 0;
   const [newSaleIds, setNewSaleIds] = useState<string[]>([]);
   const [deletingSales, setDeletingSales] = useState<DailySale[]>([]);
+  const [frozenRecentSales, setFrozenRecentSales] = useState<DailySale[] | null>(null);
   const previousSaleIdsRef = useRef<string[] | null>(null);
   const highlightTimeoutIdsRef = useRef(new Set<number>());
   const deleteTimeoutIdsRef = useRef(new Set<number>());
@@ -80,16 +81,21 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
     const sale = recentSales.find((item) => item.id === id);
     if (!sale) return;
 
-    const deletingSale = { ...sale, operationId: sale.operationId ?? `deleting-${sale.id}` };
+    const deletingSale = { ...sale };
+    if (deletingSales.length === 0) setFrozenRecentSales(recentSales);
     setDeletingSales((current) => current.some((item) => getSaleKey(item) === getSaleKey(deletingSale))
       ? current
       : [...current, deletingSale]);
     onDeleteSale?.(id);
 
     const timeoutId = window.setTimeout(() => {
-      setDeletingSales((current) => current.filter((item) => getSaleKey(item) !== getSaleKey(deletingSale)));
+      setDeletingSales((current) => {
+        const remaining = current.filter((item) => getSaleKey(item) !== getSaleKey(deletingSale));
+        if (remaining.length === 0) setFrozenRecentSales(null);
+        return remaining;
+      });
       deleteTimeoutIdsRef.current.delete(timeoutId);
-    }, 1000);
+    }, 2000);
 
     deleteTimeoutIdsRef.current.add(timeoutId);
   };
@@ -106,9 +112,10 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
     }
   });
 
-  const recentSalesKeys = new Set(recentSales.map(getSaleKey));
   const deletingKeys = new Set(deletingSales.map(getSaleKey));
-  const visibleRecentSales = [...recentSales, ...deletingSales.filter((sale) => !recentSalesKeys.has(getSaleKey(sale)))];
+  const deletingSalesByKey = new Map(deletingSales.map((sale) => [getSaleKey(sale), sale]));
+  const baseRecentSales = frozenRecentSales ?? recentSales;
+  const visibleRecentSales = baseRecentSales.map((sale) => deletingSalesByKey.get(getSaleKey(sale)) ?? sale);
 
   return (
     <div className={`${styles.dailySalesTotal}`}>

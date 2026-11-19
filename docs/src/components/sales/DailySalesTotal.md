@@ -8,7 +8,7 @@
 - Lista "Últimas 4 vendas" (`recentSales`) com Editar/Excluir quando `canEdit(data)`; senão mostra "Bloqueado". O botão Excluir não exibe ícone.
 - Atalho `Delete` exclui a venda mais recente; renderiza `children` no card do formulário.
 - Blocos de vendas recém-adicionadas (inserções otimistas com `operationId: optimistic-*`) recebem destaque visual e voltam suavemente ao estado normal em até 5s (`historyItemNew`).
-- Ao excluir, a mutação é chamada imediatamente; o bloco continua visível em preto e branco e desaparece em até 2s (`historyItemDeleting`), sem sofrer efeito de hover nem permitir foco em seus botões.
+- Ao excluir, a mutação é chamada imediatamente e a lista exibida fica congelada durante a animação: o bloco é substituído na mesma posição (mesma chave React), continua visível em preto e branco e desaparece em até 2s (`historyItemDeleting`), sem sofrer efeito de hover nem permitir foco em seus botões. Nenhum card extra aparece e a próxima venda só entra na vaga após o fim da animação.
 
 ```ts
 interface DailySalesTotalProps {
