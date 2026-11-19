@@ -36,8 +36,10 @@ const Nav: React.FC = () => {
   const [stores, setStores] = useState<StoreOption[]>([]);
   const [switchingStore, setSwitchingStore] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileLinksOpen, setMobileLinksOpen] = useState(false);
   const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -56,12 +58,17 @@ const Nav: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen && !mobileLinksOpen) return;
     const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+      const target = event.target as Node;
+      if (menuOpen && !menuRef.current?.contains(target)) setMenuOpen(false);
+      if (mobileLinksOpen && !mobileMenuRef.current?.contains(target)) setMobileLinksOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        setMobileLinksOpen(false);
+      }
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
     document.addEventListener('keydown', closeOnEscape);
@@ -69,7 +76,7 @@ const Nav: React.FC = () => {
       document.removeEventListener('mousedown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [menuOpen]);
+  }, [menuOpen, mobileLinksOpen]);
 
   const switchStore = async (event: FormEvent<HTMLSelectElement>) => {
     const storeId = event.currentTarget.value;
@@ -96,23 +103,36 @@ const Nav: React.FC = () => {
 
   return (
     <nav className={styles.nav} aria-label="Navegação principal">
-      <Link href="/" className={styles.brand} prefetch>MinErp</Link>
+      <div ref={mobileMenuRef} className={styles.leftSide}>
+        <Link href="/" className={styles.brand} prefetch>MinErp</Link>
+        <button
+          type="button"
+          className={styles.brandButton}
+          aria-expanded={mobileLinksOpen}
+          aria-controls="mobile-nav-links"
+          onClick={() => setMobileLinksOpen((open) => !open)}
+        >
+          MinErp
+        </button>
 
-      <div className={styles.navLinks}>
-        {user ? (
-          NAV_ITEMS.map(({ href, label, Icon }) => (
-            <div className={styles.navItem} key={href}>
-              <span className="icon"><Link href={href} prefetch><Icon /></Link></span>
-              <span className="text-responsive"><Link href={href} prefetch>{label}</Link></span>
-            </div>
-          ))
-        ) : (
-          <>
-            <Skeleton variant="button" width={88} height="28px" />
-            <Skeleton variant="button" width={72} height="28px" />
-            <Skeleton variant="button" width={88} height="28px" />
-          </>
-        )}
+        <div id="mobile-nav-links" className={`${styles.navLinks} ${mobileLinksOpen ? styles.navLinksOpen : ''}`}>
+          {user ? (
+            NAV_ITEMS.map(({ href, label, Icon }) => (
+              <div className={styles.navItem} key={href}>
+                <span className={`${styles.navIcon} icon`}><Link href={href} prefetch><Icon /></Link></span>
+                <span className={`${styles.navText} text-responsive`}>
+                  <Link href={href} prefetch onClick={() => setMobileLinksOpen(false)}>{label}</Link>
+                </span>
+              </div>
+            ))
+          ) : (
+            <>
+              <Skeleton variant="button" width={88} height="28px" />
+              <Skeleton variant="button" width={72} height="28px" />
+              <Skeleton variant="button" width={88} height="28px" />
+            </>
+          )}
+        </div>
       </div>
 
       <div className={styles.rightSide}>
@@ -125,12 +145,11 @@ const Nav: React.FC = () => {
           <>
             {stores.length > 0 && (
               <select
-                className="headerSelect"
+                className={`${styles.storeSelect} headerSelect`}
                 value={user.storeId}
                 disabled={switchingStore}
                 onChange={(event) => void switchStore(event)}
                 aria-label="Loja atual"
-                style={{ maxWidth: '180px' }}
               >
                 {stores.map((store) => (
                   <option key={store.id} value={store.id}>{store.name}</option>
