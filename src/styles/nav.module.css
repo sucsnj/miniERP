@@ -249,8 +249,8 @@
   }
 }
 
-/* Responsividade para 630px */
-@media (max-width: 630px) {
+/* Responsividade para abaixo de 1024px */
+@media (max-width: 1023px) {
   .nav {
     gap: 8px;
     padding: 8px 10px;
@@ -302,7 +302,10 @@
 
   .navLinks .navText {
     display: inline-flex;
-    font-size: 0.84rem;
+  }
+
+  .navLinks .navText a {
+    font-size: 0.92rem;
   }
 
   .navItem {
@@ -349,19 +352,6 @@
   }
 
   .navLinks {
-    gap: 4px;
-  }
-
-  .themeButton {
-    padding: 5px 8px;
-    font-size: 0.65rem;
-  }
-
-  .navLinks a {
-    font-size: 0.65rem;
-  }
-
-  .navLinks span {
-    font-size: 0.65rem;
+    width: min(200px, 82vw);
   }
 }

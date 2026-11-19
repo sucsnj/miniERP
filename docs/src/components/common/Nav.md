@@ -10,7 +10,7 @@
 - Avatar do usuário; sem `avatar_url`/erro de imagem, exibe a inicial do nome.
 - Ao clicar no nome/avatar, abre menu com identidade, `Perfil` (somente admin), `Configurações`, `Administração` (somente admin) e `Sair`.
 - Botão de logout revoga a sessão atual.
-- Em mobile (≤630px), tocar no nome do app abre/fecha um painel lateral à esquerda (largura limitada), vertical, sem ícones e com fonte ligeiramente menor; loja e usuário ficam compactos no canto superior direito.
+- Abaixo de 1024px, tocar no nome do app abre/fecha um painel lateral à esquerda (largura limitada), vertical, sem ícones e com fonte ligeiramente menor; loja e usuário ficam compactos no canto superior direito.
 
 ## Relações
 

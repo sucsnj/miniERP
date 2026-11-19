@@ -24,7 +24,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Tabela de medicamentos | planilha CMED com cabeçalhos pt-BR, aba relevante detectada e UF PE em cache (ADR 0020) |
 | Resultados da tabela | cabeçalho fixo abaixo da navbar e sem quebra de palavras (`overflow-x: clip` em `html, body`) |
 | Histórico da tabela | até 20 buscas/30 dias; "Limpar histórico" com largura de conteúdo |
-| Nav mobile | painel lateral à esquerda acionado pelo nome do app; loja/usuário compactos à direita |
+| Nav mobile | painel lateral à esquerda abaixo de 1024px, acionado pelo nome do app; loja/usuário compactos à direita |
 | Offline/PWA | não implementado |
 | Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
 
