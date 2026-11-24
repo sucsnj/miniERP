@@ -24,6 +24,7 @@ declare const styles: {
   readonly "fab": string;
   readonly "fabIcon": string;
   readonly "filterActions": string;
+  readonly "filterDropdowns": string;
   readonly "filterForm": string;
   readonly "filterInput": string;
   readonly "filterLabel": string;

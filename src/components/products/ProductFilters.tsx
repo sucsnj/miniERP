@@ -47,7 +47,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     return (
         <Panel>
             <PanelHeader title="Filtros de Pesquisa" />
-            <Form onSubmit={actions.search} className="page-actions">
+            <Form onSubmit={actions.search} className={styles.filterForm}>
                 <label htmlFor="search-input" className={styles.filterLabelSearch}>
                     Buscar:
                     <input
@@ -60,7 +60,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     />
                 </label>
 
-                <label htmlFor="filtro-tipo">
+            <div className={styles.filterDropdowns}>
+                <label htmlFor="filtro-tipo" className={styles.filterLabel}>
                     Tipo:
                     <select
                         id="filtro-tipo"
@@ -77,7 +78,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     </select>
                 </label>
 
-                <label htmlFor="filtro-categoria">
+                <label htmlFor="filtro-categoria" className={styles.filterLabel}>
                     Categoria:
                     <select
                         id="filtro-categoria"
@@ -96,7 +97,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     </select>
                 </label>
 
-                <label htmlFor="filtro-marca">
+                <label htmlFor="filtro-marca" className={styles.filterLabel}>
                     Marca:
                     <select
                         id="filtro-marca"
@@ -115,7 +116,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     </select>
                 </label>
 
-                <label htmlFor="filtro-fornecedor">
+                <label htmlFor="filtro-fornecedor" className={styles.filterLabel}>
                     Fornecedor:
                     <select
                         id="filtro-fornecedor"
@@ -134,7 +135,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     </select>
                 </label>
 
-                <label htmlFor="filtro-status">
+                <label htmlFor="filtro-status" className={styles.filterLabel}>
                     Status:
                     <select
                         id="filtro-status"
@@ -150,6 +151,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         <option value="INATIVO">Inativos</option>
                     </select>
                 </label>
+            </div>
 
                 <div className={styles.filterActions}>
                     <Button type="submit" variant="primary">

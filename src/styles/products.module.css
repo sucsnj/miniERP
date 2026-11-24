@@ -113,18 +113,38 @@
   align-items: flex-end;
 }
 
-.filterLabel,
 .filterLabelSearch {
   display: flex;
   flex-direction: column;
   gap: 6px;
   min-width: 0;
-  flex: 1 0 100%;
+  flex: 0 0 50%;
 }
 
-.filterInput,
-.filterSelect {
+.filterDropdowns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  flex: 0 0 50%;
+  min-width: 0;
+}
+
+.filterLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.filterInput {
   width: 100%;
+}
+
+.filterSelect {
+  width: 180px;
+  max-width: 100%;
 }
 
 .filterActions {
