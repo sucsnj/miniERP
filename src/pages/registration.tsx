@@ -29,7 +29,7 @@ import {
 } from '@/hooks/useProducts';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import RequireAdmin from '@/components/auth/RequireAdmin';
-import { usePendingTask } from '../contexts/RouteLoadingContext';
+
 import PageShell from '@/components/common/PageShell';
 import PageHeader from '@/components/common/PageHeader';
 import Panel from '@/components/common/Panel';
@@ -58,10 +58,6 @@ const RegistrationPage: React.FC = () => {
         enabled: Boolean(editQueryId),
     });
     const { data: options, setOptions } = optionsQuery;
-    const auxiliaryLoading = optionsQuery.isLoading;
-    const editQueryLoading = Boolean(editQueryId) && catalogQuery.isLoading;
-    usePendingTask('registration-options', auxiliaryLoading);
-    usePendingTask('registration-edit', editQueryLoading);
 
     // Estado do formulário de Cadastro/Edição
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -122,6 +118,30 @@ const RegistrationPage: React.FC = () => {
     const nameInputRef = useRef<HTMLInputElement | null>(null);
     const barcodeInputRef = useRef<HTMLInputElement | null>(null);
     const productMutations = useProductMutations();
+
+    useEffect(() => {
+        if (editingId) return;
+        if (!options.categories.length || !options.brands.length || !options.suppliers.length || !options.unitsOfMeasure.length) return;
+        const timer = setTimeout(() => {
+            setForm((prev) => {
+            if (prev.categoryId || prev.brandId || prev.supplierId || prev.unitOfMeasureId) return prev;
+            const defaultCategory = options.categories.find((item) => item.isDefault) ?? options.categories[0];
+            const defaultBrand = options.brands.find((item) => item.isDefault) ?? options.brands[0];
+            const defaultSupplier = options.suppliers.find((item) => item.isDefault) ?? options.suppliers[0];
+            const defaultUnit = options.unitsOfMeasure.find((item) => item.isDefault) ?? options.unitsOfMeasure[0];
+            const unitId = defaultUnit?.id ?? '';
+            return {
+                ...prev,
+                categoryId: defaultCategory?.id ?? prev.categoryId,
+                brandId: defaultBrand?.id ?? prev.brandId,
+                supplierId: defaultSupplier?.id ?? prev.supplierId,
+                unitOfMeasureId: unitId,
+                unitsOfMeasure: [{ unitOfMeasureId: unitId, unitMultiplier: '1', isMain: true }],
+            };
+            });
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [options, editingId]);
     const movementsQuery = useStockMovements(editingId, stockAdjustModalOpen);
     const movementsLoading = movementsQuery.isFetching;
     const stockMovements = movementsQuery.data?.slice(0, 10) ?? [];
@@ -229,12 +249,12 @@ const RegistrationPage: React.FC = () => {
                     salePrice: calculatedSalePrice,
         stock: stockValue,
                     unitMultiplier: '1',
-                    unitOfMeasureId: uomId || (options.unitsOfMeasure[0]?.id ?? ''),
+                    unitOfMeasureId: uomId || (options.unitsOfMeasure.find((item) => item.isDefault)?.id ?? options.unitsOfMeasure[0]?.id ?? ''),
                     internalCode: internalCodeValue,
         reference: '',
         durationMinutes: '',
         active: 1,
-                    unitsOfMeasure: [{ unitOfMeasureId: uomId, unitMultiplier: '1', isMain: true }],
+                    unitsOfMeasure: [{ unitOfMeasureId: uomId || (options.unitsOfMeasure.find((item) => item.isDefault)?.id ?? options.unitsOfMeasure[0]?.id ?? ''), unitMultiplier: '1', isMain: true }],
                 });
 
                 if (eanStr) {

@@ -87,22 +87,26 @@ export interface CategoryData {
   id: string;
   name: string;
   description?: string;
+  isDefault?: boolean;
 }
 
 export interface BrandData {
   id: string;
   name: string;
+  isDefault?: boolean;
 }
 
 export interface SupplierData {
   id: string;
   name: string;
+  isDefault?: boolean;
 }
 
 export interface UnitOfMeasureData {
   id: string;
   abbreviation: string;
   description?: string;
+  isDefault?: boolean;
 }
 
 function mapProduct(row: any): ItemData {
@@ -413,7 +417,7 @@ export const fetchCategories = async (): Promise<CategoryData[]> => {
   if (!response.ok) throw new Error('Erro ao buscar categorias.');
   const date = await response.json();
   return Array.isArray(date)
-    ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), description: row.description ?? row.description ?? undefined }))
+    ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), description: row.description ?? row.description ?? undefined, isDefault: Boolean(row.isDefault ?? row.is_default) }))
     : [];
 };
 
@@ -458,7 +462,7 @@ export const fetchBrands = async (): Promise<BrandData[]> => {
   const response = await fetch('/api/products/brands');
   if (!response.ok) throw new Error('Erro ao buscar marcas.');
   const date = await response.json();
-  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), isDefault: Boolean(row.isDefault ?? row.is_default) })) : [];
 };
 
 export const createBrand = async (name: string): Promise<{ id: string; message: string }> => {
@@ -502,7 +506,7 @@ export const fetchSuppliers = async (): Promise<SupplierData[]> => {
   const response = await fetch('/api/products/suppliers');
   if (!response.ok) throw new Error('Erro ao buscar fornecedores.');
   const date = await response.json();
-  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? '') })) : [];
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), name: String(row.name ?? row.name ?? ''), isDefault: Boolean(row.isDefault ?? row.is_default) })) : [];
 };
 
 export const createSupplier = async (name: string): Promise<{ id: string; message: string }> => {
@@ -546,7 +550,7 @@ export const fetchUnitsOfMeasure = async (): Promise<UnitOfMeasureData[]> => {
   const response = await fetch('/api/products/units-of-measure');
   if (!response.ok) throw new Error('Erro ao buscar unidades de medida.');
   const date = await response.json();
-  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), abbreviation: String(row.abbreviation ?? row.abbreviation ?? ''), description: row.description ?? row.description ?? undefined })) : [];
+  return Array.isArray(date) ? date.map((row: any) => ({ id: String(row.id), abbreviation: String(row.abbreviation ?? row.abbreviation ?? ''), description: row.description ?? row.description ?? undefined, isDefault: Boolean(row.isDefault ?? row.is_default) })) : [];
 };
 
 export const createUnitOfMeasure = async (abbreviation: string, description?: string): Promise<{ id: string; message: string }> => {
