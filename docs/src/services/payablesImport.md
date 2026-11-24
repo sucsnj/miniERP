@@ -20,5 +20,6 @@
 ## Notas
 
 - Aliases são comparados com acentos/maiúsculos/pontuação removidos.
-- Documento duplicado (`supplierName + document`) é ignorado no mesmo pedido; nota por `accessKey` permanece deduplicada.
+- Documento duplicado (`supplierName + document`) é ignorado no mesmo pedido; nota por `accessKey` permanece deduplicada por empresa (`invoices_company_id_access_key_uq`).
+- `createInvoice` tolera violação de unicidade (`23505`) tratando a nota como já importada, evitando erro 500.
 - Criação automática de distribuidoras: intencionalmente não acontece; resposta de erro `409` com contexto para o usuário.

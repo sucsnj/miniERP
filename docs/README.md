@@ -51,6 +51,7 @@ Este arquivo é o ponto de partida para navegar pela documentação do projeto.
 - [adr/0019-distribuidoras-configuraveis-regras-xml.md](adr/0019-distribuidoras-configuraveis-regras-xml.md) - ADR: distribuidoras e regras da importação XML configuráveis por empresa.
 - [adr/0020-tabela-medicamentos-planilha-cmed-uf.md](adr/0020-tabela-medicamentos-planilha-cmed-uf.md) - ADR: planilha CMED (compatibilidade pt-BR), aba relevante e UF de referência na tabela de medicamentos.
 - [adr/0021-associacao-distribuidoras-por-cnpj.md](adr/0021-associacao-distribuidoras-por-cnpj.md) - ADR: associação de distribuidoras por CNPJ/CPF na importação de XML, com aliases como fallback.
+- [adr/0022-isolamento-notas-por-empresa.md](adr/0022-isolamento-notas-por-empresa.md) - ADR: unicidade de nota fiscal por empresa (multi-tenant).
 - [adr/0017-persistencia-tabela-medicamentos.md](adr/0017-persistencia-tabela-medicamentos.md) - ADR rejeitada: persistência da tabela de medicamentos no Supabase (substituída por ADR 0018).
 - [adr/0018-tabela-medicamentos-localstorage-indexeddb.md](adr/0018-tabela-medicamentos-localstorage-indexeddb.md) - ADR: tabela de medicamentos local-first em IndexedDB.
 

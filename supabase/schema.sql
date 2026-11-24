@@ -357,7 +357,7 @@ create table if not exists public.invoices (
   id uuid primary key default gen_random_uuid(),
   company_id uuid not null references public.companies (id) on delete cascade,
   supplier_name text not null,
-  access_key text not null unique,
+  access_key text not null,
   issue_date date not null,
   amount numeric(14, 2) not null,
   created_at timestamptz not null default now()
@@ -411,6 +411,9 @@ create unique index if not exists payables_company_id_supplier_document_uq
   on public.payables (company_id, lower(supplier_name), lower(document));
 create unique index if not exists medicine_search_history_company_id_normalized_query_uq
   on public.medicine_search_history (company_id, normalized_query);
+
+create unique index if not exists invoices_company_id_access_key_uq
+  on public.invoices (company_id, access_key);
 create index if not exists stores_company_id_idx on public.stores (company_id);
 create index if not exists users_company_id_idx on public.users (company_id);
 create index if not exists users_login_idx on public.users (login);

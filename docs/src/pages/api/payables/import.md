@@ -8,7 +8,8 @@
 - Ordem distribuidora: `override.newDistributorName` (cria na hora, capturando `emit.CNPJ`/`emit.CPF`) ou `override.distributorId` (usa cadastrada) ou `findDistributor()` (prioriza `emit.CNPJ`/`emit.CPF` exato e, se não houver, casa `emit.xNome` ao `aliases`).
 - Aplica regras (`amount_adjustment`, soma cumulativa; `name_override`, rename sequencial) antes de insert.
 - Se não houver correspondência alguma: responde `409` com `{ code: 'DISTRIBUTOR_NOT_FOUND', xmlDistributorName, availableDistributors }`.
-- Importa duplicatas inexistentes (`supplierName + document`), registra a nota (`accessKey` deduplicada) e retorna `200 { sucesso, registros }`.
+- Importa duplicatas inexistentes (`supplierName + document`), registra a nota (`accessKey` deduplicada por empresa) e retorna `200 { sucesso, registros }`.
+- A unicidade de `access_key` é por empresa; uma nota de outra empresa não bloqueia a importação.
 
 ## Relações
 

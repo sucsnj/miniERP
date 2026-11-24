@@ -135,11 +135,17 @@ export const processPayablesXml = async (
     return { error: 'Nota e duplicata(s) já existentes' as const };
   }
 
-  await createInvoice({ supplierName: distributor.name, accessKey, issueDate, amount: parseCurrency(String(invoiceTotal)) ?? parseNumber(String(invoiceTotal)) }, ctx);
-  invoiceInserted = true;
+  try {
+    await createInvoice({ supplierName: distributor.name, accessKey, issueDate, amount: parseCurrency(String(invoiceTotal)) ?? parseNumber(String(invoiceTotal)) }, ctx);
+    invoiceInserted = true;
+  } catch (error) {
+    const code = typeof error === 'object' && error !== null && 'code' in error ? String((error as { code?: unknown }).code) : '';
+    if (code !== '23505') throw error;
+    // Nota já existia (mesma empresa ou corrida): não é erro fatal.
+  }
 
   if (invoiceInserted || records.length > 0) {
     return { sucesso: true, registros: records } as const;
   }
-  return { error: 'Nada foi inserido' as const };
+  return { error: 'Nota e duplicata(s) já existentes' as const };
 };
