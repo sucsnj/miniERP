@@ -9,6 +9,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 interface MissingDistributorModalProps {
   xml: string;
   emitterName: string;
+  emitterTaxId?: string | null;
   availableDistributors: DistributorConfig[];
   onClose: () => void;
   onImported: (recordsCount: number) => void;
@@ -17,6 +18,7 @@ interface MissingDistributorModalProps {
 export default function MissingDistributorModal({
   xml,
   emitterName,
+  emitterTaxId,
   availableDistributors,
   onClose,
   onImported,
@@ -29,7 +31,7 @@ export default function MissingDistributorModal({
   const [mode, setMode] = useState<'existing' | 'new'>(enabledDistributors.length > 0 ? 'existing' : 'new');
   const [selectedId, setSelectedId] = useState(enabledDistributors[0]?.id ?? '');
   const [newDistributorName, setNewDistributorName] = useState(emitterName.trim());
-  const [newTaxId, setNewTaxId] = useState('');
+  const [newTaxIds, setNewTaxIds] = useState(emitterTaxId ? emitterTaxId.replace(/\D/g, '') : '');
   const [newAliases, setNewAliases] = useState(emitterName.trim());
   const [saving, setSaving] = useState(false);
 
@@ -41,7 +43,7 @@ export default function MissingDistributorModal({
     ? { distributorId: selectedId }
     : {
         newDistributorName: newDistributorName.trim(),
-        newDistributorTaxId: newTaxId.trim(),
+        newDistributorTaxId: newTaxIds.trim(),
         newDistributorAliases: newAliases.split(/[,;\n]/).map((value) => value.trim()).filter(Boolean),
       };
 
@@ -121,8 +123,8 @@ export default function MissingDistributorModal({
             <input value={newDistributorName} onChange={(event) => setNewDistributorName(event.target.value)} autoComplete="off" style={{ padding: '8px' }} />
           </label>
             <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
-            CNPJ/CPF da distribuidora (opcional)
-            <input value={newTaxId} onChange={(event) => setNewTaxId(event.target.value)} placeholder="00.000.000/0000-00" autoComplete="off" style={{ padding: '8px' }} />
+            CNPJ/CPF da distribuidora (um ou mais, separados por vírgula)
+            <input value={newTaxIds} onChange={(event) => setNewTaxIds(event.target.value)} placeholder="00.000.000/0000-00" autoComplete="off" style={{ padding: '8px' }} />
           </label>
             <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
             Identificadores do XML (separados por vírgula)

@@ -55,17 +55,19 @@ export const processPayablesXml = async (
     const existing = distributorConfig.find((item) =>
       item.name.toLowerCase() === name.toLowerCase()
       || item.aliases.some((alias) => aliasKeys.has(alias))
-      || (xmlTaxId !== null && item.taxId === xmlTaxId)
-      || (overrideTaxId !== null && item.taxId === overrideTaxId)
+      || (xmlTaxId !== null && item.taxIds.includes(xmlTaxId))
+      || (overrideTaxId !== null && item.taxIds.includes(overrideTaxId))
     );
 
     if (existing) {
       distributor = existing;
     } else {
+      const newDistributorTaxIds = [overrideTaxId, xmlTaxId, ...(override.newDistributorTaxId ? override.newDistributorTaxId.split(/[,;\n]/).map((value) => normalizeTaxId(value.trim())).filter((value): value is string => Boolean(value)) : [])]
+        .filter((value): value is string => Boolean(value));
       const newDistributor: DistributorConfig = {
         id: crypto.randomUUID(),
         name,
-        taxId: overrideTaxId ?? xmlTaxId,
+        taxIds: [...new Set(newDistributorTaxIds)],
         aliases: normalizedAliases,
         enabled: true,
         rules: [],
@@ -92,6 +94,7 @@ export const processPayablesXml = async (
       error: 'Distribuidora não encontrada no XML.' as const,
       code: 'DISTRIBUTOR_NOT_FOUND' as const,
       xmlDistributorName: rawDistributorName,
+      xmlDistributorTaxId: rawDistributorTaxId,
       availableDistributors: distributorConfig,
     };
   }

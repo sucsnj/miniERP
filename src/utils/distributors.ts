@@ -11,7 +11,7 @@ export interface DistributorRule {
 export interface DistributorConfig {
   id: string;
   name: string;
-  taxId: string | null;
+  taxIds: string[];
   aliases: string[];
   enabled: boolean;
   rules: DistributorRule[];
@@ -48,7 +48,12 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
     const source = item as Record<string, unknown>;
     const id = String(source.id ?? '').trim();
     const name = String(source.name ?? '').trim();
-    const taxId = normalizeTaxId(String(source.taxId ?? source.cnpj ?? source.cpfCnpj ?? '').trim());
+    const rawTaxIds = Array.isArray(source.taxIds)
+      ? source.taxIds
+      : source.taxId || source.cnpj || source.cpfCnpj
+        ? [source.taxId ?? source.cnpj ?? source.cpfCnpj]
+        : [];
+    const taxIds = [...new Set(rawTaxIds.map((value) => normalizeTaxId(String(value ?? '').trim())).filter((value): value is string => Boolean(value)))];
     const aliases = Array.isArray(source.aliases)
       ? source.aliases.map((value) => String(value ?? '').trim()).filter(Boolean)
       : [];
@@ -59,8 +64,6 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
     const nameKey = name.toLocaleLowerCase('pt-BR');
     if (distributorNames.has(nameKey)) return null;
     distributorNames.add(nameKey);
-
-    if (taxId && !/^\d{11}$|^\d{14}$/.test(taxId)) return null;
 
     const normalizedAliases = aliases.map(normalizeMatchText).filter(Boolean);
     if (new Set(normalizedAliases).size !== normalizedAliases.length) return null;
@@ -97,7 +100,7 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
       return null;
     }
 
-    distributors.push({ id, name, taxId, aliases: normalizedAliases, enabled, rules });
+    distributors.push({ id, name, taxIds, aliases: normalizedAliases, enabled, rules });
   }
 
   return distributors;
@@ -112,7 +115,7 @@ export const findDistributor = (
 
   if (normalizedTaxId) {
     const taxMatch = config.find((distributor) =>
-      distributor.enabled && distributor.taxId === normalizedTaxId
+      distributor.enabled && distributor.taxIds.includes(normalizedTaxId)
     );
     if (taxMatch) return taxMatch;
   }

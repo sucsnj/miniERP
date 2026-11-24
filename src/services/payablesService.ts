@@ -30,7 +30,7 @@ interface ImportXmlResponse {
 export interface DistributorConfig {
   id: string;
   name: string;
-  taxId: string | null;
+  taxIds: string[];
   aliases: string[];
   enabled: boolean;
   rules: { id: string; name: string; type: 'amount_adjustment' | 'name_override'; value: number | string; enabled: boolean }[];
@@ -39,6 +39,7 @@ export interface DistributorConfig {
 export interface ImportXmlConflictResponse {
   code: 'DISTRIBUTOR_NOT_FOUND';
   xmlDistributorName: string;
+  xmlDistributorTaxId?: string | null;
   availableDistributors: DistributorConfig[];
 }
 
@@ -101,7 +102,7 @@ export const importAccountsFromXml = async (xml: string) => {
 
 export const importPayablesXml = async (
   xml: string,
-  override: { distributorId?: string; newDistributorName?: string; newDistributorAliases?: string[] } = {},
+  override: { distributorId?: string; newDistributorName?: string; newDistributorTaxId?: string; newDistributorAliases?: string[] } = {},
 ): Promise<ImportPayablesXmlResponse> => {
   const response = await fetch('/api/payables/import', {
     method: 'POST',
@@ -115,8 +116,9 @@ export const importPayablesXml = async (
     return {
       sucesso: false,
       code: 'DISTRIBUTOR_NOT_FOUND',
-      xmlDistributorName: String(body.xmlDistributorName ?? ''),
-      availableDistributors: Array.isArray(body.availableDistributors)
+  xmlDistributorName: String(body.xmlDistributorName ?? ''),
+  xmlDistributorTaxId: body.xmlDistributorTaxId == null ? null : String(body.xmlDistributorTaxId),
+  availableDistributors: Array.isArray(body.availableDistributors)
         ? body.availableDistributors as DistributorConfig[]
         : [],
     };

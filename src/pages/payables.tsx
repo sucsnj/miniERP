@@ -52,7 +52,7 @@ const Payables: React.FC = () => {
   const deleteAccountMutation = useDeleteAccount();
   const payAccountMutation = usePayAccount();
   const cancelPaymentMutation = useCancelPayment();
-  const [missingDistributor, setMissingDistributor] = useState<{ xml: string; emitterName: string; availableDistributors: DistributorConfig[] } | null>(null);
+  const [missingDistributor, setMissingDistributor] = useState<{ xml: string; emitterName: string; emitterTaxId?: string | null; availableDistributors: DistributorConfig[] } | null>(null);
   const [distributor, setDistributor] = useState('');
   const [amount, setAmount] = useState('');
   const [dueDate, setDueDate] = useState(today);
@@ -312,6 +312,7 @@ const Payables: React.FC = () => {
           setMissingDistributor({
             xml,
             emitterName: result.xmlDistributorName,
+            emitterTaxId: result.xmlDistributorTaxId,
             availableDistributors: result.availableDistributors,
           });
           return;
@@ -463,6 +464,7 @@ const Payables: React.FC = () => {
         <MissingDistributorModal
           xml={missingDistributor.xml}
           emitterName={missingDistributor.emitterName}
+          emitterTaxId={missingDistributor.emitterTaxId}
           availableDistributors={missingDistributor.availableDistributors}
           onClose={() => setMissingDistributor(null)}
           onImported={(recordsCount) => {

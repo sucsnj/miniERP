@@ -23,7 +23,7 @@ export default function DistributorSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [draftName, setDraftName] = useState('');
-  const [draftTaxId, setDraftTaxId] = useState('');
+  const [draftTaxIds, setDraftTaxIds] = useState('');
   const [draftAliases, setDraftAliases] = useState('');
   const [ruleId, setRuleId] = useState('');
   const [ruleName, setRuleName] = useState('Nova regra');
@@ -36,7 +36,7 @@ export default function DistributorSettings() {
     const item = _distributors.find((row) => row.id === id);
     setSelectedId(item?.id ?? '');
     setDraftName(item?.name ?? '');
-    setDraftTaxId(item?.taxId ?? '');
+    setDraftTaxIds((item?.taxIds ?? []).join(', '));
     setDraftAliases(item?.aliases.join(', ') ?? '');
   };
 
@@ -96,7 +96,7 @@ export default function DistributorSettings() {
     setIsEditing(true);
     setSelectedId(`new-${newId()}`);
     setDraftName('');
-    setDraftTaxId('');
+      setDraftTaxIds('');
     setDraftAliases('');
   };
 
@@ -110,11 +110,11 @@ export default function DistributorSettings() {
   const cancelEdit = () => {
     if (selected) {
       setDraftName(selected.name);
-      setDraftTaxId(selected.taxId ?? '');
+      setDraftTaxIds((selected.taxIds ?? []).join(', '));
       setDraftAliases(selected.aliases.join(', '));
     } else {
       setDraftName('');
-      setDraftTaxId('');
+    setDraftTaxIds('');
       setDraftAliases('');
     }
     setIsEditing(false);
@@ -122,7 +122,10 @@ export default function DistributorSettings() {
 
   const saveDistributor = async () => {
     const name = draftName.trim();
-    const taxId = draftTaxId.trim();
+    const taxIds = draftTaxIds
+      .split(/[,;\n]/)
+      .map((value) => value.replace(/\D/g, ''))
+      .filter(Boolean);
     const aliases = parseDraftAliases(draftAliases);
 
     if (!name) {
@@ -130,7 +133,7 @@ export default function DistributorSettings() {
       return;
     }
 
-    if (taxId && !/^\d{11}$|^\d{14}$/.test(taxId.replace(/\D/g, ''))) {
+    if (taxIds.some((value) => !/^\d{11}$|^\d{14}$/.test(value))) {
       showToast('CNPJ/CPF inválido. Informe 11 ou 14 dígitos.', 'error');
       return;
     }
@@ -140,7 +143,7 @@ export default function DistributorSettings() {
     const nextDistributor: DistributorConfig = {
       id,
       name,
-      taxId: taxId ? taxId.replace(/\D/g, '') : null,
+      taxIds: [...new Set(taxIds)],
       aliases,
       enabled: selected?.enabled ?? true,
       rules: selected?.rules ?? [],
@@ -256,8 +259,8 @@ export default function DistributorSettings() {
                     <input value={draftName} onChange={(e) => setDraftName(e.target.value)} placeholder="Ex.: Cimed" autoComplete="off" style={{ padding: '6px' }} />
                   </label>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
-                    CNPJ/CPF da distribuidora (opcional, mas recomendado)
-                    <input value={draftTaxId} onChange={(e) => setDraftTaxId(e.target.value)} placeholder="00.000.000/0000-00" autoComplete="off" style={{ padding: '6px' }} />
+                    CNPJ/CPF da distribuidora (um ou mais, separados por vírgula)
+                    <input value={draftTaxIds} onChange={(e) => setDraftTaxIds(e.target.value)} placeholder="00.000.000/0000-00, 11.111.111/0001-11" autoComplete="off" style={{ padding: '6px' }} />
                   </label>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem' }}>
                     Identificadores do XML (separados por vírgula)
@@ -275,7 +278,7 @@ export default function DistributorSettings() {
                     <strong>{selected.name}</strong>
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
-                    CNPJ/CPF: {selected.taxId ? selected.taxId : 'não informado'}
+                    CNPJ/CPF: {selected.taxIds.length ? selected.taxIds.join(', ') : 'não informado'}
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
                     Identificadores: {selected.aliases.length ? selected.aliases.join(', ') : 'não informados'}
