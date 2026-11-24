@@ -54,16 +54,17 @@ const ProductUnitsSection: React.FC<ProductUnitsSectionProps> = ({ form, setForm
                                 <span>Principal</span>
                             </label>
 
-                            <Button
-                                type="button"
-                                variant="danger"
-                                size="sm"
-                                iconOnly
-                                onClick={() => {
-                                    const { units, unitOfMeasureId, unitMultiplier } = removeUnit(
-                                        form.unitsOfMeasure,
-                                        index
-                                    );
+                        <Button
+                            type="button"
+                            variant="danger"
+                            size="sm"
+                            iconOnly
+                            disabled={form.unitsOfMeasure.length <= 1}
+                            onClick={() => {
+                                const { units, unitOfMeasureId, unitMultiplier } = removeUnit(
+                                    form.unitsOfMeasure,
+                                    index
+                                );
                                     setForm(prev => ({
                                         ...prev,
                                         unitsOfMeasure: units,
