@@ -28,7 +28,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Exclusão de vendas | lista congelada durante a animação: card sai no lugar, sem card extra |
 | Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente (um ou mais por distribuidora); aliases como fallback (ADR 0021) |
 | Cadastro/registro | filtros e cadastro rápido via XML normalizados para parâmetros em inglês (`categoryId`, `brandId`, `supplierId`, `active`; `newImport`, `name`, `stock`, `unit`) |
-| Listagem de produtos | clique na linha abre edição; cancelar em edição retorna para `/products` |
+| Listagem de produtos | clique na linha abre edição; cancelar em edição retorna para `/products`; filtros por categoria/marca/fornecedor usam IDs de texto; botão de edição com lápis removido |
 | Cadastro/registro | defaults de categoria, marca, fornecedor e unidade usam as opções nativas (`isDefault`) |
 | Códigos internos | geração automática usa prefixo `PROD`/`SERV` + 11 dígitos aleatórios únicos |
 | Notas fiscais | unicidade de `access_key` por empresa; importação tolera `23505` (ADR 0022) |

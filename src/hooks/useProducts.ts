@@ -33,9 +33,9 @@ import { useAuth } from '../contexts/AuthContext';
 export interface ProductCatalogFilters {
   search: string;
   type: 'PRODUCT' | 'SERVICE' | 'TODOS';
-  categoryId: number | '';
-  brandId: number | '';
-  supplierId: number | '';
+  categoryId: string | '';
+  brandId: string | '';
+  supplierId: string | '';
   status: 'ATIVO' | 'INATIVO' | 'TODOS';
 }
 

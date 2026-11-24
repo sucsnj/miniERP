@@ -2,7 +2,7 @@ import styles from '../../styles/products.module.css';
 import Panel from '@/components/common/Panel';
 import Button from '@/components/common/Button';
 import PanelHeader from '@/components/common/PanelHeader';
-import EditIcon from '@mui/icons-material/Edit';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import BlockIcon from '@mui/icons-material/Block';
@@ -113,17 +113,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                             leftIcon={item.active === 1 ? <BlockIcon fontSize="small" /> : <CheckIcon fontSize="small" />}
                                                         />
                                                     )}
-                                                    <Button
-                                                        type="button"
-                                                        variant="info"
-                                                        size="sm"
-                                                        iconOnly
-                                                        onClick={() => onEdit(item)}
-                                                        title="Editar"
-                                                        aria-label="Editar"
-                                                        id={`edit-item-${item.id}`}
-                                                        leftIcon={<EditIcon fontSize="small" />}
-                                                    />
+
                                                     <Button
                                                         type="button"
                                                         variant="danger"

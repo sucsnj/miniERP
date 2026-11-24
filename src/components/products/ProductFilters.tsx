@@ -12,9 +12,9 @@ import Button from '@/components/common/Button';
 export interface ProductFiltersState {
     search: string;
     type: 'PRODUCT' | 'SERVICE' | 'TODOS';
-    categoryId: number | '';
-    brandId: number | '';
-    supplierId: number | '';
+    categoryId: string | '';
+    brandId: string | '';
+    supplierId: string | '';
     status: 'ATIVO' | 'INATIVO' | 'TODOS';
 }
 
@@ -85,7 +85,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         className={`${styles.filterSelect} headerSelect`}
                         value={state.categoryId}
                         onChange={(e) => {
-                            setFilters(prev => ({ ...prev, categoryId: e.target.value ? Number(e.target.value) : '' }));
+                            setFilters(prev => ({ ...prev, categoryId: e.target.value }));
                             actions.changePage(1);
                         }}>
                         <option value="">Todas</option>
@@ -104,7 +104,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         className={`${styles.filterSelect} headerSelect`}
                         value={state.brandId}
                         onChange={(e) => {
-                            setFilters(prev => ({ ...prev, brandId: e.target.value ? Number(e.target.value) : '' }));
+                            setFilters(prev => ({ ...prev, brandId: e.target.value }));
                             actions.changePage(1);
                         }}>
                         <option value="">Todas</option>
@@ -123,7 +123,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         className={`${styles.filterSelect} headerSelect`}
                         value={state.supplierId}
                         onChange={(e) => {
-                            setFilters(prev => ({ ...prev, supplierId: e.target.value ? Number(e.target.value) : '' }));
+                            setFilters(prev => ({ ...prev, supplierId: e.target.value }));
                             actions.changePage(1);
                         }}>
                         <option value="">Todos</option>
