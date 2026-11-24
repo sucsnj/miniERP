@@ -1071,6 +1071,7 @@ declare
   v_unit jsonb;
   v_unit_id uuid;
   v_has_units boolean := false;
+  v_internal_code text;
 begin
   if p_name is null or trim(p_name) = '' then
     raise exception 'Product name is required';
@@ -1100,6 +1101,18 @@ begin
   end if;
   if not exists (select 1 from public.suppliers where id = p_supplier_id and company_id = p_company_id) then
     raise exception 'Supplier not found for company: %', p_supplier_id;
+  end if;
+
+  if p_internal_code is null or trim(p_internal_code) = '' then
+    loop
+      v_internal_code := 'PROD-' || lpad((floor(random() * 100000000000))::bigint::text, 11, '0');
+      exit when not exists (
+        select 1 from public.products
+        where company_id = p_company_id
+          and lower(internal_code) = lower(v_internal_code)
+      );
+    end loop;
+    p_internal_code := v_internal_code;
   end if;
 
   insert into public.products (
@@ -1136,13 +1149,6 @@ begin
     coalesce(p_active, true)
   )
   returning id into v_product_id;
-
-  if p_internal_code is null or trim(p_internal_code) = '' then
-    update public.products
-    set internal_code = v_product_id::text
-    where id = v_product_id
-      and company_id = p_company_id;
-  end if;
 
   for v_barcode in
     select * from jsonb_array_elements(coalesce(p_barcodes, '[]'::jsonb))
@@ -1391,6 +1397,7 @@ language plpgsql
 as $$
 declare
   v_service_id uuid;
+  v_internal_code text;
 begin
     if p_name is null or trim(p_name) = '' then
       raise exception 'Service name is required';
@@ -1400,6 +1407,17 @@ begin
       raise exception 'Category not found for company: %', p_category_id;
     end if;
 
+    if p_internal_code is null or trim(p_internal_code) = '' then
+      loop
+        v_internal_code := 'SERV-' || lpad((floor(random() * 100000000000))::bigint::text, 11, '0');
+        exit when not exists (
+          select 1 from public.services
+          where company_id = p_company_id
+            and lower(internal_code) = lower(v_internal_code)
+        );
+      end loop;
+      p_internal_code := v_internal_code;
+    end if;
 
     insert into public.services (
       company_id,
@@ -1421,13 +1439,6 @@ begin
     coalesce(p_duration_minutes, 0)
   )
   returning id into v_service_id;
-
-  if p_internal_code is null or trim(p_internal_code) = '' then
-    update public.services
-    set internal_code = v_service_id::text
-      where id = v_service_id
-        and company_id = p_company_id;
-  end if;
 
   return v_service_id;
 end;

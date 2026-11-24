@@ -673,7 +673,10 @@ const RegistrationPage: React.FC = () => {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={resetForm}
+                                        onClick={() => {
+                                            resetForm();
+                                            if (editingId) router.push('/products');
+                                        }}
                                         id="cancel-item-btn"
                                     >
                                         Cancelar

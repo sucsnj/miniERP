@@ -1,6 +1,7 @@
 
 import { getSupabaseServerClient } from './supabase';
 import type { AuthContext } from '../utils/serverAuth';
+import { randomInt } from 'crypto';
 
 type SupabaseClient = ReturnType<typeof getSupabaseServerClient>;
 
@@ -450,6 +451,7 @@ export async function createProduct(input: ProductInput, ctx: AuthContext): Prom
     unitMultiplier: u.unitMultiplier,
     isPrimary: u.isPrimary,
   }));
+  const internalCode = input.internalCode?.trim() || (await generateUniqueInternalCode('PROD', ctx));
   const { data, error } = await sb().rpc('create_product', {
     p_company_id: ctx.companyId,
     p_name: input.name,
@@ -463,7 +465,7 @@ export async function createProduct(input: ProductInput, ctx: AuthContext): Prom
     p_sale_price: input.salePrice,
     p_stock: input.stock,
     p_unit_multiplier: input.unitMultiplier,
-    p_internal_code: input.internalCode ?? null,
+    p_internal_code: internalCode,
     p_reference: input.reference ?? null,
     p_active: input.active ?? true,
     p_barcodes: barcodes,
@@ -519,6 +521,30 @@ export async function checkDuplicateInternalCode(internalCode: string, excludeId
   const { data, error } = await query.limit(1);
   if (error) throw error;
   return asArray(data).length > 0;
+}
+
+async function generateUniqueInternalCode(prefix: 'PROD' | 'SERV', ctx: AuthContext): Promise<string> {
+  const isTaken =
+    prefix === 'PROD'
+      ? (code: string) => checkDuplicateInternalCode(code, undefined, ctx)
+      : async (code: string) => {
+          const { data, error } = await sb()
+            .from('services')
+            .select('id')
+            .eq('company_id', ctx.companyId)
+            .ilike('internal_code', code.trim())
+            .limit(1);
+          if (error) throw error;
+          return asArray(data).length > 0;
+        };
+
+  for (let attempt = 0; attempt < 25; attempt++) {
+    let digits = '';
+    for (let i = 0; i < 11; i++) digits += String(randomInt(0, 10));
+    const code = `${prefix}-${digits}`;
+    if (!(await isTaken(code))) return code;
+  }
+  throw new Error(`Não foi possível gerar um código interno único para ${prefix}.`);
 }
 
 export async function checkDuplicateBarcode(barcodes: string[], excludeProductId: string | undefined, ctx: AuthContext): Promise<string | null> {
@@ -594,13 +620,14 @@ export async function getService(id: string, ctx: AuthContext): Promise<Service 
 }
 
 export async function createService(input: ServiceInput, ctx: AuthContext): Promise<string> {
+  const internalCode = input.internalCode?.trim() || (await generateUniqueInternalCode('SERV', ctx));
   const { data, error } = await sb().rpc('create_service', {
     p_company_id: ctx.companyId,
     p_name: input.name,
     p_description: input.description ?? null,
     p_category_id: input.categoryId,
     p_sale_price: input.salePrice,
-    p_internal_code: input.internalCode ?? null,
+    p_internal_code: internalCode,
     p_reference: input.reference ?? null,
     p_duration_minutes: input.durationMinutes ?? 0,
   });

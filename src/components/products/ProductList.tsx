@@ -52,7 +52,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                             <tbody>
                                 {items.map((item) => {
                                     return (
-                                        <tr key={item.id}>
+                                        <tr key={item.id} onClick={canWrite ? () => onEdit(item) : undefined} style={canWrite ? { cursor: 'pointer' } : undefined}>
                                             <td>
                                                 <span
                                                     className={`${styles.badge} ${item.kind === 'PRODUCT'
@@ -98,7 +98,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                 )}
                                             </td>
                                             {canWrite && (
-                                                <td>
+                                                <td onClick={(e) => e.stopPropagation()}>
                                                  <div className={styles.actionsCell}>
                                                      {item.kind === 'PRODUCT' && (
                                                         <Button

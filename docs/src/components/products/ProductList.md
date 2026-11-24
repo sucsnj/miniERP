@@ -5,7 +5,7 @@
 ## O que faz
 
 - Colunas: Tipo, Cód. Interno, Nome (+descrição truncada), Preço, Estoque e Status (produto).
-- Ações: ativar/desativar (produto), editar e excluir; `id`s por item (`edit-item-<id>` etc.).
+- Ações: ativar/desativar (produto), editar e excluir; clique na linha também abre a edição; `id`s por item (`edit-item-<id>` etc.).
 - Paginação visível quando `totalPages > 1`; estados loading/vazio.
 
 ```ts
