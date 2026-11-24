@@ -64,7 +64,7 @@ const Listagem: React.FC<ProductListProps> = ({ items, total, page, totalPages, 
                                                 </span>
                                             </td>
                                             <td>{item.internalCode || '—'}</td>
-                                            <td>
+                                            <td className={styles.colNome}>
                                                 <strong>{item.name}</strong>
                                                 {item.description && (
                                                     <div

@@ -48,13 +48,20 @@
 }
 
 .table {
-  min-width: 700px;
   width: 100%;
+  min-width: 700px;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
+.table th,
+.table td {
+  white-space: nowrap;
+}
+
 .colNome {
-  width: 40%; /* Ajuste a porcentagem conforme necessário */
+  width: 100%;
+  white-space: normal;
 }
 
 @media (max-width: 1024px) {
