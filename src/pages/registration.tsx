@@ -1043,7 +1043,10 @@ const RegistrationPage: React.FC = () => {
                             setImportFile(null);
                         }}
                         onImportSuccess={() => {
+                            setModalImportOpen(false);
+                            setImportFile(null);
                             showToast('Itens importados com sucesso!', 'success');
+                            // router.push('/products'); // comentado propositalmente, não remover comentário
                         }}
                     />
                 )}

@@ -11,7 +11,6 @@ import {
   listBrands,
   listSuppliers,
   listUnitsOfMeasure,
-  applyStockMovement,
 } from '../../../database/productsRepository';
 import { parseNumber } from '../../../utils/number';
 import { parseStringPromise } from 'xml2js';
@@ -136,20 +135,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         description: description,
         quantity: quantity,
         valorUnitario: unitValue,
-        tipoMovimentacao: movementType,
         idExistingItem: existingItemId,
       } = productPayload;
 
       if (existingItemId) {
-        await applyStockMovement(String(existingItemId), (movementType || 'ENTRADA').toUpperCase() === 'SAIDA' ? 'OUT' : 'IN', quantity, 'Importação de XML de NF-e', ctx);
-        return res.status(200).json({ sucesso: true, id: existingItemId, estoqueAtualizado: true });
+        return res.status(200).json({ sucesso: true, id: existingItemId, estoqueAtualizado: false });
       }
 
       if (ean) {
         const existingProduct = await findProductByBarcode(String(ean), ctx);
         if (existingProduct) {
-          await applyStockMovement(existingProduct.id, 'IN', quantity, 'Importação de XML de NF-e', ctx);
-          return res.status(200).json({ sucesso: true, id: existingProduct.id, estoqueAtualizado: true });
+          return res.status(200).json({ sucesso: true, id: existingProduct.id, estoqueAtualizado: false });
         }
         const duplicate = await checkDuplicateBarcode([String(ean)], undefined, ctx);
         if (duplicate) {
