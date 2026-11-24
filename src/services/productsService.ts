@@ -167,11 +167,11 @@ export const fetchProducts = async (options: {
 }): Promise<PagedResult<ItemData>> => {
   const params = new URLSearchParams();
   if (options.search) params.append('search', options.search);
-  if (options.categoryId) params.append('categoria_id', String(options.categoryId));
-  if (options.brandId) params.append('marca_id', String(options.brandId));
-  if (options.supplierId) params.append('fornecedor_id', String(options.supplierId));
-  if (options.salePrice) params.append('preco_venda', String(options.salePrice));
-  if (options.active) params.append('ativo', options.active);
+  if (options.categoryId) params.append('categoryId', String(options.categoryId));
+  if (options.brandId) params.append('brandId', String(options.brandId));
+  if (options.supplierId) params.append('supplierId', String(options.supplierId));
+  if (options.salePrice) params.append('salePrice', String(options.salePrice));
+  if (options.active) params.append('active', options.active);
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 
@@ -289,7 +289,7 @@ export const fetchServices = async (options: {
 }): Promise<PagedResult<ServiceData>> => {
   const params = new URLSearchParams();
   if (options.search) params.append('search', options.search);
-  if (options.categoryId) params.append('categoria_id', String(options.categoryId));
+  if (options.categoryId) params.append('categoryId', String(options.categoryId));
   if (options.page) params.append('page', String(options.page));
   if (options.pageSize) params.append('pageSize', String(options.pageSize));
 

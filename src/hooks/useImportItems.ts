@@ -166,11 +166,11 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
 
   const handleQuickRegister = (item: ImportedProduct) => {
     const params = new URLSearchParams();
-    params.append('novoImport', '1');
-    if (item.description) params.append('nome', item.description);
+    params.append('newImport', '1');
+    if (item.description) params.append('name', item.description);
     if (item.valorUnitario) params.append('purchasePrice', String(item.valorUnitario));
-    if (item.quantity) params.append('estoque', String(item.quantity));
-    if (item.unidadeMedida) params.append('unidade', item.unidadeMedida);
+    if (item.quantity) params.append('stock', String(item.quantity));
+    if (item.unidadeMedida) params.append('unit', item.unidadeMedida);
     if (item.ean) params.append('ean', item.ean);
     if (item.cProd) params.append('internalCode', item.cProd);
 

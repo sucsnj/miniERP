@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Dois fluxos: novo (direto ou `?novoImport=1&nome=&purchasePrice=&estoque=&unidade=&ean=&internalCode=`) e edição (`?id=X`).
+- Dois fluxos: novo (direto ou `?newImport=1&name=&purchasePrice=&stock=&unit=&ean=&internalCode=`) e edição (`?id=X`).
 - Carrega auxiliares via `useProductsOptions` e, na edição, item via `useProductsCatalog` (somente quando `?id=` existe).
 - Salva produto/serviço via mutation TanStack Query (`useProductMutations`), redireciona para `/products` após 2s.
 - Gerencia múltiplos códigos de barras (`BarcodeManager`) e CRUD auxiliar (categoria, marca, fornecedor, unit) via hooks.

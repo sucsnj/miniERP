@@ -19,5 +19,5 @@
 ## Notas
 
 - Quase todas as funções lançam `Error` com mensagem extraída de `errorData.error` quando `!response.ok`.
-- `fetchProducts` aceita filtros (`search`, `categoria_id`, `marca_id`, `fornecedor_id`, `preco_venda`, `ativo`, paginação) e monta query string condicional.
+- `fetchProducts` aceita filtros (`search`, `categoryId`, `brandId`, `supplierId`, `salePrice`, `active`, paginação) e monta query string condicional.
 - `previewInvoiceItems` normaliza resposta com `{ok,...}` mesmo em caso de erro HTTP.

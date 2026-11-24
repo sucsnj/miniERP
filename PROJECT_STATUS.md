@@ -2,7 +2,7 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **18/11/2026**
+Atualizado em: **24/11/2026**
 
 ## Resumo executivo
 
@@ -27,6 +27,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Nav mobile | painel lateral à esquerda abaixo de 1024px, acionado pelo nome do app; loja/usuário compactos à direita |
 | Exclusão de vendas | lista congelada durante a animação: card sai no lugar, sem card extra |
 | Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente (um ou mais por distribuidora); aliases como fallback (ADR 0021) |
+| Cadastro/registro | filtros e cadastro rápido via XML normalizados para parâmetros em inglês (`categoryId`, `brandId`, `supplierId`, `active`; `newImport`, `name`, `stock`, `unit`) |
 | Notas fiscais | unicidade de `access_key` por empresa; importação tolera `23505` (ADR 0022) |
 | Offline/PWA | não implementado |
 | Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
