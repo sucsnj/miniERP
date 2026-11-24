@@ -11,6 +11,7 @@ export interface CatalogEntityField {
     value: string;
     required?: boolean;
     autoFocus?: boolean;
+    maxLength?: number;
     onChange: (value: string) => void;
 }
 
@@ -83,6 +84,7 @@ const CatalogEntityModal: React.FC<CatalogEntityModalProps> = ({
                                     onChange={(event) => field.onChange(event.target.value)}
                                     required={field.required}
                                     autoFocus={field.autoFocus}
+                                    maxLength={field.maxLength}
                                 />
                             </div>
                         ))}

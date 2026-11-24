@@ -37,6 +37,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           type="text"
           className={styles.inputField}
           placeholder="Nome do serviço"
+          maxLength={100}
           value={form.name}
           onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
         />
@@ -51,6 +52,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           className={styles.textareaField}
           placeholder="Detalhes ou especificações"
           rows={3}
+          maxLength={800}
           value={form.description}
           onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
         />
@@ -153,6 +155,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           className={styles.inputField}
           placeholder={editingProductId ? 'Código Interno não pode ser alterado' : 'Ex: SERV-001 (preenchido automaticamente caso deixado em branco)'}
           value={form.internalCode}
+          maxLength={20}
           onChange={(e) => setForm(prev => ({ ...prev, internalCode: e.target.value }))}
           disabled={!!editingProductId}
         />
@@ -167,6 +170,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           type="text"
           className={styles.inputField}
           placeholder="Ex: REF-001"
+          maxLength={20}
           value={form.reference}
           onChange={(e) => setForm(prev => ({ ...prev, reference: e.target.value }))}
         />

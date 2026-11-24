@@ -40,6 +40,7 @@ const BarcodeManager: React.FC<BarcodeManagerProps> = ({
           className={styles.inputField}
           placeholder="Digitar código de barras..."
           value={date.newBarcode}
+          maxLength={30}
           onChange={(e) => actions.change(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {

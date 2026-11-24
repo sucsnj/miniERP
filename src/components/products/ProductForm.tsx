@@ -97,6 +97,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     type="text"
                     className={styles.inputField}
                     placeholder="Nome do item"
+                    maxLength={100}
                     value={form.name}
                     onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
                 />
@@ -111,6 +112,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     className={styles.textareaField}
                     placeholder="Detalhes ou especificações"
                     rows={3}
+                    maxLength={800}
                     value={form.description}
                     onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
                 />
@@ -297,6 +299,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     className={styles.inputField}
                     placeholder={editingProductId ? "Código Interno não pode ser alterado" : "Ex: PROD-001 (preenchido automaticamente caso deixado em branco)"}
                     value={form.internalCode}
+                    maxLength={20}
                     onChange={(e) => setForm(prev => ({ ...prev, internalCode: e.target.value }))}
                     disabled={!!editingProductId}
                 />
@@ -311,6 +314,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     type="text"
                     className={styles.inputField}
                     placeholder="Ex: REF-001"
+                    maxLength={20}
                     value={form.reference}
                     onChange={(e) => setForm(prev => ({ ...prev, reference: e.target.value }))}
                 />
