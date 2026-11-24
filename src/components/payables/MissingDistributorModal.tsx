@@ -87,9 +87,9 @@ export default function MissingDistributorModal({
         <Button type="button" size="sm" variant="outline" onClick={onClose}>Cancelar</Button>
       )}
       footerRight={(
-        <Button type="button" size="sm" variant="success" onClick={handleImport} disabled={saving}>
-          Adicionar e importar
-        </Button>
+           <Button type="button" size="sm" variant="success" onClick={handleImport} disabled={saving}>
+           {mode === 'existing' ? 'Associar e importar' : 'Adicionar e importar'}
+         </Button>
       )}
     >
       <p style={{ margin: '0 0 12px', fontSize: '0.85rem', color: 'var(--muted)' }}>
