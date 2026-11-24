@@ -20,6 +20,7 @@
 ## Notas
 
 - Aliases são comparados com acentos/maiúsculos/pontuação removidos.
+- Ao usar uma distribuidora cadastrada (ou coincidir por nome/CNPJ), o CNPJ do XML e os identificadores são mesclados de forma persistente à distribuidora.
 - Documento duplicado (`supplierName + document`) é ignorado no mesmo pedido; nota por `accessKey` permanece deduplicada por empresa (`invoices_company_id_access_key_uq`).
 - `createInvoice` tolera violação de unicidade (`23505`) tratando a nota como já importada, evitando erro 500.
 - Criação automática de distribuidoras: intencionalmente não acontece; resposta de erro `409` com contexto para o usuário.

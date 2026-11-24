@@ -78,7 +78,7 @@ export const processPayablesXml = async (
       }
       await updateDistributorConfig(updatedConfig, ctx);
       distributorConfig = updatedConfig;
-      distributor = newDistributor;
+      distributor = updatedConfig.find((item) => item.id === newDistributor.id) ?? newDistributor;
     }
   } else if (override.distributorId) {
     distributor = distributorConfig.find((item) => item.id === override.distributorId) ?? null;
@@ -87,6 +87,42 @@ export const processPayablesXml = async (
     }
   } else {
     distributor = findDistributor(distributorConfig, rawDistributorName, rawDistributorTaxId);
+  }
+
+  if (distributor) {
+    const xmlTaxId = normalizeTaxId(rawDistributorTaxId ?? '');
+    const overrideTaxIds = (override.newDistributorTaxId ?? '')
+      .split(/[,;\n]/)
+      .map((value) => normalizeTaxId(value.trim()))
+      .filter((value): value is string => Boolean(value));
+    const taxIds = [...distributor.taxIds];
+    for (const taxId of [xmlTaxId, ...overrideTaxIds]) {
+      if (taxId && !taxIds.includes(taxId) && !distributorConfig.some((item) => item.id !== distributor!.id && item.taxIds.includes(taxId))) {
+        taxIds.push(taxId);
+      }
+    }
+
+    const aliasKey = normalizeMatchText(rawDistributorName);
+    const overrideAliases = (override.newDistributorAliases ?? []).map(normalizeMatchText).filter(Boolean);
+    const aliases = [...distributor.aliases];
+    for (const key of [aliasKey, ...overrideAliases]) {
+      if (key && !aliases.includes(key)) {
+        aliases.push(key);
+      }
+    }
+
+    if (taxIds.length !== distributor.taxIds.length || aliases.length !== distributor.aliases.length) {
+      const updatedConfig = normalizeDistributorConfig(
+        distributorConfig.map((item) =>
+          item.id === distributor!.id ? { ...item, taxIds, aliases } : item
+        )
+      );
+      if (updatedConfig) {
+        await updateDistributorConfig(updatedConfig, ctx);
+        distributorConfig = updatedConfig;
+        distributor = updatedConfig.find((item) => item.id === distributor!.id) ?? distributor;
+      }
+    }
   }
 
   if (!distributor) {
