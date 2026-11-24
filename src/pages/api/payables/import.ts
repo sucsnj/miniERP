@@ -7,12 +7,14 @@ const parseOverride = (body: unknown): PayablesImportOverride => {
   const override: PayablesImportOverride = {};
   const distributorId = String(source.distributorId ?? '').trim();
   const newDistributorName = String(source.newDistributorName ?? '').trim();
+  const newDistributorTaxId = String(source.newDistributorTaxId ?? '').trim();
   const aliases = Array.isArray(source.newDistributorAliases)
     ? source.newDistributorAliases.map((value) => String(value ?? '').trim()).filter(Boolean)
     : undefined;
 
   if (distributorId) override.distributorId = distributorId;
   if (newDistributorName) override.newDistributorName = newDistributorName;
+  if (newDistributorTaxId) override.newDistributorTaxId = newDistributorTaxId;
   if (aliases && aliases.length > 0) override.newDistributorAliases = aliases;
 
   return override;

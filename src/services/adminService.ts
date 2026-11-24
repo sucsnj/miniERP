@@ -48,6 +48,7 @@ export type StoreProfileInput = Omit<StoreAdmin, 'id' | 'active'>;
 export interface DistributorConfig {
   id: string;
   name: string;
+  taxId: string | null;
   aliases: string[];
   enabled: boolean;
   rules: {

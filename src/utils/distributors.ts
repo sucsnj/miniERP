@@ -11,6 +11,7 @@ export interface DistributorRule {
 export interface DistributorConfig {
   id: string;
   name: string;
+  taxId: string | null;
   aliases: string[];
   enabled: boolean;
   rules: DistributorRule[];
@@ -19,6 +20,13 @@ export interface DistributorConfig {
 const MAX_DISTRIBUTORS = 100;
 const MAX_RULES_PER_DISTRIBUTOR = 20;
 const MAX_ALIASES = 30;
+
+export const normalizeTaxId = (value: string) => {
+  const digits = value.replace(/\D/g, '');
+  if (!digits) return null;
+  if (digits.length === 11 || digits.length === 14) return digits;
+  return null;
+};
 
 export const normalizeMatchText = (value: string) =>
   value
@@ -40,6 +48,7 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
     const source = item as Record<string, unknown>;
     const id = String(source.id ?? '').trim();
     const name = String(source.name ?? '').trim();
+    const taxId = normalizeTaxId(String(source.taxId ?? source.cnpj ?? source.cpfCnpj ?? '').trim());
     const aliases = Array.isArray(source.aliases)
       ? source.aliases.map((value) => String(value ?? '').trim()).filter(Boolean)
       : [];
@@ -50,6 +59,8 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
     const nameKey = name.toLocaleLowerCase('pt-BR');
     if (distributorNames.has(nameKey)) return null;
     distributorNames.add(nameKey);
+
+    if (taxId && !/^\d{11}$|^\d{14}$/.test(taxId)) return null;
 
     const normalizedAliases = aliases.map(normalizeMatchText).filter(Boolean);
     if (new Set(normalizedAliases).size !== normalizedAliases.length) return null;
@@ -86,7 +97,7 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
       return null;
     }
 
-    distributors.push({ id, name, aliases: normalizedAliases, enabled, rules });
+    distributors.push({ id, name, taxId, aliases: normalizedAliases, enabled, rules });
   }
 
   return distributors;
@@ -94,8 +105,17 @@ export const normalizeDistributorConfig = (input: unknown): DistributorConfig[] 
 
 export const findDistributor = (
   config: DistributorConfig[],
-  emitter: string
+  emitter: string,
+  emitterTaxId?: string | null
 ): DistributorConfig | null => {
+  const normalizedTaxId = normalizeTaxId(emitterTaxId ?? '');
+
+  if (normalizedTaxId) {
+    const taxMatch = config.find((distributor) =>
+      distributor.enabled && distributor.taxId === normalizedTaxId
+    );
+    if (taxMatch) return taxMatch;
+  }
   const emitterKey = normalizeMatchText(emitter);
   if (!emitterKey) return null;
 

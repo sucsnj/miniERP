@@ -1,22 +1,19 @@
 # `src/components/payables/DistributorSettings.tsx`
 
-> Card de settings para configurar distribuidoras e suas regras de importação XML.
+> Card de configuração de distribuidoras e regras da importação XML.
 
 ## O que faz
 
-- Carrega a configuração da empresa (`/api/admin/distributors`) e exibe a lista de distribuidoras com contagem de regras.
-- Cria/edita/exclui distribuidoras (`name`) e aliases usados para casar `emit.xNome` do XML; o flag `enabled` fica como padrão habilitado para itens criados manualmente.
-- Cada distribuidora aceita múltiplas regras tipadas (`amount_adjustment`: soma/subtrae `value`; `name_override`: renomeia nome final), em ordem.
-- UI expõe formulário de criação de nova regra (quando não houver) ou edição de regra existente; cada regra pode ser removida/excluída individualmente.
+- Lista, cria, edita e exclui distribuidoras do tenant (admin-only), com regras tipadas (`amount_adjustment`, `name_override`).
+- Cada distribuidora pode ter `taxId` (CNPJ 14 dígitos ou CPF 11 dígitos) e aliases de `emit.xNome`.
+- Persiste via `/api/admin/distributors` e atualiza o cache local.
 
 ## Relações
 
-- Visual idêntico aos demais cards de configuração (mesmo `Panel` e `MASONRY_CARD_STYLE`).
-- Lista de distribuidoras via dropdown; quando não existe nenhuma cadastrada, o dropdown fica desabilitado e exibe "Sem distribuidoras".
-- **Usado por:** [settings](../../pages/settings.md).
-- **Usa:** [adminService](../../services/adminService.md).
+- **Usa:** `adminService` (`fetchDistributors`, `replaceDistributors`), `DistributorConfig`, MUI icons, `Panel`, `PanelHeader`, `Button`.
+- **Usado por:** `src/pages/settings.tsx`.
 
 ## Notas
 
-- Admin-only (a rota `/api/admin/distributors` exige `requireAdminApi`).
-- O callback modificado persiste via `replaceDistributors`; a lista inteira é refeita na empresa.
+- `taxId` é opcional, mas recomendado: quando presente, a importação associa por CNPJ/CPF exato antes dos aliases.
+- Aliases continuam como fallback para emitentes sem CNPJ/CPF ou variações de nome.

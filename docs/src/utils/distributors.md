@@ -5,7 +5,9 @@
 ## O que faz
 
 - `normalizeMatchText` — minúsculas sem acentos/pontuação (`NFD`, `[^a-z0-9]` removidos).
-- `normalizeDistributorConfig` — valida lista: tipos/regras específicos, normalização de aliases, limites (`100` distribuidoras, `30` aliases, `20` regras).
+- `normalizeDistributorConfig` — valida lista: tipos/regras específicos, normalização de aliases, `taxId` (11 ou 14 dígitos), limites (`100` distribuidoras, `30` aliases, `20` regras).
+- `normalizeTaxId` — remove não dígitos e aceita apenas CPF (11) ou CNPJ (14).
+- `findDistributor(config, emitter, emitterTaxId?)` — prioriza match exato por `taxId`; só então busca aliases que casam `emit.xNome`.
 - `findDistributor(config, emitter)` — acha a distribuidora com aliases que casam `emit.xNome`; múltiplos casam a mais longa.
 - `applyDistributorRules(distributor, amount)` — aplica `amount_adjustment` em ordem (soma ajusta) e `name_override` (último vence).
 

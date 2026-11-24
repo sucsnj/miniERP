@@ -26,6 +26,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Histórico da tabela | até 20 buscas/30 dias; "Limpar histórico" com largura de conteúdo |
 | Nav mobile | painel lateral à esquerda abaixo de 1024px, acionado pelo nome do app; loja/usuário compactos à direita |
 | Exclusão de vendas | lista congelada durante a animação: card sai no lugar, sem card extra |
+| Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente; aliases como fallback (ADR 0021) |
 | Offline/PWA | não implementado |
 | Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
 

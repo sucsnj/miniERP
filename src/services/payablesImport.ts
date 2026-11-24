@@ -3,12 +3,13 @@ import { parseCurrency, parseNumber } from '../utils/number';
 import { toDate } from '../utils/date';
 import { parseStringPromise } from 'xml2js';
 import { getCompanySettings, updateDistributorConfig } from '../database/settingsRepository';
-import { applyDistributorRules, findDistributor, normalizeDistributorConfig, type DistributorConfig, normalizeMatchText } from './../utils/distributors';
+import { applyDistributorRules, findDistributor, normalizeDistributorConfig, normalizeTaxId, type DistributorConfig, normalizeMatchText } from './../utils/distributors';
 import type { AuthContext } from '../utils/serverAuth';
 
 export interface PayablesImportOverride {
   distributorId?: string;
   newDistributorName?: string;
+  newDistributorTaxId?: string;
   newDistributorAliases?: string[];
 }
 
@@ -33,6 +34,7 @@ export const processPayablesXml = async (
   // Caminho correto dentro do XML
   const infNFe = parsed.nfeProc.NFe[0].infNFe[0];
   const rawDistributorName: string = infNFe.emit[0].xNome[0];
+  const rawDistributorTaxId: string | null = infNFe.emit[0].CNPJ?.[0] ?? infNFe.emit[0].CPF?.[0] ?? null;
   const invoiceNumber: string = infNFe.ide[0].nNF[0];
   const duplicates: Array<{ vDup: string[]; dVenc: string[] }> = infNFe.cobr?.[0]?.dup ?? [];
   const issueDate: string = infNFe.ide[0].dhEmi[0];
@@ -48,9 +50,13 @@ export const processPayablesXml = async (
     const aliases = override.newDistributorAliases?.map((alias) => alias.trim()).filter(Boolean) ?? [];
     const normalizedAliases = [name, ...(aliases ?? [])];
     const aliasKeys = new Set(normalizedAliases.map(normalizeMatchText));
+    const overrideTaxId = normalizeTaxId(override.newDistributorTaxId ?? '');
+    const xmlTaxId = normalizeTaxId(rawDistributorTaxId ?? '');
     const existing = distributorConfig.find((item) =>
       item.name.toLowerCase() === name.toLowerCase()
       || item.aliases.some((alias) => aliasKeys.has(alias))
+      || (xmlTaxId !== null && item.taxId === xmlTaxId)
+      || (overrideTaxId !== null && item.taxId === overrideTaxId)
     );
 
     if (existing) {
@@ -59,6 +65,7 @@ export const processPayablesXml = async (
       const newDistributor: DistributorConfig = {
         id: crypto.randomUUID(),
         name,
+        taxId: overrideTaxId ?? xmlTaxId,
         aliases: normalizedAliases,
         enabled: true,
         rules: [],
@@ -77,7 +84,7 @@ export const processPayablesXml = async (
       return { error: 'Distribuidora não encontrada.' as const };
     }
   } else {
-    distributor = findDistributor(distributorConfig, rawDistributorName);
+    distributor = findDistributor(distributorConfig, rawDistributorName, rawDistributorTaxId);
   }
 
   if (!distributor) {

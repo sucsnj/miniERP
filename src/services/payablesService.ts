@@ -30,6 +30,7 @@ interface ImportXmlResponse {
 export interface DistributorConfig {
   id: string;
   name: string;
+  taxId: string | null;
   aliases: string[];
   enabled: boolean;
   rules: { id: string; name: string; type: 'amount_adjustment' | 'name_override'; value: number | string; enabled: boolean }[];

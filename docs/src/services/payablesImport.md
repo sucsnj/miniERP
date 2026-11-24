@@ -5,9 +5,9 @@
 ## O que faz
 
 - `processPayablesXml(xml, ctx, timezone, override?)` — executa parse do XML e aplica uma ordem distribuidor:
-  1. `override.newDistributorName` cria distribuidora (`rules: []`) e anexa à configuração;
+  1. `override.newDistributorName` cria distribuidora (`rules: []`, com `taxId` capturado do XML ou informado no modal) e anexa à configuração;
   2. `override.distributorId` usa distribuidora cadastrada;
-  3. caso contrário, `findDistributor()` casa `emit.xNome` com `aliases` normalizados;
+  3. caso contrário, `findDistributor()` prioriza `emit.CNPJ`/`emit.CPF` exato e, se não houver, casa `emit.xNome` com `aliases` normalizados;
   4. `applyDistributorRules()` soma (`amount_adjustment`, pode haver múltiplas) e aplica `name_override` (último vence) antes de salvar registros;
   5. insere no payables (fluxo atual) e cria a nota (accessKey).
 - Retorna `{ sucesso, registros }` ou `{ code: 'DISTRIBUTOR_NOT_FOUND', xmlDistributorName, availableDistributors }` para UI completar.
