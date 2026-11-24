@@ -44,44 +44,65 @@ const ItemForm: React.FC<ItemFormProps> = ({
     return (
         <>
             <div className={styles.formHeader}>
-                <div className={styles.formGroupHeader}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.formLabel} htmlFor="form-tipo">
-                            Tipo:
-                        </label>
-                        <select
-                            id="form-tipo"
-                            className={styles.selectField}
-                            value={form.type}
-                            onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as 'PRODUCT' | 'SERVICE' }))}
-                        >
-                            <option value="PRODUCT">Produto</option>
-                            <option value="SERVICE">Serviço</option>
-                        </select>
-
+                <div className={styles.formRow}>
+                    <div className={styles.formField}>
+                        <div className={styles.formGroup}>
+                            <label className={styles.formLabel} htmlFor="form-tipo">
+                                Tipo:
+                            </label>
+                            <select
+                                id="form-tipo"
+                                className={styles.selectField}
+                                value={form.type}
+                                onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as 'PRODUCT' | 'SERVICE' }))}
+                            >
+                                <option value="PRODUCT">Produto</option>
+                                <option value="SERVICE">Serviço</option>
+                            </select>
+                        </div>
                     </div>
-                    <div
-                        className={`${importStyles.dropZone} ${isDragOver ? importStyles.dropZoneActive : ''}`}
-                        style={{ padding: '8px 16px', minHeight: 'auto', gap: '8px', flexDirection: 'row', cursor: 'pointer' }}
-                        onDrop={handleDrop}
-                        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-                        onDragLeave={() => setIsDragOver(false)}
-                        onClick={() => fileInputRef.current?.click()}
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Área para soltar arquivo XML"
-                        onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-                    >
-                        <ImportExportIcon className="material-icon" fontSize="small" style={{ margin: 0, color: 'inherit' }} />
-                        <span style={{ fontSize: '0.85rem', color: 'inherit' }}>Arraste XML NF-e ou Clique</span>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept=".xml"
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                            id="xml-file-input-inline"
-                        />
+                    {form.type === 'PRODUCT' && (
+                        <div className={styles.formField}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel} htmlFor="form-ativo">
+                                    Ativo:
+                                </label>
+                                <select
+                                    id="form-ativo"
+                                    className={styles.selectField}
+                                    value={form.active}
+                                    onChange={(e) => setForm(prev => ({ ...prev, active: Number(e.target.value) }))}
+                                >
+                                    <option value={1}>Sim</option>
+                                    <option value={0}>Não</option>
+                                </select>
+                            </div>
+                        </div>
+                    )}
+                    <div className={styles.formField} style={{ flex: '2 1 320px' }}>
+                        <div
+                            className={`${importStyles.dropZone} ${isDragOver ? importStyles.dropZoneActive : ''}`}
+                            style={{ padding: '8px 16px', minHeight: 'auto', gap: '8px', flexDirection: 'row', cursor: 'pointer' }}
+                            onDrop={handleDrop}
+                            onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                            onDragLeave={() => setIsDragOver(false)}
+                            onClick={() => fileInputRef.current?.click()}
+                            role="button"
+                            tabIndex={0}
+                            aria-label="Área para soltar arquivo XML"
+                            onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+                        >
+                            <ImportExportIcon className="material-icon" fontSize="small" style={{ margin: 0, color: 'inherit' }} />
+                            <span style={{ fontSize: '0.85rem', color: 'inherit' }}>Arraste XML NF-e ou Clique</span>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".xml"
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                                id="xml-file-input-inline"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

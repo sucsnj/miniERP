@@ -145,10 +145,12 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
         </div>
       </div>
 
-      <div className={styles.formGroup}>
-        <label className={styles.formLabel} htmlFor="form-cod-interno">
-          Código Interno:
-        </label>
+      <div className={styles.formRow}>
+        <div className={styles.formField}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="form-cod-interno">
+              Código Interno:
+            </label>
         <input
           id="form-cod-interno"
           type="text"
@@ -159,10 +161,11 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           onChange={(e) => setForm(prev => ({ ...prev, internalCode: e.target.value }))}
           disabled={!!editingProductId}
         />
-      </div>
-
-      <div className={styles.formGroup}>
-        <label className={styles.formLabel} htmlFor="form-referencia">
+          </div>
+        </div>
+        <div className={styles.formField}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="form-referencia">
           Referência:
         </label>
         <input
@@ -175,6 +178,8 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           onChange={(e) => setForm(prev => ({ ...prev, reference: e.target.value }))}
         />
       </div>
+        </div>
+    </div>
     </div>
   );
 };

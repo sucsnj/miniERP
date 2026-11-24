@@ -30,10 +30,12 @@ declare const styles: {
   readonly "filterLabel": string;
   readonly "filterLabelSearch": string;
   readonly "filterSelect": string;
+  readonly "formField": string;
   readonly "formGroup": string;
   readonly "formGroupHeader": string;
   readonly "formHeader": string;
   readonly "formLabel": string;
+  readonly "formRow": string;
   readonly "historyHeader": string;
   readonly "historyLoading": string;
   readonly "historySection": string;
@@ -66,6 +68,21 @@ declare const styles: {
   readonly "textareaField": string;
   readonly "valoresGroup": string;
   readonly "valoresGroupServico": string;
+  readonly "unitsSection": string;
+  readonly "unitsHeader": string;
+  readonly "helperText": string;
+  readonly "unitsList": string;
+  readonly "unitCard": string;
+  readonly "unitCardMain": string;
+  readonly "unitCardHeader": string;
+  readonly "mainRadioLabel": string;
+  readonly "unitFields": string;
+  readonly "fieldWrapper": string;
+  readonly "miniLabel": string;
+  readonly "unitFields": string;
+  readonly "selectField": string;
+  readonly "inputField": string;
+  readonly "unitsActions": string;
 };
 export = styles;
 

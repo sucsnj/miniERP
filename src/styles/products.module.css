@@ -168,6 +168,20 @@
   gap: 4px;
 }
 
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.formField {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
 .formLabel {
   font-size: 0.82rem;
   font-weight: 600;
@@ -588,4 +602,121 @@
 
 .fab:hover .fabIcon {
   transform: rotate(90deg);
+}
+
+.unitsSection {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.unitsHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.helperText {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.unitsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Card da unidade - Mobile First */
+.unitCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+/* Destaque visual para a unidade marcada como principal */
+.unitCardMain {
+    border-color: rgba(59, 130, 246, 0.5); /* Ajuste para a cor primária do seu tema */
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.unitCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mainRadioLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 0; /* Aumenta área de toque no mobile */
+}
+
+.unitFields {
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    gap: 0.65rem;
+    align-items: start;
+}
+
+.fieldWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.miniLabel {
+    font-size: 0.75rem;
+    opacity: 0.75;
+}
+
+/* Garante que select e input preencham suas colunas no grid */
+.unitFields .selectField,
+.unitFields .inputField {
+    width: 100%;
+    min-width: 0;
+    height: 40px; /* Ajuste para a altura padrão dos seus inputs (ex: 38px, 40px ou 42px) */
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.unitsActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+/* Ajuste para telas maiores (Tablet / Desktop) */
+@media (min-width: 640px) {
+    .unitCard {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .unitCardHeader {
+        order: 2;
+        gap: 1rem;
+        height: 40px; /* Mesma altura do input/select para alinhar perfeitamente */
+        padding-bottom: 0;
+        align-items: center;
+    }
+
+    .unitFields {
+        order: 1;
+        flex: 1;
+        grid-template-columns: minmax(200px, 1fr) 120px;
+    }
 }
