@@ -9,6 +9,7 @@ declare const styles: {
   readonly "inputWithIconWrapper": string;
   readonly "mathButton": string;
   readonly "mathButtons": string;
+  readonly "observationsTextarea": string;
   readonly "pixButton": string;
   readonly "recentHistory": string;
   readonly "recentSaleActions": string;

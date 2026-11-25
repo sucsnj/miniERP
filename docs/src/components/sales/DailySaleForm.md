@@ -4,7 +4,7 @@
 
 ## O que faz
 
-- Campos data, valor (calculadora `+ − × ÷`), observações, tipo de venda opcional (crédito, débito, PIX, outros) e botões Registrar/Limpar; botão do carrinho com badge.
+- Campos data, valor (calculadora `+ − × ÷`), observações (autoexpansível, máximo 500 caracteres), tipo de venda opcional (crédito, débito, PIX, outros) e botões Registrar/Limpar; botão do carrinho com badge.
 - Valor exibido com PIX clicável; renderiza os modais de seleção, carrinho e PIX.
 - Aplica ampliação compartilhada por empresa (`fieldScaleDate`, `fieldScaleValue`, `fieldScaleObservations`) exclusivamente aos campos Data, Valor e Observações via `zoom` CSS, somente quando `fieldScalesAvailable` é `true`.
 - Toda a lógica de estado/validação/ações está em `useDailySaleForm`.

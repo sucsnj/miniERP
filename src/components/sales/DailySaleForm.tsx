@@ -4,6 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ClearIcon from '@mui/icons-material/Clear';
 import { formatCurrency } from '../../utils/formatter';
 import { useDailySaleForm } from '../../hooks/useDailySaleForm';
+import { useEffect } from 'react';
 import Button from '@/components/common/Button';
 import type { DailySale } from '../../services/salesService';
 import CartModal from '@/components/cart/CartModal';
@@ -73,6 +74,13 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     totalCartCount,
   } = useDailySaleForm({ selectedDate, onSaleAdded });
   const { pixKey, pixName, pixBank, fieldScaleDate, fieldScaleValue, fieldScaleObservations, fieldScalesAvailable } = useSettings();
+
+  useEffect(() => {
+    const textarea = observationsTextareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 240)}px`;
+  }, [observations, observationsTextareaRef]);
 
   return (
     <>
@@ -182,8 +190,9 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 ref={observationsTextareaRef}
                 onChange={(e) => setObservations(e.target.value)}
                 disabled={loading}
-                className="flex-grow-edit-observacoes"
+                className={styles.observationsTextarea}
                 placeholder={'Observações...'}
+                maxLength={500}
                 style={fieldScalesAvailable ? { zoom: fieldScaleObservations } : undefined}
               />
             </label>
