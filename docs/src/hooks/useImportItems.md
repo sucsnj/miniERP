@@ -8,7 +8,7 @@
 - Suporta drag/drop, seleção via input, reset e fluxo de importação em lote (`importInvoiceItem`).
 - Gerencia estados: `loading`, `importing`, `error`, `completed`, `isDragOver`, `products`, `fileName`.
 - Manipula sugestões de nome (`handleItemDescriptionChange`, `handleSelectSuggestion`) e ações de edição/registration rápido (abrem páginas com parâmetros).
-- Aceita `initialFile` para processar ao abrir modal.
+- Aceita `initialFile` para processar ao abrir modal e `initialProducts` para abrir já com o preview carregado, sem reler o XML.
 
 ## Relações
 
@@ -19,3 +19,4 @@
 
 - Atualiza `products` incrementalmente durante importação em lote (reflete status por item: `idle`, `ok`, `duplicado`, `estoque_atualizado`, `erro`).
 - `handleEditItem`/`handleQuickRegister` abrem novas janelas (`window.open`).
+- Com `initialProducts`, o modal começa com `products` preenchido e não dispara nova leitura do arquivo.

@@ -15,7 +15,6 @@ import ItemForm from '@/components/products/ItemForm';
 import CatalogEntityModal from '@/components/catalog/CatalogEntityModal';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 import StockAdjustModal from '@/components/products/StockAdjustModal';
-import ImportItemsModal from '@/components/import/ImportItemsModal';
 import { ProductFormData } from '@/components/products/ProductForm';
 import { useCategory } from '@/hooks/useCategory';
 import { useBrand } from '@/hooks/useBrand';
@@ -89,10 +88,6 @@ const RegistrationPage: React.FC = () => {
     // Modal de confirmação de exclusão
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<ItemData | null>(null);
-
-    // Modal de Importação XML
-    const [modalImportOpen, setModalImportOpen] = useState(false);
-    const [importFile, setImportFile] = useState<File | null>(null);
 
     // Notificações (toast) do store global
     const { showToast } = useToast();
@@ -600,12 +595,6 @@ const RegistrationPage: React.FC = () => {
         setItemToDelete,
     });
 
-    // Função para importação de XML
-    const handleImportXML = (file?: File) => {
-        setImportFile(file || null);
-        setModalImportOpen(true);
-    };
-
     return (
         <RequireAdmin>
         <>
@@ -632,7 +621,6 @@ const RegistrationPage: React.FC = () => {
 
                             <form onSubmit={handleSubmitForm}>
                                 <ItemForm
-                                    onImportXML={handleImportXML}
                                     editingProductId={editingId}
                                     form={form}
                                     setForm={setForm}
@@ -1030,23 +1018,6 @@ const RegistrationPage: React.FC = () => {
                         onClose={() => {
                             setDeleteConfirmOpen(false);
                             setItemToDelete(null);
-                        }}
-                    />
-                )}
-
-                {/* Modal: Importação XML */}
-                {modalImportOpen && (
-                    <ImportItemsModal
-                        initialFile={importFile}
-                        onClose={() => {
-                            setModalImportOpen(false);
-                            setImportFile(null);
-                        }}
-                        onImportSuccess={() => {
-                            setModalImportOpen(false);
-                            setImportFile(null);
-                            showToast('Itens importados com sucesso!', 'success');
-                            // router.push('/products'); // comentado propositalmente, não remover comentário
                         }}
                     />
                 )}

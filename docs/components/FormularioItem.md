@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Componente wrapper do formulário de cadastro/edição de itens do catálogo. Alterna entre `FormularioProduto` e `FormularioServico` conforme `form.tipo` e adiciona a área de importação de XML NF-e (arrastar/soltar ou clique).
+Componente wrapper do formulário de cadastro/edição de itens do catálogo. Alterna entre `FormularioProduto` e `FormularioServico` conforme `form.tipo`.
 
 ## Contexto
 
@@ -10,15 +10,13 @@ Usado na página `/products` (bloco Produtos/Estoque) no topo do formulário de 
 
 ## Responsabilidades
 
-- Renderizar o seletor de tipo (`PRODUTO` | `SERVICO`).
-- Exibir a dropzone de importação de XML NF-e (drag & drop, clique ou tecla Enter).
+- Renderizar o seletor de tipo (`PRODUCT` | `SERVICE`).
 - Delegar o formulário propriamente dito a `FormularioProduto` ou `FormularioServico`.
 
 ## Assinatura
 
 ```ts
 interface FormularioItemProps {
-  onImportXML: (file?: File) => void;
   editarProdutoId: number | null;
   form: ProdutoFormData;
   setForm: Dispatch<SetStateAction<ProdutoFormData>>;
@@ -32,7 +30,6 @@ const FormularioItem: React.FC<FormularioItemProps>;
 
 ## Props
 
-- `onImportXML` - recebe o arquivo XML selecionado/soltado para importação.
 - `editarProdutoId` - id em edição (`null` para novo item).
 - `form` - estado do formulário (`ProdutoFormData`).
 - `setForm` - atualizador do estado do formulário.
@@ -43,11 +40,9 @@ const FormularioItem: React.FC<FormularioItemProps>;
 ## Dependências
 
 - `FormularioProduto`, `FormularioServico`.
-- `styles/products.module.css`, `styles/modalImport.module.css`.
-- Ícone MUI (`ImportExportIcon`).
+- `styles/products.module.css`.
 
 ## Observações
 
-- O input de arquivo aceita apenas `.xml`.
-- O dropzone possui `role="button"` e `tabIndex={0}` (acessível por teclado).
 - O tipo selecionado troca o formulário exibido sem recarregar a página.
+- A importação de XML de NF-e é feita em `/payables`.

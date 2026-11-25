@@ -1,17 +1,15 @@
 # `src/components/products/ItemForm.tsx`
 
-> Wrapper do formulário de item: seletor de tipo, dropzone de XML e escolha do formulário.
+> Wrapper do formulário de item: seletor de tipo e escolha do formulário.
 
 ## O que faz
 
-- Seletor **Tipo** (`PRODUTO` | `SERVICO`) que alterna o formulário exibido.
-- Dropzone de XML de NF-e (drag&drop, clique ou Enter) que chama `onImportXML(file)`.
+- Seletor **Tipo** (`PRODUCT` | `SERVICE`) que alterna o formulário exibido.
 - Delega para [ProductForm](./ProductForm.md) ou [ServiceForm](./ServiceForm.md).
 
 ```ts
 interface ItemFormProps {
-  onImportXML: (file?: File) => void;
-  editingProductId: number | null;
+  editingProductId: string | null;
   form: ProductFormData;
   setForm: Dispatch<SetStateAction<ProductFormData>>;
   options: ProductOptions;
@@ -22,9 +20,9 @@ interface ItemFormProps {
 
 ## Relações
 
-- **Usa:** [ProductForm](./ProductForm.md), [ServiceForm](./ServiceForm.md), `products.module.css`, `modalImport.module.css`.
-- **Usado por:** `../../pages/products.md`.
+- **Usa:** [ProductForm](./ProductForm.md), [ServiceForm](./ServiceForm.md), `products.module.css`.
+- **Usado por:** `../../pages/registration.md`.
 
 ## Notas
 
-- O input de arquivo aceita só `.xml`; a dropzone é acessível por teclado (`role="button"`).
+- A importação de XML de NF-e não faz mais parte deste formulário; ela é feita em `/payables`.

@@ -23,21 +23,32 @@ interface UseImportItemsOptions {
   onImportSuccess: () => void;
   /** Arquivo recebido imediatamente ao abrir o modal (drop externo). */
   initialFile?: File | null;
+  /** Itens já pré-carregados para abrir o modal sem nova leitura do XML. */
+  initialProducts?: ImportedProduct[] | null;
 }
 
-export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsOptions) => {
+export const useImportItems = ({ onImportSuccess, initialFile, initialProducts }: UseImportItemsOptions) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(initialFile?.name ?? null);
+  const [loading, setLoading] = useState(Boolean(initialFile && !initialProducts));
   const [importing, setImporting] = useState(false);
-  const [products, setProducts] = useState<ItemWithStatus[]>([]);
+  const [products, setProducts] = useState<ItemWithStatus[]>(() =>
+    initialProducts
+      ? initialProducts.map((product) => ({
+          ...product,
+          originalDescription: product.originalDescription || product.description,
+          status: 'idle' as const,
+        }))
+      : []
+  );
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
 
   const processFile = useCallback(async (file: File) => {
     if (!file.name.endsWith('.xml')) {
       setError('Selecione um arquivo XML válido de nota fiscal.');
+      setLoading(false);
       return;
     }
 
@@ -71,11 +82,11 @@ export const useImportItems = ({ onImportSuccess, initialFile }: UseImportItemsO
   }, []);
 
   useEffect(() => {
-    if (initialFile) {
+    if (initialFile && !initialProducts) {
       const timer = setTimeout(() => processFile(initialFile), 0);
       return () => clearTimeout(timer);
     }
-  }, [initialFile, processFile]);
+  }, [initialFile, initialProducts, processFile]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -12,6 +12,7 @@ import {
   importPayablesXml,
   type DistributorConfig,
 } from '../services/payablesService';
+import { previewInvoiceItems, type ImportedProduct } from '../services/productsService';
 import MissingDistributorModal from '@/components/payables/MissingDistributorModal';
 import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
@@ -34,6 +35,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Button from '@/components/common/Button';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
+import ImportItemsModal from '@/components/import/ImportItemsModal';
 
 const today = now().format('YYYY-MM-DD');
 
@@ -78,6 +80,13 @@ const Payables: React.FC = () => {
   const [accountFormOpen, setAccountFormOpen] = useState(false);
   const [payModalOpen, setPayModalOpen] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState('');
+  const [importChoiceOpen, setImportChoiceOpen] = useState(false);
+  const [importChoice, setImportChoice] = useState<'values' | 'products' | 'both' | null>(null);
+  const [importXmlText, setImportXmlText] = useState<string | null>(null);
+  const [productImportOpen, setProductImportOpen] = useState(false);
+  const [productImportFile, setProductImportFile] = useState<File | null>(null);
+  const [productImportProducts, setProductImportProducts] = useState<ImportedProduct[] | null>(null);
+  const [pendingBothImport, setPendingBothImport] = useState(false);
 
   const handleDueDateFromChange = (value: string) => {
     setDueDateFromFilter(value);
@@ -303,7 +312,7 @@ const Payables: React.FC = () => {
     xmlInputRef.current?.click();
   };
 
-  const handleImportPayload = async (xml: string) => {
+  const handleImportPayload = async (xml: string): Promise<'success' | 'distributor-missing' | 'error'> => {
     try {
       const result = await importPayablesXml(xml);
 
@@ -315,18 +324,20 @@ const Payables: React.FC = () => {
             emitterTaxId: result.xmlDistributorTaxId,
             availableDistributors: result.availableDistributors,
           });
-          return;
+          return 'distributor-missing';
         }
 
         showToast('Importação falhou. Nenhuma conta foi inserida.', 'error');
-        return;
+        return 'error';
       }
 
       showToast(`Importação concluída: ${result.registros?.length ?? 0} registros inseridos`, 'success');
       await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+      return 'success';
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao importar XML', 'error');
       console.error(error);
+      return 'error';
     }
   };
 
@@ -337,7 +348,64 @@ const Payables: React.FC = () => {
     if (!file) return;
 
     const text = await file.text();
-    await handleImportPayload(text);
+    setImportXmlText(text);
+    setProductImportFile(file);
+    setProductImportProducts(null);
+    setImportChoice(null);
+    setImportChoiceOpen(true);
+  };
+
+  const handleImportChoiceConfirm = async () => {
+    setImportChoiceOpen(false);
+    const text = importXmlText;
+    setImportXmlText(null);
+    if (!text || !importChoice) {
+      setProductImportFile(null);
+      setProductImportProducts(null);
+      setPendingBothImport(false);
+      return;
+    }
+
+    if (importChoice === 'values') {
+      setProductImportFile(null);
+      setProductImportProducts(null);
+      setPendingBothImport(false);
+      void handleImportPayload(text);
+      return;
+    }
+
+    if (importChoice === 'products') {
+      setProductImportProducts(null);
+      setPendingBothImport(false);
+      setProductImportOpen(true);
+      return;
+    }
+
+    const previewPromise = previewInvoiceItems(text).catch(() => null);
+    const status = await handleImportPayload(text);
+    const preview = await previewPromise;
+    if (preview?.ok && preview.produtos) {
+      setProductImportProducts(preview.produtos);
+    }
+    if (status === 'success') {
+      setPendingBothImport(false);
+      setProductImportOpen(true);
+      return;
+    }
+    if (status === 'distributor-missing') {
+      setPendingBothImport(true);
+      return;
+    }
+    setPendingBothImport(false);
+    setProductImportFile(null);
+    setProductImportProducts(null);
+  };
+
+  const closeProductImportModal = () => {
+    setProductImportOpen(false);
+    setProductImportFile(null);
+    setProductImportProducts(null);
+    setPendingBothImport(false);
   };
 
   const filteredAccounts = useMemo(() => {
@@ -439,6 +507,61 @@ const Payables: React.FC = () => {
         aria-label="Arquivo XML da nota fiscal"
       />
 
+      {importChoiceOpen && (
+        <div
+          className={styles.importChoiceOverlay}
+          role="presentation"
+          onClick={() => { setImportChoiceOpen(false); setImportXmlText(null); setProductImportFile(null); setProductImportProducts(null); setPendingBothImport(false); }}
+        >
+          <div
+            className={styles.importChoiceModal}
+            role="dialog"
+            aria-modal="true"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 className={styles.importChoiceTitle}>Importar XML</h3>
+            <label htmlFor="payables-import-choice" className={styles.importChoiceLabel}>
+              O que importar?
+            </label>
+            <select
+              id="payables-import-choice"
+              className={styles.importChoiceSelect}
+              value={importChoice ?? ''}
+              onChange={(event) => setImportChoice(event.target.value as 'values' | 'products' | 'both' | null)}
+            >
+              <option value="values">Importar Valores</option>
+              <option value="products">Importar Itens</option>
+              <option value="both">Importar Ambos</option>
+            </select>
+            <div className={styles.importChoiceActions}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={handleImportChoiceConfirm}
+                disabled={!importChoice}
+              >
+                Confirmar
+              </Button>
+              <Button type="button" variant="outline" onClick={() => { setImportChoiceOpen(false); setImportXmlText(null); setProductImportFile(null); setProductImportProducts(null); setPendingBothImport(false); }}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {productImportOpen && (
+        <ImportItemsModal
+          initialFile={productImportFile}
+          initialProducts={productImportProducts}
+          onClose={closeProductImportModal}
+          onImportSuccess={() => {
+            closeProductImportModal();
+            showToast('Produtos importados com sucesso!', 'success');
+          }}
+        />
+      )}
+
       <PayablesAccountModal
         isOpen={accountFormOpen}
         onClose={handleCancelEdit}
@@ -466,12 +589,25 @@ const Payables: React.FC = () => {
           emitterName={missingDistributor.emitterName}
           emitterTaxId={missingDistributor.emitterTaxId}
           availableDistributors={missingDistributor.availableDistributors}
-          onClose={() => setMissingDistributor(null)}
+          onClose={() => {
+            setMissingDistributor(null);
+            setPendingBothImport(false);
+            setProductImportFile(null);
+            setProductImportProducts(null);
+          }}
           onImported={(recordsCount) => {
             setMissingDistributor(null);
             if (recordsCount > 0) {
               void Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+              if (pendingBothImport) {
+                setPendingBothImport(false);
+                setProductImportOpen(true);
+              }
+              return;
             }
+            setPendingBothImport(false);
+            setProductImportFile(null);
+            setProductImportProducts(null);
           }}
         />
       )}

@@ -1,6 +1,6 @@
 # `src/pages/registration.tsx`
 
-> Cadastro/edição de produtos e serviços (`/registration`), com códigos de barras, ajuste de estoque e importação XML.
+> Cadastro/edição de produtos e serviços (`/registration`), com códigos de barras e ajuste de estoque.
 
 ## O que faz
 
@@ -13,13 +13,14 @@
 
 ## Relações
 
-- **Usa:** `useProductsCatalog`, `useProductsOptions`, `useProductMutations`, `useStockMovements`; componentes `ItemForm`, `BarcodeManager`, `CatalogEntityModal` e modais XML/estoque; hooks `useCategory`, `useBrand`, `useSupplier`, `useUnitOfMeasure`.
+- **Usa:** `useProductsCatalog`, `useProductsOptions`, `useProductMutations`, `useStockMovements`; componentes `ItemForm`, `BarcodeManager`, `CatalogEntityModal` e modal de estoque; hooks `useCategory`, `useBrand`, `useSupplier`, `useUnitOfMeasure`.
 - **Usado por:** `./products.md` (edição via `?id=`) e `./api/products/items.md` (cadastro rápido).
 
 ## Notas
 
-- Cadastro rápido via XML: `preco_venda = preco_compra × 1,5` (margem 50%).
+- Cadastro rápido via XML: `preco_venda = preco_compra * 1,5` (margem 50%).
 - Ajuste de estoque no formulário não persiste de imediato: soma no campo e exige "Salvar Alterações".
 - Cancelar em modo de edição limpa o formulário e retorna para `/products`.
 - Ao carregar as opções, os campos categoria, marca, fornecedor e unidade recebem o primeiro item disponível quando ainda estão vazios.
 - A query de edição só é habilitada com `?id=`; sem parâmetro, o catálogo não é pré-carregado.
+- A importação de XML de NF-e é feita em `/payables`; `/registration` não possui mais botão/dropzone de importação.

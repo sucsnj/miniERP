@@ -23,6 +23,7 @@ declare const styles: {
   readonly "emptyState": string;
   readonly "fab": string;
   readonly "fabIcon": string;
+  readonly "fieldWrapper": string;
   readonly "filterActions": string;
   readonly "filterDropdowns": string;
   readonly "filterForm": string;
@@ -36,6 +37,7 @@ declare const styles: {
   readonly "formHeader": string;
   readonly "formLabel": string;
   readonly "formRow": string;
+  readonly "helperText": string;
   readonly "historyHeader": string;
   readonly "historyLoading": string;
   readonly "historySection": string;
@@ -45,7 +47,9 @@ declare const styles: {
   readonly "inactiveBadge": string;
   readonly "inputField": string;
   readonly "listagemGrid": string;
+  readonly "mainRadioLabel": string;
   readonly "manageButton": string;
+  readonly "miniLabel": string;
   readonly "modalActions": string;
   readonly "modalContent": string;
   readonly "modalForm": string;
@@ -66,23 +70,16 @@ declare const styles: {
   readonly "table": string;
   readonly "tableContainer": string;
   readonly "textareaField": string;
+  readonly "unitCard": string;
+  readonly "unitCardHeader": string;
+  readonly "unitCardMain": string;
+  readonly "unitFields": string;
+  readonly "unitsActions": string;
+  readonly "unitsHeader": string;
+  readonly "unitsList": string;
+  readonly "unitsSection": string;
   readonly "valoresGroup": string;
   readonly "valoresGroupServico": string;
-  readonly "unitsSection": string;
-  readonly "unitsHeader": string;
-  readonly "helperText": string;
-  readonly "unitsList": string;
-  readonly "unitCard": string;
-  readonly "unitCardMain": string;
-  readonly "unitCardHeader": string;
-  readonly "mainRadioLabel": string;
-  readonly "unitFields": string;
-  readonly "fieldWrapper": string;
-  readonly "miniLabel": string;
-  readonly "unitFields": string;
-  readonly "selectField": string;
-  readonly "inputField": string;
-  readonly "unitsActions": string;
 };
 export = styles;
 

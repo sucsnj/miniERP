@@ -13,15 +13,17 @@ interface ImportItemsModalProps {
   onClose: () => void;
   onImportSuccess: () => void;
   initialFile?: File | null;
+  initialProducts?: ImportedProduct[] | null;
 }
 ```
 
 ## Relações
 
 - **Usa:** `useImportItems` (`src/hooks/useImportItems.ts`), [ItemNameDropdown](./ItemNameDropdown.md), `productsService`, `modalImport.module.css`.
-- **Usado por:** `../../pages/registration.md`.
+- **Usado por:** `../../pages/payables.md`.
 
 ## Notas
 
 - Refatorado de um módulo misto (~587 linhas): hook, dropdown e serviços foram extraídos; `ImportedProduct` foi para `productsService.ts`.
 - Identificadores internos migrados para inglês (ADR 0004).
+- Com `initialProducts`, abre direto na tabela já carregada (sem dropzone/loading de leitura); `initialFile` é mantido apenas para exibir o nome e permitir "Trocar arquivo".

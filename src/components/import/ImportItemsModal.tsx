@@ -19,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useImportItems, type ItemStatus } from '../../hooks/useImportItems';
+import type { ImportedProduct } from '../../services/productsService';
 import ItemNameDropdown from './ItemNameDropdown';
 import Button from '@/components/common/Button';
 
@@ -26,6 +27,7 @@ interface ImportItemsModalProps {
   onClose: () => void;
   onImportSuccess: () => void;
   initialFile?: File | null;
+  initialProducts?: ImportedProduct[] | null;
 }
 
 const rowClassByStatus: Record<ItemStatus, string | undefined> = {
@@ -36,7 +38,7 @@ const rowClassByStatus: Record<ItemStatus, string | undefined> = {
   erro: importStyles.row_erro,
 };
 
-const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSuccess, initialFile }) => {
+const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSuccess, initialFile, initialProducts }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef, true);
 
@@ -59,7 +61,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
     handleEditItem,
     handleQuickRegister,
     resetFile,
-  } = useImportItems({ onImportSuccess, initialFile });
+  } = useImportItems({ onImportSuccess, initialFile, initialProducts });
 
   const counts = useMemo(() => {
     let okCount = 0;
