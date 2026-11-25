@@ -196,7 +196,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 style={fieldScalesAvailable ? { zoom: fieldScaleObservations } : undefined}
               />
             </label>
-            <label>
+            <label style={{ width: 'fit-content' }}>
               Tipo de venda (opcional):
               <select
                 value={saleType}
