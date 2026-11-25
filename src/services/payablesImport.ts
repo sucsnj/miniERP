@@ -48,13 +48,19 @@ export const processPayablesXml = async (
   if (override.newDistributorName) {
     const name = override.newDistributorName.trim();
     const aliases = override.newDistributorAliases?.map((alias) => alias.trim()).filter(Boolean) ?? [];
-    const normalizedAliases = [name, ...(aliases ?? [])];
-    const aliasKeys = new Set(normalizedAliases.map(normalizeMatchText));
+    const aliasKeys = new Set<string>();
+    const normalizedAliases = [name, ...aliases].filter((alias) => {
+      const key = normalizeMatchText(alias);
+      if (!key || aliasKeys.has(key)) return false;
+      aliasKeys.add(key);
+      return true;
+    });
+    const normalizedAliasKeys = new Set(normalizedAliases.map(normalizeMatchText));
     const overrideTaxId = normalizeTaxId(override.newDistributorTaxId ?? '');
     const xmlTaxId = normalizeTaxId(rawDistributorTaxId ?? '');
     const existing = distributorConfig.find((item) =>
       item.name.toLowerCase() === name.toLowerCase()
-      || item.aliases.some((alias) => aliasKeys.has(alias))
+      || item.aliases.some((alias) => normalizedAliasKeys.has(alias))
       || (xmlTaxId !== null && item.taxIds.includes(xmlTaxId))
       || (overrideTaxId !== null && item.taxIds.includes(overrideTaxId))
     );
