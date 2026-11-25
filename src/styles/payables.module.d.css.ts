@@ -38,12 +38,8 @@ declare const styles: {
   readonly "formActions": string;
   readonly "formRow": string;
   readonly "hoverEllipsis": string;
-  readonly "importChoiceActions": string;
   readonly "importChoiceLabel": string;
-  readonly "importChoiceModal": string;
-  readonly "importChoiceOverlay": string;
   readonly "importChoiceSelect": string;
-  readonly "importChoiceTitle": string;
   readonly "lastTenPanel": string;
   readonly "mesSelect": string;
   readonly "observacoesCell": string;

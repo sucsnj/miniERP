@@ -221,34 +221,9 @@
   margin-bottom: 16px;
 }
 
-.importChoiceOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.importChoiceModal {
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 24px;
-  width: 420px;
-  max-width: 90vw;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.importChoiceTitle {
-  margin: 0 0 8px;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
 .importChoiceLabel {
+  display: block;
+  margin-bottom: 8px;
   font-size: 0.82rem;
   font-weight: 600;
 }
@@ -259,13 +234,8 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface-strong);
-}
-
-.importChoiceActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
+  color: var(--foreground);
+  font: inherit;
 }
 
 .accountFormFields {

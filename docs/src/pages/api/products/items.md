@@ -17,7 +17,7 @@
 ## Relações
 
 - **Usa:** `src/database/productsDb.ts` (`insertItem`, `insertStockMovement`, ...).
-- **Usado por:** `ImportItemsModal` (via `../../registration.md`).
+- **Usado por:** `ImportItemsModal` (via `../../payables.md`).
 
 ## Notas
 

@@ -33,6 +33,7 @@ import { getDateArray, toTimestamp, now } from '../utils/date';
 import { validateRequired, validateCurrency } from '../utils/validation';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '@/components/common/Button';
+import AppModalShell from '@/components/common/AppModalShell';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ImportItemsModal from '@/components/import/ImportItemsModal';
@@ -347,12 +348,16 @@ const Payables: React.FC = () => {
     event.target.value = '';
     if (!file) return;
 
-    const text = await file.text();
-    setImportXmlText(text);
-    setProductImportFile(file);
-    setProductImportProducts(null);
-    setImportChoice(null);
-    setImportChoiceOpen(true);
+    try {
+      const text = await file.text();
+      setImportXmlText(text);
+      setProductImportFile(file);
+      setProductImportProducts(null);
+      setImportChoice(null);
+      setImportChoiceOpen(true);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
+    }
   };
 
   const handleImportChoiceConfirm = async () => {
@@ -384,21 +389,41 @@ const Payables: React.FC = () => {
     const previewPromise = previewInvoiceItems(text).catch(() => null);
     const status = await handleImportPayload(text);
     const preview = await previewPromise;
-    if (preview?.ok && preview.produtos) {
-      setProductImportProducts(preview.produtos);
+    const previewItems = preview?.ok && preview.produtos ? preview.produtos : null;
+
+    if (previewItems && previewItems.length > 0) {
+      setProductImportProducts(previewItems);
     }
+    if (previewItems && previewItems.length === 0) {
+      setProductImportFile(null);
+      setProductImportProducts(null);
+    }
+
     if (status === 'success') {
       setPendingBothImport(false);
+      if (previewItems && previewItems.length === 0) {
+        showToast('Nenhum item encontrado na nota.', 'info');
+        return;
+      }
       setProductImportOpen(true);
       return;
     }
     if (status === 'distributor-missing') {
-      setPendingBothImport(true);
+      setPendingBothImport(previewItems ? previewItems.length > 0 : true);
       return;
     }
     setPendingBothImport(false);
     setProductImportFile(null);
     setProductImportProducts(null);
+  };
+
+  const closeImportChoice = () => {
+    setImportChoiceOpen(false);
+    setImportChoice(null);
+    setImportXmlText(null);
+    setProductImportFile(null);
+    setProductImportProducts(null);
+    setPendingBothImport(false);
   };
 
   const closeProductImportModal = () => {
@@ -508,46 +533,45 @@ const Payables: React.FC = () => {
       />
 
       {importChoiceOpen && (
-        <div
-          className={styles.importChoiceOverlay}
-          role="presentation"
-          onClick={() => { setImportChoiceOpen(false); setImportXmlText(null); setProductImportFile(null); setProductImportProducts(null); setPendingBothImport(false); }}
-        >
-          <div
-            className={styles.importChoiceModal}
-            role="dialog"
-            aria-modal="true"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3 className={styles.importChoiceTitle}>Importar XML</h3>
-            <label htmlFor="payables-import-choice" className={styles.importChoiceLabel}>
-              O que importar?
-            </label>
-            <select
-              id="payables-import-choice"
-              className={styles.importChoiceSelect}
-              value={importChoice ?? ''}
-              onChange={(event) => setImportChoice(event.target.value as 'values' | 'products' | 'both' | null)}
-            >
-              <option value="values">Importar Valores</option>
-              <option value="products">Importar Itens</option>
-              <option value="both">Importar Ambos</option>
-            </select>
-            <div className={styles.importChoiceActions}>
+        <AppModalShell
+          isOpen
+          onClose={closeImportChoice}
+          title="Importar XML"
+          titleId="payables-import-choice-title"
+          closeAriaLabel="Fechar escolha de importação"
+          footerRight={(
+            <>
+              <Button type="button" variant="outline" size="sm" onClick={closeImportChoice}>
+                Cancelar
+              </Button>
               <Button
                 type="button"
                 variant="primary"
+                size="sm"
                 onClick={handleImportChoiceConfirm}
                 disabled={!importChoice}
               >
                 Confirmar
               </Button>
-              <Button type="button" variant="outline" onClick={() => { setImportChoiceOpen(false); setImportXmlText(null); setProductImportFile(null); setProductImportProducts(null); setPendingBothImport(false); }}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
+            </>
+          )}
+        >
+          <label htmlFor="payables-import-choice" className={styles.importChoiceLabel}>
+            O que importar?
+          </label>
+          <select
+            id="payables-import-choice"
+            className={styles.importChoiceSelect}
+            value={importChoice ?? ''}
+            onChange={(event) => setImportChoice(event.target.value as 'values' | 'products' | 'both')}
+            autoFocus
+          >
+            <option value="" disabled>Selecione uma opção</option>
+            <option value="values">Importar Valores</option>
+            <option value="products">Importar Itens</option>
+            <option value="both">Importar Ambos</option>
+          </select>
+        </AppModalShell>
       )}
 
       {productImportOpen && (

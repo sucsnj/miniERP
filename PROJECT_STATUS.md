@@ -26,7 +26,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Histórico da tabela | até 20 buscas/30 dias; "Limpar histórico" com largura de conteúdo |
 | Nav mobile | painel lateral à esquerda abaixo de 1024px, acionado pelo nome do app; loja/usuário compactos à direita |
 | Exclusão de vendas | lista congelada durante a animação: card sai no lugar, sem card extra |
-| Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente (um ou mais por distribuidora); aliases como fallback (ADR 0021); import não considera estoque (produtos existentes ou cadastro rápido); modal fecha e redireciona para `/products` após sucesso |
+| Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente (um ou mais por distribuidora); aliases como fallback (ADR 0021); import não considera estoque (produtos existentes ou cadastro rápido); modal de itens fecha após sucesso, sem redirecionar |
 | Cadastro/registro | filtros e cadastro rápido via XML normalizados para parâmetros em inglês (`categoryId`, `brandId`, `supplierId`, `active`; `newImport`, `name`, `stock`, `unit`); botão/dropzone de importação XML removido da página (fluxo fica em `/payables`) |
 | Listagem de produtos | clique na linha abre edição; cancelar em edição retorna para `/products`; filtros por categoria/marca/fornecedor usam IDs de texto; botão de edição com lápis removido |
 | Cadastro/registro | defaults de categoria, marca, fornecedor e unidade usam as opções nativas (`isDefault`); layout realinhado em linhas flexíveis |
