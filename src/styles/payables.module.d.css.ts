@@ -35,6 +35,9 @@ declare const styles: {
   readonly "emptyRow": string;
   readonly "filterBar": string;
   readonly "filterChipActions": string;
+  readonly "filterCombobox": string;
+  readonly "filterComboboxList": string;
+  readonly "filterComboboxOption": string;
   readonly "formActions": string;
   readonly "formRow": string;
   readonly "hoverEllipsis": string;

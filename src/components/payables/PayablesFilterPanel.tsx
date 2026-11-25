@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AccountDetails } from '../../services/payablesService';
 import { formatDateString } from '../../utils/date';
 import { formatCurrency } from '../../utils/formatter';
@@ -16,6 +16,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 interface PayablesFilterPanelProps {
   distributorFilter: string;
   setDistributorFilter: (value: string) => void;
+  distributorOptions?: string[];
   statusFilter: 'Todos' | 'Pendente' | 'Pago';
   setStatusFilter: (value: 'Todos' | 'Pendente' | 'Pago') => void;
   dueDateFromFilter: string;
@@ -34,6 +35,7 @@ interface PayablesFilterPanelProps {
 const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
   distributorFilter,
   setDistributorFilter,
+  distributorOptions = [],
   statusFilter,
   setStatusFilter,
   dueDateFromFilter,
@@ -51,11 +53,27 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
   // Estado para o diálogo
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [distributorOptionsOpen, setDistributorOptionsOpen] = useState(false);
+  const distributorComboboxRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!distributorComboboxRef.current?.contains(event.target as Node)) {
+        setDistributorOptionsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    return () => document.removeEventListener('mousedown', handlePointerDown);
+  }, []);
 
   const openConfirm = (id: string) => {
     setSelectedId(id);
     setConfirmOpen(true);
   };
+
+  const filteredDistributorOptions = distributorOptions.filter((option) =>
+    option.toLowerCase().includes(distributorFilter.trim().toLowerCase())
+  );
 
   return (
     <div className={styles.contasFilterPanel}>
@@ -74,12 +92,40 @@ const PayablesFilterPanel: React.FC<PayablesFilterPanelProps> = ({
           <div>
             <label>
               Distribuidora
-              <input
-                type="text"
-                placeholder="Filtrar por distribuidora"
-                value={distributorFilter}
-                onChange={(e) => setDistributorFilter(e.target.value)}
-              />
+              <div className={styles.filterCombobox} ref={distributorComboboxRef}>
+                <input
+                  type="text"
+                  placeholder="Filtrar por distribuidora"
+                  value={distributorFilter}
+                  onFocus={() => setDistributorOptionsOpen(true)}
+                  onChange={(e) => {
+                    setDistributorFilter(e.target.value);
+                    setDistributorOptionsOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') setDistributorOptionsOpen(false);
+                  }}
+                />
+                {distributorOptionsOpen && filteredDistributorOptions.length > 0 ? (
+                  <ul className={styles.filterComboboxList} role="listbox">
+                    {filteredDistributorOptions.map((option) => (
+                      <li
+                        key={option}
+                        role="option"
+                        aria-selected={distributorFilter === option}
+                        className={styles.filterComboboxOption}
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          setDistributorFilter(option);
+                          setDistributorOptionsOpen(false);
+                        }}
+                      >
+                        {option}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             </label>
           </div>
           <div>

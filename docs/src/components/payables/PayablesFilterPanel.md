@@ -5,6 +5,7 @@
 ## O que faz
 
 - Filtros por distribuidora, intervalo de vencimento e status; botão "Limpar filtros" no cabeçalho, ao lado do chip "Filtro".
+- O campo de distribuidora é digitável e também oferece a lista de distribuidoras cadastradas via `<datalist>`.
 - Tabela do período com a linha clicável/accessível por teclado (abre detalhes) e ações Excluir (via [ConfirmDialog](../common/ConfirmDialog.md)) e Pagar (só pendentes).
 - O botão "Ver" foi removido; a célula de ações não propaga o clique/tecla para a linha.
 - Tooltip de observações no status via `.status:hover::after` e `data-observacoes` (fallback: `Pago`/`Pendente`).

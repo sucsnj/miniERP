@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useToast } from '../hooks/useToast';
 import { usePayables } from '../hooks/usePayables';
 import {
@@ -14,6 +14,7 @@ import {
 } from '../services/payablesService';
 import { previewInvoiceItems, type ImportedProduct } from '../services/productsService';
 import MissingDistributorModal from '@/components/payables/MissingDistributorModal';
+import { fetchDistributors } from '../services/adminService';
 import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
@@ -63,6 +64,7 @@ const Payables: React.FC = () => {
   const [bankNotes, setBankNotes] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<AccountDetails | null>(null);
   const [distributorFilter, setDistributorFilter] = useState('');
+  const [extraDistributorNames, setExtraDistributorNames] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<'Todos' | 'Pendente' | 'Pago'>('Todos');
   const [dueDateFromFilter, setDueDateFromFilter] = useState(() => {
     if (typeof window === 'undefined') return today;
@@ -118,6 +120,36 @@ const Payables: React.FC = () => {
   const { showToast } = useToast();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
+
+  const accountDistributorNames = useMemo(
+    () =>
+      Array.from(new Set(accountsYear.map((account) => account.supplierName).filter(Boolean))).sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
+      ),
+    [accountsYear]
+  );
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    let active = true;
+    fetchDistributors()
+      .then((result) => {
+        if (!active) return;
+        setExtraDistributorNames(result.distributors.map((item) => item.name).filter(Boolean));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [isAdmin]);
+
+  const distributorOptions = useMemo(
+    () =>
+      Array.from(new Set([...accountDistributorNames, ...extraDistributorNames])).sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
+      ),
+    [accountDistributorNames, extraDistributorNames]
+  );
 
   const resetForm = () => {
     setDistributor('');
@@ -469,8 +501,9 @@ const Payables: React.FC = () => {
       <main className={styles.contasGrid}>
         <section className={`${styles.contasPanel} ${styles.detailPanel}`}>
           <PayablesFilterPanel
-            distributorFilter={distributorFilter}
-            setDistributorFilter={setDistributorFilter}
+          distributorFilter={distributorFilter}
+          setDistributorFilter={setDistributorFilter}
+          distributorOptions={distributorOptions}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             dueDateFromFilter={dueDateFromFilter}

@@ -238,6 +238,39 @@
   font: inherit;
 }
 
+.filterCombobox {
+  position: relative;
+  width: 100%;
+}
+
+.filterComboboxList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.filterComboboxOption {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--foreground);
+  transition: background-color 0.12s ease;
+}
+
+.filterComboboxOption:hover {
+  background: var(--accent-soft);
+}
+
 .accountFormFields {
   width: 100%;
   gap: 0;
