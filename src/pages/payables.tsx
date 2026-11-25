@@ -15,7 +15,7 @@ import {
 import { previewInvoiceItems, type ImportedProduct } from '../services/productsService';
 import MissingDistributorModal from '@/components/payables/MissingDistributorModal';
 import { fetchDistributors } from '../services/adminService';
-import { readStoredString, writeStoredValue, removeStoredValue } from '../utils/storage';
+import { writeStoredValue } from '../utils/storage';
 import Agenda from '@/components/payables/Agenda';
 import Summary from '@/components/summary/Summary';
 import PayablesHeader from '@/components/payables/PayablesHeader';
@@ -68,11 +68,17 @@ const Payables: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'Todos' | 'Pendente' | 'Pago'>('Todos');
   const [dueDateFromFilter, setDueDateFromFilter] = useState(() => {
     if (typeof window === 'undefined') return today;
-    return readStoredString('filtroVencimentoDe', today);
+    const saved = window.localStorage.getItem('filtroVencimentoDe');
+    if (saved) return saved;
+    window.localStorage.setItem('filtroVencimentoDe', today);
+    return today;
   });
   const [dueDateToFilter, setDueDateToFilter] = useState(() => {
     if (typeof window === 'undefined') return today;
-    return readStoredString('filtroVencimentoAte', today);
+    const saved = window.localStorage.getItem('filtroVencimentoAte');
+    if (saved) return saved;
+    window.localStorage.setItem('filtroVencimentoAte', today);
+    return today;
   });
   const distributorInputRef = useRef<HTMLInputElement | null>(null);
   const amountInputRef = useRef<HTMLInputElement | null>(null);
@@ -523,8 +529,8 @@ const Payables: React.FC = () => {
               setDueDateToFilter(today);
 
               if (typeof window !== 'undefined') {
-                removeStoredValue('filtroVencimentoDe');
-                removeStoredValue('filtroVencimentoAte');
+                writeStoredValue('filtroVencimentoDe', today);
+                writeStoredValue('filtroVencimentoAte', today);
               }
             }}
           />
