@@ -62,6 +62,7 @@ export const useDailySaleForm = ({
   const [isValueInvalid, setIsValueInvalid] = useState(false);
   const [calculatedValue, setCalculatedValue] = useState<number | null>(0);
   const [pixModalOpen, setPixModalOpen] = useState(false);
+  const [saleType, setSaleType] = useState('');
   const [pixPayload, setPixPayload] = useState('');
   const [pixAmount, setPixAmount] = useState<string | null>(null);
 
@@ -203,6 +204,7 @@ export const useDailySaleForm = ({
     prevCartValueRef.current = 0;
     setValue('');
     setObservations('');
+    setSaleType('');
     setCalculatedValue(0);
     setIsValueInvalid(false);
     valueInputRef.current?.focus();
@@ -245,7 +247,7 @@ export const useDailySaleForm = ({
   };
 
   // Envia os dados para o serviço de vendas
-  const submitSale = async (saleType?: string | null) => {
+  const submitSale = async (forcedSaleType?: string | null) => {
     if (pendingSubmissionRef.current) return;
 
     try {
@@ -316,12 +318,13 @@ export const useDailySaleForm = ({
         notes: observations,
         items: cartItems,
         idempotencyKey,
-        saleType: saleType ?? null,
+        saleType: forcedSaleType ?? (saleType || null),
       });
 
       // Manter uma chave apenas do início para o fim da operação.
       setValue('');
       setObservations('');
+      setSaleType('');
       setCalculatedValue(0);
       setIsValueInvalid(false);
       setCartItems([]);
@@ -440,6 +443,8 @@ export const useDailySaleForm = ({
     setPixModalOpen,
     pixPayload,
     pixAmount,
+    saleType,
+    setSaleType,
     valueInputRef,
     observationsTextareaRef,
     formRef,

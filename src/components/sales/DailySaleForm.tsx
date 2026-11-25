@@ -34,6 +34,8 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     value,
     observations,
     setObservations,
+    saleType,
+    setSaleType,
     loading,
     clearing,
     calculatedValue,
@@ -180,10 +182,24 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 ref={observationsTextareaRef}
                 onChange={(e) => setObservations(e.target.value)}
                 disabled={loading}
-                className="flex-grow-observacoes"
+                className="flex-grow-edit-observacoes"
                 placeholder={'Observações...'}
                 style={fieldScalesAvailable ? { zoom: fieldScaleObservations } : undefined}
               />
+            </label>
+            <label>
+              Tipo de venda (opcional):
+              <select
+                value={saleType}
+                onChange={(e) => setSaleType(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Não informado</option>
+                <option value="credito">Crédito</option>
+                <option value="debito">Débito</option>
+                <option value="pix">PIX</option>
+                <option value="outros">Outros</option>
+              </select>
             </label>
             <div className="buttons-wrapper">
               <Button
