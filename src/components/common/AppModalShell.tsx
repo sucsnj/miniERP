@@ -19,6 +19,7 @@ export interface AppModalShellProps {
   bodyClassName?: string;
   containerClassName?: string;
   closeOnEscape?: boolean;
+  closeOnOverlayClick?: boolean;
 }
 
 export const AppModalShell: React.FC<AppModalShellProps> = ({
@@ -35,6 +36,7 @@ export const AppModalShell: React.FC<AppModalShellProps> = ({
   bodyClassName,
   containerClassName,
   closeOnEscape = true,
+  closeOnOverlayClick = true,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +50,7 @@ export const AppModalShell: React.FC<AppModalShellProps> = ({
       className="cart-modal-overlay"
       role="presentation"
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (closeOnOverlayClick && event.target === event.currentTarget) onClose();
       }}
     >
       <div

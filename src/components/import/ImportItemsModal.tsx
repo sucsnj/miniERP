@@ -81,9 +81,7 @@ const ImportItemsModal: React.FC<ImportItemsModalProps> = ({ onClose, onImportSu
     <div
       className={styles.modalOverlay}
       role="presentation"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      onClick={() => undefined}
     >
       <div
         className={`${styles.modalContent} ${importStyles.modalLarge}`}

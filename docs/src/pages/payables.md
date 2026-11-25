@@ -13,7 +13,7 @@
 - Lista contas do mês e ano via `usePayables` (`useQuery`, tenant-scoped); filtros por distribuidora, status e intervalo de vencimento (persistidos em `localStorage`).
 - CRUD via `useCreateAccount`/`useUpdateAccount`/`useDeleteAccount` (optimistic update/rollback); valida `distribuidora`, `valor` (> 0), `vencimento` e `documento`.
 - Paga (`usePayAccount`) e cancela pagamento (`useCancelPayment`); a observação é gravada via `useUpdateAccount` antes do pagamento.
-- O botão "Importar XML" abre o seletor de arquivo; após escolher o XML, um modal permite escolher `Importar Valores`, `Importar Itens` ou `Importar Ambos`. O arquivo selecionado é reutilizado na importação de itens, sem novo seletor. Na opção `Ambos`, o preview dos itens é pré-carregado em paralelo à importação de valores; o modal de itens só aparece depois que os valores são importados, já carregado.
+- O botão "Importar XML" abre o seletor de arquivo; após escolher o XML, um modal permite escolher `Importar Valores`, `Importar Itens` ou `Importar Ambos`, com `Importar Valores` pré-selecionado. O arquivo selecionado é reutilizado na importação de itens, sem novo seletor. Na opção `Ambos`, o preview dos itens é pré-carregado em paralelo à importação de valores; o modal de itens só aparece depois que os valores são importados, já carregado. Os modais do fluxo de importação não fecham por clique fora nem por Esc.
 - Importa XML NF-e via `importPayablesXml`; se emitente não cadastrado, abre `MissingDistributorModal` e pede escolher distribuidora existente ou criar uma nova; ao confirmar, repete a importação no mesmo XML.
 
 ## Relações

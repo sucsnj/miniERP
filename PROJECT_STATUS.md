@@ -31,7 +31,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Listagem de produtos | clique na linha abre edição; cancelar em edição retorna para `/products`; filtros por categoria/marca/fornecedor usam IDs de texto; botão de edição com lápis removido |
 | Cadastro/registro | defaults de categoria, marca, fornecedor e unidade usam as opções nativas (`isDefault`); layout realinhado em linhas flexíveis |
 | Códigos internos | geração automática usa prefixo `PROD`/`SERV` + 11 dígitos aleatórios únicos |
-| Notas fiscais | unicidade de `access_key` por empresa; importação tolera `23505` (ADR 0022); `/payables`: escolha Importar Valores/Itens/Ambos vem após seleção do arquivo; o arquivo é reutilizado nos itens; em Ambos, preview dos itens pré-carrega em paralelo e o modal só abre após concluir valores, já carregado |
+| Notas fiscais | unicidade de `access_key` por empresa; importação tolera `23505` (ADR 0022); `/payables`: escolha Importar Valores/Itens/Ambos vem após seleção do arquivo; por padrão vem pré-selecionado “Valores”; o arquivo é reutilizado nos itens; em Ambos, preview dos itens pré-carrega em paralelo e o modal só abre após concluir valores, já carregado; fluxo de importação não fecha por clique fora nem Esc |
 | Offline/PWA | não implementado |
 | Teste manual | funcionalidades críticas validadas; OCR exercitado com fixtures de imagem/PDF; fluxo Supabase/auth e deploy ainda não exercitados em runtime |
 

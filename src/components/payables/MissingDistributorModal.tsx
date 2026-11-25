@@ -79,6 +79,8 @@ export default function MissingDistributorModal({
     <AppModalShell
       isOpen
       onClose={onClose}
+      closeOnEscape={false}
+      closeOnOverlayClick={false}
       title="Distribuidora não encontrada"
       titleId="missing-distributor-modal-title"
       icon={<StorefrontIcon />}

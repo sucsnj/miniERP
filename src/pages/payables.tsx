@@ -353,7 +353,7 @@ const Payables: React.FC = () => {
       setImportXmlText(text);
       setProductImportFile(file);
       setProductImportProducts(null);
-      setImportChoice(null);
+      setImportChoice('values');
       setImportChoiceOpen(true);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
@@ -419,7 +419,7 @@ const Payables: React.FC = () => {
 
   const closeImportChoice = () => {
     setImportChoiceOpen(false);
-    setImportChoice(null);
+    setImportChoice('values');
     setImportXmlText(null);
     setProductImportFile(null);
     setProductImportProducts(null);
@@ -539,6 +539,8 @@ const Payables: React.FC = () => {
           title="Importar XML"
           titleId="payables-import-choice-title"
           closeAriaLabel="Fechar escolha de importação"
+          closeOnEscape={false}
+          closeOnOverlayClick={false}
           footerRight={(
             <>
               <Button type="button" variant="outline" size="sm" onClick={closeImportChoice}>
