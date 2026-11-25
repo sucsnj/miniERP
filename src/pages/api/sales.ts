@@ -70,6 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const idempotencyKey = body.idempotencyKey === undefined
       ? null
       : String(body.idempotencyKey).trim();
+    const saleType = body.saleType ?? body.sale_type ?? null;
     const validIdempotencyKey = idempotencyKey === null
       || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey);
 
@@ -88,6 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         createdAt: createdAt ?? null,
         idempotencyKey,
         items: items.map(normalizeItem),
+        saleType: saleType == null ? null : String(saleType).trim() || null,
       }, ctx);
 
       res.status(200).json({ message: 'Venda registrada com sucesso', id });

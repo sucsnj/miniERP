@@ -8,6 +8,8 @@ declare const styles: {
   readonly "historyItemNew": string;
   readonly "historyValues": string;
   readonly "recentSaleActions": string;
+  readonly "recentSaleHeader": string;
+  readonly "recentSaleType": string;
   readonly "recentSalesGrid": string;
   readonly "saleDelete": string;
   readonly "saleHighlight": string;

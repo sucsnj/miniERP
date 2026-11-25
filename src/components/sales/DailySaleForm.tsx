@@ -49,6 +49,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     handleValueChange,
     handlePixClick,
     handleSubmit,
+    submitSale,
     handleClear,
     addOperator,
     cartItems,
@@ -234,6 +235,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
         merchantBank={pixBank}
         amount={pixAmount}
         pixKey={pixKey}
+        onRegister={() => submitSale('pix')}
       />
 </>
   );

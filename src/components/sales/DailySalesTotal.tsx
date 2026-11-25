@@ -183,7 +183,10 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                       className={`${styles.historyItem}${isNew ? ` ${styles.historyItemNew}` : ''}${isDeleting ? ` ${styles.historyItemDeleting}` : ''}`}
                     >
                       <div>
-                        <strong>{parseDate(sale.createdAt).format('HH:mm:ss')}</strong>
+                        <div className={styles.recentSaleHeader}>
+                          <strong>{parseDate(sale.createdAt).format('HH:mm:ss')}</strong>
+                          {sale.saleType ? <span className={styles.recentSaleType}>{sale.saleType}</span> : null}
+                        </div>
 
                         <div className="recent-sale-observacoes">
                           {sale.notes || 'Sem observações'}

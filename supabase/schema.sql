@@ -286,7 +286,8 @@ create table if not exists public.sales (
   notes text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  idempotency_key uuid
+  idempotency_key uuid,
+  sale_type text
 );
 
 create unique index if not exists sales_company_store_idempotency_key_idx
@@ -740,7 +741,8 @@ create or replace function public.create_sale(
   p_notes text default null,
   p_created_at timestamptz default null,
   p_items jsonb default '[]'::jsonb,
-  p_idempotency_key uuid default null
+  p_idempotency_key uuid default null,
+  p_sale_type text default null
 )
 returns uuid
 language plpgsql
@@ -784,7 +786,7 @@ begin
   end if;
 
   begin
-    insert into public.sales (company_id, store_id, sale_date, amount, notes, created_at, idempotency_key)
+    insert into public.sales (company_id, store_id, sale_date, amount, notes, created_at, idempotency_key, sale_type)
     values (
       p_company_id,
       p_store_id,
@@ -792,7 +794,8 @@ begin
       p_amount,
       nullif(trim(coalesce(p_notes, '')), ''),
       coalesce(p_created_at, now()),
-      p_idempotency_key
+      p_idempotency_key,
+      nullif(trim(coalesce(p_sale_type, '')), '')
     )
     returning id into v_sale_id;
   exception

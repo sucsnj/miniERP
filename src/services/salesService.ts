@@ -12,6 +12,7 @@ export interface DailySale {
   notes?: string;
   createdAt: string;
   operationId?: string;
+  saleType?: string | null;
 }
 
 export interface SaleItemData {
@@ -64,6 +65,7 @@ function mapDailySale(row: any): DailySale {
     amount: Number(row.amount ?? row.amount ?? 0),
     notes: row.notes ?? row.notes ?? undefined,
     createdAt: String(row.createdAt ?? row.created_at ?? row.createdAt ?? ''),
+    saleType: row.saleType ?? row.sale_type ?? row.saleType ?? null,
   };
 }
 
@@ -125,6 +127,7 @@ export const registerSale = async (
   notes?: string,
   items?: SaleItemInput[],
   idempotencyKey?: string,
+  saleType?: string | null,
 ) => {
   const response = await fetch('/api/sales', {
     method: 'POST',
@@ -135,6 +138,7 @@ export const registerSale = async (
       notes,
       items: (items ?? []).map(toSaleItemPayload),
       idempotencyKey,
+      saleType: saleType ?? null,
     }),
   });
   if (!response.ok) {

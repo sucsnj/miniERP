@@ -26,6 +26,7 @@ interface DailySalesTotalProps {
 ## Notas
 
 - Largura livre de `105%`, `transform: scale` e larguras mínimas fixas removidos: o card usa `width: 100%`, `min-width: 0` e grids com `minmax(0)` para não estourar viewports longos não móveis.
+- Nas últimas vendas, o tipo de venda (`saleType`) é exibido ao lado da hora quando presente.
 - `canEdit` bloqueia vendas fora da janela editável; o `Delete` age sobre a maior `id` de `recentSales`.
 - A chave React dos blocos usa `operationId` quando disponível, preservando a mesma instância entre o ID otimista e o ID definitivo da API.
 - Timeouts de destaque/exclusão são armazenados em `Set`s e removidos ao disparar/desmontar, evitando timers obsoletos acumulados.

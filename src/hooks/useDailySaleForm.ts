@@ -245,9 +245,7 @@ export const useDailySaleForm = ({
   };
 
   // Envia os dados para o serviço de vendas
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const submitSale = async (saleType?: string | null) => {
     if (pendingSubmissionRef.current) return;
 
     try {
@@ -318,6 +316,7 @@ export const useDailySaleForm = ({
         notes: observations,
         items: cartItems,
         idempotencyKey,
+        saleType: saleType ?? null,
       });
 
       // Manter uma chave apenas do início para o fim da operação.
@@ -378,6 +377,11 @@ export const useDailySaleForm = ({
       pendingSubmissionRef.current = false;
       showToast('Erro ao registrar venda.', 'error');
     }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    await submitSale();
   };
 
   // Garante o foco no campo de registro sempre que a rota `/` terminar de carregar completamente.
@@ -443,6 +447,7 @@ export const useDailySaleForm = ({
     handleValueChange,
     handlePixClick,
     handleSubmit,
+    submitSale,
     handleClear,
     addOperator,
     cartItems,

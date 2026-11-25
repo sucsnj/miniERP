@@ -37,6 +37,7 @@ export interface DailySale {
   amount: number;
   notes: string | null;
   createdAt: string;
+  saleType?: string | null;
 }
 
 export interface SaleItem {
@@ -92,6 +93,7 @@ function mapDailySale(row: unknown): DailySale {
     amount: toNumber(r.amount ?? r.amount),
     notes: toStringOrNull(r.notes ?? r.notes),
     createdAt: String(r.created_at ?? r.createdAt ?? ''),
+    saleType: toStringOrNull(r.sale_type ?? r.saleType),
   };
 }
 
@@ -167,6 +169,7 @@ export async function createSale(input: {
   createdAt?: string | null;
   idempotencyKey?: string | null;
   items?: SaleItemInput[];
+  saleType?: string | null;
 }, ctx: AuthContext): Promise<string> {
   const { data, error } = await sb().rpc('create_sale', {
     p_company_id: ctx.companyId,
@@ -187,6 +190,7 @@ export async function createSale(input: {
       reference: item.reference ?? null,
     })),
     p_idempotency_key: input.idempotencyKey ?? null,
+    p_sale_type: input.saleType ?? null,
   });
   if (error) throw error;
   return String(data);

@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { renderQr, pulseQr, QR_SIZE } from '@/utils/qrPix';
 import { downloadQrPng } from '@/utils/pixActions';
-import { printPixSheet, type PixPrintData } from '@/utils/pixPrintPdf';
+
 import { showToast } from '@/utils/toast';
 import { copyToClipboard } from '@/utils/clipboard';
 import { useFocusTrap } from '../../utils/focus';
@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Button from '@/components/common/Button';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import PrintIcon from '@mui/icons-material/Print';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface PixModalProps {
   isOpen: boolean;
@@ -20,6 +20,7 @@ interface PixModalProps {
   merchantBank: string;
   amount: string | null;
   pixKey: string;
+  onRegister?: () => void | Promise<void>;
 }
 
 const ModalPixContent: React.FC<PixModalProps> = ({
@@ -30,6 +31,7 @@ const ModalPixContent: React.FC<PixModalProps> = ({
   merchantBank,
   amount,
   pixKey,
+  onRegister,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -80,19 +82,11 @@ const ModalPixContent: React.FC<PixModalProps> = ({
     }
   };
 
-  const handlePrint = async () => {
-    const data: PixPrintData = {
-      payload,
-      name: merchantName,
-      bank: merchantBank,
-      amount,
-      key: pixKey,
-    };
-
+  const handleRegister = async () => {
     try {
-      await printPixSheet(data);
-    } catch {
-      showToast('Erro ao gerar PDF para impressão.', 'error');
+      await onRegister?.();
+    } finally {
+      onClose();
     }
   };
 
@@ -149,9 +143,11 @@ const ModalPixContent: React.FC<PixModalProps> = ({
           <Button className="action-button" variant="secondary" onClick={handleDownload} leftIcon={<FileDownloadIcon fontSize="small" />}>
             Baixar PNG
           </Button>
-          <Button className="action-button" variant="outline" onClick={handlePrint} leftIcon={<PrintIcon fontSize="small" />}>
-            Imprimir
-          </Button>
+          {onRegister ? (
+            <Button className="action-button" variant="success" onClick={() => void handleRegister()} leftIcon={<CheckCircleIcon fontSize="small" />}>
+              Registrar
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>
