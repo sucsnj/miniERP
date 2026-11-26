@@ -55,3 +55,12 @@
   font-size: 0.8rem;
   font-weight: 700;
 }
+
+.badge {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: #2563eb;
+  color: #ffffff;
+}

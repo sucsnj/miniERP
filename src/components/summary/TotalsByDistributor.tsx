@@ -32,7 +32,7 @@ const TotalsByDistributor: React.FC<TotalsByDistributorProps> = ({ totalsByDistr
                             <li key={distributor} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                                 <span>
                                     {distributor}
-                                    <span style={{ marginLeft: '6px', padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                    <span className="badge" style={{ marginLeft: '6px' }}>
                                         {info.count}
                                     </span>
                                 </span>

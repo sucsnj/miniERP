@@ -115,7 +115,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initi
                     <h4 style={{ margin: '0 0 4px' }}>Somatório</h4>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span>R$ {formatCurrency(invoiceTotal, 2)}</span>
-                        <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                        <span className="badge" style={{ marginLeft: '6px' }}>
                             {invoices.length}
                         </span>
                     </div>
@@ -140,7 +140,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initi
                                 >
                                     <span>{name}</span>
                                     <span>R$ {formatCurrency(total, 2)}
-                                        <span style={{ marginLeft: '6px', padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                        <span className="badge" style={{ marginLeft: '6px' }}>
                                             {list.length}
                                         </span>
                                     </span>

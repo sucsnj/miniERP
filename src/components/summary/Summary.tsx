@@ -82,21 +82,15 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                                 <td>
                                     <div className={`${summaryStyles.summaryRow}`}>
                                         <strong>Pago</strong>
-                                        <span className={summaryStyles.badge}>
-                                            {summary.paidCount}
-                                        </span>
+                                        <span className="badge">{summary.paidCount}</span>
                                     </div>
                                     <div className={`${summaryStyles.summaryRow}`}>
                                         <strong>Pendente</strong>
-                                        <span className={summaryStyles.badge}>
-                                            {summary.pendingCount}
-                                        </span>
+                                        <span className="badge">{summary.paidCount}</span>
                                     </div>
                                     <div className={`${summaryStyles.summaryRow}`}>
                                         <strong>Acumulado anual</strong>
-                                        <span className={summaryStyles.badge}>
-                                            {summary.totalCount}
-                                        </span>
+                                        <span className="badge">{summary.paidCount}</span>
                                     </div>
                                 </td>
                                 <td style={{ textAlign: 'right', verticalAlign: 'top' }}>
