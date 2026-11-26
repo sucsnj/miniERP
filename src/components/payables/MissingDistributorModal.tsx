@@ -79,10 +79,11 @@ export default function MissingDistributorModal({
           showToast('A distribuidora foi adicionada, mas a importação não encontrou registros novos.', 'error');
         }
       }
-      showToast(`Importação concluída: ${total} registro(s) inserido(s).`, 'success');
+      if (total > 0) showToast(`Importação concluída: ${total} registro(s) inserido(s).`, 'success');
       onImported(total, effectiveType);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao importar XML.', 'error');
+      onImported(0, effectiveType);
     } finally {
       setSaving(false);
     }
