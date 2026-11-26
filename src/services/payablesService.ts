@@ -132,13 +132,13 @@ export const importPayablesXml = async (
   return body as unknown as ImportPayablesXmlResponse;
 };
 
-export const fetchAccounts = async (year: number, month?: number): Promise<AccountDetails[]> => {
-  const params = new URLSearchParams({ year: String(year) });
-  if (month !== undefined) {
-    params.append('month', String(month));
-  }
+export const fetchAccounts = async (year?: number, month?: number): Promise<AccountDetails[]> => {
+  const params = new URLSearchParams();
+  if (year !== undefined) params.append('year', String(year));
+  if (month !== undefined) params.append('month', String(month));
 
-  const response = await fetch(`/api/payables?${params.toString()}`);
+  const query = params.toString();
+  const response = await fetch(query ? `/api/payables?${query}` : '/api/payables');
   const rows = await parseResponse<Array<Record<string, unknown>>>(response);
   return (Array.isArray(rows) ? rows : []).map(mapAccount);
 };

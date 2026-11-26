@@ -34,11 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'GET') {
     const { year: yearParam, month: monthParam } = req.query;
-    if (!yearParam) {
-      return res.status(400).json({ error: 'Ano é obrigatório' });
-    }
-
-    const accounts = await listPayablesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined, ctx);
+    const accounts = yearParam
+      ? await listPayablesByPeriod(parseInt(yearParam as string), monthParam ? parseInt(monthParam as string) : undefined, ctx)
+      : await listAllPayables(ctx);
     return res.status(200).json(accounts.map(mapPayable));
   }
 

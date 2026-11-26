@@ -46,11 +46,9 @@ const Payables: React.FC = () => {
   const [year, setYear] = useState(getDateArray()[2]);
   const [month, setMonth] = useState(getDateArray()[1]);
   const {
-    accountsMonth,
     accountsYear,
-    loadMonthAccounts,
-    loadYearAccounts,
-  } = usePayables({ month, year });
+    loadYearAccounts: loadAccounts,
+  } = usePayables();
   const createAccountMutation = useCreateAccount();
   const updateAccountMutation = useUpdateAccount();
   const deleteAccountMutation = useDeleteAccount();
@@ -231,7 +229,7 @@ const Payables: React.FC = () => {
 
       resetForm();
       setAccountFormOpen(false);
-      await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+      await Promise.all([loadAccounts()]);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao salvar a conta.', 'error');
     }
@@ -371,7 +369,7 @@ const Payables: React.FC = () => {
       }
 
       showToast(`Importação concluída: ${result.registros?.length ?? 0} registros inseridos`, 'success');
-      await Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+      await Promise.all([loadAccounts()]);
       return 'success';
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao importar XML', 'error');
@@ -502,9 +500,8 @@ const Payables: React.FC = () => {
 
   return (
     <PageShell className={styles.contasPage}>
-      <PayablesHeader year={year} month={month} setYear={setYear} setMonth={setMonth} />
-
       <main className={styles.contasGrid}>
+        <PayablesHeader/>
         <section className={`${styles.contasPanel} ${styles.detailPanel}`}>
           <PayablesFilterPanel
           distributorFilter={distributorFilter}
@@ -555,7 +552,7 @@ const Payables: React.FC = () => {
         </section>
 
         {/* #Agenda */}
-        <Agenda accountsMonth={accountsMonth} accountsYear={accountsYear} />
+          <Agenda accountsMonth={accountsYear} accountsYear={accountsYear} />
 
         {/* #Resumo */}
         <Summary accountsYear={accountsYear} year={year} month={month} setYear={setYear} setMonth={setMonth} />
@@ -663,7 +660,7 @@ const Payables: React.FC = () => {
           onImported={(recordsCount) => {
             setMissingDistributor(null);
             if (recordsCount > 0) {
-              void Promise.all([loadMonthAccounts(), loadYearAccounts()]);
+              void Promise.all([loadAccounts()]);
               if (pendingBothImport) {
                 setPendingBothImport(false);
                 setProductImportOpen(true);
