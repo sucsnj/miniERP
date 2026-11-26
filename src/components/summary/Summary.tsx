@@ -81,27 +81,21 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                             <tr>
                                 <td>
                                     <div className={`${summaryStyles.summaryRow}`}>
-                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                            <strong>Pago</strong>
-                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
-                                                {summary.paidCount}
-                                            </span>
+                                        <strong>Pago</strong>
+                                        <span className={summaryStyles.badge}>
+                                            {summary.paidCount}
                                         </span>
                                     </div>
                                     <div className={`${summaryStyles.summaryRow}`}>
-                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                            <strong>Pendente</strong>
-                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
-                                                {summary.pendingCount}
-                                            </span>
+                                        <strong>Pendente</strong>
+                                        <span className={summaryStyles.badge}>
+                                            {summary.pendingCount}
                                         </span>
                                     </div>
                                     <div className={`${summaryStyles.summaryRow}`}>
-                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                            <strong>Acumulado anual</strong>
-                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
-                                                {summary.totalCount}
-                                            </span>
+                                        <strong>Acumulado anual</strong>
+                                        <span className={summaryStyles.badge}>
+                                            {summary.totalCount}
                                         </span>
                                     </div>
                                 </td>
