@@ -11,8 +11,9 @@ interface MissingDistributorModalProps {
   emitterName: string;
   emitterTaxId?: string | null;
   availableDistributors: DistributorConfig[];
+  matchedDistributor?: DistributorConfig | null;
   onClose: () => void;
-  onImported: (recordsCount: number) => void;
+  onImported: (recordsCount: number, importType: 'values' | 'products' | 'both') => void;
 }
 
 export default function MissingDistributorModal({
@@ -20,6 +21,7 @@ export default function MissingDistributorModal({
   emitterName,
   emitterTaxId,
   availableDistributors,
+  matchedDistributor = null,
   onClose,
   onImported,
 }: MissingDistributorModalProps) {
@@ -29,23 +31,29 @@ export default function MissingDistributorModal({
     [availableDistributors]
   );
   const [mode, setMode] = useState<'existing' | 'new'>(enabledDistributors.length > 0 ? 'existing' : 'new');
-  const [selectedId, setSelectedId] = useState(enabledDistributors[0]?.id ?? '');
+  const [selectedId, setSelectedId] = useState(matchedDistributor?.id ?? enabledDistributors[0]?.id ?? '');
   const [newDistributorName, setNewDistributorName] = useState(emitterName.trim());
   const [newTaxIds, setNewTaxIds] = useState(emitterTaxId ? emitterTaxId.replace(/\D/g, '') : '');
   const [newAliases, setNewAliases] = useState(emitterName.trim());
+  const [importType, setImportType] = useState<'values' | 'products' | 'both'>('values');
   const [saving, setSaving] = useState(false);
 
   const handleImport = async () => {
+    if (importType === 'products') {
+      onImported(0, 'products');
+      return;
+    }
+
     setSaving(true);
 
     try {
-  const override = mode === 'existing'
-    ? { distributorId: selectedId }
-    : {
-        newDistributorName: newDistributorName.trim(),
-        newDistributorTaxId: newTaxIds.trim(),
-        newDistributorAliases: newAliases.split(/[,;\n]/).map((value) => value.trim()).filter(Boolean),
-      };
+      const override = mode === 'existing'
+        ? { distributorId: selectedId }
+        : {
+            newDistributorName: newDistributorName.trim(),
+            newDistributorTaxId: newTaxIds.trim(),
+            newDistributorAliases: newAliases.split(/[,;\n]/).map((value) => value.trim()).filter(Boolean),
+          };
 
       if (mode === 'new' && !override.newDistributorName) {
         showToast('Informe o nome da distribuidora.', 'error');
@@ -63,7 +71,7 @@ export default function MissingDistributorModal({
 
       if (result.sucesso) {
         showToast(`Importação concluída: ${result.registros?.length ?? 0} registro(s) inserido(s).`, 'success');
-        onImported(result.registros?.length ?? 0);
+        onImported(result.registros?.length ?? 0, importType);
       } else {
         showToast('A distribuidora foi adicionada, mas a importação não encontrou registros novos.', 'error');
         onClose();
@@ -81,7 +89,7 @@ export default function MissingDistributorModal({
       onClose={onClose}
       closeOnEscape={false}
       closeOnOverlayClick={false}
-      title="Distribuidora não encontrada"
+      title="Importação de XML"
       titleId="missing-distributor-modal-title"
       icon={<StorefrontIcon />}
       closeAriaLabel="Fechar importação de distribuidora"
@@ -90,7 +98,7 @@ export default function MissingDistributorModal({
       )}
       footerRight={(
            <Button type="button" size="sm" variant="success" onClick={handleImport} disabled={saving}>
-           {mode === 'existing' ? 'Associar e importar' : 'Adicionar e importar'}
+            {mode === 'existing' ? 'Associar e importar' : 'Adicionar e importar'}
          </Button>
       )}
     >
@@ -134,6 +142,15 @@ export default function MissingDistributorModal({
           </label>
         </div>
       )}
+
+      <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', marginTop: '12px' }}>
+        O que importar?
+        <select value={importType} onChange={(event) => setImportType(event.target.value as 'values' | 'products' | 'both')} style={{ padding: '8px' }}>
+          <option value="values">Importar Valores</option>
+          <option value="products">Importar Itens</option>
+          <option value="both">Importar Ambos</option>
+        </select>
+      </label>
     </AppModalShell>
   );
 }
