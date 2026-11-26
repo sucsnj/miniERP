@@ -1,10 +1,7 @@
 import React from 'react';
 import styles from '../../styles/payables.module.css';
 
-interface PayablesHeaderProps {
-}
-
-const PayablesHeader: React.FC<PayablesHeaderProps> = ({}) => {
+const PayablesHeader: React.FC = () => {
 
   return (
     <header className={styles.contasHeader}>
