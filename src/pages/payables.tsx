@@ -88,9 +88,9 @@ const Payables: React.FC = () => {
   const [paymentNotes, setPaymentNotes] = useState('');
   const [importDistributorOpen, setImportDistributorOpen] = useState(false);
   const [importMatchedDistributor, setImportMatchedDistributor] = useState<DistributorConfig | null>(null);
-  const [importQueue, setImportQueue] = useState<File[]>([]);
+  const [importGroupQueue, setImportGroupQueue] = useState<{ matched: DistributorConfig | null; emitterName: string; emitterTaxId: string | null; invoiceTotal: string; invoiceNumber: string; xmls: string[]; file: File }[]>([]);
   const [multiImport, setMultiImport] = useState(false);
-  const [importXmlText, setImportXmlText] = useState<string | null>(null);
+  const [importXmls, setImportXmls] = useState<string[]>([]);
   const [productImportOpen, setProductImportOpen] = useState(false);
   const [productImportFile, setProductImportFile] = useState<File | null>(null);
   const [productImportProducts, setProductImportProducts] = useState<ImportedProduct[] | null>(null);
@@ -351,33 +351,13 @@ const Payables: React.FC = () => {
     xmlInputRef.current?.click();
   };
 
-  const prepareImportFile = async (file: File) => {
-    try {
-      const text = await file.text();
-      setImportXmlText(text);
-      setProductImportFile(file);
-      setProductImportProducts(null);
-
-      const parsed = new DOMParser().parseFromString(text, 'text/xml');
-      const emit = parsed.getElementsByTagName('emit')[0];
-      const emitterName = emit?.getElementsByTagName('xNome')[0]?.textContent?.trim() ?? '';
-      const emitterTaxId =
-        emit?.getElementsByTagName('CNPJ')[0]?.textContent?.trim() ??
-        emit?.getElementsByTagName('CPF')[0]?.textContent?.trim() ??
-        null;
-      const invoiceTotal = parsed.getElementsByTagName('vNF')[0]?.textContent?.trim() ?? '';
-      const invoiceNumber = parsed.getElementsByTagName('nNF')[0]?.textContent?.trim() ?? '';
-      setImportDistributorInfo({ emitterName, emitterTaxId, invoiceTotal, invoiceNumber });
-
-      const configs = distributorConfigs.length > 0 ? distributorConfigs : (await fetchDistributors().catch(() => ({ distributors: [] }))).distributors;
-      if (distributorConfigs.length === 0 && configs.length > 0) setDistributorConfigs(configs);
-      const matched = findDistributor(configs as unknown as Parameters<typeof findDistributor>[0], emitterName, emitterTaxId);
-      setImportMatchedDistributor(matched ?? null);
-
-      setImportDistributorOpen(true);
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
-    }
+  const loadImportGroup = (group: { matched: DistributorConfig | null; emitterName: string; emitterTaxId: string | null; invoiceTotal: string; invoiceNumber: string; xmls: string[]; file: File }) => {
+    setImportXmls(group.xmls);
+    setProductImportFile(group.file);
+    setProductImportProducts(null);
+    setImportDistributorInfo({ emitterName: group.emitterName, emitterTaxId: group.emitterTaxId, invoiceTotal: group.invoiceTotal, invoiceNumber: group.invoiceNumber });
+    setImportMatchedDistributor(group.matched);
+    setImportDistributorOpen(true);
   };
 
   const handleImportXmlFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -385,16 +365,54 @@ const Payables: React.FC = () => {
     event.target.value = '';
     if (files.length === 0) return;
 
-    if (files.length === 1) {
-      setMultiImport(false);
-      setImportQueue([]);
-      await prepareImportFile(files[0]);
-      return;
-    }
+    try {
+      const configs = distributorConfigs.length > 0 ? distributorConfigs : (await fetchDistributors().catch(() => ({ distributors: [] }))).distributors;
+      if (distributorConfigs.length === 0 && configs.length > 0) setDistributorConfigs(configs);
 
-    setMultiImport(true);
-    setImportQueue(files.slice(1));
-    await prepareImportFile(files[0]);
+      // Parse all files first
+      const items = await Promise.all(files.map(async (file) => {
+        const text = await file.text();
+        const parsed = new DOMParser().parseFromString(text, 'text/xml');
+        const emit = parsed.getElementsByTagName('emit')[0];
+        const emitterName = emit?.getElementsByTagName('xNome')[0]?.textContent?.trim() ?? '';
+        const emitterTaxId =
+          emit?.getElementsByTagName('CNPJ')[0]?.textContent?.trim() ??
+          emit?.getElementsByTagName('CPF')[0]?.textContent?.trim() ??
+          null;
+        const invoiceTotal = parsed.getElementsByTagName('vNF')[0]?.textContent?.trim() ?? '';
+        const invoiceNumber = parsed.getElementsByTagName('nNF')[0]?.textContent?.trim() ?? '';
+        const matched = findDistributor(configs as unknown as Parameters<typeof findDistributor>[0], emitterName, emitterTaxId);
+        return { file, text, emitterName, emitterTaxId, invoiceTotal, invoiceNumber, matched };
+      }));
+
+      setMultiImport(files.length > 1);
+
+      // Group by distributor
+      const groups: { matched: DistributorConfig | null; emitterName: string; emitterTaxId: string | null; invoiceTotal: string; invoiceNumber: string; xmls: string[]; file: File }[] = [];
+      for (const it of items) {
+        const key = it.matched?.id ?? `missing:${it.emitterTaxId ?? it.emitterName}`;
+        const existing = groups.find((g) => (g.matched?.id ?? `missing:${g.emitterTaxId ?? g.emitterName}`) === key);
+        if (existing) {
+          existing.xmls = [...existing.xmls, it.text];
+        } else {
+          groups.push({
+            matched: it.matched ?? null,
+            emitterName: it.emitterName,
+            emitterTaxId: it.emitterTaxId,
+            invoiceTotal: it.invoiceTotal,
+            invoiceNumber: it.invoiceNumber,
+            xmls: [it.text],
+            file: it.file,
+          });
+        }
+      }
+      if (groups.length === 0) return;
+
+      setImportGroupQueue(groups.slice(1));
+      loadImportGroup(groups[0]);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
+    }
   };
 
   const closeProductImportModal = () => {
@@ -505,7 +523,8 @@ const Payables: React.FC = () => {
 
       {importDistributorOpen && importDistributorInfo && (
         <MissingDistributorModal
-          xml={importXmlText ?? ''}
+          key={importMatchedDistributor?.id ?? importDistributorInfo.emitterTaxId ?? importDistributorInfo.emitterName}
+          xmls={importXmls}
           emitterName={importDistributorInfo.emitterName}
           emitterTaxId={importDistributorInfo.emitterTaxId}
           availableDistributors={distributorConfigs}
@@ -513,22 +532,28 @@ const Payables: React.FC = () => {
           restrictToValues={multiImport}
           onClose={() => {
             setImportDistributorOpen(false);
-            setImportXmlText(null);
+            setImportXmls([]);
             setProductImportFile(null);
             setProductImportProducts(null);
             setImportDistributorInfo(null);
             setImportMatchedDistributor(null);
-            setImportQueue([]);
+            setImportGroupQueue([]);
             setMultiImport(false);
           }}
-          onImported={(recordsCount, importType) => {
+          onImported={async (recordsCount, importType) => {
             setImportDistributorOpen(false);
+            try {
+              const r = await fetchDistributors();
+              if (r?.distributors) setDistributorConfigs(r.distributors);
+            } catch {
+              // ignore
+            }
             if (importType === 'values' || importType === 'both') {
               void loadAccounts();
             }
             if (importType === 'products' || importType === 'both') {
-              if (importXmlText) {
-                void previewInvoiceItems(importXmlText).then((preview) => {
+              if (importXmls.length > 0) {
+                void previewInvoiceItems(importXmls[0]).then((preview) => {
                   const items = preview?.ok && preview.produtos ? preview.produtos : null;
                   if (items && items.length > 0) setProductImportProducts(items);
                   if (items && items.length === 0) {
@@ -539,18 +564,17 @@ const Payables: React.FC = () => {
               }
               setProductImportOpen(true);
             }
-            if (multiImport && importQueue.length > 0) {
-              const next = importQueue[0];
-              setImportQueue(importQueue.slice(1));
-              void prepareImportFile(next);
+            if (importGroupQueue.length > 0) {
+              const next = importGroupQueue[0];
+              setImportGroupQueue(importGroupQueue.slice(1));
+              loadImportGroup(next);
             } else {
-              setImportQueue([]);
+              setImportGroupQueue([]);
               setMultiImport(false);
+              setImportXmls([]);
+              setImportDistributorInfo(null);
+              setImportMatchedDistributor(null);
             }
-
-            setImportXmlText(null);
-            setImportDistributorInfo(null);
-            setImportMatchedDistributor(null);
           }}
         />
       )}

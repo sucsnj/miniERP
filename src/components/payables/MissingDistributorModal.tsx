@@ -7,7 +7,7 @@ import { useToast } from '../../hooks/useToast';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 
 interface MissingDistributorModalProps {
-  xml: string;
+  xmls: string[];
   emitterName: string;
   emitterTaxId?: string | null;
   availableDistributors: DistributorConfig[];
@@ -18,7 +18,7 @@ interface MissingDistributorModalProps {
 }
 
 export default function MissingDistributorModal({
-  xml,
+  xmls,
   emitterName,
   emitterTaxId,
   availableDistributors,
@@ -70,15 +70,17 @@ export default function MissingDistributorModal({
         return;
       }
 
-      const result = await importPayablesXml(xml, override);
-
-      if (result.sucesso) {
-        showToast(`Importação concluída: ${result.registros?.length ?? 0} registro(s) inserido(s).`, 'success');
-        onImported(result.registros?.length ?? 0, effectiveType);
-      } else {
-        showToast('A distribuidora foi adicionada, mas a importação não encontrou registros novos.', 'error');
-        onClose();
+      let total = 0;
+      for (const xml of xmls) {
+        const result = await importPayablesXml(xml, override);
+        if (result.sucesso) {
+          total += result.registros?.length ?? 0;
+        } else {
+          showToast('A distribuidora foi adicionada, mas a importação não encontrou registros novos.', 'error');
+        }
       }
+      showToast(`Importação concluída: ${total} registro(s) inserido(s).`, 'success');
+      onImported(total, effectiveType);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao importar XML.', 'error');
     } finally {
