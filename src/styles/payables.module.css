@@ -228,6 +228,17 @@
   font-weight: 600;
 }
 
+.importDistributorInfo {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
 .importChoiceSelect {
   width: 100%;
   padding: 10px 12px;

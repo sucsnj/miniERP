@@ -43,6 +43,7 @@ declare const styles: {
   readonly "hoverEllipsis": string;
   readonly "importChoiceLabel": string;
   readonly "importChoiceSelect": string;
+  readonly "importDistributorInfo": string;
   readonly "lastTenPanel": string;
   readonly "mesSelect": string;
   readonly "observacoesCell": string;

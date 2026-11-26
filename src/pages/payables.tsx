@@ -13,6 +13,7 @@ import {
   type DistributorConfig,
 } from '../services/payablesService';
 import { previewInvoiceItems, type ImportedProduct } from '../services/productsService';
+import { findDistributor } from '../utils/distributors';
 import MissingDistributorModal from '@/components/payables/MissingDistributorModal';
 import { fetchDistributors } from '../services/adminService';
 import { writeStoredValue } from '../utils/storage';
@@ -94,6 +95,9 @@ const Payables: React.FC = () => {
   const [productImportFile, setProductImportFile] = useState<File | null>(null);
   const [productImportProducts, setProductImportProducts] = useState<ImportedProduct[] | null>(null);
   const [pendingBothImport, setPendingBothImport] = useState(false);
+  const [importDistributorInfo, setImportDistributorInfo] = useState<{ emitterName: string; emitterTaxId: string | null; invoiceTotal: string; invoiceNumber: string } | null>(null);
+  const [importRegisteredDistributorName, setImportRegisteredDistributorName] = useState<string | null>(null);
+  const [distributorConfigs, setDistributorConfigs] = useState<DistributorConfig[]>([]);
 
   const handleDueDateFromChange = (value: string) => {
     setDueDateFromFilter(value);
@@ -390,6 +394,23 @@ const Payables: React.FC = () => {
       setProductImportFile(file);
       setProductImportProducts(null);
       setImportChoice('values');
+
+      const parsed = new DOMParser().parseFromString(text, 'text/xml');
+      const emit = parsed.getElementsByTagName('emit')[0];
+      const emitterName = emit?.getElementsByTagName('xNome')[0]?.textContent?.trim() ?? '';
+      const emitterTaxId =
+        emit?.getElementsByTagName('CNPJ')[0]?.textContent?.trim() ??
+        emit?.getElementsByTagName('CPF')[0]?.textContent?.trim() ??
+        null;
+      const invoiceTotal = parsed.getElementsByTagName('vNF')[0]?.textContent?.trim() ?? '';
+      const invoiceNumber = parsed.getElementsByTagName('nNF')[0]?.textContent?.trim() ?? '';
+      setImportDistributorInfo({ emitterName, emitterTaxId, invoiceTotal, invoiceNumber });
+
+      const configs = distributorConfigs.length > 0 ? distributorConfigs : (await fetchDistributors().catch(() => ({ distributors: [] }))).distributors;
+      if (distributorConfigs.length === 0 && configs.length > 0) setDistributorConfigs(configs);
+      const matched = findDistributor(configs as unknown as Parameters<typeof findDistributor>[0], emitterName, emitterTaxId);
+      setImportRegisteredDistributorName(matched?.name ?? null);
+
       setImportChoiceOpen(true);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
@@ -460,6 +481,8 @@ const Payables: React.FC = () => {
     setProductImportFile(null);
     setProductImportProducts(null);
     setPendingBothImport(false);
+    setImportDistributorInfo(null);
+    setImportRegisteredDistributorName(null);
   };
 
   const closeProductImportModal = () => {
@@ -594,6 +617,15 @@ const Payables: React.FC = () => {
             </>
           )}
         >
+          {importDistributorInfo ? (
+            <div className={styles.importDistributorInfo}>
+              <div><strong>Razão Social:</strong> {importDistributorInfo.emitterName || '—'}</div>
+              <div><strong>Distribuidora:</strong> {importRegisteredDistributorName || 'Não cadastrada'}</div>
+              <div><strong>CNPJ:</strong> {importDistributorInfo.emitterTaxId || '—'}</div>
+              <div><strong>Valor da nota:</strong> {importDistributorInfo.invoiceTotal ? `R$ ${importDistributorInfo.invoiceTotal}` : '—'}</div>
+            </div>
+          ) : null}
+
           <label htmlFor="payables-import-choice" className={styles.importChoiceLabel}>
             O que importar?
           </label>
