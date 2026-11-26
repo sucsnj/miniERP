@@ -98,14 +98,14 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initi
 
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', marginBottom: '12px' }}>
                 <div style={{ display: 'inline-grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: 'fit-content' }}>
-                    <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))} style={{ padding: '4px 8px', fontSize: '0.8rem', width: '100%' }}>
+                    <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))} style={{ padding: '6px', width: '100%' }}>
                         {months.map((name, index) => (
                             <option key={index} value={index + 1}>
                                 {name}
                             </option>
                         ))}
                     </select>
-                    <select value={effectiveYear} onChange={(e) => setSelectedYear(Number(e.target.value))} style={{ padding: '4px 8px', fontSize: '0.8rem', width: '100%' }}>
+                    <select value={effectiveYear} onChange={(e) => setSelectedYear(Number(e.target.value))} style={{ padding: '6px', width: '100%' }}>
                         {years.map((y) => (
                             <option key={y} value={y}>{y}</option>
                         ))}
@@ -146,6 +146,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initi
                                     </span>
                                 </div>
                                 {isExpanded && (
+                                    <div style={{ overflowX: 'auto' }}>
                                     <table className={`${styles.summaryTable}`}>
                                         <thead>
                                             <tr>
@@ -175,6 +176,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initi
                                             ))}
                                         </tbody>
                                     </table>
+                                    </div>
                                 )}
                             </div>
                         );

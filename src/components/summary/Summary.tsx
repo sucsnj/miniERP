@@ -75,50 +75,51 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'stretch' }}>
                 <div className={`${summaryStyles.summaryCard}`} style={{ flex: '1 1 320px', minWidth: '280px' }}>
                     <h3 style={{ margin: '0 0 8px' }}>Totais e contadores</h3>
+                    <div style={{ overflowX: 'auto' }}>
                     <table>
-                        <thead>
-                            <tr>
-                                <th><strong>Totais</strong></th>
-                                <th><strong>Contadores</strong></th>
-                            </tr>
-                        </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                             <strong>Pago</strong>
-                                            <span>R$ {formatCurrency(summary.paidTotal, 2)}</span>
-                                        </div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
+                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                                {summary.paidCount}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                             <strong>Pendente</strong>
-                                            <span>R$ {formatCurrency(summary.pendingTotal, 2)}</span>
-                                        </div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
+                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                                {summary.pendingCount}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                             <strong>Acumulado anual</strong>
-                                            <span>R$ {formatCurrency(summary.annualTotal, 2)}</span>
-                                        </div>
+                                            <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                                {summary.totalCount}
+                                            </span>
+                                        </span>
                                     </div>
                                 </td>
-                                <td>
-                                    <div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
-                                            <strong>Pago</strong>
-                                            <span>{summary.paidCount}</span>
-                                        </div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
-                                            <strong>Pendente</strong>
-                                            <span>{summary.pendingCount}</span>
-                                        </div>
-                                        <div className={`${summaryStyles.summaryRow}`}>
-                                            <strong>Acumulado anual</strong>
-                                            <span>{summary.totalCount}</span>
-                                        </div>
+                                <td style={{ textAlign: 'right', verticalAlign: 'top' }}>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span>R$ {formatCurrency(summary.paidTotal, 2)}</span>
+                                    </div>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span>R$ {formatCurrency(summary.pendingTotal, 2)}</span>
+                                    </div>
+                                    <div className={`${summaryStyles.summaryRow}`}>
+                                        <span>R$ {formatCurrency(summary.annualTotal, 2)}</span>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    </div>
 
                 </div>
                 <div style={{ flex: '1 1 280px', minWidth: '240px' }}>
