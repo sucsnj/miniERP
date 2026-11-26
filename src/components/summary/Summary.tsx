@@ -72,7 +72,9 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                     <h2>Resumo</h2>
                     <span className={styles.statusChip}>Atualização automática</span>
                 </div>
-                <div className={`${summaryStyles.summaryCard}`}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'stretch' }}>
+                <div className={`${summaryStyles.summaryCard}`} style={{ flex: '1 1 320px', minWidth: '280px' }}>
+                    <h3 style={{ margin: '0 0 8px' }}>Totais e contadores</h3>
                     <table>
                         <thead>
                             <tr>
@@ -119,8 +121,11 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                     </table>
 
                 </div>
+                <div style={{ flex: '1 1 280px', minWidth: '240px' }}>
                 {/* #Totais por supplierName */}
                 <TotalsByDistributor totalsByDistributor={summary.totalsByDistributor} />
+                </div>
+                </div>
 
                 { /* #Consolidação mensal */}
                 <MonthlyConsolidation accounts={accountsYear} />
