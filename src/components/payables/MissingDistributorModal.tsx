@@ -12,6 +12,7 @@ interface MissingDistributorModalProps {
   emitterTaxId?: string | null;
   availableDistributors: DistributorConfig[];
   matchedDistributor?: DistributorConfig | null;
+  restrictToValues?: boolean;
   onClose: () => void;
   onImported: (recordsCount: number, importType: 'values' | 'products' | 'both') => void;
 }
@@ -22,6 +23,7 @@ export default function MissingDistributorModal({
   emitterTaxId,
   availableDistributors,
   matchedDistributor = null,
+  restrictToValues = false,
   onClose,
   onImported,
 }: MissingDistributorModalProps) {
@@ -39,7 +41,8 @@ export default function MissingDistributorModal({
   const [saving, setSaving] = useState(false);
 
   const handleImport = async () => {
-    if (importType === 'products') {
+    const effectiveType = restrictToValues ? 'values' : importType;
+    if (effectiveType === 'products') {
       onImported(0, 'products');
       return;
     }
@@ -71,7 +74,7 @@ export default function MissingDistributorModal({
 
       if (result.sucesso) {
         showToast(`Importação concluída: ${result.registros?.length ?? 0} registro(s) inserido(s).`, 'success');
-        onImported(result.registros?.length ?? 0, importType);
+        onImported(result.registros?.length ?? 0, effectiveType);
       } else {
         showToast('A distribuidora foi adicionada, mas a importação não encontrou registros novos.', 'error');
         onClose();
@@ -143,14 +146,20 @@ export default function MissingDistributorModal({
         </div>
       )}
 
-      <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', marginTop: '12px' }}>
-        O que importar?
-        <select value={importType} onChange={(event) => setImportType(event.target.value as 'values' | 'products' | 'both')} style={{ padding: '8px' }}>
-          <option value="values">Importar Valores</option>
-          <option value="products">Importar Itens</option>
-          <option value="both">Importar Ambos</option>
-        </select>
-      </label>
+      {restrictToValues ? (
+        <p style={{ margin: '12px 0 0', fontSize: '0.85rem', color: 'var(--muted)' }}>
+          Múltiplas notas selecionadas: apenas a importação de <strong>Valores</strong> será realizada.
+        </p>
+      ) : (
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', marginTop: '12px' }}>
+          O que importar?
+          <select value={importType} onChange={(event) => setImportType(event.target.value as 'values' | 'products' | 'both')} style={{ padding: '8px' }}>
+            <option value="values">Importar Valores</option>
+            <option value="products">Importar Itens</option>
+            <option value="both">Importar Ambos</option>
+          </select>
+        </label>
+      )}
     </AppModalShell>
   );
 }

@@ -88,6 +88,8 @@ const Payables: React.FC = () => {
   const [paymentNotes, setPaymentNotes] = useState('');
   const [importDistributorOpen, setImportDistributorOpen] = useState(false);
   const [importMatchedDistributor, setImportMatchedDistributor] = useState<DistributorConfig | null>(null);
+  const [importQueue, setImportQueue] = useState<File[]>([]);
+  const [multiImport, setMultiImport] = useState(false);
   const [importXmlText, setImportXmlText] = useState<string | null>(null);
   const [productImportOpen, setProductImportOpen] = useState(false);
   const [productImportFile, setProductImportFile] = useState<File | null>(null);
@@ -349,12 +351,7 @@ const Payables: React.FC = () => {
     xmlInputRef.current?.click();
   };
 
-  const handleImportXmlFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    const file = files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+  const prepareImportFile = async (file: File) => {
     try {
       const text = await file.text();
       setImportXmlText(text);
@@ -381,6 +378,23 @@ const Payables: React.FC = () => {
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Erro ao ler arquivo XML', 'error');
     }
+  };
+
+  const handleImportXmlFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (files.length === 0) return;
+
+    if (files.length === 1) {
+      setMultiImport(false);
+      setImportQueue([]);
+      await prepareImportFile(files[0]);
+      return;
+    }
+
+    setMultiImport(true);
+    setImportQueue(files.slice(1));
+    await prepareImportFile(files[0]);
   };
 
   const closeProductImportModal = () => {
@@ -479,14 +493,15 @@ const Payables: React.FC = () => {
 
       </main>
 
-      <input
-        ref={xmlInputRef}
-        type="file"
-        accept=".xml"
-        className="hidden"
-        onChange={(event) => void handleImportXmlFile(event)}
-        aria-label="Arquivo XML da nota fiscal"
-      />
+       <input
+         ref={xmlInputRef}
+         type="file"
+         accept=".xml"
+         multiple
+         className="hidden"
+         onChange={(event) => void handleImportXmlFile(event)}
+         aria-label="Arquivo XML da nota fiscal"
+       />
 
       {importDistributorOpen && importDistributorInfo && (
         <MissingDistributorModal
@@ -495,6 +510,7 @@ const Payables: React.FC = () => {
           emitterTaxId={importDistributorInfo.emitterTaxId}
           availableDistributors={distributorConfigs}
           matchedDistributor={importMatchedDistributor}
+          restrictToValues={multiImport}
           onClose={() => {
             setImportDistributorOpen(false);
             setImportXmlText(null);
@@ -502,6 +518,8 @@ const Payables: React.FC = () => {
             setProductImportProducts(null);
             setImportDistributorInfo(null);
             setImportMatchedDistributor(null);
+            setImportQueue([]);
+            setMultiImport(false);
           }}
           onImported={(recordsCount, importType) => {
             setImportDistributorOpen(false);
@@ -521,6 +539,15 @@ const Payables: React.FC = () => {
               }
               setProductImportOpen(true);
             }
+            if (multiImport && importQueue.length > 0) {
+              const next = importQueue[0];
+              setImportQueue(importQueue.slice(1));
+              void prepareImportFile(next);
+            } else {
+              setImportQueue([]);
+              setMultiImport(false);
+            }
+
             setImportXmlText(null);
             setImportDistributorInfo(null);
             setImportMatchedDistributor(null);
