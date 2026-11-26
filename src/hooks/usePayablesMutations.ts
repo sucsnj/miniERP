@@ -271,7 +271,7 @@ export function useDeleteInvoice() {
   const identity = user ? identityFromUser(user) : null;
 
   return useMutation({
-    mutationFn: (input: { id: string }) => deleteInvoice(input.id),
+    mutationFn: (input: { id: string; deleteAccounts?: boolean }) => deleteInvoice(input.id, input.deleteAccounts ?? false),
     onMutate: async (input) => {
       if (!identity) return { identity, snapshots: [] as InvoicesSnapshot };
       await queryClient.cancelQueries({ predicate: invoicesMonthPredicate(identity) });
@@ -288,6 +288,9 @@ export function useDeleteInvoice() {
     onSettled: (_data, _error, _input, context) => {
       if (!context?.identity) return;
       invalidateInvoices(queryClient, context.identity);
+      if (_input?.deleteAccounts) {
+        queryClient.invalidateQueries({ predicate: payablesPredicate(context.identity), refetchType: 'all' });
+      }
     },
   });
 }

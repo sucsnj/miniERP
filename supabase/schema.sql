@@ -359,7 +359,7 @@ create table if not exists public.invoices (
   company_id uuid not null references public.companies (id) on delete cascade,
   supplier_name text not null,
   access_key text not null,
-  issue_date date not null,
+  issue_date timestamptz not null,
   amount numeric(14, 2) not null,
   created_at timestamptz not null default now()
 );

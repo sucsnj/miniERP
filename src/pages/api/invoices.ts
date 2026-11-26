@@ -6,6 +6,7 @@ import {
   listAllInvoices,
   createInvoice,
   deleteInvoice,
+  deletePayablesByInvoiceNote,
 } from '../../database/payablesRepository';
 import parseNumber from '../../utils/number';
 import { isAdmin, requireApiAuth } from '../../utils/serverAuth';
@@ -71,6 +72,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const body = req.body ?? {};
     const id = body.id;
     if (!id) return res.status(400).json({ error: 'ID é obrigatório para exclusão' });
+    if (body.deleteAccounts) {
+      const invoice = await getInvoiceById(String(id), ctx);
+      if (invoice) {
+        await deletePayablesByInvoiceNote({ supplierName: invoice.supplierName, accessKey: invoice.accessKey }, ctx);
+      }
+    }
     await deleteInvoice(String(id), ctx);
     return res.status(200).json({ changes: 1 });
   }

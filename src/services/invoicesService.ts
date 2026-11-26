@@ -60,11 +60,11 @@ export const fetchAllInvoices = async (): Promise<InvoiceDetails[]> => {
   return (Array.isArray(rows) ? rows : []).map(mapInvoice);
 };
 
-export const deleteInvoice = async (id: string | number) => {
+export const deleteInvoice = async (id: string | number, deleteAccounts = false) => {
   const response = await fetch('/api/invoices', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ id, deleteAccounts }),
   });
   return parseResponse<{ message?: string; changes?: number; error?: string }>(response);
 };

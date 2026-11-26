@@ -290,6 +290,21 @@ export async function deleteInvoice(id: string, ctx: AuthContext): Promise<void>
   if (error) throw error;
 }
 
+export async function deletePayablesByInvoiceNote(invoice: { supplierName: string; accessKey: string }, ctx: AuthContext): Promise<void> {
+  const accessKey = invoice.accessKey;
+  const nNF = accessKey && accessKey.length >= 34 ? accessKey.substring(25, 34) : '';
+  const invoiceNumber = nNF ? String(parseInt(nNF, 10)) : '';
+  if (!invoiceNumber) return;
+  const prefix = invoiceNumber;
+  const { error } = await sb()
+    .from('payables')
+    .delete()
+    .eq('company_id', ctx.companyId)
+    .eq('supplier_name', invoice.supplierName)
+    .like('document', `${prefix}%`);
+  if (error) throw error;
+}
+
 export async function getInvoiceSumByYear(year: number, ctx: AuthContext): Promise<number> {
   const { data, error } = await sb().from('invoices').select('amount').eq('company_id', ctx.companyId).gte('issue_date', `${year}-01-01`).lte('issue_date', `${year}-12-31`);
   if (error) throw error;

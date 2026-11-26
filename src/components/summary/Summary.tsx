@@ -31,11 +31,15 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
         // Conta o total de contas
         const totalCount = accountsYear.length;
 
-        const totalsByDistributor = accountsYear.reduce<Record<string, number>>((acc, account) => {
+        const totalsByDistributor = accountsYear.reduce<Record<string, { amount: number; count: number }>>((acc, account) => {
             if (account.status === 'Pendente') {
-                acc[account.supplierName] = (acc[account.supplierName] || 0) + account.amount;
+                if (!acc[account.supplierName]) {
+                    acc[account.supplierName] = { amount: 0, count: 0 };
+                }
+                acc[account.supplierName].amount += account.amount;
+                acc[account.supplierName].count += 1;
             }
-            
+
             return acc;
         }, {});
 
