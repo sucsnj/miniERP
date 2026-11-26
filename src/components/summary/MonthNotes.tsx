@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react';
 import { fetchInvoicesByPeriod, type InvoiceDetails } from '../../services/invoicesService';
+import { fetchAvailableYears } from '../../services/payablesService';
 import { tenantKeys, identityFromUser } from '../../utils/queryKeys';
 import { useDeleteInvoice } from '../../hooks/usePayablesMutations';
 import { formatCurrency } from '../../utils/formatter';
@@ -24,18 +25,30 @@ interface MonthNotesProps {
     setMonth: (month: number) => void;
 }
 
-const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth }) => {
+const MonthNotes: React.FC<MonthNotesProps> = ({ year: initialYear, month: initialMonth }) => {
     const { user } = useAuth();
     const isAdmin = user?.role === 'admin';
     const deleteInvoiceMutation = useDeleteInvoice();
 
     const identity = user ? identityFromUser(user) : null;
+
+    const { data: availableYears = [] } = useQuery<number[]>({
+        queryKey: ['payables', 'available-years'],
+        queryFn: () => fetchAvailableYears(),
+        ...LIVE_TENANT_QUERY_OPTIONS,
+    });
+    const years = availableYears.length > 0 ? availableYears : [getCurrentYear()];
+
+    const [selectedYear, setSelectedYear] = useState<number>(initialYear ?? years[0]);
+    const [selectedMonth, setSelectedMonth] = useState<number>(initialMonth ?? (new Date().getMonth() + 1));
+    const effectiveYear = years.includes(selectedYear) ? selectedYear : years[0];
+
     const { data: invoices = [], isLoading } = useQuery<InvoiceDetails[]>({
         queryKey: identity
-            ? tenantKeys.invoicesByMonth(identity, year, month)
-            : ['invoices', 'disabled', year, month],
+            ? tenantKeys.invoicesByMonth(identity, effectiveYear, selectedMonth)
+            : ['invoices', 'disabled', effectiveYear, selectedMonth],
         enabled: Boolean(identity),
-        queryFn: () => fetchInvoicesByPeriod(year, month),
+        queryFn: () => fetchInvoicesByPeriod(effectiveYear, selectedMonth),
         ...LIVE_TENANT_QUERY_OPTIONS,
     });
 
@@ -83,23 +96,29 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
         <div className={`${styles.summaryCard} ${styles.small}`}>
             <h3>Notas do mês</h3>
 
-            <div className={`${styles.selectors}`}>
-                <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
-                    {months.map((name, index) => (
-                        <option key={index} value={index + 1}>
-                            {name}
-                        </option>
-                    ))}
-                </select>
-
-                <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                    {Array.from({ length: 5 }, (_, i) => getCurrentYear() - i).map((y) => (
-                        <option key={y} value={y}>{y}</option>
-                    ))}
-                </select>
-                <div>
-                    <h4>Somatório</h4>
-                    <span>R$ {formatCurrency(invoiceTotal, 2)}</span>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                <div style={{ display: 'inline-grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: 'fit-content' }}>
+                    <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))} style={{ padding: '4px 8px', fontSize: '0.8rem', width: '100%' }}>
+                        {months.map((name, index) => (
+                            <option key={index} value={index + 1}>
+                                {name}
+                            </option>
+                        ))}
+                    </select>
+                    <select value={effectiveYear} onChange={(e) => setSelectedYear(Number(e.target.value))} style={{ padding: '4px 8px', fontSize: '0.8rem', width: '100%' }}>
+                        {years.map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                        ))}
+                    </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: '0 0 4px' }}>Somatório</h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>R$ {formatCurrency(invoiceTotal, 2)}</span>
+                        <span style={{ padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                            {invoices.length}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -111,9 +130,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                         const total = list.reduce((s, n) => s + n.amount, 0);
                         const isExpanded = expanded.has(name);
                         return (
-                            <div
-                                key={name}
-                                style={{ marginBottom: '8px', border: '1px solid var(--border, #ddd)', borderRadius: '6px', transition: 'background 0.15s ease' }}
+                            <div key={name} style={{ marginBottom: '8px', border: '1px solid var(--border, #ddd)', borderRadius: '6px', transition: 'background 0.15s ease' }}
                                 onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-soft)'; }}
                                 onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
                             >
@@ -122,7 +139,11 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                                     style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', fontWeight: 600 }}
                                 >
                                     <span>{name}</span>
-                                    <span>R$ {formatCurrency(total, 2)} ({list.length})</span>
+                                    <span>R$ {formatCurrency(total, 2)}
+                                        <span style={{ marginLeft: '6px', padding: '1px 7px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600, background: '#2563eb', color: '#ffffff' }}>
+                                            {list.length}
+                                        </span>
+                                    </span>
                                 </div>
                                 {isExpanded && (
                                     <table className={`${styles.summaryTable}`}>
