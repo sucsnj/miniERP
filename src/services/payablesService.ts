@@ -132,6 +132,12 @@ export const importPayablesXml = async (
   return body as unknown as ImportPayablesXmlResponse;
 };
 
+export const fetchAvailableYears = async (): Promise<number[]> => {
+  const response = await fetch('/api/payables/years');
+  if (!response.ok) throw new Error('Erro ao buscar anos disponíveis');
+  return (await response.json()) as number[];
+};
+
 export const fetchAccounts = async (year?: number, month?: number): Promise<AccountDetails[]> => {
   const params = new URLSearchParams();
   if (year !== undefined) params.append('year', String(year));

@@ -290,6 +290,23 @@ export async function deleteInvoice(id: string, ctx: AuthContext): Promise<void>
   if (error) throw error;
 }
 
+export async function listAvailableYears(ctx: AuthContext): Promise<number[]> {
+  const { data: accounts } = await sb().from('payables').select('due_date').eq('company_id', ctx.companyId);
+  const { data: invoices } = await sb().from('invoices').select('issue_date').eq('company_id', ctx.companyId);
+  const years = new Set<number>();
+  const currentYear = new Date().getFullYear();
+  years.add(currentYear);
+  for (const r of accounts ?? []) {
+    const y = parseInt(String((r as { due_date?: string }).due_date ?? '').slice(0, 4), 10);
+    if (!Number.isNaN(y)) years.add(y);
+  }
+  for (const r of invoices ?? []) {
+    const y = parseInt(String((r as { issue_date?: string }).issue_date ?? '').slice(0, 4), 10);
+    if (!Number.isNaN(y)) years.add(y);
+  }
+  return Array.from(years).sort((a, b) => b - a);
+}
+
 export async function deletePayablesByInvoiceNote(invoice: { supplierName: string; accessKey: string }, ctx: AuthContext): Promise<void> {
   const accessKey = invoice.accessKey;
   const nNF = accessKey && accessKey.length >= 34 ? accessKey.substring(25, 34) : '';

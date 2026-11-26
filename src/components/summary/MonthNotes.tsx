@@ -114,7 +114,7 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                             <div
                                 key={name}
                                 style={{ marginBottom: '8px', border: '1px solid var(--border, #ddd)', borderRadius: '6px', transition: 'background 0.15s ease' }}
-                                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'var(--hover-bg, rgba(0,0,0,0.04))'; }}
+                                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-soft)'; }}
                                 onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
                             >
                                 <div
@@ -142,10 +142,10 @@ const MonthNotes: React.FC<MonthNotesProps> = ({ year, month, setYear, setMonth 
                                                     <td>R$ {formatCurrency(Number(n.amount), 2)}</td>
                                                     {isAdmin && (
                                                         <td style={{ display: 'flex', gap: '4px' }}>
-                                                            <Button variant="danger" size="sm" onClick={() => openConfirm(n.id, false)} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>
+                                                            <Button variant="danger" size="sm" onClick={() => openConfirm(n.id, false)} style={{ fontSize: '0.75rem', padding: '2px 6px', width: 'auto', minWidth: 'fit-content' }}>
                                                                 Excluir
                                                             </Button>
-                                                            <Button variant="outline" size="sm" onClick={() => openConfirm(n.id, true)} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>
+                                                            <Button variant="outline" size="sm" onClick={() => openConfirm(n.id, true)} style={{ fontSize: '0.75rem', padding: '2px 6px', width: 'auto', minWidth: 'fit-content' }}>
                                                                 + contas
                                                             </Button>
                                                         </td>

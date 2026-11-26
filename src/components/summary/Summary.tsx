@@ -123,7 +123,7 @@ const Summary: React.FC<SummaryProps> = ({ accountsYear, year, month, setYear, s
                 <TotalsByDistributor totalsByDistributor={summary.totalsByDistributor} />
 
                 { /* #Consolidação mensal */}
-                <MonthlyConsolidation months={summary.months} />
+                <MonthlyConsolidation accounts={accountsYear} />
 
                 {/* #Notas do Mês */}
                 <MonthNotes year={year} month={month} setYear={setYear} setMonth={setMonth} />
