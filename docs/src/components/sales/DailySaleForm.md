@@ -15,6 +15,7 @@ interface DailySaleFormProps {
   onDateChange: (date: string) => void; onSaleAdded?: () => void;
   onEditSale?: (sale: DailySale) => void; onDeleteSale?: (id: number) => void;
   showHistory?: boolean; // sales/onEditSale/onDeleteSale/showHistory hoje não são usados
+  isEditing?: boolean; // suspende o autofoco enquanto há venda em edição
 }
 ```
 
@@ -28,4 +29,5 @@ interface DailySaleFormProps {
 - Campos Valor e Observações ficam desabilitados enquanto uma venda está sendo registrada, evitando digitação concorrente.
 - Ícone do carrinho mantém o alinhamento vertical no hover/focus e apenas muda a cor e aumenta levemente (`scale`).
 - `CartItem` foi movido para `src/types/sale.ts` (compartilhado com `useCart`/modais).
+- `isEditing` repassa para `useDailySaleForm`, que suspende o autofoco automático enquanto a venda está em edição e devolve o foco ao campo Valor ao sair da edição.
 - `<style jsx>` permanece no componente (migração para CSS Modules prevista na Fase 2 do ADR 0007); `EditSaleForm` não depende mais dessas classes.

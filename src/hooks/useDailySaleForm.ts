@@ -43,11 +43,13 @@ const ALLOWED_SALE_KEYS = [
 interface UseDailySaleFormProps {
   selectedDate: string;
   onSaleAdded?: () => void;
+  isEditing?: boolean;
 }
 
 export const useDailySaleForm = ({
   selectedDate,
   onSaleAdded,
+  isEditing = false,
 }: UseDailySaleFormProps) => {
   const { showToast } = useToast();
   const { autoFocusSaleInput, autoFocusSaleInputDelay, pixKey, pixName, pixBank, pixCity } = useSettings();
@@ -72,6 +74,7 @@ export const useDailySaleForm = ({
   const prevCartValueRef = useRef<number>(0);
   const pendingSubmissionRef = useRef(false);
   const focusAfterSubmissionRef = useRef(false);
+  const wasEditingRef = useRef(isEditing);
   const submissionIdempotencyRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   // Estado e ações do carrinho (catálogo, seleção e gerenciamento), compartilhado
@@ -405,8 +408,23 @@ export const useDailySaleForm = ({
     };
   }, [pathname, pendingCount, loading]);
 
-  // Mantém o foco e a visibilidade do campo de venda conforme configuração
-  useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput, focusIntervalMs: autoFocusSaleInputDelay * 1000 });
+  // Mantém o foco e a visibilidade do campo de venda conforme configuração,
+  // suspendendo o autofoco automático enquanto uma venda está em edição
+  useAutoFocus(valueInputRef, { enabled: autoFocusSaleInput && !isEditing, focusIntervalMs: autoFocusSaleInputDelay * 1000 });
+
+  // Ao sair da edição (salvar ou cancelar), devolve o foco ao campo de registro
+  useEffect(() => {
+    const wasEditing = wasEditingRef.current;
+    wasEditingRef.current = isEditing;
+    if (!wasEditing || isEditing) return undefined;
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      valueInputRef.current?.focus();
+      valueInputRef.current?.select();
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [isEditing]);
 
   useEffect(() => {
     if (loading || !focusAfterSubmissionRef.current) return;

@@ -7,7 +7,7 @@
 - `GET ?mes=&ano=&filtro=`: lista vendas do mês; `filtro` (`positivas`|`negativas`|`todas`, default `todas`).
 - `POST { saleDate, amount, notes?, createdAt?, idempotencyKey? }`: registra a venda e insere os itens; responde `200 { message, id }`.
 - `idempotencyKey`, quando fornecida, deve ser um UUID e é repassada à RPC `create_sale`; retry com a mesma chave retorna a venda existente, sem duplicar itens ou movimentar estoque novamente.
-- `PUT`/`DELETE { id, ... }`: só permitem vendas com até **2 dias** (senão `403`); o PUT substitui os itens.
+- `PUT`/`DELETE { id, ... }`: só permitem vendas com até **2 dias** (senão `403`); o PUT substitui os itens e aceita `saleType` (gravado em `sales.sale_type`).
 - Demais métodos → `405` (`Allow: POST, PUT, DELETE, GET`).
 
 ## Relações

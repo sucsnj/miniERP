@@ -202,6 +202,7 @@ export async function updateSale(input: {
   amount: number;
   notes?: string | null;
   items?: SaleItemInput[];
+  saleType?: string | null;
 }, ctx: AuthContext): Promise<void> {
   const { error } = await sb().rpc('update_sale', {
     p_company_id: ctx.companyId,
@@ -210,6 +211,7 @@ export async function updateSale(input: {
     p_sale_date: input.saleDate,
     p_amount: input.amount,
     p_notes: input.notes ?? null,
+    p_sale_type: input.saleType ?? null,
     p_items: (input.items ?? []).map((item) => ({
       kind: item.kind,
       productId: item.productId ?? null,

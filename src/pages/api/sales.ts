@@ -103,6 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const date = body.saleDate ?? body.date;
     const amount = body.amount ?? body.amount;
     const notes = body.notes ?? body.notes;
+    const saleType = body.saleType ?? body.sale_type ?? null;
     const items = Array.isArray(body.items ?? body.itens) ? (body.items ?? body.itens) : [];
 
     const timezone = req.cookies?.timezone || 'America/Recife';
@@ -127,6 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         amount: validValue,
         notes: notes ?? null,
         items: items.map(normalizeItem),
+        saleType: saleType == null ? null : String(saleType).trim() || null,
       }, ctx);
 
       res.status(200).json({ message: 'Venda atualizada com sucesso' });

@@ -2,7 +2,7 @@
 
 > Fonte da verdade sobre o **estado atual** e o que está **pendente/futuro**. Não registra histórico: decisões e mudanças passadas ficam em `docs/` (ADRs e docs de código) e no histórico do Git. Todo agente deve ler antes de trabalhar e atualizar ao final de cada mudança.
 
-Atualizado em: **24/11/2026**
+Atualizado em: **26/11/2026**
 
 ## Resumo executivo
 
@@ -27,6 +27,7 @@ Sistema de gestão de vendas (Next.js 16 + React 19 + TypeScript + MUI + React Q
 | Nav mobile | painel lateral à esquerda abaixo de 1024px, acionado pelo nome do app; loja/usuário compactos à direita |
 | Exclusão de vendas | lista congelada durante a animação: card sai no lugar, sem card extra |
 | Vendas PIX | modal PIX não tem mais impressão; botão "Registrar" executa o registro padrão e fecha o modal; vendas passam a ter campo opcional `sale_type`, preenchido com `pix` nas vendas registradas via modal PIX; últimas vendas exibem o tipo ao lado da hora; formulário de venda permite escolher tipo (crédito, débito, PIX, outros) opcionalmente; campo de observações autoexpansível com limite de 500 caracteres |
+| Edição de vendas | permite alterar o tipo de venda (`sale_type`, RPC `update_sale` via migration 0034); layout em grade com Data, Valor e Tipo lado a lado e botões em linha; autofoco automático suspenso durante a edição e restaurado (com foco no campo de registro) ao salvar/cancelar |
 | Importação de XML | associação de distribuidora prioriza CNPJ/CPF do emitente (um ou mais por distribuidora); aliases como fallback (ADR 0021); import não considera estoque (produtos existentes ou cadastro rápido); modal de itens fecha após sucesso, sem redirecionar |
 | Cadastro/registro | filtros e cadastro rápido via XML normalizados para parâmetros em inglês (`categoryId`, `brandId`, `supplierId`, `active`; `newImport`, `name`, `stock`, `unit`); botão/dropzone de importação XML removido da página (fluxo fica em `/payables`) |
 | Listagem de produtos | clique na linha abre edição; cancelar em edição retorna para `/products`; filtros por categoria/marca/fornecedor usam IDs de texto; botão de edição com lápis removido |

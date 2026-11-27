@@ -5,7 +5,6 @@ declare const styles: {
   readonly "summaryCard": string;
   readonly "summaryPanel": string;
   readonly "summaryRow": string;
-  readonly "badge": string;
 };
 export = styles;
 

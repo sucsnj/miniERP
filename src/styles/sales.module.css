@@ -55,3 +55,25 @@
   color: var(--muted);
   font-size: 0.78rem;
 }
+
+.editFormGrid {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.8fr) minmax(220px, 1.4fr) minmax(150px, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.editFormActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+}
+
+@media (max-width: 720px) {
+  .editFormGrid {
+    grid-template-columns: 1fr;
+  }
+}

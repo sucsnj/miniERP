@@ -886,7 +886,8 @@ create or replace function public.update_sale(
   p_sale_date date,
   p_amount numeric,
   p_notes text default null,
-  p_items jsonb default '[]'::jsonb
+  p_items jsonb default '[]'::jsonb,
+  p_sale_type text default null
 )
 returns void
 language plpgsql
@@ -945,6 +946,7 @@ begin
   set sale_date = p_sale_date,
       amount = p_amount,
       notes = nullif(trim(coalesce(p_notes, '')), ''),
+      sale_type = nullif(trim(coalesce(p_sale_type, '')), ''),
       updated_at = now()
   where id = p_id
     and company_id = p_company_id

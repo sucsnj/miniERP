@@ -4,6 +4,8 @@ declare const styles: {
   readonly "cartHint": string;
   readonly "cartIcon": string;
   readonly "cartIconButton": string;
+  readonly "editFormActions": string;
+  readonly "editFormGrid": string;
 };
 export = styles;
 

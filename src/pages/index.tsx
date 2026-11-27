@@ -66,6 +66,7 @@ const Home: React.FC = () => {
             onEditSale={handleEditSale}
             onDeleteSale={handleDeleteSale}
             showHistory={false}
+            isEditing={Boolean(editingSale)}
           />
         </DailySalesTotal>
 

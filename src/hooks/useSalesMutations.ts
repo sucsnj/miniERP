@@ -158,6 +158,7 @@ interface UpdateSaleInput {
   amount: number;
   notes?: string;
   items?: SaleItemInput[];
+  saleType?: string | null;
 }
 
 interface DeleteSaleInput {
@@ -218,7 +219,7 @@ export function useUpdateSale() {
 
   return useMutation({
     mutationFn: (input: UpdateSaleInput) =>
-      updateSale(input.id, input.date, input.amount, input.notes, input.items),
+      updateSale(input.id, input.date, input.amount, input.notes, input.items, input.saleType),
     onMutate: async (input) => {
       if (!tenantId) return { tenantId, snapshots: [] as Array<[readonly unknown[], DailySale[] | undefined]>, affectedMonths: [] as Array<{ month: number; year: number }> };
       await queryClient.cancelQueries({ predicate: salesDailyPredicate(tenantId) });
@@ -226,7 +227,7 @@ export function useUpdateSale() {
       const affectedMonths = findAffectedMonths(input.date, snapshots, input.id);
       queryClient.setQueriesData<DailySale[]>({ predicate: salesDailyPredicate(tenantId) }, (current) =>
         current?.map((sale) =>
-          sale.id === input.id ? { ...sale, date: input.date, amount: input.amount, notes: input.notes } : sale
+          sale.id === input.id ? { ...sale, date: input.date, amount: input.amount, notes: input.notes, saleType: input.saleType ?? null } : sale
         )
       );
       return { tenantId, snapshots, affectedMonths };

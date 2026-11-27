@@ -13,6 +13,7 @@
 - Bloqueia envio enquanto uma submissão está em andamento e limpa o formulário imediatamente; em falha, restaura os dados somente se o usuário não digitou nada novo.
 - Envia `idempotencyKey` estável por tentativa do mesmo rascunho na criação de venda; falha desconhecida seguida de retry não registra a venda duas vezes.
 - Efeitos: ESC limpa formulário (ignorado enquanto `useFocusTrap` marca `body.modal-open`), auto-foco/visibilidade do input via `useAutoFocus` e atualizações por carrinho.
+- Recebe `isEditing`: enquanto `true`, o auto-foco automático (`useAutoFocus`) fica suspenso; ao transicionar de `true` para `false` (salvar ou cancelar a edição), o foco e a seleção voltam ao campo Valor.
 
 ## Relacoes
 

@@ -6,7 +6,7 @@
 
 - PostgreSQL: `sales.idempotency_key` (UUID opcional) fica fora de rows legadas e possui índice único parcial por `(company_id, store_id, idempotency_key)`.
 - Usa o cliente server-only `getSupabaseServerClient()` (`src/database/supabase.ts`).
-- Lista, cria, atualiza e exclui vendas diárias (via RPCs `create_sale`, `update_sale`, `delete_sale`), aplicando movimentações de estoque automaticamente; `create_sale` aceita `p_idempotency_key` e retorna o UUID existente em retry.
+- Lista, cria, atualiza e exclui vendas diárias (via RPCs `create_sale`, `update_sale`, `delete_sale`), aplicando movimentações de estoque automaticamente; `create_sale` aceita `p_idempotency_key` e retorna o UUID existente em retry; `update_sale` aceita `p_sale_type` (atualiza `sale_type`).
 - Lista itens de uma venda e totais/consolidações mensais.
 - Consolida mês (`consolidateMonthly`) e exclui consolidação (`deleteMonthlySale`).
 - Integra com `productsRepository` via IDs UUID de produtos/serviços.

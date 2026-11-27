@@ -184,7 +184,7 @@ export const fetchDailySales = async (
   return Array.isArray(date) ? date.map(mapDailySale) : [];
 };
 
-export const updateSale = async (id: string | number, date: string, amount: number, notes?: string, items?: SaleItemInput[]) => {
+export const updateSale = async (id: string | number, date: string, amount: number, notes?: string, items?: SaleItemInput[], saleType?: string | null) => {
   const response = await fetch('/api/sales', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -194,6 +194,7 @@ export const updateSale = async (id: string | number, date: string, amount: numb
       amount,
       notes,
       items: (items ?? []).map(toSaleItemPayload),
+      saleType: saleType ?? null,
     }),
   });
   if (!response.ok) {

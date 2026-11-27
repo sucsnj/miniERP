@@ -4,9 +4,10 @@
 
 ## O que faz
 
-- Carrega os itens via `fetchSaleItems` → `CartItem`; permite editar data, valor e observações.
+- Carrega os itens via `fetchSaleItems` → `CartItem`; permite editar data, valor, tipo de venda (`saleType`: não informado, crédito, débito, PIX, outros) e observações.
 - Recalcula o valor a partir do carrinho quando ele não está vazio (preserva o campo se for esvaziado).
-- Salva via `useUpdateSale` (optimistic update do cache de vendas); integra [SelectItemsModal](../cart/SelectItemsModal.md) e [CartModal](../cart/CartModal.md).
+- Layout em grade (`sales.module.css` `.editFormGrid`): Data, Valor (com controles do carrinho) e Tipo de venda lado a lado; Observações abaixo; botões Salvar/Cancelar em linha (`.editFormActions`) sem ocupar toda a largura.
+- Salva via `useUpdateSale` (optimistic update do cache de vendas, incluindo `saleType`); integra [SelectItemsModal](../cart/SelectItemsModal.md) e [CartModal](../cart/CartModal.md).
 
 ```ts
 interface EditSaleFormProps {
@@ -25,3 +26,4 @@ interface EditSaleFormProps {
 - Janela de edição de 2 dias validada na página e na API (403).
 - Foca/seleciona o campo de valor ao abrir; mostra `loadingItems` durante a busca.
 - Os controles do carrinho usam classes próprias de `sales.module.css`; não dependem mais do `styled-jsx` de `DailySaleForm`.
+- Enquanto está em edição, o autofoco automático do formulário de registro fica suspenso; ao salvar ou cancelar, o foco volta ao campo de registro de vendas (ver `useDailySaleForm`).

@@ -21,6 +21,7 @@ interface DailySaleFormProps {
   onEditSale?: (sale: DailySale) => void;
   onDeleteSale?: (id: string) => void;
   showHistory?: boolean;
+  isEditing?: boolean;
 }
 
 // Formulário de venda diária (dashboard `/`). Componente apresentacional:
@@ -30,6 +31,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
   selectedDate,
   onDateChange,
   onSaleAdded,
+  isEditing = false,
 }) => {
   const {
     value,
@@ -72,7 +74,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
     handleRemoveItem,
     handleClearCart,
     totalCartCount,
-  } = useDailySaleForm({ selectedDate, onSaleAdded });
+  } = useDailySaleForm({ selectedDate, onSaleAdded, isEditing });
   const { pixKey, pixName, pixBank, fieldScaleDate, fieldScaleValue, fieldScaleObservations, fieldScalesAvailable } = useSettings();
 
   useEffect(() => {

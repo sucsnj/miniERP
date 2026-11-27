@@ -27,6 +27,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
   const [editDate, setEditDate] = useState(sale.date);
   const [editAmount, setEditAmount] = useState(sale.amount.toFixed(2));
   const [editNotes, setEditNotes] = useState(sale.notes ?? "");
+  const [editSaleType, setEditSaleType] = useState(sale.saleType ?? "");
   const [loadingItems, setLoadingItems] = useState(true);
   const editAmountInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -104,6 +105,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
         date: editDate,
         amount,
         notes: editNotes,
+        saleType: editSaleType || null,
         items: cartItems.map((item) => ({
           item_id: item.id,
           kind: item.kind,
@@ -126,81 +128,98 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
       <Panel>
         <PanelHeader title="Editar Venda" />
         <Form onSubmit={handleSaveEdit}>
+          <div className={styles.editFormGrid}>
+            <label>
+              Data:
+              <input
+                type="date"
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+                required
+              />
+            </label>
 
-        <label>
-          Data:
-          <input
-            type="date"
-            value={editDate}
-            onChange={(e) => setEditDate(e.target.value)}
-            required
-          />
-        </label>
+            <label>
+              Valor:
+              <div className={styles.cartControls}>
+                <input
+                  ref={editAmountInputRef}
+                  type="number"
+                  step="0.01"
+                  value={editAmount}
+                  onChange={(e) => setEditAmount(e.target.value)}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={styles.cartIconButton}
+                  onClick={handleCartClick}
+                  aria-label="Abrir carrinho"
+                  title="Abrir carrinho"
+                >
+                  <AddShoppingCartIcon className={styles.cartIcon} />
+                  {totalCartCount > 0 && (
+                    <span className={styles.cartBadge}>{totalCartCount}</span>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  className={styles.cartIconButton}
+                  onClick={openCartModal}
+                  aria-label="Editar itens da venda"
+                  title="Editar itens da venda"
+                >
+                  <ShoppingCartIcon className={styles.cartIcon} />
+                  {totalCartCount > 0 && (
+                    <span className={styles.cartBadge}>{totalCartCount}</span>
+                  )}
+                </Button>
+              </div>
+              {cartItems.length > 0 && (
+                <span className={styles.cartHint}>
+                  {cartItems.length} {cartItems.length === 1 ? "item" : "itens"} no carrinho — amount recalculado automaticamente
+                </span>
+              )}
+              {loadingItems && (
+                <span className={styles.cartHint}>
+                  Carregando itens...
+                </span>
+              )}
+            </label>
 
-        <label>
-          Valor:
-          <div className={styles.cartControls}>
-            <input
-              ref={editAmountInputRef}
-              type="number"
-              step="0.01"
-              value={editAmount}
-              onChange={(e) => setEditAmount(e.target.value)}
-              required
+            <label>
+              Tipo de venda (opcional):
+              <select
+                value={editSaleType}
+                onChange={(e) => setEditSaleType(e.target.value)}
+              >
+                <option value="">Não informado</option>
+                <option value="credito">Crédito</option>
+                <option value="debito">Débito</option>
+                <option value="pix">PIX</option>
+                <option value="outros">Outros</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Observações:
+            <textarea
+              className="flex-grow-edit-observacoes"
+              value={editNotes}
+              onChange={(e) => setEditNotes(e.target.value)}
             />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className={styles.cartIconButton}
-              onClick={handleCartClick}
-              aria-label="Abrir carrinho"
-              title="Abrir carrinho"
-            >
-              <AddShoppingCartIcon className={styles.cartIcon} />
-              {totalCartCount > 0 && (
-                <span className={styles.cartBadge}>{totalCartCount}</span>
-              )}
-            </Button>
-            <Button
-              type="button"
-              className={styles.cartIconButton}
-              onClick={openCartModal}
-              aria-label="Editar itens da venda"
-              title="Editar itens da venda"
-            >
-              <ShoppingCartIcon className={styles.cartIcon} />
-              {totalCartCount > 0 && (
-                <span className={styles.cartBadge}>{totalCartCount}</span>
-              )}
+          </label>
+
+          <div className={styles.editFormActions}>
+            <Button type="submit" variant="success" leftIcon={<SaveIcon />}>Salvar Alteração</Button>
+            <Button type="button" variant="outline" onClick={onCancel} leftIcon={<CancelIcon />}>
+              Cancelar
             </Button>
           </div>
-          {cartItems.length > 0 && (
-            <span className={styles.cartHint}>
-              {cartItems.length} {cartItems.length === 1 ? "item" : "itens"} no carrinho — amount recalculado automaticamente
-            </span>
-          )}
-          {loadingItems && (
-            <span className={styles.cartHint}>
-              Carregando itens...
-            </span>
-          )}
-        </label>
-
-        <label>
-          Observações:
-          <textarea
-            className="flex-grow-edit-observacoes"
-            value={editNotes}
-            onChange={(e) => setEditNotes(e.target.value)}
-          />
-        </label>
-
-        <Button type="submit" variant="success" leftIcon={<SaveIcon />}>Salvar Alteração</Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="button-spacing" leftIcon={<CancelIcon />}>
-          Cancelar
-        </Button>
-      </Form>
+        </Form>
       </Panel>
 
       {/* Modal de seleção de itens (adicionar ao carrinho) */}
