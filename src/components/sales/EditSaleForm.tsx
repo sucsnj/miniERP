@@ -197,7 +197,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
                 value={editSaleType}
                 onChange={(e) => setEditSaleType(e.target.value)}
               >
-                <option value="">Não informado</option>
+                <option value="">Dinheiro</option>
                 <option value="credito">Crédito</option>
                 <option value="debito">Débito</option>
                 <option value="pix">PIX</option>

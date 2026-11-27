@@ -9,23 +9,40 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CategoryIcon from '@mui/icons-material/Category';
+import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import { useShortcuts } from '../../utils/shortcuts';
 import Button from '@/components/common/Button';
 import styles from '../../styles/dailySalesTotal.module.css';
 
-type SaleTypeFilter = '' | 'credito' | 'debito' | 'pix' | 'outros';
+type SaleTypeFilter = '' | 'credito' | 'debito' | 'cartao' | 'pix' | 'outros' | 'todos';
 
-const SALE_TYPE_ORDER: SaleTypeFilter[] = ['', 'credito', 'debito', 'pix', 'outros'];
+const SALE_TYPE_ORDER: SaleTypeFilter[] = ['', 'credito', 'debito', 'cartao', 'pix', 'outros', 'todos'];
 
 const SALE_TYPE_LABELS: Record<SaleTypeFilter, string> = {
-  '': 'Não informado',
+  '': 'Dinheiro',
   credito: 'Crédito',
   debito: 'Débito',
+  cartao: 'Cartão',
   pix: 'PIX',
   outros: 'Outros',
+  todos: 'Todos',
 };
 
 const normalizeSaleType = (value?: string | null) => (value ?? '').trim().toLowerCase();
+
+const matchesType = (sale: DailySale, type: SaleTypeFilter) => {
+  const normalized = normalizeSaleType(sale.saleType);
+  switch (type) {
+    case '':
+      return normalized === '';
+    case 'cartao':
+      return normalized === 'credito' || normalized === 'debito';
+    case 'todos':
+      return true;
+    default:
+      return normalized === type;
+  }
+};
 
 const renderTotalTypeIcon = (type: SaleTypeFilter) => {
   switch (type) {
@@ -38,10 +55,18 @@ const renderTotalTypeIcon = (type: SaleTypeFilter) => {
           <span className={styles.debitIconCurrency}>$</span>
         </span>
       );
+    case 'cartao':
+      return (
+        <span className={styles.debitIconWrap}>
+          <CreditCardIcon fontSize="inherit" />
+        </span>
+      );
     case 'pix':
       return <QrCode2Icon fontSize="inherit" />;
     case 'outros':
       return <CategoryIcon fontSize="inherit" />;
+    case 'todos':
+      return <AllInclusiveIcon fontSize="inherit" />;
     default:
       return <AttachMoneyIcon fontSize="inherit" />;
   }
@@ -62,7 +87,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   const [totalType, setTotalType] = useState<SaleTypeFilter>('');
-  const filteredSales = sales.filter((sale) => normalizeSaleType(sale.saleType) === totalType);
+  const filteredSales = sales.filter((sale) => matchesType(sale, totalType));
   const total = filteredSales.reduce((sum, sale) => sum + sale.amount, 0);
   const salesCount = filteredSales.length;
   const averageTicket = salesCount > 0 ? total / salesCount : 0;

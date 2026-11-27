@@ -205,7 +205,7 @@ const DailySaleForm: React.FC<DailySaleFormProps> = ({
                 onChange={(e) => setSaleType(e.target.value)}
                 disabled={loading}
               >
-                <option value="">Não informado</option>
+                <option value="">Dinheiro</option>
                 <option value="credito">Crédito</option>
                 <option value="debito">Débito</option>
                 <option value="pix">PIX</option>
