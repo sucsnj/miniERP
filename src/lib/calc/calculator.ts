@@ -140,7 +140,17 @@ export function insertKey(expression: string, key: string): string {
     case 'afterClose':
       if (keyType === 'digit') return `${expression}*${normalizedKey}`
       if (keyType === 'open') return `${expression}*(`
-      if (keyType === 'operator' || keyType === 'close') return applySubstitution(expression, normalizedKey)
+      if (keyType === 'operator') {
+        const { open, close } = countParentheses(expression)
+        // Se o ')' final fecha um parêntese aberto, não substitui: anexa o operador.
+        if (open >= close) return `${expression}${normalizedKey}`
+        return applySubstitution(expression, normalizedKey)
+      }
+      if (keyType === 'close') {
+        const { open, close } = countParentheses(expression)
+        if (close < open) return `${expression})`
+        return expression
+      }
       return expression
 
     default:
@@ -335,6 +345,8 @@ export function calculate(expression: string): number | null {
 }
 
 export function calculateResult(expression: string): number | null {
+  const trimmed = expression.trim()
+  if (trimmed === '(' || trimmed === '-') return 0
   const value = calculate(expression)
   return value === null ? null : roundCurrency(value)
 }
