@@ -125,7 +125,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
 
   return (
     <>
-      <Panel>
+      <Panel className={styles.editSalePanel}>
         <PanelHeader title="Editar Venda" />
         <Form onSubmit={handleSaveEdit}>
           <div className={styles.editFormGrid}>
@@ -133,6 +133,7 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
               Data:
               <input
                 type="date"
+                className={styles.editDateInput}
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
                 required
@@ -189,9 +190,10 @@ const EditSaleForm: React.FC<EditSaleFormProps> = ({ sale, onSaved, onCancel, on
               )}
             </label>
 
-            <label>
+            <label className={styles.editTypeLabel}>
               Tipo de venda (opcional):
               <select
+                className={styles.editSaleTypeSelect}
                 value={editSaleType}
                 onChange={(e) => setEditSaleType(e.target.value)}
               >

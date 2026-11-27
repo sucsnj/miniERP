@@ -4,8 +4,12 @@ declare const styles: {
   readonly "cartHint": string;
   readonly "cartIcon": string;
   readonly "cartIconButton": string;
+  readonly "editDateInput": string;
   readonly "editFormActions": string;
   readonly "editFormGrid": string;
+  readonly "editSalePanel": string;
+  readonly "editSaleTypeSelect": string;
+  readonly "editTypeLabel": string;
 };
 export = styles;
 

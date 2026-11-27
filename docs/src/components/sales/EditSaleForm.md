@@ -6,7 +6,8 @@
 
 - Carrega os itens via `fetchSaleItems` → `CartItem`; permite editar data, valor, tipo de venda (`saleType`: não informado, crédito, débito, PIX, outros) e observações.
 - Recalcula o valor a partir do carrinho quando ele não está vazio (preserva o campo se for esvaziado).
-- Layout em grade (`sales.module.css` `.editFormGrid`): Data, Valor (com controles do carrinho) e Tipo de venda lado a lado; Observações abaixo; botões Salvar/Cancelar em linha (`.editFormActions`) sem ocupar toda a largura.
+- Layout em grade (`sales.module.css` `.editFormGrid`): Data, Valor (com controles do carrinho) e Tipo de venda lado a lado; Observações abaixo; botões Salvar/Cancelar em linha (`.editFormActions`) sem ocupar toda a largura. Os seletores de Data e Tipo usam largura do próprio conteúdo (`.editDateInput`/`.editSaleTypeSelect`).
+- O painel usa `.editSalePanel` (largura máxima de 1440px, centralizado), igual ao card "Resumo do Período". O rótulo e o seletor de tipo usam `.editTypeLabel`/`.editSaleTypeSelect`, replicando o estilo do formulário "Registrar Venda Diária" (coluna com `gap` 8px; select `max-width: 180px`, `border-radius: 8px`, `padding: 6px 10px`, `font-size: 0.85rem`).
 - Salva via `useUpdateSale` (optimistic update do cache de vendas, incluindo `saleType`); integra [SelectItemsModal](../cart/SelectItemsModal.md) e [CartModal](../cart/CartModal.md).
 
 ```ts
