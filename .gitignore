@@ -65,3 +65,6 @@ notas.db
 tabela.db
 script.sql
 *.db
+
+# Arquivos de log
+log.*

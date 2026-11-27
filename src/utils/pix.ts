@@ -59,8 +59,27 @@ const TRANSACTION_CURRENCY = '5303986';
 const COUNTRY_CODE = '5802BR';
 const ADDITIONAL_DATA_ID = '62';
 const TXID_SUBFIELD = '05';
-const DEFAULT_TXID = '***';
 const CRC_ID = '6304';
+
+/**
+ * Gera um TXID alfanumérico curto para PIX estático (até 25 caracteres).
+ * Formato: "PIX" + timestamp (base36) + sufixo aleatório (base36).
+ */
+function generatePixTxid(): string {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).slice(2, 10);
+  return `PIX${timestamp}${random}`.slice(0, 25).toUpperCase();
+}
+
+/**
+ * Normaliza/valida um TXID para o padrão EMVCo (alfanumérico, máx. 25).
+ * Retorna null se inválido.
+ */
+function normalizeTxid(value: string | null | undefined): string | null {
+  const cleaned = String(value ?? '').trim().replace(/[^A-Za-z0-9]/g, '');
+  if (!cleaned) return null;
+  return cleaned.slice(0, 25);
+}
 
 const MAX_MERCHANT_NAME_LEN = 25;
 const MAX_MERCHANT_CITY_LEN = 15;
@@ -342,10 +361,12 @@ export function buildPixPayload({
   merchantName,
   merchantCity,
   amount = null,
-  txid = DEFAULT_TXID,
+  txid,
 }: BuildPixPayloadParams): BuildPixPayloadResult {
   const name = normalizeText(merchantName, MAX_MERCHANT_NAME_LEN);
   const city = normalizeText(merchantCity, MAX_MERCHANT_CITY_LEN);
+
+  const resolvedTxid = normalizeTxid(txid) ?? generatePixTxid();
 
   // 26 — Merchant Account Information: GUI + chave PIX
   const accountInfo = emv(GUI_SUBFIELD, GUI_VALUE) + emv(KEY_SUBFIELD, pixKey);
@@ -360,7 +381,7 @@ export function buildPixPayload({
   parts.push(COUNTRY_CODE);
   parts.push(emv('59', name));
   parts.push(emv('60', city));
-  parts.push(emv(ADDITIONAL_DATA_ID, emv(TXID_SUBFIELD, txid)));
+  parts.push(emv(ADDITIONAL_DATA_ID, emv(TXID_SUBFIELD, resolvedTxid)));
 
   const payload = `${parts.join('')}${CRC_ID}`;
 
@@ -371,7 +392,7 @@ export function buildPixPayload({
       name,
       city,
       amount,
-      txid,
+      txid: resolvedTxid,
     },
   };
 }
