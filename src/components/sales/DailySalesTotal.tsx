@@ -100,8 +100,9 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   };
 
   const dailySales = selectedDay ? sales.filter((sale) => sale.date === selectedDay) : [];
-  const dailyTotal = dailySales.reduce((sum, sale) => sum + sale.amount, 0);
-  const dailyCount = dailySales.length;
+  const filteredDailySales = dailySales.filter((sale) => matchesType(sale, totalType));
+  const dailyTotal = filteredDailySales.reduce((sum, sale) => sum + sale.amount, 0);
+  const dailyCount = filteredDailySales.length;
   const dailyAverage = dailyCount > 0 ? dailyTotal / dailyCount : 0;
   const [newSaleIds, setNewSaleIds] = useState<string[]>([]);
   const [deletingSales, setDeletingSales] = useState<DailySale[]>([]);
@@ -226,10 +227,22 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
             </button>
 
             {selectedDay ? (
-              <div className={`${styles.summaryCard} daily-card`}>
-                <span className={`${styles.summaryCardTitle}`}>
-                  Resumo do dia {formatDateString(selectedDay, 'DD-MM-YYYY')}
-                </span>
+              <button
+                type="button"
+                className={`${styles.summaryCard} ${styles.totalTypeCard} daily-card`}
+                onClick={handleCycleTotalType}
+                title="Clique para alternar o tipo de venda"
+                aria-label={`Resumo do dia ${formatDateString(selectedDay, 'DD-MM-YYYY')} — ${SALE_TYPE_LABELS[totalType]}. Clique para alternar o tipo de venda.`}
+              >
+                <div className={`${styles.summaryCardHeader}`}>
+                  <span className={`${styles.summaryCardTitle}`}>
+                    Resumo do dia {formatDateString(selectedDay, 'DD-MM-YYYY')}
+                  </span>
+                  <span className={`${styles.totalTypeBadge}`}>
+                    {renderTotalTypeIcon(totalType)}
+                    <span>{SALE_TYPE_LABELS[totalType]}</span>
+                  </span>
+                </div>
 
                 <div className={`${styles.summaryMetrics}`}>
                   <div>
@@ -245,7 +258,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                     <span className={`${styles.summaryValue}`}> R$ {formatCurrency(dailyAverage, 2)}</span>
                   </div>
                 </div>
-              </div>
+              </button>
             ) : null}
           </div>
 
