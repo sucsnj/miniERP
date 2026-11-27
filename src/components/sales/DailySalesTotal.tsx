@@ -5,9 +5,47 @@ import { formatCurrency } from '../../utils/formatter';
 import { formatDateString, parseDate } from '../../utils/date';
 import { canEdit } from '../../utils/edit';
 import EditIcon from '@mui/icons-material/Edit';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CategoryIcon from '@mui/icons-material/Category';
 import { useShortcuts } from '../../utils/shortcuts';
 import Button from '@/components/common/Button';
 import styles from '../../styles/dailySalesTotal.module.css';
+
+type SaleTypeFilter = '' | 'credito' | 'debito' | 'pix' | 'outros';
+
+const SALE_TYPE_ORDER: SaleTypeFilter[] = ['', 'credito', 'debito', 'pix', 'outros'];
+
+const SALE_TYPE_LABELS: Record<SaleTypeFilter, string> = {
+  '': 'Não informado',
+  credito: 'Crédito',
+  debito: 'Débito',
+  pix: 'PIX',
+  outros: 'Outros',
+};
+
+const normalizeSaleType = (value?: string | null) => (value ?? '').trim().toLowerCase();
+
+const renderTotalTypeIcon = (type: SaleTypeFilter) => {
+  switch (type) {
+    case 'credito':
+      return <CreditCardIcon fontSize="inherit" />;
+    case 'debito':
+      return (
+        <span className={styles.debitIconWrap}>
+          <CreditCardIcon fontSize="inherit" />
+          <span className={styles.debitIconCurrency}>$</span>
+        </span>
+      );
+    case 'pix':
+      return <QrCode2Icon fontSize="inherit" />;
+    case 'outros':
+      return <CategoryIcon fontSize="inherit" />;
+    default:
+      return <AttachMoneyIcon fontSize="inherit" />;
+  }
+};
 
 interface DailySalesTotalProps {
   sales: DailySale[];
@@ -23,9 +61,18 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
   
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
-  const total = sales.reduce((sum, sale) => sum + sale.amount, 0);
-  const salesCount = sales.length;
+  const [totalType, setTotalType] = useState<SaleTypeFilter>('');
+  const filteredSales = sales.filter((sale) => normalizeSaleType(sale.saleType) === totalType);
+  const total = filteredSales.reduce((sum, sale) => sum + sale.amount, 0);
+  const salesCount = filteredSales.length;
   const averageTicket = salesCount > 0 ? total / salesCount : 0;
+
+  const handleCycleTotalType = () => {
+    setTotalType((current) => {
+      const index = SALE_TYPE_ORDER.indexOf(current);
+      return SALE_TYPE_ORDER[(index + 1) % SALE_TYPE_ORDER.length];
+    });
+  };
 
   const dailySales = selectedDay ? sales.filter((sale) => sale.date === selectedDay) : [];
   const dailyTotal = dailySales.reduce((sum, sale) => sum + sale.amount, 0);
@@ -123,8 +170,20 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
       <div className={`${styles.summaryGrid}`}>
         <div className={`${styles.summaryLeft}`}>
           <div className={`${styles.summaryRow}`}>
-            <div className={`${styles.summaryCard} totals-card`}>
-              <span className={`${styles.summaryCardTitle}`}>Total do Período</span>
+            <button
+              type="button"
+              className={`${styles.summaryCard} ${styles.totalTypeCard} totals-card`}
+              onClick={handleCycleTotalType}
+              title="Clique para alternar o tipo de venda"
+              aria-label={`Total do Período — ${SALE_TYPE_LABELS[totalType]}. Clique para alternar o tipo de venda.`}
+            >
+              <div className={`${styles.summaryCardHeader}`}>
+                <span className={`${styles.summaryCardTitle}`}>Total do Período</span>
+                <span className={`${styles.totalTypeBadge}`}>
+                  {renderTotalTypeIcon(totalType)}
+                  <span>{SALE_TYPE_LABELS[totalType]}</span>
+                </span>
+              </div>
               <div className={`${styles.summaryMetrics}`}>
                 <div>
                   <span className={`${styles.summaryLabel}`}>Total de Vendas</span>
@@ -139,7 +198,7 @@ const DailySalesTotal: React.FC<DailySalesTotalProps> = ({ sales, selectedDay, r
                   <span className={`${styles.summaryValue}`}> R$ {formatCurrency(averageTicket, 2)}</span>
                 </div>
               </div>
-            </div>
+            </button>
 
             {selectedDay ? (
               <div className={`${styles.summaryCard} daily-card`}>

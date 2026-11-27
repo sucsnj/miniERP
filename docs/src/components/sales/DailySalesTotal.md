@@ -28,6 +28,7 @@ interface DailySalesTotalProps {
 - Largura livre de `105%`, `transform: scale` e larguras mínimas fixas removidos: o card usa `width: 100%`, `min-width: 0` e grids com `minmax(0)` para não estourar viewports longos não móveis.
 - Nas últimas vendas, o tipo de venda (`saleType`) é exibido ao lado da hora quando presente.
 - `canEdit` bloqueia vendas fora da janela editável; o `Delete` age sobre a maior `id` de `recentSales`.
+- O card "Total do Período" é clicável e cicla o filtro de tipo de venda (Não informado → Crédito → Débito → PIX → Outros → Não informado), exibindo badge com ícone (crédito: cartão simples; débito: cartão com cifrão; PIX: QR code; outros: categoria; não informado: cifrão) e rótulo; os totais refletem o filtro.
 - A chave React dos blocos usa `operationId` quando disponível, preservando a mesma instância entre o ID otimista e o ID definitivo da API.
 - Timeouts de destaque/exclusão são armazenados em `Set`s e removidos ao disparar/desmontar, evitando timers obsoletos acumulados.
 - O destaque usa tokens de tema (`accent`) e a CSS de exclusão remove o hover e desabilita os botões de Editar/Excluir; `prefers-reduced-motion` reduz a animação.

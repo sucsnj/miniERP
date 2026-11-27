@@ -1,5 +1,7 @@
 declare const styles: {
   readonly "dailySalesTotal": string;
+  readonly "debitIconCurrency": string;
+  readonly "debitIconWrap": string;
   readonly "fadeIn": string;
   readonly "formCard": string;
   readonly "historyCard": string;
@@ -14,6 +16,7 @@ declare const styles: {
   readonly "saleDelete": string;
   readonly "saleHighlight": string;
   readonly "summaryCard": string;
+  readonly "summaryCardHeader": string;
   readonly "summaryCardTitle": string;
   readonly "summaryGrid": string;
   readonly "summaryLabel": string;
@@ -21,6 +24,8 @@ declare const styles: {
   readonly "summaryMetrics": string;
   readonly "summaryRow": string;
   readonly "summaryValue": string;
+  readonly "totalTypeBadge": string;
+  readonly "totalTypeCard": string;
 };
 export = styles;
 
